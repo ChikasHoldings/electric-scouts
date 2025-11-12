@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Star, Sparkles } from "lucide-react";
+import { MapPin, Star, Sparkles, CheckCircle, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -77,28 +77,20 @@ export default function HeroSection({ zipCode, setZipCode, onCompare }) {
 
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-md">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">100% Free</p>
-                  <p className="text-xs text-gray-500">No hidden fees</p>
-                </div>
+            <div className="mt-3 flex items-center justify-center lg:justify-start gap-3 sm:gap-4 flex-wrap text-xs sm:text-sm text-gray-600">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
+                <span className="font-medium">Instant results</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center shadow-md">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">Instant Results</p>
-                  <p className="text-xs text-gray-500">Compare in seconds</p>
-                </div>
+              <span className="text-gray-400">•</span>
+              <div className="flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
+                <span className="font-medium">100% free</span>
+              </div>
+              <span className="text-gray-400">•</span>
+              <div className="flex items-center gap-1.5">
+                <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
+                <span className="font-medium">No spam</span>
               </div>
             </div>
           </div>
