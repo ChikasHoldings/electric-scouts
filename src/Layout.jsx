@@ -1,16 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Phone, ChevronDown, Menu, X } from "lucide-react";
+import { Phone, ChevronDown, Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 
 const texasCities = [
   "Houston", "Dallas", "Fort Worth", "Corpus Christi", "Arlington",
@@ -35,21 +27,31 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-gray-900">power</span>
-                <span className="text-2xl font-bold text-teal-500">wizard</span>
-                <div className="w-2 h-2 bg-coral-500 rounded-full mb-4"></div>
+              <div className="flex items-center gap-0 relative">
+                <span className="text-2xl font-normal text-gray-900">power</span>
+                <span className="text-2xl font-normal text-teal-500">wizard</span>
+                <svg 
+                  className="absolute -top-1 -right-3 w-3 h-3" 
+                  viewBox="0 0 20 20" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path 
+                    d="M10 0L11.5 8.5L20 10L11.5 11.5L10 20L8.5 11.5L0 10L8.5 8.5L10 0Z" 
+                    fill="#FF6B5B"
+                  />
+                </svg>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
               <div className="relative group">
-                <button className="flex items-center gap-1 text-gray-700 hover:text-teal-600 transition-colors font-medium">
+                <button className="flex items-center gap-1 text-gray-700 hover:text-teal-600 transition-colors font-normal">
                   Residential
                   <ChevronDown className="w-4 h-4" />
                 </button>
-                <div className="absolute top-full left-0 mt-2 w-96 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-6">
+                <div className="absolute top-full left-0 mt-2 w-96 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-6 z-50">
                   <div className="grid grid-cols-2 gap-6">
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-3">Cities</h3>
@@ -91,24 +93,24 @@ export default function Layout({ children, currentPageName }) {
 
               <Link
                 to={createPageUrl("BusinessRates")}
-                className="text-gray-700 hover:text-teal-600 transition-colors font-medium"
+                className="text-gray-700 hover:text-teal-600 transition-colors font-normal"
               >
                 Business Rates
               </Link>
 
               <Link
                 to={createPageUrl("HomeConcierge")}
-                className="text-gray-700 hover:text-teal-600 transition-colors font-medium"
+                className="text-gray-700 hover:text-teal-600 transition-colors font-normal"
               >
                 Home Concierge
               </Link>
 
               <div className="relative group">
-                <button className="flex items-center gap-1 text-gray-700 hover:text-teal-600 transition-colors font-medium">
+                <button className="flex items-center gap-1 text-gray-700 hover:text-teal-600 transition-colors font-normal">
                   Resources
                   <ChevronDown className="w-4 h-4" />
                 </button>
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4">
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-4 z-50">
                   <div className="space-y-2">
                     <Link to={createPageUrl("AboutUs")} className="block text-sm text-gray-600 hover:text-teal-600 transition-colors">
                       About Us
@@ -203,10 +205,20 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl font-bold">power</span>
-                <span className="text-xl font-bold text-teal-400">wizard</span>
-                <div className="w-1.5 h-1.5 bg-coral-500 rounded-full mb-3"></div>
+              <div className="flex items-center gap-0 relative mb-4">
+                <span className="text-xl font-normal">power</span>
+                <span className="text-xl font-normal text-teal-400">wizard</span>
+                <svg 
+                  className="absolute -top-1 -right-3 w-2.5 h-2.5" 
+                  viewBox="0 0 20 20" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path 
+                    d="M10 0L11.5 8.5L20 10L11.5 11.5L10 20L8.5 11.5L0 10L8.5 8.5L10 0Z" 
+                    fill="#FF6B5B"
+                  />
+                </svg>
               </div>
               <p className="text-gray-400 text-sm">
                 Empowering Texans to find the best electricity rates since 2019.

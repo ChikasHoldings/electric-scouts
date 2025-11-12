@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { MapPin, SlidersHorizontal, Zap, Clock, Leaf, DollarSign } from "lucide-react";
+import { MapPin, SlidersHorizontal, Zap } from "lucide-react";
 import PlanCard from "../components/compare/PlanCard";
 import FiltersPanel from "../components/compare/FiltersPanel";
 
@@ -53,7 +53,7 @@ export default function CompareRates() {
     });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-white">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,8 +62,8 @@ export default function CompareRates() {
           </h1>
           
           {/* Search Bar */}
-          <div className="bg-white rounded-xl shadow-xl p-4 max-w-4xl">
-            <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg shadow-xl p-3 max-w-4xl">
+            <div className="grid md:grid-cols-3 gap-3">
               <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-lg">
                 <MapPin className="w-5 h-5 text-gray-400" />
                 <Input
@@ -71,7 +71,7 @@ export default function CompareRates() {
                   placeholder="Enter ZIP code"
                   value={zipCode}
                   onChange={(e) => setZipCode(e.target.value)}
-                  className="border-0 bg-transparent focus-visible:ring-0 text-gray-900"
+                  className="border-0 bg-transparent focus-visible:ring-0 text-gray-900 p-0 h-auto"
                   maxLength={5}
                 />
               </div>
@@ -123,7 +123,7 @@ export default function CompareRates() {
             {isLoading ? (
               <div className="space-y-4">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl p-6 shadow-sm animate-pulse">
+                  <div key={i} className="bg-white rounded-xl p-6 border border-gray-200 animate-pulse">
                     <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
                     <div className="h-4 bg-gray-200 rounded w-2/3"></div>
                   </div>
@@ -136,7 +136,7 @@ export default function CompareRates() {
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-xl p-12 text-center shadow-sm">
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-200">
                 <Zap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">No plans found</h3>
                 <p className="text-gray-600">Try adjusting your filters or search criteria</p>

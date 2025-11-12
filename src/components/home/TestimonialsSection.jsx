@@ -10,14 +10,14 @@ const defaultTestimonials = [
     customer_name: "Janice C",
     location: "Dallas, TX",
     rating: 5,
-    review_text: "The representative of Power Wizard was very helpful. She answered all my questions. She explained anything I didn't understand. This company was highly recommended.",
+    review_text: "The representative of Power Wizard was very helpful. She answered all my questions. She explained anything I didn't understand. This company was highl...",
     review_date: "2024-10-06"
   },
   {
     customer_name: "Letitia T",
     location: "Houston, TX",
     rating: 5,
-    review_text: "Caroline is an awesome customer service agent who made the process easy and thoroughly explained everything and answered every question. Professional, patient and friendly.",
+    review_text: "Caroline is an awesome customer service agent who made the process easy and thoroughly explained everything and answered every question. Professional,...",
     review_date: "2024-07-01"
   },
   {
@@ -31,21 +31,21 @@ const defaultTestimonials = [
     customer_name: "Kenneth E",
     location: "Houston, TX",
     rating: 5,
-    review_text: "Very friendly, and responsive in a timely manner with helping me and my family switch providers for our electric bill. Was also able to help us save a lot of money.",
+    review_text: "Very friendly, and responsive in a timely manner with helping me and my family switch providers for our electric bill. Was also able to help us save a...",
     review_date: "2024-09-13"
   },
   {
     customer_name: "Brandi F",
     location: "Corpus Christi, TX",
     rating: 5,
-    review_text: "Had Power Wizard for years and cancelled when I moved. After 6 months I've realized just how much money and headache the company had saved me and I signed back up immediately.",
+    review_text: "Had Power Wizard for years and cancelled when I moved. After 6 months I've realized just how much money and headache the company had saved me and I si...",
     review_date: "2024-08-15"
   },
   {
     customer_name: "Dee R",
     location: "Fort Worth, TX",
     rating: 5,
-    review_text: "The agent was very helpful, pleasant and respectful, she explained everything so clearly and it didn't take a long time to sign me up, I'm very pleased.",
+    review_text: "The agent was very helpful, pleasant and respectful, she explained everything so clearly and it didn't take a long time to sign me up, I'm very please...",
     review_date: "2024-08-28"
   }
 ];
@@ -84,21 +84,12 @@ export default function TestimonialsSection() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
             Don't Take Our Word For It
           </h2>
-          <div className="flex items-center justify-center gap-2 text-xl">
-            <div className="flex gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-              ))}
-            </div>
-            <span className="font-semibold text-gray-900">4.8</span>
-            <span className="text-gray-600">• 1,200+ Reviews</span>
-          </div>
         </div>
 
         {/* Testimonials Carousel */}
@@ -107,7 +98,7 @@ export default function TestimonialsSection() {
             {visibleTestimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-all duration-300"
               >
                 {/* Stars */}
                 <div className="flex gap-1 mb-4">
@@ -117,12 +108,12 @@ export default function TestimonialsSection() {
                 </div>
 
                 {/* Review Date */}
-                <p className="text-sm text-gray-500 mb-3">
+                <p className="text-sm text-gray-500 mb-4">
                   {format(new Date(testimonial.review_date), "MMMM d, yyyy")}
                 </p>
 
                 {/* Review Text */}
-                <p className="text-gray-700 mb-6 leading-relaxed line-clamp-4">
+                <p className="text-gray-700 mb-6 leading-relaxed">
                   {testimonial.review_text}
                 </p>
 
@@ -135,37 +126,24 @@ export default function TestimonialsSection() {
             ))}
           </div>
 
-          {/* Navigation Buttons */}
+          {/* Navigation Arrows */}
           <div className="flex justify-center gap-4">
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
               onClick={prevTestimonial}
-              className="w-12 h-12 rounded-full border-2 hover:bg-teal-50 hover:border-teal-500"
+              className="w-12 h-12 rounded-full hover:bg-gray-100"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-6 h-6" />
             </Button>
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
               onClick={nextTestimonial}
-              className="w-12 h-12 rounded-full border-2 hover:bg-teal-50 hover:border-teal-500"
+              className="w-12 h-12 rounded-full hover:bg-gray-100"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-6 h-6" />
             </Button>
-          </div>
-
-          {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-6">
-            {displayTestimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentIndex ? "bg-teal-500 w-8" : "bg-gray-300"
-                }`}
-              />
-            ))}
           </div>
         </div>
       </div>
