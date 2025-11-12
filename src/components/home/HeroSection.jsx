@@ -41,13 +41,13 @@ export default function HeroSection({ zipCode, setZipCode, onCompare }) {
             {/* Main Headline with Gradient */}
             <div>
               <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 tracking-tight">
-                Compare the Best{" "}
+                Find the Best{" "}
                 <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent">
-                  Electricity Rates
+                  Electricity Deals
                 </span>
               </h1>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Finding the right electricity plan that fits your lifestyle has never been easier.
+                Compare plans and save up to $800 annually on your electricity bills.
               </p>
             </div>
 
@@ -129,8 +129,8 @@ export default function HeroSection({ zipCode, setZipCode, onCompare }) {
                     <span className="text-lg font-bold text-white">$</span>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-medium">Avg. Savings</p>
-                    <p className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">$475</p>
+                    <p className="text-xs text-gray-500 font-medium">Save Up To</p>
+                    <p className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">$800</p>
                   </div>
                 </div>
               </div>
