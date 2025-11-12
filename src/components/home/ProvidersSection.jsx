@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Zap } from "lucide-react";
+import { motion } from "framer-motion";
 
 const providerLogos = [
   { name: "4Change Energy", url: "https://www.powerwizard.com/wp-content/uploads/2025/05/4change-energy.png" },
@@ -24,62 +25,48 @@ const providerLogos = [
 
 export default function ProvidersSection() {
   return (
-    <section className="py-16 lg:py-20 bg-white relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-100 to-transparent rounded-full blur-3xl opacity-30"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-purple-100 to-transparent rounded-full blur-3xl opacity-30"></div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-full px-3 py-1.5 border border-yellow-100 mb-4">
-            <Zap className="w-3 h-3 text-yellow-600" />
-            <span className="text-xs font-semibold text-yellow-600 uppercase tracking-wide">14+ Trusted Partners</span>
-          </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-            Trusted Electricity{" "}
-            <span className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              Providers
-            </span>
+    /* Trusted Electricity Providers Section */
+    <section className="py-16 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-3xl font-bold text-[#0A5C8C] mb-3">
+            Exclusive Provider Discounts
           </h2>
-          <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            Top energy providers that deliver a variety of simple and clear electricity plans.
+          <p className="text-gray-600 text-lg">
+            Compare discounted rates from Texas's most trusted electricity companies
           </p>
-        </div>
-
-        {/* Provider Grid with Enhanced Hover Effects */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          {providerLogos.map((provider, index) => (
-            <Link
+        </motion.div>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-8 items-center opacity-70 hover:opacity-100 transition-opacity duration-300">
+          {[
+            { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/8818da2fa_id3-OId0b2_1762848198226.png", alt: "4Change Energy" },
+            { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/b8f3a8167_idy5Qy7KTo_1762848313421.png", alt: "APG&E" },
+            { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/49ae44b66_idecUVsTjb_logos.png", alt: "BKV Energy" },
+            { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/c2f973518_idabZcuDLC_1762848446410.png", alt: "Champion Energy" },
+            { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/315800ea4_idEK1dDtu1_logos.png", alt: "Chariot" },
+            { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/f5dbabf5e_idvO6_xjIY_logos.png", alt: "Constellation" },
+            { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/df51b99dd_idT9p2RC1n_1762848661994.png", alt: "Ambit Energy" }
+          ].map((logo, index) => (
+            <motion.div 
               key={index}
-              to={createPageUrl("ProviderDetails") + `?provider=${provider.name}`}
-              className="group relative"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.05 }}
+              className="flex items-center justify-center h-16"
             >
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-              <div className="relative bg-white rounded-xl p-4 h-20 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 group-hover:border-transparent transform group-hover:scale-105">
-                <img
-                  src={provider.url}
-                  alt={provider.name}
-                  className="max-h-10 max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                  onError={(e) => {
-                    e.target.outerHTML = `<div class="text-xs font-bold text-gray-400 group-hover:text-blue-600 transition-colors">${provider.name.substring(0, 3)}</div>`;
-                  }}
-                />
-              </div>
-            </Link>
+              <img 
+                src={logo.src}
+                alt={logo.alt}
+                className="h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </motion.div>
           ))}
-        </div>
-
-        {/* Trust Badge */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl px-6 py-3 border border-green-100">
-            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-            </svg>
-            <div className="text-left">
-              <p className="text-sm font-semibold text-gray-900">100% Verified Providers</p>
-              <p className="text-xs text-gray-600">All partners are licensed and regulated</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
