@@ -119,8 +119,8 @@ export default function HeroSection({ zipCode, setZipCode, onCompare }) {
             <div className="absolute -inset-4 bg-gradient-to-r from-blue-200 via-cyan-200 to-teal-200 rounded-3xl opacity-20 blur-2xl"></div>
             <div className="relative transform hover:scale-105 transition-transform duration-500">
               <img 
-                src="https://www.powerwizard.com/wp-content/uploads/2025/08/hero-house-4-600x435-1-e1755614726248.webp"
-                alt="Smart home with electricity savings"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/25aa21e12_Screenshot47.png"
+                alt="Electricity services illustration"
                 className="w-full h-auto drop-shadow-2xl"
               />
               {/* Floating Stats Card */}
