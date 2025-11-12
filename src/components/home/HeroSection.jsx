@@ -41,7 +41,7 @@ export default function HeroSection({ zipCode, setZipCode, onCompare }) {
             {/* Main Headline with Gradient */}
             <div>
               <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4 tracking-tight">
-                compare the Best{" "}
+                Compare the Best{" "}
                 <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent">
                   Electricity Deals
                 </span>
