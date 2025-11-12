@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 
 const defaultTestimonials = [
   {
+    rating_image: "https://www.powerwizard.com/wp-content/uploads/2025/04/rating-5star.svg",
     customer_name: "Janice C",
     location: "Dallas, TX",
     rating: 5,
@@ -14,6 +14,7 @@ const defaultTestimonials = [
     review_date: "2024-10-06"
   },
   {
+    rating_image: "https://www.powerwizard.com/wp-content/uploads/2025/04/star-rating.svg",
     customer_name: "Letitia T",
     location: "Houston, TX",
     rating: 5,
@@ -21,6 +22,7 @@ const defaultTestimonials = [
     review_date: "2024-07-01"
   },
   {
+    rating_image: "https://www.powerwizard.com/wp-content/uploads/2025/04/rating-5star.svg",
     customer_name: "Tom P",
     location: "Plano, TX",
     rating: 5,
@@ -28,6 +30,7 @@ const defaultTestimonials = [
     review_date: "2024-04-28"
   },
   {
+    rating_image: "https://www.powerwizard.com/wp-content/uploads/2025/04/rating-5star.svg",
     customer_name: "Kenneth E",
     location: "Houston, TX",
     rating: 5,
@@ -35,6 +38,7 @@ const defaultTestimonials = [
     review_date: "2024-09-13"
   },
   {
+    rating_image: "https://www.powerwizard.com/wp-content/uploads/2025/04/star-rating.svg",
     customer_name: "Brandi F",
     location: "Corpus Christi, TX",
     rating: 5,
@@ -42,6 +46,7 @@ const defaultTestimonials = [
     review_date: "2024-08-15"
   },
   {
+    rating_image: "https://www.powerwizard.com/wp-content/uploads/2025/04/rating-5star.svg",
     customer_name: "Dee R",
     location: "Fort Worth, TX",
     rating: 5,
@@ -52,6 +57,7 @@ const defaultTestimonials = [
 
 export default function TestimonialsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const { data: testimonials } = useQuery({
     queryKey: ['testimonials'],
@@ -63,88 +69,100 @@ export default function TestimonialsSection() {
 
   // Auto-rotate testimonials
   useEffect(() => {
+    if (!isAutoPlaying) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % displayTestimonials.length);
+      setCurrentIndex((prev) => (prev + 1) % Math.max(1, displayTestimonials.length - 2));
     }, 5000);
     return () => clearInterval(timer);
-  }, [displayTestimonials.length]);
+  }, [displayTestimonials.length, isAutoPlaying]);
 
   const nextTestimonial = () => {
-    setCurrentIndex((prev) => (prev + 1) % displayTestimonials.length);
+    setIsAutoPlaying(false);
+    setCurrentIndex((prev) => (prev + 1) % Math.max(1, displayTestimonials.length - 2));
   };
 
   const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length);
+    setIsAutoPlaying(false);
+    setCurrentIndex((prev) => (prev - 1 + Math.max(1, displayTestimonials.length - 2)) % Math.max(1, displayTestimonials.length - 2));
   };
 
-  const visibleTestimonials = [
-    displayTestimonials[currentIndex],
-    displayTestimonials[(currentIndex + 1) % displayTestimonials.length],
-    displayTestimonials[(currentIndex + 2) % displayTestimonials.length]
-  ];
+  const visibleTestimonials = displayTestimonials.slice(currentIndex, currentIndex + 3);
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900" style={{fontFamily: 'system-ui, -apple-system, sans-serif'}}>
             Don't Take Our Word For It
           </h2>
         </div>
 
         {/* Testimonials Carousel */}
         <div className="relative">
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {visibleTestimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-all duration-300"
-              >
-                {/* Stars */}
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  ))}
+          {/* Carousel Container with horizontal scroll */}
+          <div className="overflow-hidden">
+            <div 
+              className="flex gap-6 transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentIndex * (100 / 3)}%)` }}
+            >
+              {displayTestimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 w-full md:w-[calc(33.333%-16px)]"
+                >
+                  <div className="bg-white rounded-xl p-8 h-full shadow-sm border border-gray-200">
+                    {/* Rating Image */}
+                    <div className="mb-4">
+                      <img 
+                        src={testimonial.rating_image || "https://www.powerwizard.com/wp-content/uploads/2025/04/rating-5star.svg"}
+                        alt="5 star rating"
+                        className="h-5"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextElementSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div className="hidden gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Review Date */}
+                    <p className="text-sm text-gray-600 mb-4">
+                      {format(new Date(testimonial.review_date), "MMMM d, yyyy")}
+                    </p>
+
+                    {/* Review Text */}
+                    <p className="text-gray-800 mb-6 leading-relaxed text-base">
+                      {testimonial.review_text}
+                    </p>
+
+                    {/* Customer Info */}
+                    <div className="pt-4">
+                      <p className="font-bold text-gray-900">{testimonial.customer_name}</p>
+                      <p className="text-sm text-gray-600">{testimonial.location}</p>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Review Date */}
-                <p className="text-sm text-gray-500 mb-4">
-                  {format(new Date(testimonial.review_date), "MMMM d, yyyy")}
-                </p>
-
-                {/* Review Text */}
-                <p className="text-gray-700 mb-6 leading-relaxed">
-                  {testimonial.review_text}
-                </p>
-
-                {/* Customer Info */}
-                <div className="pt-4 border-t border-gray-100">
-                  <p className="font-bold text-gray-900">{testimonial.customer_name}</p>
-                  <p className="text-sm text-gray-600">{testimonial.location}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {/* Navigation Arrows */}
-          <div className="flex justify-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={prevTestimonial}
-              className="w-12 h-12 rounded-full hover:bg-gray-100"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={nextTestimonial}
-              className="w-12 h-12 rounded-full hover:bg-gray-100"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </Button>
-          </div>
+          {/* Navigation Arrows - Positioned outside on sides */}
+          <button
+            onClick={prevTestimonial}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 w-10 h-10 rounded-full bg-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-700" />
+          </button>
+          <button
+            onClick={nextTestimonial}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 w-10 h-10 rounded-full bg-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+          >
+            <ChevronRight className="w-6 h-6 text-gray-700" />
+          </button>
         </div>
       </div>
     </section>
