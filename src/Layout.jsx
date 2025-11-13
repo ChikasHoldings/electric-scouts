@@ -79,7 +79,7 @@ export default function Layout({ children, currentPageName }) {
                   Service Areas
                   <ChevronDown className={`w-4 h-4 transition-transform ${serviceAreaOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className={`absolute top-full right-0 mt-2 w-[480px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
+                <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[480px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
                   serviceAreaOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
                 }`}>
                   <div className="p-4">
