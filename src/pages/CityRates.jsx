@@ -181,7 +181,7 @@ export default function CityRates() {
         <div className="absolute inset-0 opacity-10">
           <img src={city.image} alt={`${cityName} skyline`} className="w-full h-full object-cover" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="max-w-3xl">
             {/* Breadcrumb for SEO */}
             <nav className="mb-6 text-sm">
