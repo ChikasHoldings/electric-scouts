@@ -47,12 +47,9 @@ export default function Layout({ children, currentPageName }) {
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center transform hover:scale-105 transition-transform">
               <img 
-                src="https://www.powerwizard.com/wp-content/uploads/2022/05/powerwizard-logo.svg"
-                alt="Power Wizard"
-                className="h-8"
-                onError={(e) => {
-                  e.target.outerHTML = '<div class="flex items-center gap-0"><span class="text-xl text-gray-900">power</span><span class="text-xl" style="color: #00A9CE;">wizard</span></div>';
-                }}
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/54a98288c_ChatGPTImageNov12202508_20_04PM.png"
+                alt="Power Scouts"
+                className="h-10"
               />
             </Link>
 
@@ -201,9 +198,9 @@ export default function Layout({ children, currentPageName }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
             <div>
               <img 
-                src="https://www.powerwizard.com/wp-content/uploads/2022/05/powerwizard-logo.svg"
-                alt="Power Wizard"
-                className="h-7 mb-4 brightness-0 invert"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/54a98288c_ChatGPTImageNov12202508_20_04PM.png"
+                alt="Power Scouts"
+                className="h-9 mb-4 brightness-0 invert"
               />
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
                 Empowering Texans to find the best electricity rates since 2019.
@@ -261,7 +258,7 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="border-t border-gray-700 pt-6 text-center">
             <p className="text-gray-400 text-xs">
-              © {new Date().getFullYear()} Power Wizard. All rights reserved.
+              © {new Date().getFullYear()} Power Scouts. All rights reserved.
             </p>
           </div>
         </div>
