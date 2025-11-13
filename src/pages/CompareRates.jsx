@@ -13,7 +13,6 @@ import {
   getCityFromZip,
   providerServesZip 
 } from "../components/compare/providerAvailability";
-import DataDisclaimer, { FooterDisclaimer } from "../components/DataDisclaimer";
 import { 
   filterPlansByZip, 
   calculateMonthlyBill,
@@ -315,11 +314,6 @@ export default function CompareRates() {
                 </Card>
               ))}
             </div>
-
-            {/* Data Disclaimer */}
-            <div className="mt-8">
-              <DataDisclaimer variant="compact" />
-            </div>
           </div>
 
           {/* All Other Plans - Table View */}
@@ -551,8 +545,6 @@ export default function CompareRates() {
             </div>
           )}
         </div>
-
-        <FooterDisclaimer />
       </div>
     );
   }

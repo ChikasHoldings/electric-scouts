@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
-import { FooterDisclaimer } from "../components/DataDisclaimer";
 
 export default function MassachusettsElectricity() {
   const [zipCode, setZipCode] = useState("");
@@ -286,17 +285,7 @@ export default function MassachusettsElectricity() {
             </div>
           </div>
         </section>
-
-        {/* Disclaimer */}
-        <div className="pb-8">
-          <p className="text-xs text-gray-500 text-center max-w-4xl mx-auto leading-relaxed">
-            <strong>Disclaimer:</strong> Rates shown are for comparison purposes based on publicly available data. 
-            Actual rates vary by location, usage, and provider. Verify all details before enrollment.
-          </p>
-        </div>
       </div>
-
-      <FooterDisclaimer />
     </div>
   );
 }

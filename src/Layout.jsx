@@ -333,6 +333,12 @@ export default function Layout({ children, currentPageName }) {
                 <Link to={createPageUrl("LearningCenter")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Learning Center
                 </Link>
+                <Link to={createPageUrl("BusinessRates")} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                  Business Rates
+                </Link>
+                <Link to={createPageUrl("HomeConcierge")} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                  Home Concierge
+                </Link>
                 <Link to={createPageUrl("AboutUs")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   About Us
                 </Link>
@@ -414,11 +420,7 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="border-t border-gray-700 pt-6">
             <p className="text-gray-500 text-xs leading-relaxed mb-4 max-w-5xl mx-auto">
-              <strong>Disclaimer:</strong> Power Scouts is an independent electricity comparison service. Rates, plan details, and provider availability 
-              displayed are for informational and comparison purposes based on publicly available data and may not reflect current offerings. 
-              Actual electricity rates vary by ZIP code, usage level, credit score, and are subject to change without notice. We recommend 
-              verifying all plan details, terms, and pricing directly with electricity providers before enrollment. Power Scouts does not 
-              guarantee rate accuracy or plan availability. Savings estimates are based on average market conditions and typical usage patterns.
+              <strong>Disclaimer:</strong> Electricity rates, plan details, and provider actual rates vary by ZIP code, usage, credit, and are subject to change. Verify all details with providers before enrollment. Power Scouts is a comparison service and does not guarantee rate accuracy or plan availability. Savings estimates are based on average usage and market conditions.
             </p>
             <p className="text-gray-400 text-xs text-center">
               © {new Date().getFullYear()} Power Scouts. All rights reserved. | 

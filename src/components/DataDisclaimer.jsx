@@ -44,10 +44,7 @@ export function FooterDisclaimer() {
     <div className="bg-gray-100 border-t border-gray-200 py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="text-xs text-gray-600 text-center leading-relaxed">
-          <strong>Disclaimer:</strong> Electricity rates, plan details, and provider availability shown are for comparison purposes 
-          based on publicly available data and may not be current. Actual rates vary by ZIP code, usage, credit, and are subject 
-          to change. Verify all details with providers before enrollment. Power Scouts is a comparison service and does not 
-          guarantee rate accuracy or plan availability. Savings estimates are based on average usage and market conditions.
+          <strong>Disclaimer:</strong> Electricity rates, plan details, and provider actual rates vary by ZIP code, usage, credit, and are subject to change. Verify all details with providers before enrollment. Power Scouts is a comparison service and does not guarantee rate accuracy or plan availability. Savings estimates are based on average usage and market conditions.
         </p>
       </div>
     </div>

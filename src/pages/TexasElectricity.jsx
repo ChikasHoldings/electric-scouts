@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, TrendingDown, ChevronDown, ArrowRight, Building2, ExternalLink } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 import { getProvidersForZipCode } from "../components/compare/providerAvailability";
-import { FooterDisclaimer } from "../components/DataDisclaimer";
 
 export default function TexasElectricity() {
   const [zipCode, setZipCode] = useState("");
@@ -470,18 +469,7 @@ export default function TexasElectricity() {
             </div>
           </div>
         </section>
-
-        {/* Disclaimer */}
-        <div className="pb-8">
-          <p className="text-xs text-gray-500 text-center max-w-4xl mx-auto leading-relaxed">
-            <strong>Disclaimer:</strong> Electricity rates and plan details shown are for comparison purposes and based on publicly available data. 
-            Actual rates vary by ZIP code, usage, credit score, and are subject to change. Verify all details with providers before enrolling. 
-            Average savings estimates based on typical usage patterns. Power Scouts is a free comparison service.
-          </p>
-        </div>
       </div>
-
-      <FooterDisclaimer />
     </div>
   );
 }
