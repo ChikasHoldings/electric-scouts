@@ -344,7 +344,7 @@ export default function BillAnalyzer() {
           </div>
           <h1 className="text-3xl font-bold mb-3">Electricity Bill Analyzer</h1>
           <p className="text-base text-blue-100 max-w-2xl mx-auto">
-            Upload your current electricity bill and we'll analyze your usage, rate, and cost to find you better plans with guaranteed savings.
+            Upload your current electricity bill and we'll analyze your usage, rate, and cost to find better plans available in your area.
           </p>
         </div>
       </div>
