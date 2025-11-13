@@ -14,6 +14,11 @@ import {
   providerServesZip 
 } from "../components/compare/providerAvailability";
 import DataDisclaimer, { FooterDisclaimer } from "../components/DataDisclaimer";
+import { 
+  filterPlansByZip, 
+  calculateMonthlyBill,
+  validateZipForComparison 
+} from "../components/compare/dataValidation";
 
 export default function CompareRates() {
   const [step, setStep] = useState(1);
@@ -123,9 +128,9 @@ export default function CompareRates() {
   const topPlans = sortedPlans.slice(0, 3);
   const otherPlans = sortedPlans.slice(3);
 
-  // Calculate estimated bill (assuming 1000 kWh usage)
+  // Use centralized bill calculation for consistency
   const calculateBill = (plan) => {
-    return ((plan.rate_per_kwh / 100) * 1000 + (plan.monthly_base_charge || 0)).toFixed(2);
+    return calculateMonthlyBill(plan, 1000);
   };
 
   // Get provider logo from provider details

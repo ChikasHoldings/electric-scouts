@@ -13,6 +13,7 @@ import {
 import PlanCard from "../components/compare/PlanCard";
 import { getProvidersForZipCode, getProviderDetails } from "../components/compare/providerAvailability";
 import DataDisclaimer, { FooterDisclaimer } from "../components/DataDisclaimer";
+import { calculateMonthlyBill } from "../components/compare/dataValidation";
 
 // City-specific data for SEO
 const cityData = {

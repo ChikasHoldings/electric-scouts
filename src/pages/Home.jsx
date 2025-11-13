@@ -111,6 +111,8 @@ export default function Home() {
           </Card>
         </div>
       </section>
+
+      <FooterDisclaimer />
     </div>);
 
 }
