@@ -8,6 +8,7 @@ import {
   Clock, Users, ArrowRight, MapPin, Building2, FileText
 } from "lucide-react";
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
+import { getFullArticle } from "../components/learning/fullArticles";
 
 // Same articles data from Learning Center
 const articles = [
@@ -181,9 +182,12 @@ export default function ArticleDetail() {
   const Icon = article.icon;
   const colors = colorClasses[article.color];
 
+  // Get full article content
+  const fullArticle = getFullArticle(articleId);
+
   const articleSchema = getArticleSchema({
-    title: article.title,
-    description: article.description,
+    title: fullArticle?.metaTitle || article.title,
+    description: fullArticle?.metaDescription || article.description,
     image: article.image,
     datePublished: "2024-01-15",
     dateModified: "2024-01-15"
@@ -198,9 +202,9 @@ export default function ArticleDetail() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title={`${article.title} | Power Scouts Learning Center`}
-        description={article.description}
-        keywords={article.keywords.join(", ")}
+        title={fullArticle?.metaTitle || `${article.title} | Power Scouts Learning Center`}
+        description={fullArticle?.metaDescription || article.description}
+        keywords={fullArticle?.tags?.join(", ") || article.keywords.join(", ")}
         canonical={`/article?id=${article.id}`}
         image={article.image}
         type="article"
@@ -245,31 +249,38 @@ export default function ArticleDetail() {
 
           {/* Article Body */}
           <div className="p-6 sm:p-10 lg:p-12">
-            <div className="prose prose-lg max-w-none">
-              <p className="text-xl text-gray-700 leading-relaxed mb-8 border-l-4 border-[#FF6B35] pl-6 py-2 bg-gray-50 rounded-r-lg">
-                {article.description}
-              </p>
-              
-              <p className="text-base text-gray-600 leading-relaxed mb-6">
-                {article.excerpt}
-              </p>
+            {fullArticle ? (
+              <div 
+                className="prose prose-lg max-w-none article-content"
+                dangerouslySetInnerHTML={{ __html: fullArticle.content }}
+              />
+            ) : (
+              <div className="prose prose-lg max-w-none">
+                <p className="text-xl text-gray-700 leading-relaxed mb-8 border-l-4 border-[#FF6B35] pl-6 py-2 bg-gray-50 rounded-r-lg">
+                  {article.description}
+                </p>
+                
+                <p className="text-base text-gray-600 leading-relaxed mb-6">
+                  {article.excerpt}
+                </p>
 
-              {/* CTA within article */}
-              <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 my-8 text-center border-2 border-blue-100">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Start Saving Today</h3>
-                <p className="text-sm text-gray-600 mb-4">Compare electricity rates in your area now</p>
-                <Link to={createPageUrl("CompareRates")}>
-                  <Button className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white rounded-xl">
-                    Compare Rates
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
+                {/* CTA within article */}
+                <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 my-8 text-center border-2 border-blue-100">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Start Saving Today</h3>
+                  <p className="text-sm text-gray-600 mb-4">Compare electricity rates in your area now</p>
+                  <Link to={createPageUrl("CompareRates")}>
+                    <Button className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white rounded-xl">
+                      Compare Rates
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+
+                <p className="text-base text-gray-600 leading-relaxed">
+                  For more personalized guidance, explore our state-specific and city-specific guides or use our free comparison tool to find the best rates in your area.
+                </p>
               </div>
-
-              <p className="text-base text-gray-600 leading-relaxed">
-                For more personalized guidance, explore our state-specific and city-specific guides or use our free comparison tool to find the best rates in your area.
-              </p>
-            </div>
+            )}
 
             {/* Related Links */}
             <div className="mt-8 pt-8 border-t border-gray-200">
@@ -348,7 +359,113 @@ export default function ArticleDetail() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Article Tags */}
+        {fullArticle?.tags && fullArticle.tags.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Article Tags:</h3>
+            <div className="flex flex-wrap gap-2">
+              {fullArticle.tags.map((tag, index) => (
+                <span 
+                  key={index}
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-gray-200 transition-colors"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Custom Styles for Article Content */}
+      <style>{`
+        .article-content h2 {
+          font-size: 1.75rem;
+          font-weight: 700;
+          color: #1a202c;
+          margin-top: 2rem;
+          margin-bottom: 1rem;
+          line-height: 1.3;
+        }
+        
+        .article-content h3 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #2d3748;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+        }
+        
+        .article-content p {
+          margin-bottom: 1rem;
+          line-height: 1.75;
+          color: #4a5568;
+        }
+        
+        .article-content strong {
+          font-weight: 600;
+          color: #2d3748;
+        }
+        
+        .article-content ul, .article-content ol {
+          margin-bottom: 1rem;
+          padding-left: 1.5rem;
+        }
+        
+        .article-content li {
+          margin-bottom: 0.5rem;
+          line-height: 1.75;
+          color: #4a5568;
+        }
+        
+        .article-content .cta-box {
+          background: linear-gradient(135deg, #EBF8FF 0%, #E6FFFA 100%);
+          border: 2px solid #90CDF4;
+          border-radius: 1rem;
+          padding: 2rem;
+          margin: 2rem 0;
+          text-align: center;
+        }
+        
+        .article-content .cta-box h3 {
+          color: #0A5C8C;
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin: 0 0 0.75rem 0;
+        }
+        
+        .article-content .cta-box p {
+          color: #4a5568;
+          margin-bottom: 1rem;
+        }
+        
+        .article-content .cta-button {
+          display: inline-block;
+          background: #FF6B35;
+          color: white;
+          padding: 0.75rem 2rem;
+          border-radius: 0.75rem;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        }
+        
+        .article-content .cta-button:hover {
+          background: #e55a2b;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        .article-content a:not(.cta-button) {
+          color: #0A5C8C;
+          text-decoration: underline;
+        }
+        
+        .article-content a:not(.cta-button):hover {
+          color: #084a6f;
+        }
+      `}</style>
     </div>
   );
 }
