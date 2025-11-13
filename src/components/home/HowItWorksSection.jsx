@@ -31,7 +31,7 @@ export default function HowItWorksSection() {
             How It Works
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Finding the best electricity rate in Texas is simple. Compare plans, switch providers, and start saving in just three easy steps.
+            Compare plans, switch providers, and start saving in three easy steps.
           </p>
         </div>
 
