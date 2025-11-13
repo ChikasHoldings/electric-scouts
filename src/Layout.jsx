@@ -55,84 +55,33 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
-              <div className="relative group">
-                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium">
-                  Residential
-                  <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
-                </button>
-                <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-5 z-50 border border-gray-100">
-                  <div className="grid grid-cols-2 gap-5">
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2 text-xs uppercase tracking-wide">Cities</h3>
-                      <div className="space-y-1.5">
-                        {texasCities.slice(0, 5).map(city => (
-                          <Link
-                            key={city}
-                            to={createPageUrl("CityRates") + `?city=${city}`}
-                            className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all"
-                          >
-                            {city}
-                          </Link>
-                        ))}
-                        <Link to={createPageUrl("AllCities")} className="text-sm text-blue-600 font-medium hover:translate-x-1 transition-all inline-block mt-1">
-                          Browse all →
-                        </Link>
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2 text-xs uppercase tracking-wide">Providers</h3>
-                      <div className="space-y-1.5">
-                        {providers.slice(0, 5).map(provider => (
-                          <Link
-                            key={provider}
-                            to={createPageUrl("ProviderDetails") + `?provider=${provider}`}
-                            className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all"
-                          >
-                            {provider}
-                          </Link>
-                        ))}
-                        <Link to={createPageUrl("AllProviders")} className="text-sm text-blue-600 font-medium hover:translate-x-1 transition-all inline-block mt-1">
-                          Browse all →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <Link
-                to={createPageUrl("BusinessRates")}
+                to={createPageUrl("AllProviders")}
                 className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium"
               >
-                Business Rates
+                Providers
               </Link>
 
               <Link
-                to={createPageUrl("HomeConcierge")}
+                to={createPageUrl("AllCities")}
                 className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium"
               >
-                Home Concierge
+                Cities
               </Link>
 
-              <div className="relative group">
-                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium">
-                  Resources
-                  <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
-                </button>
-                <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-3 z-50 border border-gray-100">
-                  <div className="space-y-1.5">
-                    <Link to={createPageUrl("AboutUs")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all">
-                      About Us
-                    </Link>
-                    <Link to={createPageUrl("FAQ")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all">
-                      FAQs
-                    </Link>
-                    <Link to={createPageUrl("Blog")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all">
-                      The Power Lab
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <Link
+                to={createPageUrl("AboutUs")}
+                className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium"
+              >
+                About Us
+              </Link>
+
+              <Link
+                to={createPageUrl("FAQ")}
+                className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium"
+              >
+                FAQs
+              </Link>
             </nav>
 
             {/* Compare Rates Button */}
@@ -161,11 +110,11 @@ export default function Layout({ children, currentPageName }) {
               <Link to={createPageUrl("CompareRates")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Compare Rates
               </Link>
-              <Link to={createPageUrl("BusinessRates")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                Business Rates
+              <Link to={createPageUrl("AllProviders")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Providers
               </Link>
-              <Link to={createPageUrl("HomeConcierge")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                Home Concierge
+              <Link to={createPageUrl("AllCities")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Cities
               </Link>
               <Link to={createPageUrl("AboutUs")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 About Us
@@ -216,16 +165,16 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-3 text-sm">Residential</h3>
+              <h3 className="font-semibold mb-3 text-sm">Quick Links</h3>
               <div className="space-y-2">
                 <Link to={createPageUrl("CompareRates")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Compare Rates
                 </Link>
-                <Link to={createPageUrl("AllCities")} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Cities
-                </Link>
                 <Link to={createPageUrl("AllProviders")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Providers
+                </Link>
+                <Link to={createPageUrl("AllCities")} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                  Cities
                 </Link>
               </div>
             </div>
@@ -238,9 +187,6 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
                 <Link to={createPageUrl("FAQ")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   FAQs
-                </Link>
-                <Link to={createPageUrl("Blog")} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Blog
                 </Link>
               </div>
             </div>
