@@ -1,5 +1,4 @@
-import React from "react";
-import { Helmet } from "react-helmet";
+import React, { useEffect } from "react";
 
 export default function SEOHead({ 
   title, 
@@ -10,41 +9,87 @@ export default function SEOHead({
   type = "website",
   structuredData 
 }) {
-  const siteUrl = window.location.origin;
-  const fullUrl = canonical ? `${siteUrl}${canonical}` : window.location.href;
-  const defaultImage = image || `${siteUrl}/og-image.png`;
-  
-  return (
-    <Helmet>
-      {/* Basic Meta Tags */}
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      {keywords && <meta name="keywords" content={keywords} />}
-      <link rel="canonical" href={fullUrl} />
-      
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={fullUrl} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={defaultImage} />
-      <meta property="og:site_name" content="Power Scouts" />
-      
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={fullUrl} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={defaultImage} />
-      
-      {/* Structured Data */}
-      {structuredData && (
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      )}
-    </Helmet>
-  );
+  useEffect(() => {
+    // Update title
+    if (title) {
+      document.title = title;
+    }
+
+    const siteUrl = window.location.origin;
+    const fullUrl = canonical ? `${siteUrl}${canonical}` : window.location.href;
+    const defaultImage = image || `${siteUrl}/og-image.png`;
+
+    // Helper function to update or create meta tag
+    const updateMetaTag = (selector, attribute, content) => {
+      let element = document.querySelector(selector);
+      if (!element) {
+        element = document.createElement('meta');
+        if (attribute === 'property') {
+          element.setAttribute('property', selector.replace('meta[property="', '').replace('"]', ''));
+        } else {
+          element.setAttribute('name', selector.replace('meta[name="', '').replace('"]', ''));
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    // Update basic meta tags
+    if (description) {
+      updateMetaTag('meta[name="description"]', 'name', description);
+    }
+    if (keywords) {
+      updateMetaTag('meta[name="keywords"]', 'name', keywords);
+    }
+
+    // Update Open Graph tags
+    updateMetaTag('meta[property="og:type"]', 'property', type);
+    updateMetaTag('meta[property="og:url"]', 'property', fullUrl);
+    updateMetaTag('meta[property="og:title"]', 'property', title);
+    updateMetaTag('meta[property="og:description"]', 'property', description);
+    updateMetaTag('meta[property="og:image"]', 'property', defaultImage);
+    updateMetaTag('meta[property="og:site_name"]', 'property', "Power Scouts");
+
+    // Update Twitter tags
+    updateMetaTag('meta[name="twitter:card"]', 'name', "summary_large_image");
+    updateMetaTag('meta[name="twitter:url"]', 'name', fullUrl);
+    updateMetaTag('meta[name="twitter:title"]', 'name', title);
+    updateMetaTag('meta[name="twitter:description"]', 'name', description);
+    updateMetaTag('meta[name="twitter:image"]', 'name', defaultImage);
+
+    // Update canonical link
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute('href', fullUrl);
+
+    // Add structured data
+    if (structuredData) {
+      const scriptId = 'structured-data-script';
+      let script = document.getElementById(scriptId);
+      if (!script) {
+        script = document.createElement('script');
+        script.id = scriptId;
+        script.type = 'application/ld+json';
+        document.head.appendChild(script);
+      }
+      script.textContent = JSON.stringify(Array.isArray(structuredData) ? structuredData : [structuredData]);
+    }
+
+    // Cleanup function
+    return () => {
+      // Optional: clean up structured data when component unmounts
+      const script = document.getElementById('structured-data-script');
+      if (script) {
+        script.remove();
+      }
+    };
+  }, [title, description, canonical, keywords, image, type, structuredData]);
+
+  return null;
 }
 
 // Helper function to generate Organization schema
