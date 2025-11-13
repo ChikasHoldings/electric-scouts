@@ -16,7 +16,7 @@ function ReviewCard({ review }) {
 
       {/* Header with Profile */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-base font-bold flex-shrink-0 shadow-md">
+        <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-md">
           {review.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0 pr-16">
