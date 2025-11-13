@@ -10,7 +10,7 @@ import {
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import { getFullArticle } from "../components/learning/fullArticles";
 
-// Same articles data from Learning Center
+// Complete articles data - all 22 articles
 const articles = [
   {
     id: 1,
@@ -23,7 +23,7 @@ const articles = [
     excerpt: "Discover how choosing your electricity provider can save you $500-800 per year in competitive energy markets across 12 states.",
     readTime: "8 min",
     keywords: ["deregulated electricity", "energy deregulation", "choose electricity provider"],
-    relatedArticles: [2, 3, 5]
+    relatedArticles: [2, 3, 11]
   },
   {
     id: 2,
@@ -36,7 +36,7 @@ const articles = [
     excerpt: "Learn the exact process energy experts use to find the lowest rates and avoid hidden fees that cost you money.",
     readTime: "10 min",
     keywords: ["compare electricity rates", "save money electricity", "electricity shopping guide"],
-    relatedArticles: [1, 3, 6]
+    relatedArticles: [1, 3, 11]
   },
   {
     id: 3,
@@ -49,7 +49,7 @@ const articles = [
     excerpt: "See actual bills from families who chose fixed vs variable rates and discover which option is right for you.",
     readTime: "12 min",
     keywords: ["fixed rate electricity", "variable rate electricity", "best electricity plan type"],
-    relatedArticles: [1, 2, 7]
+    relatedArticles: [1, 2, 11]
   },
   {
     id: 4,
@@ -62,46 +62,7 @@ const articles = [
     excerpt: "Thousands of families power their homes with 100% renewable energy without paying extra. Here's how you can too.",
     readTime: "7 min",
     keywords: ["renewable energy plans", "green electricity", "100% renewable energy"],
-    relatedArticles: [1, 2, 8]
-  },
-  {
-    id: 5,
-    category: "Texas Electricity",
-    icon: MapPin,
-    color: "orange",
-    title: "Texas Electricity Guide: Find the Cheapest Rates in 2024",
-    description: "Everything Texas residents need to know about finding the lowest electricity rates in Houston, Dallas, Austin, and beyond.",
-    image: "https://images.unsplash.com/photo-1583321500900-82807e458f3c?w=1200&q=80",
-    excerpt: "Texas has 40+ providers. This guide shows you exactly how to find the cheapest rates and avoid common mistakes.",
-    readTime: "12 min",
-    keywords: ["Texas electricity rates", "cheapest Texas electricity", "Texas power plans"],
-    relatedArticles: [6, 7, 8]
-  },
-  {
-    id: 6,
-    category: "City Guides",
-    icon: Building2,
-    color: "blue",
-    title: "Houston Electricity: Best Rates and Providers for 2024",
-    description: "Find the cheapest electricity in Houston with this comprehensive guide for Harris County residents.",
-    image: "https://images.unsplash.com/photo-1577894947058-fccf5cf3f8ac?w=1200&q=80",
-    excerpt: "Houston families save $1,000+ per year with these proven strategies for finding the best electricity rates.",
-    readTime: "10 min",
-    keywords: ["Houston electricity", "Houston power rates", "cheapest Houston electricity"],
-    relatedArticles: [5, 7, 9]
-  },
-  {
-    id: 7,
-    category: "City Guides",
-    icon: Building2,
-    color: "purple",
-    title: "Dallas Electricity Rates: Complete Comparison Guide",
-    description: "Everything Dallas residents need to know about finding the best electricity deals in the DFW Metroplex.",
-    image: "https://images.unsplash.com/photo-1552083974-186346191183?w=1200&q=80",
-    excerpt: "Compare electricity rates from 42+ providers serving Dallas and surrounding areas. Save up to $800 annually.",
-    readTime: "9 min",
-    keywords: ["Dallas electricity rates", "DFW electricity", "Dallas power companies"],
-    relatedArticles: [5, 6, 8]
+    relatedArticles: [1, 2, 11]
   },
   {
     id: 8,
@@ -114,7 +75,7 @@ const articles = [
     excerpt: "These 10 strategies helped families cut summer electricity bills by 30-40% while staying comfortable.",
     readTime: "8 min",
     keywords: ["summer electricity savings", "lower AC costs", "reduce summer bills"],
-    relatedArticles: [2, 3, 5]
+    relatedArticles: [2, 3, 11]
   },
   {
     id: 9,
@@ -141,6 +102,163 @@ const articles = [
     readTime: "6 min",
     keywords: ["switch electricity provider", "change power company", "electricity provider switch"],
     relatedArticles: [1, 2, 3]
+  },
+  // STATE-SPECIFIC ARTICLES
+  {
+    id: 11,
+    category: "State Guides",
+    icon: MapPin,
+    color: "orange",
+    title: "Texas Electricity Rates Guide: Find the Cheapest Plans in 2024",
+    description: "Everything Texas residents need to know about finding the lowest electricity rates in Houston, Dallas, Austin, and beyond.",
+    image: "https://images.unsplash.com/photo-1583321500900-82807e458f3c?w=1200&q=80",
+    excerpt: "Texas has 40+ providers. This guide shows you exactly how to find the cheapest rates and avoid common mistakes.",
+    readTime: "12 min",
+    keywords: ["Texas electricity rates", "cheapest Texas electricity", "Texas power plans"],
+    relatedArticles: [1, 2, 12]
+  },
+  {
+    id: 12,
+    category: "State Guides",
+    icon: MapPin,
+    color: "blue",
+    title: "Pennsylvania Electricity Rates: Complete Guide to PA Power Savings",
+    description: "Compare Pennsylvania electricity rates from 25+ providers. Find the cheapest power plans in Philadelphia and Pittsburgh.",
+    image: "https://images.unsplash.com/photo-1590086782792-42dd2350140d?w=1200&q=80",
+    excerpt: "Pennsylvania consumers save $400-600 yearly by shopping for competitive electricity suppliers. Here's your complete guide.",
+    readTime: "11 min",
+    keywords: ["Pennsylvania electricity rates", "PA power", "Philadelphia electricity"],
+    relatedArticles: [1, 2, 13]
+  },
+  {
+    id: 13,
+    category: "State Guides",
+    icon: MapPin,
+    color: "purple",
+    title: "New York Electricity Rates: Complete NY Power Shopping Guide",
+    description: "Compare New York electricity rates from 20+ ESCO suppliers. Find lowest power prices in NYC, Buffalo, and Rochester.",
+    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&q=80",
+    excerpt: "New York's regulated ESCO market offers savings with strong consumer protections. Save $300-500 annually.",
+    readTime: "11 min",
+    keywords: ["New York electricity", "NYC power rates", "ESCO suppliers"],
+    relatedArticles: [1, 2, 14]
+  },
+  {
+    id: 14,
+    category: "State Guides",
+    icon: MapPin,
+    color: "green",
+    title: "Ohio Electricity Rates: Compare OH Power Plans & Save Money",
+    description: "Compare Ohio electricity rates from 20+ suppliers. Find lowest power prices in Cleveland, Columbus, and Cincinnati.",
+    image: "https://images.unsplash.com/photo-1604246851544-2b2d471f671a?w=1200&q=80",
+    excerpt: "Ohio's competitive market with PUCO oversight makes shopping safe and profitable. Save $350-550 yearly.",
+    readTime: "10 min",
+    keywords: ["Ohio electricity", "Cleveland power", "Columbus electricity"],
+    relatedArticles: [1, 2, 15]
+  },
+  {
+    id: 15,
+    category: "State Guides",
+    icon: MapPin,
+    color: "orange",
+    title: "Illinois Electricity Rates: Complete Guide to IL Power Savings",
+    description: "Compare Illinois electricity rates from 20+ suppliers. Find cheapest power in Chicago, Aurora, and Naperville.",
+    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80",
+    excerpt: "Illinois deregulation since 1997 gives Chicago-area residents excellent supplier options. Save $350-500 yearly.",
+    readTime: "10 min",
+    keywords: ["Illinois electricity", "Chicago power", "ComEd rates"],
+    relatedArticles: [1, 2, 16]
+  },
+  {
+    id: 16,
+    category: "State Guides",
+    icon: MapPin,
+    color: "blue",
+    title: "New Jersey Electricity Rates: NJ Power Shopping Guide",
+    description: "Compare NJ electricity rates from 15+ suppliers. Find lowest power prices in Newark, Jersey City, and Paterson.",
+    image: "https://images.unsplash.com/photo-1589756823695-278bc8eac975?w=1200&q=80",
+    excerpt: "New Jersey's regulated market offers solid savings with strong BPU oversight. Save $300-450 yearly.",
+    readTime: "9 min",
+    keywords: ["New Jersey electricity", "NJ power", "PSE&G rates"],
+    relatedArticles: [1, 2, 17]
+  },
+  {
+    id: 17,
+    category: "State Guides",
+    icon: MapPin,
+    color: "purple",
+    title: "Maryland Electricity Rates: Complete MD Power Comparison Guide",
+    description: "Compare Maryland electricity rates from 15+ suppliers. Find cheapest power in Baltimore, Frederick, and Rockville.",
+    image: "https://images.unsplash.com/photo-1590932722660-b2e3c71b1379?w=1200&q=80",
+    excerpt: "Maryland's competitive market with PSC protections helps residents save $300-450 annually on electricity.",
+    readTime: "9 min",
+    keywords: ["Maryland electricity", "Baltimore power", "BGE rates"],
+    relatedArticles: [1, 2, 18]
+  },
+  {
+    id: 18,
+    category: "State Guides",
+    icon: MapPin,
+    color: "green",
+    title: "Massachusetts Electricity Rates: Complete MA Power Guide",
+    description: "Compare Massachusetts electricity rates from 12+ suppliers. Find lowest power prices in Boston, Worcester, and Springfield.",
+    image: "https://images.unsplash.com/photo-1572636661577-f6d05cbb7682?w=1200&q=80",
+    excerpt: "Massachusetts offers competitive supplier options with strong DPU oversight. Save $250-400 yearly on electricity.",
+    readTime: "8 min",
+    keywords: ["Massachusetts electricity", "Boston power", "National Grid MA"],
+    relatedArticles: [1, 2, 19]
+  },
+  {
+    id: 19,
+    category: "State Guides",
+    icon: MapPin,
+    color: "orange",
+    title: "Connecticut Electricity Rates: CT Power Shopping Guide",
+    description: "Compare Connecticut electricity rates from 12+ suppliers. Find cheapest power in Hartford, New Haven, and Stamford.",
+    image: "https://images.unsplash.com/photo-1569149646689-5e8bbdbbd944?w=1200&q=80",
+    excerpt: "Connecticut's PURA-regulated market offers moderate competition and real savings. Save $250-400 yearly.",
+    readTime: "8 min",
+    keywords: ["Connecticut electricity", "CT power", "Eversource CT"],
+    relatedArticles: [1, 2, 20]
+  },
+  {
+    id: 20,
+    category: "State Guides",
+    icon: MapPin,
+    color: "blue",
+    title: "Maine Electricity Rates: Complete ME Power Comparison Guide",
+    description: "Compare Maine electricity rates from 8+ suppliers. Find cheapest power in Portland, Bangor, and Lewiston.",
+    image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=1200&q=80",
+    excerpt: "Maine's smaller competitive market still offers real savings opportunities. Save $200-350 yearly on electricity.",
+    readTime: "7 min",
+    keywords: ["Maine electricity", "Portland power", "CMP rates"],
+    relatedArticles: [1, 2, 21]
+  },
+  {
+    id: 21,
+    category: "State Guides",
+    icon: MapPin,
+    color: "purple",
+    title: "New Hampshire Electricity Rates: NH Power Shopping Guide",
+    description: "Compare NH electricity rates from 8+ suppliers. Find cheapest power in Manchester, Nashua, and Concord.",
+    image: "https://images.unsplash.com/photo-1606403726988-eb685c61c9b6?w=1200&q=80",
+    excerpt: "New Hampshire offers modest supplier competition with PUC oversight. Save $200-350 yearly on electricity.",
+    readTime: "7 min",
+    keywords: ["New Hampshire electricity", "NH power", "Eversource NH"],
+    relatedArticles: [1, 2, 22]
+  },
+  {
+    id: 22,
+    category: "State Guides",
+    icon: MapPin,
+    color: "green",
+    title: "Rhode Island Electricity Rates: RI Power Comparison Guide",
+    description: "Compare Rhode Island electricity rates from 8+ suppliers. Find cheapest power in Providence, Warwick, and Cranston.",
+    image: "https://images.unsplash.com/photo-1602984891859-69d29e64b886?w=1200&q=80",
+    excerpt: "Rhode Island's competitive market with PUC licensing offers genuine savings. Save $200-320 yearly on electricity.",
+    readTime: "7 min",
+    keywords: ["Rhode Island electricity", "RI power", "National Grid RI"],
+    relatedArticles: [1, 2, 11]
   }
 ];
 
