@@ -428,38 +428,16 @@ export default function ArticleDetail() {
           </div>
         </article>
 
-        {/* Related Articles */}
-        {article.relatedArticles && article.relatedArticles.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Guides</h2>
-            <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
-              {article.relatedArticles.map(relatedId => {
-                const related = articles.find(a => a.id === relatedId);
-                if (!related) return null;
-                const RelatedIcon = related.icon;
-                const relatedColors = colorClasses[related.color];
-                return (
-                  <Link key={related.id} to={createPageUrl("ArticleDetail") + `?id=${related.id}`}>
-                    <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-[#0A5C8C] h-full">
-                      <CardContent className="p-5">
-                        <div className={`w-12 h-12 ${relatedColors.bg} rounded-xl flex items-center justify-center mb-3`}>
-                          <RelatedIcon className={`w-6 h-6 ${relatedColors.text}`} />
-                        </div>
-                        <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-2">
-                          {related.title}
-                        </h3>
-                        <span className="text-xs text-gray-500 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {related.readTime}
-                        </span>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {/* Reading Analytics */}
+        <div className="mt-8">
+          <ReadingAnalytics allArticles={articles} />
+        </div>
+
+        {/* AI-Powered Article Recommendations */}
+        <ArticleRecommendations 
+          currentArticle={article}
+          allArticles={articles}
+        />
 
         {/* Bottom CTA */}
         <div className="mt-12">
