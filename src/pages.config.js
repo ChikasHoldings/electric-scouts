@@ -13,8 +13,6 @@ import TermsOfService from './pages/TermsOfService';
 import RenewableEnergy from './pages/RenewableEnergy';
 import Landing from './pages/Landing';
 import AllStates from './pages/AllStates';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
 import TexasElectricity from './pages/TexasElectricity';
 import IllinoisElectricity from './pages/IllinoisElectricity';
 import OhioElectricity from './pages/OhioElectricity';
@@ -48,8 +46,6 @@ export const PAGES = {
     "RenewableEnergy": RenewableEnergy,
     "Landing": Landing,
     "AllStates": AllStates,
-    "Blog": Blog,
-    "BlogPost": BlogPost,
     "TexasElectricity": TexasElectricity,
     "IllinoisElectricity": IllinoisElectricity,
     "OhioElectricity": OhioElectricity,
