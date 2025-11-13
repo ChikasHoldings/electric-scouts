@@ -68,7 +68,7 @@ export default function NewYorkElectricity() {
               <span className="text-white">New York</span>
             </nav>
 
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-4">
               New York Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
