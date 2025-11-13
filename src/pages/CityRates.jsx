@@ -11,6 +11,7 @@ import {
   ArrowRight, DollarSign, Clock, Shield, Star, Leaf, ChevronDown 
 } from "lucide-react";
 import PlanCard from "../components/compare/PlanCard";
+import { getProvidersForZipCode, getProviderDetails } from "../components/compare/providerAvailability";
 
 // City-specific data for SEO
 const cityData = {
@@ -172,8 +173,21 @@ export default function CityRates() {
     initialData: [],
   });
 
-  // Filter plans by city (in real app, would filter by ZIP codes)
-  const cityPlans = plans.slice(0, 6);
+  // Get available providers for first ZIP in city
+  const cityZipCode = city.zipCodes[0];
+  const availableProviders = getProvidersForZipCode(cityZipCode);
+  const availableProviderNames = availableProviders.map(p => p.name);
+  
+  // Filter plans by providers available in this city
+  const cityPlans = plans.filter(plan => 
+    availableProviderNames.includes(plan.provider_name)
+  ).slice(0, 6);
+
+  // Get provider logo
+  const getProviderLogo = (providerName) => {
+    const provider = getProviderDetails(providerName);
+    return provider ? provider.logo : null;
+  };
 
   return (
     <div className="min-h-screen bg-white">
