@@ -49,7 +49,7 @@ export default function Layout({ children, currentPageName }) {
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/54a98288c_ChatGPTImageNov12202508_20_04PM.png"
                 alt="Power Scouts"
-                className="h-10"
+                className="h-14"
               />
             </Link>
 
