@@ -47,31 +47,31 @@ export default function Home() {
           <Card className="border-none shadow-2xl overflow-hidden">
             <CardContent className="p-0">
               <div className="grid md:grid-cols-2">
-                <div className="bg-gradient-to-br from-[#DC2626] to-[#B91C1C] p-10 text-white flex flex-col justify-center">
+                <div className="bg-gradient-to-br from-[#0A5C8C] to-[#084a6f] p-10 text-white flex flex-col justify-center">
                   <h2 className="text-3xl font-bold mb-4">
-                    Ready to Find the Best Utility Deals?
+                    Start Saving on Electricity Today
                   </h2>
                   <p className="text-lg opacity-90 mb-6">
-                    Compare electricity, internet, and mobile plans in your area
+                    Compare plans from 40+ providers in minutes
                   </p>
                   <ul className="space-y-3">
                     <li className="flex items-center gap-3">
                       <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                      <span>See all available deals instantly</span>
+                      <span>Instant comparison results</span>
                     </li>
                     <li className="flex items-center gap-3">
                       <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                      <span>Save hundreds per year</span>
+                      <span>Save up to $800/year</span>
                     </li>
                     <li className="flex items-center gap-3">
                       <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                      <span>100% free with no spam</span>
+                      <span>100% free, no spam</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-white p-10 flex flex-col justify-center">
-                  <h3 className="text-xl font-bold text-[#003049] mb-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">
                     Enter Your ZIP Code
                   </h3>
                   <div className="space-y-4">
@@ -82,18 +82,18 @@ export default function Home() {
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
                       className="h-14 text-base border-2"
-                      aria-label="ZIP code to find utility deals"
+                      aria-label="ZIP code to compare electricity plans"
                     />
                     <Button 
                       onClick={handleZipSearch}
-                      className="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white h-14 text-base font-semibold"
+                      className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-14 text-base font-semibold"
                       disabled={zipCode.length !== 5}
                     >
-                      Compare Plans Now
+                      Compare Rates Now
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                     <p className="text-xs text-gray-500 text-center">
-                      No credit card required • Takes 1 minute • Secure comparison
+                      Free comparison • No credit card required
                     </p>
                   </div>
                 </div>
