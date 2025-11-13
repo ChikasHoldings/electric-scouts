@@ -454,7 +454,7 @@ export default function CityRates() {
                 Top Electricity Plans in {cityName}
               </h2>
               <p className="text-gray-600">
-                Current rates available in {city.county}
+                {dynamicStats ? `${topPlans.length} lowest rates` : 'Featured plans'} available in {city.county}
               </p>
             </div>
             <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
