@@ -5,14 +5,16 @@ export default function AboutUs() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Hero Section */}
-      <div className="bg-[#0A5C8C] text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl lg:text-6xl font-bold mb-6">
-            About Power Scouts
-          </h1>
-          <p className="text-2xl opacity-90">
-            Empowering Texans to make smarter energy choices since 2019
-          </p>
+      <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-3">
+              About Power Scouts
+            </h1>
+            <p className="text-lg text-blue-100">
+              Empowering Texans to make smarter energy choices since 2019
+            </p>
+          </div>
         </div>
       </div>
 
