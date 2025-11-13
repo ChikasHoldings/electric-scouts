@@ -26,8 +26,8 @@ export default function AllStates() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Deregulated Electricity States - 17 States Comparison | Power Scouts"
-        description="Discover which states have deregulated electricity markets. Compare rates across Texas, Pennsylvania, New York, Ohio, Illinois, and 12+ more states. Find providers and savings in your area."
+        title="Deregulated Electricity States - 12 States Comparison | Power Scouts"
+        description="Discover which states have deregulated electricity markets. Compare rates across Texas, Illinois, Ohio, Pennsylvania, New York, New Jersey, Maryland, Massachusetts, Maine, New Hampshire, Rhode Island, and Connecticut. Find providers and savings in your area."
         keywords="deregulated electricity states, energy deregulation, electricity choice states, competitive energy markets, deregulated power markets"
         canonical="/all-states"
         structuredData={breadcrumbData}

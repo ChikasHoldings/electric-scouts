@@ -38,7 +38,7 @@ export default function Home() {
     <div className="min-h-screen">
       <SEOHead
         title="Compare Electricity Rates - Save Up to $800/Year | Power Scouts"
-        description="Compare electricity rates from 40+ providers across 17 deregulated states. Find the best electricity plan for your home and save hundreds per year. Free comparison, instant results."
+        description="Compare electricity rates from 40+ providers across 12 deregulated states. Find the best electricity plan for your home and save hundreds per year. Free comparison, instant results."
         keywords="compare electricity rates, best electricity rates, electricity providers, energy comparison, electricity plans, power companies"
         canonical="/"
         structuredData={structuredData}

@@ -10,6 +10,24 @@ export const DEREGULATED_STATES = {
     providerCount: 45,
     cities: ['Houston', 'Dallas', 'Austin', 'San Antonio', 'Fort Worth', 'Arlington', 'Plano', 'Corpus Christi']
   },
+  IL: {
+    name: 'Illinois',
+    fullName: 'Illinois',
+    deregulated: true,
+    marketType: 'Fully Deregulated',
+    avgSavings: 700,
+    providerCount: 36,
+    cities: ['Chicago', 'Aurora', 'Naperville', 'Joliet', 'Rockford', 'Springfield']
+  },
+  OH: {
+    name: 'Ohio',
+    fullName: 'Ohio',
+    deregulated: true,
+    marketType: 'Fully Deregulated',
+    avgSavings: 760,
+    providerCount: 40,
+    cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton']
+  },
   PA: {
     name: 'Pennsylvania',
     fullName: 'Pennsylvania',
@@ -18,6 +36,15 @@ export const DEREGULATED_STATES = {
     avgSavings: 750,
     providerCount: 38,
     cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading', 'Scranton', 'Lancaster']
+  },
+  NY: {
+    name: 'New York',
+    fullName: 'New York',
+    deregulated: true,
+    marketType: 'Fully Deregulated',
+    avgSavings: 740,
+    providerCount: 42,
+    cities: ['New York City', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse', 'Albany']
   },
   NJ: {
     name: 'New Jersey',
@@ -37,42 +64,6 @@ export const DEREGULATED_STATES = {
     providerCount: 32,
     cities: ['Baltimore', 'Columbia', 'Germantown', 'Silver Spring', 'Waldorf', 'Ellicott City']
   },
-  OH: {
-    name: 'Ohio',
-    fullName: 'Ohio',
-    deregulated: true,
-    marketType: 'Fully Deregulated',
-    avgSavings: 760,
-    providerCount: 40,
-    cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton']
-  },
-  IL: {
-    name: 'Illinois',
-    fullName: 'Illinois',
-    deregulated: true,
-    marketType: 'Fully Deregulated',
-    avgSavings: 700,
-    providerCount: 36,
-    cities: ['Chicago', 'Aurora', 'Naperville', 'Joliet', 'Rockford', 'Springfield']
-  },
-  MI: {
-    name: 'Michigan',
-    fullName: 'Michigan',
-    deregulated: true,
-    marketType: 'Partial Deregulation',
-    avgSavings: 650,
-    providerCount: 28,
-    cities: ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Ann Arbor', 'Lansing']
-  },
-  CT: {
-    name: 'Connecticut',
-    fullName: 'Connecticut',
-    deregulated: true,
-    marketType: 'Fully Deregulated',
-    avgSavings: 690,
-    providerCount: 30,
-    cities: ['Bridgeport', 'New Haven', 'Hartford', 'Stamford', 'Waterbury', 'Norwalk']
-  },
   MA: {
     name: 'Massachusetts',
     fullName: 'Massachusetts',
@@ -81,24 +72,6 @@ export const DEREGULATED_STATES = {
     avgSavings: 710,
     providerCount: 34,
     cities: ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell', 'Brockton']
-  },
-  RI: {
-    name: 'Rhode Island',
-    fullName: 'Rhode Island',
-    deregulated: true,
-    marketType: 'Fully Deregulated',
-    avgSavings: 660,
-    providerCount: 26,
-    cities: ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence', 'Woonsocket']
-  },
-  NH: {
-    name: 'New Hampshire',
-    fullName: 'New Hampshire',
-    deregulated: true,
-    marketType: 'Fully Deregulated',
-    avgSavings: 640,
-    providerCount: 25,
-    cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Rochester', 'Salem']
   },
   ME: {
     name: 'Maine',
@@ -109,50 +82,32 @@ export const DEREGULATED_STATES = {
     providerCount: 22,
     cities: ['Portland', 'Lewiston', 'Bangor', 'South Portland', 'Auburn', 'Biddeford']
   },
-  NY: {
-    name: 'New York',
-    fullName: 'New York',
+  NH: {
+    name: 'New Hampshire',
+    fullName: 'New Hampshire',
     deregulated: true,
     marketType: 'Fully Deregulated',
-    avgSavings: 740,
-    providerCount: 42,
-    cities: ['New York City', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse', 'Albany']
+    avgSavings: 640,
+    providerCount: 25,
+    cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Rochester', 'Salem']
   },
-  DE: {
-    name: 'Delaware',
-    fullName: 'Delaware',
+  RI: {
+    name: 'Rhode Island',
+    fullName: 'Rhode Island',
     deregulated: true,
     marketType: 'Fully Deregulated',
-    avgSavings: 670,
-    providerCount: 28,
-    cities: ['Wilmington', 'Dover', 'Newark', 'Middletown', 'Smyrna', 'Milford']
+    avgSavings: 660,
+    providerCount: 26,
+    cities: ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence', 'Woonsocket']
   },
-  DC: {
-    name: 'Washington DC',
-    fullName: 'District of Columbia',
+  CT: {
+    name: 'Connecticut',
+    fullName: 'Connecticut',
     deregulated: true,
     marketType: 'Fully Deregulated',
-    avgSavings: 700,
+    avgSavings: 690,
     providerCount: 30,
-    cities: ['Washington']
-  },
-  OR: {
-    name: 'Oregon',
-    fullName: 'Oregon',
-    deregulated: true,
-    marketType: 'Partial Deregulation',
-    avgSavings: 600,
-    providerCount: 20,
-    cities: ['Portland', 'Salem', 'Eugene', 'Gresham', 'Hillsboro', 'Beaverton']
-  },
-  MT: {
-    name: 'Montana',
-    fullName: 'Montana',
-    deregulated: true,
-    marketType: 'Partial Deregulation',
-    avgSavings: 580,
-    providerCount: 18,
-    cities: ['Billings', 'Missoula', 'Great Falls', 'Bozeman', 'Butte', 'Helena']
+    cities: ['Bridgeport', 'New Haven', 'Hartford', 'Stamford', 'Waterbury', 'Norwalk']
   }
 };
 
@@ -204,12 +159,6 @@ export const ZIP_TO_STATE = {
   '618': 'IL', '619': 'IL', '620': 'IL', '621': 'IL', '622': 'IL', '623': 'IL',
   '624': 'IL', '625': 'IL', '626': 'IL', '627': 'IL', '628': 'IL', '629': 'IL',
   
-  // Michigan (480-499)
-  '480': 'MI', '481': 'MI', '482': 'MI', '483': 'MI', '484': 'MI', '485': 'MI',
-  '486': 'MI', '487': 'MI', '488': 'MI', '489': 'MI', '490': 'MI', '491': 'MI',
-  '492': 'MI', '493': 'MI', '494': 'MI', '495': 'MI', '496': 'MI', '497': 'MI',
-  '498': 'MI', '499': 'MI',
-  
   // Connecticut (060-069)
   '060': 'CT', '061': 'CT', '062': 'CT', '063': 'CT', '064': 'CT', '065': 'CT',
   '066': 'CT', '067': 'CT', '068': 'CT', '069': 'CT',
@@ -239,21 +188,7 @@ export const ZIP_TO_STATE = {
   '130': 'NY', '131': 'NY', '132': 'NY', '133': 'NY', '134': 'NY', '135': 'NY',
   '136': 'NY', '137': 'NY', '138': 'NY', '139': 'NY', '140': 'NY', '141': 'NY',
   '142': 'NY', '143': 'NY', '144': 'NY', '145': 'NY', '146': 'NY', '147': 'NY',
-  '148': 'NY', '149': 'NY',
-  
-  // Delaware (197-199)
-  '197': 'DE', '198': 'DE', '199': 'DE',
-  
-  // DC (200-205)
-  '200': 'DC', '201': 'DC', '202': 'DC', '203': 'DC', '204': 'DC', '205': 'DC',
-  
-  // Oregon (970-979)
-  '970': 'OR', '971': 'OR', '972': 'OR', '973': 'OR', '974': 'OR', '975': 'OR',
-  '976': 'OR', '977': 'OR', '978': 'OR', '979': 'OR',
-  
-  // Montana (590-599)
-  '590': 'MT', '591': 'MT', '592': 'MT', '593': 'MT', '594': 'MT', '595': 'MT',
-  '596': 'MT', '597': 'MT', '598': 'MT', '599': 'MT'
+  '148': 'NY', '149': 'NY'
 };
 
 export const validateZipCode = (zip) => {
