@@ -28,6 +28,7 @@ import NewHampshireElectricity from './pages/NewHampshireElectricity';
 import RhodeIslandElectricity from './pages/RhodeIslandElectricity';
 import ConnecticutElectricity from './pages/ConnecticutElectricity';
 import CompareRates from './pages/CompareRates';
+import BillAnalyzer from './pages/BillAnalyzer';
 import Layout from './Layout.jsx';
 
 
@@ -62,6 +63,7 @@ export const PAGES = {
     "RhodeIslandElectricity": RhodeIslandElectricity,
     "ConnecticutElectricity": ConnecticutElectricity,
     "CompareRates": CompareRates,
+    "BillAnalyzer": BillAnalyzer,
 }
 
 export const pagesConfig = {
