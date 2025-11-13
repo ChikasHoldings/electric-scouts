@@ -83,8 +83,7 @@ export const fullArticles = {
 
 <p>Neither fixed nor variable rates are universally better. The right choice depends entirely on your specific situation. Set a reminder to review your plan every 6-12 months.</p>
 `
-  }
-};
+  },
 
   26: {
     title: "Austin Electricity Rates 2024: Compare Cheapest TX Power Plans",
