@@ -474,6 +474,19 @@ export default function CityRates() {
                 </div>
               ))}
             </div>
+          ) : topPlans.length === 0 ? (
+            <Card className="border-2 border-dashed border-gray-300 p-12 text-center">
+              <Zap className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Plans Coming Soon</h3>
+              <p className="text-gray-600 mb-6">
+                We're currently loading plans for {cityName}. Check back shortly or enter your ZIP code to see all available plans.
+              </p>
+              <Link to={createPageUrl("CompareRates")}>
+                <Button className="bg-[#FF6B35] hover:bg-[#e55a2b]">
+                  View All Plans
+                </Button>
+              </Link>
+            </Card>
           ) : (
             <>
               {/* Desktop Table View */}
