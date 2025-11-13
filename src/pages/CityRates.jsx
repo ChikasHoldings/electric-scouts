@@ -313,44 +313,133 @@ export default function CityRates() {
           </div>
         </section>
 
-        {/* Benefits Section */}
+        {/* Plan Types Breakdown - Dynamic Data */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Why Compare Electricity Plans in {cityName}?
+            Plan Types Available in {cityName}
+          </h2>
+          {dynamicStats && (
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              <Card className="border-2 hover:border-blue-500 transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Clock className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-blue-600 mb-2">{dynamicStats.fixedPlans}</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Fixed Rate Plans</h3>
+                  <p className="text-sm text-gray-600">
+                    Lock in your rate for predictable monthly bills
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-purple-500 transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <TrendingDown className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">{dynamicStats.variablePlans}</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Variable Rate Plans</h3>
+                  <p className="text-sm text-gray-600">
+                    Flexible rates that change with market conditions
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-green-500 transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Leaf className="w-8 h-8 text-green-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-green-600 mb-2">{dynamicStats.renewablePlans}</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Renewable Energy</h3>
+                  <p className="text-sm text-gray-600">
+                    50%+ green energy from Texas wind & solar
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Top Providers in {cityName}
+          </h2>
+          {dynamicStats && dynamicStats.topProviders.length > 0 && (
+            <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-8 mb-12">
+              <div className="grid md:grid-cols-5 gap-4">
+                {dynamicStats.topProviders.map((provider, index) => (
+                  <Link 
+                    key={index}
+                    to={createPageUrl("ProviderDetails") + `?provider=${provider}`}
+                    className="bg-white rounded-lg p-4 text-center hover:shadow-lg transition-all border-2 border-transparent hover:border-[#FF6B35]"
+                  >
+                    <div className="font-semibold text-gray-900 text-sm mb-1">{provider}</div>
+                    <div className="text-xs text-gray-600">View Plans →</div>
+                  </Link>
+                ))}
+              </div>
+              <div className="text-center mt-6">
+                <Link to={createPageUrl("AllProviders")}>
+                  <Button variant="outline" className="text-[#0A5C8C] border-[#0A5C8C]">
+                    View All {dynamicStats.uniqueProviders} Providers
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
+
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Local Energy Insights
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <Card className="border-2 hover:border-[#FF6B35] transition-all">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <DollarSign className="w-8 h-8 text-green-600" />
+            <Card className="border-2">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Users className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">{city.population}</div>
+                    <div className="text-sm text-gray-600">Residents</div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Save Money</h3>
-                <p className="text-gray-600">
-                  {cityName} residents can save up to $800 per year by switching to a better electricity plan
+                <p className="text-sm text-gray-600">
+                  {cityName} is one of Texas's major energy markets with diverse electricity needs
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-2 hover:border-[#FF6B35] transition-all">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-8 h-8 text-blue-600" />
+            <Card className="border-2">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Zap className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">1,000 kWh</div>
+                    <div className="text-sm text-gray-600">Avg. Monthly Usage</div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">More Options</h3>
-                <p className="text-gray-600">
-                  Access {city.providers}+ providers with fixed, variable, and renewable energy plans
+                <p className="text-sm text-gray-600">
+                  Typical household consumption in {city.county} varies by season
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-2 hover:border-[#FF6B35] transition-all">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-purple-600" />
+            <Card className="border-2">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">Deregulated</div>
+                    <div className="text-sm text-gray-600">Market Status</div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">No Risk</h3>
-                <p className="text-gray-600">
-                  Free comparison service with no credit checks, hidden fees, or obligations
+                <p className="text-sm text-gray-600">
+                  {cityName} residents can choose from multiple competitive providers
                 </p>
               </CardContent>
             </Card>
