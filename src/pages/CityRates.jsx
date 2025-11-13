@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   MapPin, Zap, Users, Building2, TrendingDown, CheckCircle, 
-  ArrowRight, DollarSign, Clock, Shield, Star, Leaf 
+  ArrowRight, DollarSign, Clock, Shield, Star, Leaf, ChevronDown 
 } from "lucide-react";
 import PlanCard from "../components/compare/PlanCard";
 
@@ -152,6 +152,7 @@ export default function CityRates() {
   const [zipCode, setZipCode] = useState("");
   const [usage, setUsage] = useState(1000);
   const [cityName, setCityName] = useState("");
+  const [openFaq, setOpenFaq] = useState(null);
 
   // Get city from URL
   useEffect(() => {
@@ -508,59 +509,59 @@ export default function CityRates() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
             {cityName} Electricity FAQs
           </h2>
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  What is the average electricity rate in {cityName}, TX?
-                </h3>
-                <p className="text-gray-600">
-                  The average electricity rate in {cityName} is approximately {city.avgRate}, though rates 
-                  vary by provider, plan type, and usage level. With Power Scouts, you can compare rates 
-                  from all {city.providers}+ providers serving {city.county} to find the best deal for your home.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  How do I switch electricity providers in {cityName}?
-                </h3>
-                <p className="text-gray-600">
-                  Switching electricity providers in {cityName} is easy. Simply compare plans on Power Scouts, 
-                  select your preferred plan, and sign up online or by phone. Your new provider will handle 
-                  the switch with your current provider, and your power will never be interrupted during the transition.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  Are there renewable energy options in {cityName}?
-                </h3>
-                <p className="text-gray-600">
-                  Yes! Many electricity providers in {cityName} offer 100% renewable energy plans sourced from 
-                  Texas wind and solar farms. Green energy plans are often competitively priced and help reduce 
-                  your carbon footprint while supporting clean energy development in Texas.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  What's the best electricity plan for {cityName} residents?
-                </h3>
-                <p className="text-gray-600">
-                  The best electricity plan depends on your usage, budget, and preferences. Fixed-rate plans 
-                  offer price stability, while variable-rate plans may have lower rates but fluctuate monthly. 
-                  For most {cityName} residents, a 12 or 24-month fixed-rate plan provides the best balance 
-                  of savings and predictability.
-                </p>
-              </CardContent>
-            </Card>
+          <div className="space-y-4">
+            {[
+              {
+                id: 1,
+                question: `What is the average electricity rate in ${cityName}, TX?`,
+                answer: `The average electricity rate in ${cityName} is approximately ${city.avgRate}, though rates vary by provider, plan type, and usage level. With Power Scouts, you can compare rates from all ${city.providers}+ providers serving ${city.county} to find the best deal for your home.`
+              },
+              {
+                id: 2,
+                question: `How do I switch electricity providers in ${cityName}?`,
+                answer: `Switching electricity providers in ${cityName} is easy. Simply compare plans on Power Scouts, select your preferred plan, and sign up online or by phone. Your new provider will handle the switch with your current provider, and your power will never be interrupted during the transition.`
+              },
+              {
+                id: 3,
+                question: `Are there renewable energy options in ${cityName}?`,
+                answer: `Yes! Many electricity providers in ${cityName} offer 100% renewable energy plans sourced from Texas wind and solar farms. Green energy plans are often competitively priced and help reduce your carbon footprint while supporting clean energy development in Texas.`
+              },
+              {
+                id: 4,
+                question: `What's the best electricity plan for ${cityName} residents?`,
+                answer: `The best electricity plan depends on your usage, budget, and preferences. Fixed-rate plans offer price stability, while variable-rate plans may have lower rates but fluctuate monthly. For most ${cityName} residents, a 12 or 24-month fixed-rate plan provides the best balance of savings and predictability.`
+              }
+            ].map((faq) => (
+              <Card 
+                key={faq.id} 
+                className="border-2 hover:border-[#0A5C8C] transition-all cursor-pointer overflow-hidden"
+                onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+              >
+                <CardContent className="p-0">
+                  <div className="flex items-center justify-between p-6">
+                    <h3 className="text-lg font-bold text-gray-900 pr-4">
+                      {faq.question}
+                    </h3>
+                    <ChevronDown 
+                      className={`w-5 h-5 text-[#0A5C8C] flex-shrink-0 transition-transform duration-300 ${
+                        openFaq === faq.id ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                  <div 
+                    className={`transition-all duration-300 ease-in-out ${
+                      openFaq === faq.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="px-6 pb-6 pt-0">
+                      <p className="text-gray-600 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 

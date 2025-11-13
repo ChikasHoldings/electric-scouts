@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   MapPin, Star, CheckCircle, ArrowRight, Leaf, Phone,
-  Award, Shield, DollarSign, Zap, Users, Clock
+  Award, Shield, DollarSign, Zap, Users, Clock, ChevronDown
 } from "lucide-react";
 
 // Provider-specific data for SEO
@@ -195,6 +195,7 @@ export default function ProviderDetails() {
   const [zipCode, setZipCode] = useState("");
   const [usage] = useState(1000);
   const [providerName, setProviderName] = useState("");
+  const [openFaq, setOpenFaq] = useState(null);
 
   // Get provider from URL
   useEffect(() => {
@@ -575,58 +576,61 @@ export default function ProviderDetails() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
             Frequently Asked Questions About {providerName}
           </h2>
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  What types of electricity plans does {providerName} offer?
-                </h3>
-                <p className="text-gray-600">
-                  {providerName} offers a variety of electricity plans including fixed-rate plans, variable-rate plans, 
-                  and renewable energy options. With {provider.planCount}+ plans available, you can find the perfect 
-                  option for your home or business needs.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  Where does {providerName} provide electricity service?
-                </h3>
-                <p className="text-gray-600">
-                  {providerName} serves customers across {provider.cities.length}+ major Texas cities including {provider.cities.slice(0, 3).join(", ")}, 
-                  and more. They're available in most deregulated electricity markets throughout Texas.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  How do I sign up for {providerName} electricity?
-                </h3>
-                <p className="text-gray-600">
-                  Signing up is easy! Compare {providerName} plans using the comparison tool above, select your preferred plan, 
-                  and complete the enrollment process online or by phone. Your new service can typically be activated within 
-                  1-3 business days.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  Does {providerName} offer renewable energy plans?
-                </h3>
-                <p className="text-gray-600">
-                  {provider.features.some(f => f.toLowerCase().includes('renewable') || f.toLowerCase().includes('green')) 
-                    ? `Yes! ${providerName} offers renewable energy plans powered by Texas wind and solar farms. These green energy options help reduce your carbon footprint while supporting clean energy development.`
-                    : `${providerName} focuses on providing reliable electricity service. For renewable energy options, explore their plan details above or contact them directly.`
-                  }
-                </p>
-              </CardContent>
-            </Card>
+          <div className="space-y-4">
+            {[
+              {
+                id: 1,
+                question: `What types of electricity plans does ${providerName} offer?`,
+                answer: `${providerName} offers a variety of electricity plans including fixed-rate plans, variable-rate plans, and renewable energy options. With ${provider.planCount}+ plans available, you can find the perfect option for your home or business needs.`
+              },
+              {
+                id: 2,
+                question: `Where does ${providerName} provide electricity service?`,
+                answer: `${providerName} serves customers across ${provider.cities.length}+ major Texas cities including ${provider.cities.slice(0, 3).join(", ")}, and more. They're available in most deregulated electricity markets throughout Texas.`
+              },
+              {
+                id: 3,
+                question: `How do I sign up for ${providerName} electricity?`,
+                answer: `Signing up is easy! Compare ${providerName} plans using the comparison tool above, select your preferred plan, and complete the enrollment process online or by phone. Your new service can typically be activated within 1-3 business days.`
+              },
+              {
+                id: 4,
+                question: `Does ${providerName} offer renewable energy plans?`,
+                answer: provider.features.some(f => f.toLowerCase().includes('renewable') || f.toLowerCase().includes('green')) 
+                  ? `Yes! ${providerName} offers renewable energy plans powered by Texas wind and solar farms. These green energy options help reduce your carbon footprint while supporting clean energy development.`
+                  : `${providerName} focuses on providing reliable electricity service. For renewable energy options, explore their plan details above or contact them directly.`
+              }
+            ].map((faq) => (
+              <Card 
+                key={faq.id} 
+                className="border-2 hover:border-[#0A5C8C] transition-all cursor-pointer overflow-hidden"
+                onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+              >
+                <CardContent className="p-0">
+                  <div className="flex items-center justify-between p-6">
+                    <h3 className="text-lg font-bold text-gray-900 pr-4">
+                      {faq.question}
+                    </h3>
+                    <ChevronDown 
+                      className={`w-5 h-5 text-[#0A5C8C] flex-shrink-0 transition-transform duration-300 ${
+                        openFaq === faq.id ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                  <div 
+                    className={`transition-all duration-300 ease-in-out ${
+                      openFaq === faq.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="px-6 pb-6 pt-0">
+                      <p className="text-gray-600 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
 
