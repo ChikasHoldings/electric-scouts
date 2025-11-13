@@ -84,19 +84,17 @@ export default function AboutSection() {
               or a plan that fits your needs, we're here to help you make the best choice.
             </p>
 
-            {/* Stats Cards */}
-            <div className="grid gap-4 pt-2">
+            {/* Stats List */}
+            <div className="space-y-2">
               {stats.map((stat, index) => (
                 <div 
                   key={index}
-                  className="group flex items-center gap-4 p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-transparent cursor-pointer"
+                  className="flex items-center gap-3"
                 >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
+                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full flex-shrink-0"></div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{stat.number}</p>
-                    <p className="text-sm text-gray-600 font-medium">{stat.label}</p>
+                    <span className="text-lg font-bold text-gray-900">{stat.number}</span>
+                    <span className="text-sm text-gray-600 ml-2">{stat.label}</span>
                   </div>
                 </div>
               ))}
