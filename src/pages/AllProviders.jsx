@@ -119,6 +119,7 @@ const providers = [
 
 export default function AllProviders() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [zipCode, setZipCode] = useState("");
 
   const filteredProviders = providers.filter(provider =>
     provider.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -256,42 +257,53 @@ export default function AllProviders() {
       {/* Bottom CTA Section */}
       <div className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl shadow-2xl p-12 border border-gray-100 text-center relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -translate-y-32 translate-x-32 opacity-50"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-50 rounded-full translate-y-32 -translate-x-32 opacity-50"></div>
+          <div className="bg-gradient-to-br from-[#0A5C8C] to-[#084a6f] rounded-3xl shadow-2xl p-12 text-center overflow-hidden">
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3">
+              Ready to Find Your Perfect Plan?
+            </h2>
+            <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+              Enter your ZIP code to see personalized rates from all these providers instantly.
+            </p>
             
-            <div className="relative z-10">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#FF6B35] to-[#FF8C5A] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Zap className="w-8 h-8 text-white" />
+            {/* ZIP Code Input */}
+            <div className="max-w-lg mx-auto mb-6">
+              <div className="bg-white rounded-2xl shadow-xl p-1.5">
+                <div className="flex flex-col sm:flex-row items-stretch gap-2">
+                  <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gray-50 rounded-xl">
+                    <MapPin className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
+                    <Input
+                      type="text"
+                      placeholder="Enter ZIP code"
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
+                      className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-lg p-0 h-auto placeholder:text-gray-400 font-semibold"
+                      maxLength={5}
+                    />
+                  </div>
+                  <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                    <Button className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] text-white shadow-lg hover:shadow-xl transition-all h-full">
+                      Compare Now
+                    </Button>
+                  </Link>
+                </div>
               </div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Ready to Find Your Perfect Plan?
-              </h2>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                Enter your ZIP code to see personalized rates from all these providers instantly.
-              </p>
-              <Link to={createPageUrl("CompareRates")}>
-                <Button size="lg" className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-10 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all">
-                  Compare Rates Now
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
-              <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>100% Free</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>No Credit Card</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Instant Results</span>
-                </div>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex items-center justify-center gap-6 flex-wrap text-sm text-blue-100">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span>100% Free</span>
+              </div>
+              <span className="text-blue-300">•</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span>No Credit Card</span>
+              </div>
+              <span className="text-blue-300">•</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                <span>Instant Results</span>
               </div>
             </div>
           </div>
