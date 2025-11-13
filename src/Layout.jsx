@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, ChevronDown, Menu, X, ArrowUp, MapPin, Building } from "lucide-react";
 
 const topStates = [
@@ -86,70 +85,71 @@ export default function Layout({ children, currentPageName }) {
                   Service Areas
                   <ChevronDown className={`w-4 h-4 transition-transform ${serviceAreaOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className={`absolute top-full right-0 mt-2 w-[420px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
+                <div className={`absolute top-full right-0 mt-2 w-[520px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
                   serviceAreaOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
                 }`}>
-                  <Tabs defaultValue="states" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 rounded-t-xl rounded-b-none h-12 bg-gray-50">
-                      <TabsTrigger value="states" className="rounded-tl-xl data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                        <Building className="w-4 h-4 mr-2" />
-                        States
-                      </TabsTrigger>
-                      <TabsTrigger value="cities" className="rounded-tr-xl data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        Cities
-                      </TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="states" className="p-4 m-0">
-                      <div className="space-y-1">
-                        {topStates.map((state, index) => (
-                          <Link 
-                            key={index}
-                            to={createPageUrl(state.page)} 
-                            className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium group"
-                            onClick={() => setServiceAreaOpen(false)}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span>{state.name}</span>
-                              <span className="text-xs text-gray-400 group-hover:text-[#0A5C8C] transition-colors">
-                                {state.code}
-                              </span>
-                            </div>
-                          </Link>
-                        ))}
+                  <div className="p-5">
+                    <div className="grid grid-cols-2 gap-6">
+                      {/* States Column */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
+                          <Building className="w-4 h-4 text-[#0A5C8C]" />
+                          <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide">States</h3>
+                        </div>
+                        <div className="space-y-1">
+                          {topStates.map((state, index) => (
+                            <Link 
+                              key={index}
+                              to={createPageUrl(state.page)} 
+                              className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium group"
+                              onClick={() => setServiceAreaOpen(false)}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span>{state.name}</span>
+                                <span className="text-xs text-gray-400 group-hover:text-[#0A5C8C] transition-colors">
+                                  {state.code}
+                                </span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                        <Link 
+                          to={createPageUrl("AllStates")} 
+                          className="block mt-3 pt-3 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
+                          onClick={() => setServiceAreaOpen(false)}
+                        >
+                          View All States →
+                        </Link>
                       </div>
-                      <Link 
-                        to={createPageUrl("AllStates")} 
-                        className="block mt-3 pt-3 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
-                        onClick={() => setServiceAreaOpen(false)}
-                      >
-                        View All States →
-                      </Link>
-                    </TabsContent>
 
-                    <TabsContent value="cities" className="p-4 m-0">
-                      <div className="space-y-1">
-                        {topCities.map((city, index) => (
-                          <Link 
-                            key={index}
-                            to={createPageUrl("CityRates") + `?city=${city}`} 
-                            className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
-                            onClick={() => setServiceAreaOpen(false)}
-                          >
-                            {city}
-                          </Link>
-                        ))}
+                      {/* Cities Column */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
+                          <MapPin className="w-4 h-4 text-[#0A5C8C]" />
+                          <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide">Cities</h3>
+                        </div>
+                        <div className="space-y-1">
+                          {topCities.map((city, index) => (
+                            <Link 
+                              key={index}
+                              to={createPageUrl("CityRates") + `?city=${city}`} 
+                              className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
+                              onClick={() => setServiceAreaOpen(false)}
+                            >
+                              {city}
+                            </Link>
+                          ))}
+                        </div>
+                        <Link 
+                          to={createPageUrl("AllCities")} 
+                          className="block mt-3 pt-3 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
+                          onClick={() => setServiceAreaOpen(false)}
+                        >
+                          View All Cities →
+                        </Link>
                       </div>
-                      <Link 
-                        to={createPageUrl("AllCities")} 
-                        className="block mt-3 pt-3 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
-                        onClick={() => setServiceAreaOpen(false)}
-                      >
-                        View All Cities →
-                      </Link>
-                    </TabsContent>
-                  </Tabs>
+                    </div>
+                  </div>
                 </div>
               </div>
 
