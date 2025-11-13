@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -15,14 +15,7 @@ import HowItWorksSection from "../components/home/HowItWorksSection";
 import TestimonialsSection from "../components/home/TestimonialsSection";
 
 export default function Home() {
-  const navigate = useNavigate();
   const [zipCode, setZipCode] = useState("");
-
-  const handleZipSearch = () => {
-    if (zipCode && zipCode.length === 5) {
-      navigate(createPageUrl("CompareRates") + `?zip=${zipCode}`);
-    }
-  };
 
   return (
     <div className="min-h-screen">
