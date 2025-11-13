@@ -7,7 +7,7 @@ import { createPageUrl } from "@/utils";
 
 export default function HeroSection({ zipCode, setZipCode, onCompare }) {
   return (
-    <section className="bg-slate-50 py-16 relative from-gray-50 via-white to-gray-50 overflow-hidden lg:py-20">
+    <section className="bg-slate-50 py-20 relative from-gray-50 via-white to-gray-50 overflow-hidden lg:py-24">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
