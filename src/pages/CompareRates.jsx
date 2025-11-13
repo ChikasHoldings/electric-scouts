@@ -10,6 +10,7 @@ import PlanCard from "../components/compare/PlanCard";
 import FiltersPanel from "../components/compare/FiltersPanel";
 import SavedPlansModal from "../components/compare/SavedPlansModal";
 import ComparisonWizard from "../components/compare/ComparisonWizard";
+import SEOHead, { getServiceSchema, getBreadcrumbSchema } from "../components/SEOHead";
 
 export default function CompareRates() {
   const [showWizard, setShowWizard] = useState(true);
@@ -82,6 +83,14 @@ export default function CompareRates() {
 
   const isPlanSaved = (planId) => savedPlans.some(p => p.id === planId);
 
+  const structuredData = [
+    getServiceSchema(),
+    getBreadcrumbSchema([
+      { name: "Home", url: "/" },
+      { name: "Compare Rates", url: "/compare-rates" }
+    ])
+  ];
+
   // Filter and sort plans
   const filteredPlans = plans
     .filter(plan => {
@@ -116,6 +125,13 @@ export default function CompareRates() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Compare Electricity Rates by ZIP Code - Find Best Plans | Power Scouts"
+        description="Enter your ZIP code to compare electricity rates from 40+ providers. View fixed, variable, and renewable energy plans. Filter by price, contract length, and more. Free instant comparison."
+        keywords="compare electricity rates, electricity rate comparison, best electricity plans, cheap electricity, fixed rate electricity, variable rate plans"
+        canonical="/compare-rates"
+        structuredData={structuredData}
+      />
       {/* Show Wizard or Results */}
       {showWizard && !wizardCompleted ? (
         <div className="bg-gradient-to-b from-gray-50 to-white py-16">

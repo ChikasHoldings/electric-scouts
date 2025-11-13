@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, MapPin, CheckCircle, Zap, TrendingDown, ArrowRight } from "lucide-react";
 import { getAllDeregulatedStates } from "../components/compare/stateData";
+import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 
 export default function AllStates() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,8 +18,20 @@ export default function AllStates() {
     state.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Deregulated States", url: "/all-states" }
+  ]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEOHead
+        title="Deregulated Electricity States - 17 States Comparison | Power Scouts"
+        description="Discover which states have deregulated electricity markets. Compare rates across Texas, Pennsylvania, New York, Ohio, Illinois, and 12+ more states. Find providers and savings in your area."
+        keywords="deregulated electricity states, energy deregulation, electricity choice states, competitive energy markets, deregulated power markets"
+        canonical="/all-states"
+        structuredData={breadcrumbData}
+      />
       {/* Header Section */}
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

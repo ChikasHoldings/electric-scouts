@@ -13,12 +13,36 @@ import AboutSection from "../components/home/AboutSection";
 import ProvidersSection from "../components/home/ProvidersSection";
 import HowItWorksSection from "../components/home/HowItWorksSection";
 import TestimonialsSection from "../components/home/TestimonialsSection";
+import SEOHead, { getOrganizationSchema, getServiceSchema } from "../components/SEOHead";
 
 export default function Home() {
   const [zipCode, setZipCode] = useState("");
 
+  const structuredData = [
+    getOrganizationSchema(),
+    getServiceSchema("Multiple States"),
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Power Scouts",
+      "url": window.location.origin,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${window.location.origin}/compare-rates?zip={zip_code}`,
+        "query-input": "required name=zip_code"
+      }
+    }
+  ];
+
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Compare Electricity Rates - Save Up to $800/Year | Power Scouts"
+        description="Compare electricity rates from 40+ providers across 17 deregulated states. Find the best electricity plan for your home and save hundreds per year. Free comparison, instant results."
+        keywords="compare electricity rates, best electricity rates, electricity providers, energy comparison, electricity plans, power companies"
+        canonical="/"
+        structuredData={structuredData}
+      />
       <HeroSection zipCode={zipCode} setZipCode={setZipCode} />
       <ProvidersSection />
       <AboutSection />

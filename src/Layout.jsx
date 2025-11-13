@@ -98,6 +98,9 @@ export default function Layout({ children, currentPageName }) {
                 </button>
                 <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-3 z-50 border border-gray-100">
                   <div className="space-y-1.5">
+                    <Link to={createPageUrl("Blog")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
+                      Blog
+                    </Link>
                     <Link to={createPageUrl("FAQ")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
                       FAQs
                     </Link>
@@ -143,6 +146,9 @@ export default function Layout({ children, currentPageName }) {
               </Link>
               <Link to={createPageUrl("AboutUs")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 About Us
+              </Link>
+              <Link to={createPageUrl("Blog")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Blog
               </Link>
               <Link to={createPageUrl("FAQ")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 FAQs
