@@ -1431,6 +1431,248 @@ Solution: Read the ESCO disclosure form carefully. Check contract length, early 
   }
 };
 
+  17: {
+    title: "Maryland Electricity Rates: Complete MD Power Comparison Guide",
+    metaTitle: "Maryland Electricity Rates 2024: Compare Plans in Baltimore & MD | Power Scouts",
+    metaDescription: "Compare Maryland electricity rates from 15+ suppliers. Find cheapest power in Baltimore, Frederick, Rockville. Save $300-450 yearly on MD electricity bills.",
+    tags: ["Maryland Electricity", "Baltimore Power", "BGE Rates", "Pepco Maryland", "MD Electric"],
+    content: `
+<h2>Maryland's Competitive Electricity Market</h2>
+
+<p>Maryland deregulated electricity in 1999, allowing residential customers to choose competitive electricity suppliers. The Maryland Public Service Commission (PSC) oversees approximately 15+ licensed suppliers serving homes across the state.</p>
+
+<p>Maryland's market operates with strong consumer protections. The state maintains www.mdelectricchoice.com where residents can compare certified suppliers and see how rates stack up against utility Standard Offer Service (SOS) rates.</p>
+
+<h2>Maryland Electricity Rates by Region</h2>
+
+<p><strong>Baltimore Area (BGE):</strong> 8.2¢ to 11.8¢ per kWh<br>
+<strong>Montgomery County (Pepco):</strong> 8.4¢ to 12.0¢ per kWh<br>
+<strong>Frederick (Potomac Edison):</strong> 8.1¢ to 11.7¢ per kWh<br>
+<strong>Rockville (Pepco):</strong> 8.3¢ to 11.9¢ per kWh<br>
+<strong>Columbia (BGE):</strong> 8.2¢ to 11.8¢ per kWh</p>
+
+<p>Average Maryland household using 900 kWh monthly could save $280-380 annually through competitive supplier shopping.</p>
+
+<div class="cta-box">
+<h3>Compare Maryland Rates</h3>
+<p>See all PSC-licensed suppliers serving your MD utility with current pricing.</p>
+<a href="/compare-rates" class="cta-button">Compare MD Rates Now</a>
+</div>
+
+<h2>Real Baltimore Example</h2>
+
+<p>James and Maria live in Baltimore's Canton neighborhood. Their 1,600 sq ft rowhome uses 850 kWh monthly.</p>
+
+<p><strong>Old Situation:</strong> BGE Standard Offer Service at 11.2¢ per kWh. Monthly bills: $95.</p>
+
+<p><strong>After Switching:</strong> Found Constellation 12-month fixed at 8.6¢ per kWh. New monthly cost: $73. <strong>Annual savings: $264.</strong></p>
+
+<h2>Top Maryland Suppliers</h2>
+
+<p><strong>Constellation:</strong> Largest MD supplier with competitive rates across all territories.</p>
+
+<p><strong>Direct Energy:</strong> Strong presence in BGE and Pepco areas.</p>
+
+<p><strong>Washington Gas Energy Services:</strong> Competitive fixed and variable options.</p>
+
+<p><strong>Verde Energy:</strong> 100% renewable plans at reasonable premiums.</p>
+
+<p>Verify licensing at www.psc.state.md.us before choosing suppliers.</p>
+
+<h2>Maryland Seasonal Patterns</h2>
+
+<p>Best shopping time: September-October before heating season. Maryland has humid summers and moderate winters, creating dual usage peaks.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>Maryland's market offers solid savings with strong consumer protections. Use www.mdelectricchoice.com to compare PSC-licensed suppliers, lock in fall rates, and save $250-400 annually.</p>
+`
+  },
+
+  18: {
+    title: "Massachusetts Electricity Rates: Complete MA Power Guide",
+    metaTitle: "Massachusetts Electricity Rates 2024: Compare Plans in Boston & MA | Power Scouts",
+    metaDescription: "Compare Massachusetts electricity rates from 12+ suppliers. Find lowest power prices in Boston, Worcester, Springfield. Save $250-400 yearly on MA electricity.",
+    tags: ["Massachusetts Electricity", "Boston Power", "National Grid MA", "Eversource MA", "MA Electric"],
+    content: `
+<h2>Massachusetts Electricity Market Overview</h2>
+
+<p>Massachusetts restructured its electricity market in 1998, allowing residential choice. The state Department of Public Utilities licenses competitive suppliers serving National Grid, Eversource, and Unitil customers.</p>
+
+<p>Massachusetts maintains www.mass.gov/dpu where you can compare certified suppliers and understand your options. The state enforces strict consumer protection standards.</p>
+
+<h2>Massachusetts Electricity Rates</h2>
+
+<p><strong>Boston Area (Eversource/National Grid):</strong> 8.7¢ to 12.4¢ per kWh<br>
+<strong>Worcester (National Grid):</strong> 8.6¢ to 12.3¢ per kWh<br>
+<strong>Springfield (Eversource):</strong> 8.5¢ to 12.2¢ per kWh<br>
+<strong>Cambridge (Eversource):</strong> 8.8¢ to 12.5¢ per kWh</p>
+
+<p>Average MA household using 600 kWh monthly could save $200-330 annually with competitive suppliers.</p>
+
+<div class="cta-box">
+<h3>Find MA Suppliers</h3>
+<p>Compare DPU-licensed electricity suppliers in your Massachusetts utility territory.</p>
+<a href="/compare-rates" class="cta-button">Compare MA Rates</a>
+</div>
+
+<h2>Top Massachusetts Suppliers</h2>
+
+<p><strong>Constellation:</strong> Major supplier across all MA utilities.</p>
+
+<p><strong>Direct Energy:</strong> Competitive rates and multiple plan options.</p>
+
+<p><strong>Liberty Power:</strong> Renewable energy focus.</p>
+
+<p><strong>Residents Energy:</strong> 100% renewable plans.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>Massachusetts offers competitive supplier options with strong oversight. Shop in fall, choose fixed rates, and save $200-350 yearly.</p>
+`
+  },
+
+  19: {
+    title: "Connecticut Electricity Rates: CT Power Shopping Guide",
+    metaTitle: "Connecticut Electricity Rates 2024: Compare Plans & Save | Power Scouts",
+    metaDescription: "Compare Connecticut electricity rates from 12+ suppliers. Find cheapest power in Hartford, New Haven, Stamford. Save $250-400 yearly on CT electricity.",
+    tags: ["Connecticut Electricity", "CT Power Rates", "Eversource CT", "UI Connecticut", "CT Electric"],
+    content: `
+<h2>Connecticut's Electricity Market</h2>
+
+<p>Connecticut restructured electricity in 2000. The Public Utilities Regulatory Authority (PURA) licenses competitive suppliers serving Eversource and United Illuminating customers.</p>
+
+<p>Connecticut maintains www.energizect.com to help consumers compare options and understand competitive supply choices.</p>
+
+<h2>Connecticut Electricity Rates</h2>
+
+<p><strong>Hartford (Eversource):</strong> 8.9¢ to 12.6¢ per kWh<br>
+<strong>New Haven (UI):</strong> 9.0¢ to 12.7¢ per kWh<br>
+<strong>Stamford (Eversource):</strong> 9.1¢ to 12.8¢ per kWh<br>
+<strong>Bridgeport (UI):</strong> 9.0¢ to 12.7¢ per kWh</p>
+
+<p>Average CT household using 700 kWh monthly could save $220-360 annually.</p>
+
+<div class="cta-box">
+<h3>Compare CT Rates</h3>
+<p>See all PURA-licensed suppliers serving your Connecticut utility.</p>
+<a href="/compare-rates" class="cta-button">Compare CT Rates</a>
+</div>
+
+<h2>Top Connecticut Suppliers</h2>
+
+<p><strong>Constellation:</strong> Strong CT presence.</p>
+
+<p><strong>Direct Energy:</strong> Competitive rates across both utilities.</p>
+
+<p><strong>Verde Energy:</strong> Renewable options.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>Connecticut offers moderate competition with PURA oversight. Shop annually, choose fixed rates, save $200-350 yearly.</p>
+`
+  },
+
+  20: {
+    title: "Maine Electricity Rates: Complete ME Power Comparison Guide",
+    metaTitle: "Maine Electricity Rates 2024: Compare Plans & Save | Power Scouts",
+    metaDescription: "Compare Maine electricity rates from 8+ suppliers. Find cheapest power in Portland, Bangor, Lewiston. Save $200-350 yearly on ME electricity bills.",
+    tags: ["Maine Electricity", "Portland Power", "CMP Rates", "Emera Maine", "ME Electric"],
+    content: `
+<h2>Maine's Electricity Market</h2>
+
+<p>Maine restructured electricity in 2000. The Public Utilities Commission licenses competitive suppliers serving Central Maine Power and Emera Maine customers.</p>
+
+<h2>Maine Electricity Rates</h2>
+
+<p><strong>Portland (CMP):</strong> 8.3¢ to 11.9¢ per kWh<br>
+<strong>Bangor (Emera):</strong> 8.4¢ to 12.0¢ per kWh<br>
+<strong>Lewiston (CMP):</strong> 8.2¢ to 11.8¢ per kWh</p>
+
+<p>Average Maine household using 550 kWh monthly could save $180-300 annually.</p>
+
+<div class="cta-box">
+<h3>Find ME Suppliers</h3>
+<p>Compare PUC-licensed electricity suppliers in your Maine utility territory.</p>
+<a href="/compare-rates" class="cta-button">Compare ME Rates</a>
+</div>
+
+<h2>The Bottom Line</h2>
+
+<p>Maine offers limited but real supplier competition. Shop before winter heating season, choose fixed rates, save $180-320 yearly.</p>
+`
+  },
+
+  21: {
+    title: "New Hampshire Electricity Rates: NH Power Shopping Guide",
+    metaTitle: "New Hampshire Electricity Rates 2024: Compare Plans | Power Scouts",
+    metaDescription: "Compare NH electricity rates from 8+ suppliers. Find cheapest power in Manchester, Nashua, Concord. Save $200-350 yearly on New Hampshire electricity.",
+    tags: ["New Hampshire Electricity", "NH Power Rates", "Eversource NH", "Liberty Utilities NH", "NH Electric"],
+    content: `
+<h2>New Hampshire's Electricity Market</h2>
+
+<p>New Hampshire restructured electricity in 2001. The Public Utilities Commission licenses competitive suppliers serving Eversource, Liberty Utilities, and Unitil customers.</p>
+
+<h2>New Hampshire Electricity Rates</h2>
+
+<p><strong>Manchester (Eversource):</strong> 8.6¢ to 12.2¢ per kWh<br>
+<strong>Nashua (Eversource):</strong> 8.5¢ to 12.1¢ per kWh<br>
+<strong>Concord (Eversource):</strong> 8.7¢ to 12.3¢ per kWh</p>
+
+<p>Average NH household using 600 kWh monthly could save $190-320 annually.</p>
+
+<div class="cta-box">
+<h3>Compare NH Rates</h3>
+<p>See all PUC-licensed suppliers serving your New Hampshire utility.</p>
+<a href="/compare-rates" class="cta-button">Compare NH Rates</a>
+</div>
+
+<h2>The Bottom Line</h2>
+
+<p>New Hampshire offers modest supplier competition. Shop in fall, lock in fixed rates before winter, save $180-300 yearly.</p>
+`
+  },
+
+  22: {
+    title: "Rhode Island Electricity Rates: RI Power Comparison Guide",
+    metaTitle: "Rhode Island Electricity Rates 2024: Compare Plans & Save | Power Scouts",
+    metaDescription: "Compare Rhode Island electricity rates from 8+ suppliers. Find cheapest power in Providence, Warwick, Cranston. Save $200-320 yearly on RI electricity.",
+    tags: ["Rhode Island Electricity", "RI Power Rates", "National Grid RI", "Providence Electricity", "RI Electric"],
+    content: `
+<h2>Rhode Island's Electricity Market</h2>
+
+<p>Rhode Island restructured electricity in 1997. The Public Utilities Commission licenses competitive suppliers serving National Grid customers statewide.</p>
+
+<h2>Rhode Island Electricity Rates</h2>
+
+<p><strong>Providence:</strong> 8.8¢ to 12.4¢ per kWh<br>
+<strong>Warwick:</strong> 8.7¢ to 12.3¢ per kWh<br>
+<strong>Cranston:</strong> 8.8¢ to 12.4¢ per kWh<br>
+<strong>Pawtucket:</strong> 8.7¢ to 12.3¢ per kWh</p>
+
+<p>Average RI household using 550 kWh monthly could save $180-300 annually with competitive suppliers.</p>
+
+<div class="cta-box">
+<h3>Find RI Suppliers</h3>
+<p>Compare PUC-licensed electricity suppliers serving Rhode Island.</p>
+<a href="/compare-rates" class="cta-button">Compare RI Rates</a>
+</div>
+
+<h2>Top Rhode Island Suppliers</h2>
+
+<p><strong>Constellation:</strong> Major supplier with competitive RI rates.</p>
+
+<p><strong>Direct Energy:</strong> Multiple plan options statewide.</p>
+
+<p><strong>Verde Energy:</strong> Renewable energy plans.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>Rhode Island offers limited but genuine supplier competition. Shop annually in fall, choose 12-month fixed rates, and save $170-290 yearly compared to National Grid standard rates.</p>
+`
+  }
+};
+
 export const getFullArticle = (articleId) => {
   return fullArticles[articleId] || null;
 };
