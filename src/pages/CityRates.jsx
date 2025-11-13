@@ -181,10 +181,10 @@ export default function CityRates() {
         <div className="absolute inset-0 opacity-10">
           <img src={city.image} alt={`${cityName} skyline`} className="w-full h-full object-cover" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-3xl">
             {/* Breadcrumb for SEO */}
-            <nav className="mb-6 text-sm">
+            <nav className="mb-4 text-xs">
               <Link to={createPageUrl("Home")} className="text-blue-200 hover:text-white">Home</Link>
               <span className="mx-2 text-blue-300">/</span>
               <Link to={createPageUrl("AllCities")} className="text-blue-200 hover:text-white">Service Areas</Link>
@@ -192,50 +192,50 @@ export default function CityRates() {
               <span className="text-white">{cityName}</span>
             </nav>
 
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-3">
               Cheap Electricity Rates in {cityName}, Texas
             </h1>
-            <p className="text-xl text-blue-100 mb-6">
+            <p className="text-lg text-blue-100 mb-5">
               Compare electricity plans from {city.providers}+ providers serving {city.county}. 
               Average rates starting at {city.avgRate} with potential savings up to $800/year.
             </p>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{city.avgRate}</div>
-                <div className="text-sm text-blue-100">Avg. Rate</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                <div className="text-xl font-bold mb-1">{city.avgRate}</div>
+                <div className="text-xs text-blue-100">Avg. Rate</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{city.providers}+</div>
-                <div className="text-sm text-blue-100">Providers</div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                <div className="text-xl font-bold mb-1">{city.providers}+</div>
+                <div className="text-xs text-blue-100">Providers</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{city.avgMonthlyBill}</div>
-                <div className="text-sm text-blue-100">Avg. Bill</div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                <div className="text-xl font-bold mb-1">{city.avgMonthlyBill}</div>
+                <div className="text-xs text-blue-100">Avg. Bill</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{city.population}</div>
-                <div className="text-sm text-blue-100">Population</div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                <div className="text-xl font-bold mb-1">{city.population}</div>
+                <div className="text-xs text-blue-100">Population</div>
               </div>
             </div>
 
             {/* CTA */}
             <div className="bg-white rounded-xl p-1.5 shadow-2xl max-w-2xl">
               <div className="flex flex-col sm:flex-row items-stretch gap-2">
-                <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gray-50 rounded-lg">
-                  <MapPin className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
+                <div className="flex-1 flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-lg">
+                  <MapPin className="w-4 h-4 text-[#0A5C8C] flex-shrink-0" />
                   <Input
                     type="text"
                     placeholder={`Enter ${cityName} ZIP code`}
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-gray-900 text-lg p-0 h-auto font-semibold"
+                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-gray-900 text-base p-0 h-auto font-semibold"
                     maxLength={5}
                   />
                 </div>
                 <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
-                  <Button className="w-full sm:w-auto px-8 py-6 text-lg font-bold rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full">
+                  <Button className="w-full sm:w-auto px-6 py-5 text-base font-bold rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full">
                     Compare Rates
                   </Button>
                 </Link>
