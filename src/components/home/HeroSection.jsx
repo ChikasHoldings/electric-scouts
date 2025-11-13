@@ -33,7 +33,7 @@ export default function HeroSection({ zipCode, setZipCode, onCompare }) {
 
             {/* Main Headline with Gradient */}
             <div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-5 tracking-tight">
+              <h1 className="text-4xl lg:text-5xl font-bold text-[#0A5C8C] leading-tight mb-5 tracking-tight">
                 Find the Perfect{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A]">
                   Electricity Plan
