@@ -13,6 +13,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import RenewableEnergy from './pages/RenewableEnergy';
 import Landing from './pages/Landing';
+import AllStates from './pages/AllStates';
 import Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "RenewableEnergy": RenewableEnergy,
     "Landing": Landing,
+    "AllStates": AllStates,
 }
 
 export const pagesConfig = {

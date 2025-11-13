@@ -5,80 +5,14 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Zap, Home, CheckCircle, ArrowRight, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-// Texas deregulated ZIP codes (major cities - expand as needed)
-const DEREGULATED_ZIPS = {
-  // Houston area
-  '770': 'Houston',
-  '771': 'Houston',
-  '772': 'Houston',
-  // Dallas area
-  '750': 'Dallas',
-  '751': 'Dallas',
-  '752': 'Dallas',
-  '753': 'Dallas',
-  '754': 'Dallas',
-  // Fort Worth area
-  '760': 'Fort Worth',
-  '761': 'Fort Worth',
-  '762': 'Fort Worth',
-  // Austin area
-  '787': 'Austin',
-  '786': 'Austin',
-  // San Antonio area
-  '780': 'San Antonio',
-  '781': 'San Antonio',
-  '782': 'San Antonio',
-  // Corpus Christi
-  '784': 'Corpus Christi',
-  // Plano/McKinney
-  '750': 'Plano',
-  // Irving
-  '750': 'Irving',
-  // Arlington
-  '760': 'Arlington',
-  // El Paso (regulated - for demo)
-  '799': null,
-  // Laredo
-  '780': 'Laredo',
-  // Lubbock
-  '794': 'Lubbock',
-  // Amarillo
-  '791': 'Amarillo',
-  // Abilene
-  '796': 'Abilene'
-};
-
-const validateTexasZip = (zip) => {
-  if (!zip || zip.length !== 5) return { valid: false, error: "Please enter a 5-digit ZIP code" };
-  
-  const prefix = zip.substring(0, 3);
-  const city = DEREGULATED_ZIPS[prefix];
-  
-  // Check if it's a Texas ZIP (starts with 75-79)
-  const firstTwo = zip.substring(0, 2);
-  if (parseInt(firstTwo) < 75 || parseInt(firstTwo) > 79) {
-    return { valid: false, error: "Please enter a valid Texas ZIP code" };
-  }
-  
-  // Check if it's deregulated
-  if (city === null) {
-    return { valid: false, error: "Sorry, this area isn't in the deregulated market yet", waitlist: true };
-  }
-  
-  if (!city) {
-    // Unknown ZIP but in Texas range - allow it
-    return { valid: true, city: "Texas", deregulated: true };
-  }
-  
-  return { valid: true, city, deregulated: true };
-};
+import { validateZipCode } from "./stateData";
 
 export default function ComparisonWizard({ onComplete }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     zipCode: "",
-    city: "",
+    state: "",
+    stateName: "",
     usage: 1000,
     homeType: "house",
     currentRate: ""
@@ -100,7 +34,7 @@ export default function ComparisonWizard({ onComplete }) {
   }, []);
 
   const validateAndAdvance = (zip) => {
-    const validation = validateTexasZip(zip);
+    const validation = validateZipCode(zip);
     
     if (!validation.valid) {
       setZipError(validation.error);
@@ -111,7 +45,13 @@ export default function ComparisonWizard({ onComplete }) {
     }
     
     setZipError("");
-    setFormData(prev => ({ ...prev, city: validation.city }));
+    setFormData(prev => ({ 
+      ...prev, 
+      state: validation.state,
+      stateName: validation.stateName,
+      providerCount: validation.providerCount,
+      avgSavings: validation.avgSavings
+    }));
     setStep(2);
   };
 
@@ -177,7 +117,7 @@ export default function ComparisonWizard({ onComplete }) {
                     Where do you need electricity?
                   </h2>
                   <p className="text-lg text-gray-600">
-                    Enter your Texas ZIP code to see available plans
+                    Enter your ZIP code to see available plans in your state
                   </p>
                 </div>
 
@@ -269,7 +209,7 @@ export default function ComparisonWizard({ onComplete }) {
                     How much electricity do you use?
                   </h2>
                   <p className="text-lg text-gray-600 mb-2">
-                    Serving: <span className="font-semibold text-[#0A5C8C]">{formData.city}, TX {formData.zipCode}</span>
+                    Serving: <span className="font-semibold text-[#0A5C8C]">{formData.stateName} - ZIP {formData.zipCode}</span>
                   </p>
                   <p className="text-sm text-gray-500">
                     Average household: 1,000 kWh/month
@@ -445,7 +385,7 @@ export default function ComparisonWizard({ onComplete }) {
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                     <p className="text-sm text-blue-900">
-                      <strong>Tip:</strong> Check your current electricity bill for your rate per kWh (usually under "Energy Charge")
+                      <strong>Tip:</strong> Check your current electricity bill for your rate per kWh (usually under "Energy Charge"). Average in {formData.stateName}: {formData.state === 'TX' ? '10.5¢' : formData.state === 'PA' ? '9.8¢' : formData.state === 'NY' ? '11.2¢' : '10.0¢'}/kWh
                     </p>
                   </div>
 

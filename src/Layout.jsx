@@ -53,7 +53,7 @@ export default function Layout({ children, currentPageName }) {
             <Link to={createPageUrl("Home")} className="flex items-center">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/54a98288c_ChatGPTImageNov12202508_20_04PM.png"
-                alt="Power Scouts"
+                alt="Power Scouts - Compare Electricity Rates"
                 className="h-16"
               />
             </Link>
@@ -67,12 +67,22 @@ export default function Layout({ children, currentPageName }) {
                 Providers
               </Link>
 
-              <Link
-                to={createPageUrl("AllCities")}
-                className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium"
-              >
-                Service Areas
-              </Link>
+              <div className="relative group">
+                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium">
+                  Service Areas
+                  <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
+                </button>
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-3 z-50 border border-gray-100">
+                  <div className="space-y-1.5">
+                    <Link to={createPageUrl("AllStates")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
+                      All States
+                    </Link>
+                    <Link to={createPageUrl("AllCities")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
+                      Texas Cities
+                    </Link>
+                  </div>
+                </div>
+              </div>
 
               <Link
                 to={createPageUrl("AboutUs")}
@@ -167,11 +177,11 @@ export default function Layout({ children, currentPageName }) {
             <div className="col-span-2 md:col-span-3 lg:col-span-1">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/54a98288c_ChatGPTImageNov12202508_20_04PM.png"
-                alt="Power Scouts - Compare Texas Electricity Rates"
+                alt="Power Scouts - Compare Electricity Rates Nationwide"
                 className="h-9 mb-4 brightness-0 invert"
               />
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                Your trusted electricity comparison platform for Texas. Compare rates from 40+ providers and save up to $800 per year.
+                Your trusted electricity comparison platform for deregulated markets nationwide. Compare rates from 40+ providers in TX, PA, NY, OH, IL, NJ, MD & more. Save up to $800 per year.
               </p>
               <div className="flex gap-2">
                 <a href="#" aria-label="Follow us on Facebook" className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
@@ -278,7 +288,7 @@ export default function Layout({ children, currentPageName }) {
           {/* SEO Text */}
           <div className="border-t border-gray-800 pt-8 pb-6">
             <p className="text-gray-500 text-xs leading-relaxed max-w-5xl">
-              Power Scouts is Texas' leading electricity comparison platform, helping residents and businesses across Houston, Dallas, Austin, San Antonio, Fort Worth, and all deregulated areas find the best electricity rates. Compare plans from top providers including TXU Energy, Reliant, Gexa, Direct Energy, and more. Whether you're looking for fixed rate plans, renewable energy options, or the cheapest electricity rates in Texas, we make it easy to switch and save. Our free service gives you instant access to rates from 40+ electricity providers, personalized to your ZIP code and usage. Start comparing today and join thousands of Texans who have saved on their electricity bills with Power Scouts.
+              Power Scouts is America's leading electricity comparison platform, helping residents and businesses across 17+ deregulated states find the best electricity rates. Serving Texas (Houston, Dallas, Austin), Pennsylvania (Philadelphia, Pittsburgh), New York (NYC, Buffalo), Ohio (Cleveland, Columbus), Illinois (Chicago), New Jersey, Maryland, Connecticut, Massachusetts, and more. Compare plans from top providers including TXU Energy, Reliant, Gexa, Direct Energy, Constellation, and 40+ others. Whether you're looking for fixed rate plans, renewable energy options, or the cheapest electricity rates in your state, we make it easy to switch and save. Our free service gives you instant access to rates from multiple electricity providers, personalized to your ZIP code and usage. Start comparing today and join thousands nationwide who have saved on their electricity bills with Power Scouts.
             </p>
           </div>
 
