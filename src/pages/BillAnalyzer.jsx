@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 
 export default function BillAnalyzer() {
   const [file, setFile] = useState(null);
@@ -117,6 +118,11 @@ export default function BillAnalyzer() {
   };
 
   const recommendations = showResults ? getRecommendations() : [];
+
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Bill Analyzer", url: "/bill-analyzer" }
+  ]);
 
   // Loading States
   if (isUploading) {
@@ -336,6 +342,13 @@ export default function BillAnalyzer() {
   // Upload Page
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEOHead
+        title="Free Electricity Bill Analyzer - Find Instant Savings | Power Scouts"
+        description="Upload your electricity bill and get instant AI-powered analysis. Discover better rates, calculate exact savings, find personalized plan recommendations. Free bill analysis for TX, PA, NY, OH, IL & more. Compare your current rate with 40+ providers. See how much you can save."
+        keywords="electricity bill analyzer, analyze electricity bill, electricity savings calculator, bill comparison tool, find cheaper electricity, electricity rate analyzer, power bill analysis, energy bill savings"
+        canonical="/bill-analyzer"
+        structuredData={breadcrumbData}
+      />
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

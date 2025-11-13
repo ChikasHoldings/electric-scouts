@@ -8,6 +8,7 @@ import {
   BookOpen, Zap, DollarSign, Leaf, TrendingDown, Shield, 
   Clock, Users, ArrowRight, Search, CheckCircle
 } from "lucide-react";
+import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 
 const articles = [
   {
@@ -134,8 +135,20 @@ export default function LearningCenter() {
 
   const categories = [...new Set(articles.map(a => a.category))];
 
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Learning Center", url: "/learning-center" }
+  ]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEOHead
+        title="Electricity Learning Center - Expert Guides & Tips to Save Money | Power Scouts"
+        description="Learn how to save on electricity with expert guides covering deregulation, plan types, switching providers, reading bills, and reducing usage. Tips for TX, PA, NY, OH, IL & more. Understanding fixed vs variable rates, renewable energy, contract terms, and hidden fees."
+        keywords="electricity guides, energy saving tips, electricity deregulation guide, fixed vs variable rates, how to switch electricity, lower electricity bill, electricity FAQ, energy education, power saving tips, electricity contract guide"
+        canonical="/learning-center"
+        structuredData={breadcrumbData}
+      />
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

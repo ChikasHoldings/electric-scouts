@@ -42,9 +42,9 @@ export default function AllStates() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Electricity Choice States - Compare Rates in 12 Markets | Power Scouts"
-        description="Discover states where you can choose your electricity supplier. Compare rates across Texas, Illinois, Ohio, Pennsylvania, New York, New Jersey, Maryland, Massachusetts, Maine, New Hampshire, Rhode Island, and Connecticut. Find providers and savings in your area."
-        keywords="electricity choice states, energy comparison states, competitive energy markets, electricity providers by state, choose electricity supplier"
+        title="Deregulated Electricity States - Compare Rates in 12 Markets | Power Scouts"
+        description="Compare electricity rates in 12 deregulated states: Texas (TX), Illinois (IL), Ohio (OH), Pennsylvania (PA), New York (NY), New Jersey (NJ), Maryland (MD), Massachusetts (MA), Maine (ME), New Hampshire (NH), Rhode Island (RI), Connecticut (CT). Choose your electricity supplier, compare 40+ providers, save up to $800/year. Free comparison across all competitive energy markets."
+        keywords="deregulated electricity states, electricity choice states, competitive energy markets, electricity providers by state, choose electricity supplier, states with energy choice, deregulated energy markets, electricity deregulation by state, energy competition states"
         canonical="/all-states"
         structuredData={breadcrumbData}
       />

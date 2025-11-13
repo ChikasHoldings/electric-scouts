@@ -403,9 +403,24 @@ export default function Layout({ children, currentPageName }) {
 
           {/* SEO Text */}
           <div className="border-t border-gray-800 pt-6 pb-6">
-            <p className="text-gray-500 text-xs leading-relaxed max-w-5xl">
-              Power Scouts is America's leading electricity comparison platform, helping residents and businesses across 12 deregulated states find the best electricity rates. Serving Texas (Houston, Dallas, Austin), Illinois (Chicago), Ohio (Cleveland, Columbus), Pennsylvania (Philadelphia, Pittsburgh), New York (NYC, Buffalo), New Jersey (Newark, Jersey City), Maryland (Baltimore), Massachusetts (Boston), Maine (Portland), New Hampshire (Manchester), Rhode Island (Providence), and Connecticut (Hartford). Compare plans from top providers including TXU Energy, Reliant, Gexa, Direct Energy, Constellation, and 40+ others. Whether you're looking for fixed rate plans, renewable energy options, or the cheapest electricity rates in your state, we make it easy to switch and save. Our free service gives you instant access to rates from multiple electricity providers, personalized to your ZIP code and usage. Start comparing today and join thousands nationwide who have saved on their electricity bills with Power Scouts.
-            </p>
+            <div className="mb-6">
+              <h3 className="text-white text-sm font-bold mb-3 uppercase tracking-wider">About Power Scouts</h3>
+              <p className="text-gray-400 text-xs leading-relaxed max-w-5xl">
+                Power Scouts is America's leading electricity comparison platform, helping residents and businesses across 12 deregulated states find the best electricity rates. We serve Texas (Houston, Dallas, Austin, San Antonio, Fort Worth), Illinois (Chicago, Aurora, Naperville), Ohio (Columbus, Cleveland, Cincinnati), Pennsylvania (Philadelphia, Pittsburgh, Allentown), New York (NYC, Buffalo, Rochester), New Jersey (Newark, Jersey City), Maryland (Baltimore), Massachusetts (Boston, Worcester), Maine (Portland), New Hampshire (Manchester), Rhode Island (Providence), and Connecticut (Hartford, New Haven, Bridgeport).
+              </p>
+            </div>
+            <div className="mb-6">
+              <h3 className="text-white text-sm font-bold mb-3 uppercase tracking-wider">Compare Electricity Providers</h3>
+              <p className="text-gray-400 text-xs leading-relaxed max-w-5xl">
+                Compare plans from top electricity companies including TXU Energy, Reliant Energy, Gexa Energy, Direct Energy, Constellation Energy, Green Mountain Energy, Pulse Power, Champion Energy, Frontier Utilities, Rhythm Energy, and 40+ other trusted providers. Find fixed rate electricity plans, variable rate plans, renewable energy options, prepaid electricity, month-to-month plans, and long-term contracts. Our platform helps you compare electricity rates per kWh, estimated monthly bills, contract terms, renewable percentages, early termination fees, and customer reviews all in one place.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-white text-sm font-bold mb-3 uppercase tracking-wider">Why Choose Your Electricity Provider</h3>
+              <p className="text-gray-400 text-xs leading-relaxed max-w-5xl">
+                In deregulated electricity markets, competition among providers creates lower rates and better service. Whether you're looking for the cheapest electricity rates, 100% renewable green energy plans, fixed rate protection, flexible month-to-month options, or plans with no deposit requirements, our free comparison service makes it easy to find and switch to better electricity plans. Save up to $800 per year on your electricity bill by comparing rates today. Our instant comparison tool is completely free with no credit card required, no hidden fees, and no obligations. Start saving on electricity now.
+              </p>
+            </div>
           </div>
 
           <div className="border-t border-gray-700 pt-6">
@@ -415,7 +430,8 @@ export default function Layout({ children, currentPageName }) {
             <p className="text-gray-400 text-xs text-center">
               © {new Date().getFullYear()} Power Scouts. All rights reserved. | 
               <Link to={createPageUrl("PrivacyPolicy")} className="hover:text-white transition-colors ml-1">Privacy Policy</Link> | 
-              <Link to={createPageUrl("TermsOfService")} className="hover:text-white transition-colors ml-1">Terms of Service</Link>
+              <Link to={createPageUrl("TermsOfService")} className="hover:text-white transition-colors ml-1">Terms of Service</Link> | 
+              <Link to={createPageUrl("AboutUs")} className="hover:text-white transition-colors ml-1">About Us</Link>
             </p>
           </div>
         </div>

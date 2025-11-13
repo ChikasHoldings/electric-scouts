@@ -13,8 +13,8 @@ const faqCategories = [
     questions: [
       {
         id: 1,
-        question: "How does the Texas electricity market work?",
-        answer: "Texas has a deregulated electricity market, meaning you can choose your electricity provider. Unlike other states where you're assigned a utility company, Texans can shop for the best rates and plans. Your local utility company still maintains the power lines and handles outages, but you choose who supplies your electricity."
+        question: "How does electricity deregulation work?",
+        answer: "In deregulated electricity markets across 12 states (TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT), you can choose your electricity provider. Unlike regulated states where you're assigned a utility company, residents in deregulated markets can shop for the best rates and plans. Your local utility company still maintains the power lines and handles outages, but you choose who supplies your electricity and at what rate."
       },
       {
         id: 2,
@@ -24,12 +24,12 @@ const faqCategories = [
       {
         id: 3,
         question: "How do I compare electricity rates?",
-        answer: "Simply enter your ZIP code and monthly usage on our comparison tool. We'll show you available plans from 40+ providers, sorted by rate. You can filter by plan type, contract length, and renewable energy options. Each plan shows the estimated monthly cost based on your usage."
+        answer: "Simply enter your ZIP code and monthly usage on our comparison tool. We'll show you available plans from 40+ providers in your state, sorted by rate. You can filter by plan type, contract length, and renewable energy options. Each plan shows the estimated monthly cost based on your usage. Our tool works across all 12 deregulated states."
       },
       {
         id: 4,
         question: "What information do I need to compare rates?",
-        answer: "You'll need your ZIP code and an estimate of your monthly electricity usage (in kWh). You can find your usage on your current electricity bill. If you don't know your usage, 1,000 kWh is a good average for most Texas homes."
+        answer: "You'll need your ZIP code and an estimate of your monthly electricity usage (in kWh). You can find your usage on your current electricity bill. If you don't know your usage, 1,000 kWh is a good average for most homes (though usage varies by climate and home size)."
       }
     ]
   },
@@ -44,17 +44,17 @@ const faqCategories = [
       {
         id: 6,
         question: "What is a kWh?",
-        answer: "A kilowatt-hour (kWh) is the unit used to measure electricity consumption. One kWh equals 1,000 watts used for one hour. For example, running a 100-watt light bulb for 10 hours uses 1 kWh. The average Texas home uses about 1,000-1,200 kWh per month."
+        answer: "A kilowatt-hour (kWh) is the unit used to measure electricity consumption. One kWh equals 1,000 watts used for one hour. For example, running a 100-watt light bulb for 10 hours uses 1 kWh. The average home uses about 800-1,200 kWh per month, depending on climate, home size, and efficiency."
       },
       {
         id: 7,
         question: "How long should my contract be?",
-        answer: "Most Texans choose 12 or 24-month fixed-rate plans for the best balance of savings and flexibility. Longer contracts often have lower rates but less flexibility. Shorter contracts (3-6 months) offer more flexibility but typically higher rates. Month-to-month plans provide maximum flexibility with variable rates."
+        answer: "Most people choose 12 or 24-month fixed-rate plans for the best balance of savings and flexibility. Longer contracts often have lower rates but less flexibility. Shorter contracts (3-6 months) offer more flexibility but typically higher rates. Month-to-month plans provide maximum flexibility with variable rates."
       },
       {
         id: 8,
         question: "What are renewable energy plans?",
-        answer: "Renewable energy plans source electricity from clean, sustainable sources like Texas wind and solar farms. Many providers offer 100% renewable plans at competitive rates. These plans help reduce your carbon footprint and support clean energy development in Texas."
+        answer: "Renewable energy plans source electricity from clean, sustainable sources like wind and solar farms. Many providers offer 100% renewable plans at competitive rates across all 12 deregulated states. These plans help reduce your carbon footprint and support clean energy development nationwide."
       },
       {
         id: 9,
@@ -169,9 +169,9 @@ export default function FAQ() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Electricity FAQ - Common Questions About Energy Plans | Power Scouts"
-        description="Get answers to frequently asked questions about electricity deregulation, switching providers, plan types, rates, and saving money on your energy bill."
-        keywords="electricity FAQ, energy questions, electricity rates FAQ, switching providers, electricity deregulation questions"
+        title="Electricity FAQ - 22+ Common Questions Answered | Power Scouts"
+        description="Get answers to frequently asked questions about electricity deregulation, switching providers, plan types, rates, billing, contracts & saving money. Expert guidance for TX, PA, NY, OH, IL, NJ, MD, MA & more. Learn about fixed vs variable rates, kWh usage, early termination fees, renewable energy, deposits & more."
+        keywords="electricity FAQ, energy questions, electricity rates FAQ, switching providers FAQ, electricity deregulation questions, how to switch electricity, electricity bill questions, kWh explained, contract length guide, early termination fee, renewable energy FAQ, electricity deposit requirements"
         canonical="/faq"
         structuredData={[faqSchema, breadcrumbData]}
       />
@@ -183,7 +183,7 @@ export default function FAQ() {
               Frequently Asked Questions
             </h1>
             <p className="text-lg text-blue-100">
-              Everything you need to know about Texas electricity
+              Everything you need to know about choosing your electricity provider
             </p>
           </div>
         </div>
@@ -274,7 +274,7 @@ export default function FAQ() {
                 Still Have Questions?
               </h2>
               <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                Our energy experts are here to help you find the perfect electricity plan for your needs
+                Our energy experts are here to help you find the perfect electricity plan across all 12 deregulated states
               </p>
               
               <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">

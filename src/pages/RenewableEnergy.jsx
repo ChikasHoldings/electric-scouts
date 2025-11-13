@@ -11,6 +11,7 @@ import {
   Shield, Heart, MapPin, ArrowRight, ChevronDown, Zap,
   Award, Globe, Sprout
 } from "lucide-react";
+import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function RenewableEnergy() {
   const [zipCode, setZipCode] = useState("");
@@ -32,7 +33,7 @@ export default function RenewableEnergy() {
     {
       icon: Heart,
       title: "Environmental Impact",
-      description: "Reduce your carbon footprint by supporting clean, renewable energy from Texas wind and solar farms"
+      description: "Reduce your carbon footprint by supporting clean, renewable energy from wind and solar farms nationwide"
     },
     {
       icon: TrendingDown,
@@ -47,7 +48,7 @@ export default function RenewableEnergy() {
     {
       icon: Award,
       title: "Support Clean Energy",
-      description: "Your choice directly supports the growth of renewable energy infrastructure in Texas"
+      description: "Your choice directly supports the growth of renewable energy infrastructure across America"
     }
   ];
 
@@ -56,36 +57,36 @@ export default function RenewableEnergy() {
       icon: Wind,
       title: "Wind Energy",
       color: "blue",
-      description: "Texas is the #1 wind energy producer in the US, with over 150 wind farms generating clean electricity",
-      percentage: "~26%",
-      stat: "of Texas power"
+      description: "Wind farms across TX, PA, OH, IL, and other states generate clean electricity from renewable wind resources",
+      percentage: "Leading",
+      stat: "renewable source"
     },
     {
       icon: Sun,
       title: "Solar Energy",
       color: "yellow",
-      description: "Rapidly growing solar capacity across Texas, harnessing abundant sunshine to power homes and businesses",
-      percentage: "~5%",
-      stat: "and growing fast"
+      description: "Rapidly growing solar capacity nationwide, harnessing sunshine to power homes and businesses",
+      percentage: "Fastest",
+      stat: "growing source"
     },
     {
       icon: Droplet,
       title: "Hydro & Other",
       color: "cyan",
-      description: "Hydroelectric and other renewable sources contribute to Texas' diverse clean energy portfolio",
-      percentage: "~1%",
-      stat: "of the mix"
+      description: "Hydroelectric and other renewable sources contribute to America's diverse clean energy portfolio",
+      percentage: "Clean",
+      stat: "& reliable"
     }
   ];
 
   const myths = [
     {
       myth: "Renewable energy is more expensive",
-      reality: "Many renewable plans are competitively priced and can actually save you money. Texas' abundant wind resources make clean energy affordable."
+      reality: "Many renewable plans are competitively priced and can actually save you money. Abundant wind and solar resources make clean energy affordable nationwide."
     },
     {
       myth: "Renewable energy isn't reliable",
-      reality: "Texas' diverse renewable portfolio (wind, solar, hydro) combined with the state's robust grid infrastructure ensures reliable power delivery 24/7."
+      reality: "Diverse renewable energy sources (wind, solar, hydro) combined with modern grid infrastructure ensure reliable power delivery 24/7 across all states."
     },
     {
       myth: "Switching to renewable is complicated",
@@ -125,8 +126,23 @@ export default function RenewableEnergy() {
     }
   ];
 
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Resources", url: "/learning-center" },
+    { name: "Renewable Energy", url: "/renewable-energy" }
+  ]);
+
+  const faqSchema = getFAQSchema(faqs);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEOHead
+        title="100% Renewable Energy Plans - Green Electricity Rates Across 12 States | Power Scouts"
+        description="Compare 100% renewable energy plans from wind and solar in TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT. Green electricity at competitive rates. 50+ clean energy plans. Reduce carbon footprint. Save money while supporting renewable energy. Fixed & variable green energy rates. Switch to solar and wind power today."
+        keywords="renewable energy plans, 100% green energy, renewable electricity, solar energy plans, wind energy plans, clean energy, green electricity providers, renewable energy rates, eco-friendly electricity, sustainable energy plans, carbon-free electricity, green power, renewable energy Texas, renewable energy Pennsylvania, renewable energy New York, wind power plans, solar power plans"
+        canonical="/renewable-energy"
+        structuredData={[breadcrumbData, faqSchema]}
+      />
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white py-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -143,10 +159,10 @@ export default function RenewableEnergy() {
               <Sun className="w-12 h-12" />
             </div>
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
-              100% Renewable Energy Plans in Texas
+              100% Renewable Energy Plans Across America
             </h1>
             <p className="text-lg text-green-100">
-              Power your home with clean energy from Texas wind and solar farms. Good for the planet, great for your wallet.
+              Power your home with clean energy from wind and solar farms. Good for the planet, great for your wallet. Available in 12 states.
             </p>
           </div>
         </div>
@@ -161,8 +177,8 @@ export default function RenewableEnergy() {
               <div className="text-sm text-gray-600">Renewable Plans</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-green-600 mb-1">26%</div>
-              <div className="text-sm text-gray-600">Texas Wind Power</div>
+              <div className="text-3xl font-bold text-green-600 mb-1">12</div>
+              <div className="text-sm text-gray-600">States Available</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-green-600 mb-1">7-10</div>
@@ -230,6 +246,23 @@ export default function RenewableEnergy() {
           </Card>
         </section>
 
+        {/* SEO Content Section */}
+        <section className="mb-16">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Clean Energy Plans Across 12 States
+            </h2>
+            <div className="prose prose-lg max-w-none text-gray-700">
+              <p className="text-base leading-relaxed mb-4">
+                Renewable energy plans are now available across Texas, Pennsylvania, New York, Ohio, Illinois, New Jersey, Maryland, Massachusetts, Maine, New Hampshire, Rhode Island, and Connecticut. These 100% renewable electricity plans source power from wind farms, solar installations, and other clean energy sources, allowing you to reduce your carbon footprint without installing solar panels or making any changes to your home.
+              </p>
+              <p className="text-base leading-relaxed">
+                Whether you're in Houston, Dallas, Chicago, Philadelphia, New York City, or any other city in a deregulated market, you can choose from dozens of renewable energy providers offering competitive rates. Many green energy plans are priced similarly to traditional electricity plans, and some are even cheaper. By choosing renewable energy, you're supporting the growth of clean energy infrastructure while potentially saving money on your monthly electricity bills.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Benefits Section */}
         <section className="mb-20">
           <div className="text-center mb-12">
@@ -265,10 +298,10 @@ export default function RenewableEnergy() {
         <section className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Renewable Energy Sources in Texas
+              Renewable Energy Sources
             </h2>
             <p className="text-xl text-gray-600">
-              Texas leads the nation in renewable energy production
+              Clean energy from wind, solar, and hydroelectric sources
             </p>
           </div>
 
@@ -300,7 +333,7 @@ export default function RenewableEnergy() {
                 Featured Renewable Energy Plans
               </h2>
               <p className="text-xl text-gray-600">
-                Current 100% renewable plans available across Texas
+                Current 100% renewable plans available in your area
               </p>
             </div>
 
@@ -425,7 +458,7 @@ export default function RenewableEnergy() {
                       <CheckCircle className="w-6 h-6 flex-shrink-0 mt-1" />
                       <div>
                         <div className="font-bold mb-1">Support Clean Energy Growth</div>
-                        <div className="text-green-100">Drive investment in Texas wind and solar farms</div>
+                        <div className="text-green-100">Drive investment in wind and solar farms nationwide</div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
