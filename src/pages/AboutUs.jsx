@@ -15,7 +15,7 @@ export default function AboutUs() {
               About Power Scouts
             </h1>
             <p className="text-lg text-blue-100">
-              Empowering Texans to make smarter energy choices since 2019
+              Empowering Americans to make smarter energy choices since 2019
             </p>
           </div>
         </div>
@@ -63,17 +63,18 @@ export default function AboutUs() {
             <div className="prose prose-lg max-w-none">
               <p className="text-xl text-gray-600 leading-relaxed mb-6">
                 Founded in 2019, Power Scouts was created to solve a simple problem: finding the 
-                right electricity plan in Texas's deregulated market shouldn't be complicated or 
+                right electricity plan in competitive energy markets shouldn't be complicated or 
                 time-consuming.
               </p>
               <p className="text-xl text-gray-600 leading-relaxed mb-6">
                 With over 100 years of combined industry experience, our team of energy experts 
-                has helped tens of thousands of Texans navigate the complex world of electricity 
+                has helped tens of thousands of households across 12 states navigate the complex world of electricity 
                 providers and plans. We're proud to maintain a 4.8-star rating with over 1,200 
                 Google reviews.
               </p>
               <p className="text-xl text-gray-600 leading-relaxed">
-                Today, we continue to empower Texas residents and businesses to make informed 
+                Today, we continue to empower residents and businesses in Texas, Pennsylvania, New York, 
+                Illinois, Ohio, New Jersey, Maryland, Massachusetts, and beyond to make informed 
                 decisions about their energy needs, saving them time, money, and hassle along the way.
               </p>
             </div>
@@ -87,7 +88,7 @@ export default function AboutUs() {
             <div className="bg-white rounded-2xl shadow-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Free Comparison Service</h3>
               <p className="text-lg text-gray-600 leading-relaxed">
-                We provide a completely free electricity plan comparison service for Texas residents. 
+                We provide a completely free electricity plan comparison service across 12 competitive energy markets. 
                 Our platform allows you to instantly compare rates from 40+ electricity providers, 
                 helping you find the perfect plan based on your ZIP code, usage, and preferences.
               </p>
@@ -96,8 +97,8 @@ export default function AboutUs() {
             <div className="bg-white rounded-2xl shadow-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Expert Guidance</h3>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Our team of energy experts is here to help you understand the Texas electricity 
-                market. From fixed vs. variable rates to renewable energy options, we provide 
+                Our team of energy experts is here to help you understand competitive electricity 
+                markets. From fixed vs. variable rates to renewable energy options, we provide 
                 clear, unbiased information to help you make informed decisions.
               </p>
             </div>
@@ -178,7 +179,7 @@ export default function AboutUs() {
                     <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">Comprehensive Coverage</div>
-                      <div className="text-gray-600">Access to 40+ providers and thousands of electricity plans across Texas</div>
+                      <div className="text-gray-600">Access to 40+ providers and thousands of electricity plans across 12 states</div>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -240,7 +241,7 @@ export default function AboutUs() {
             Ready to Start Saving on Electricity?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of Texans who trust Power Scouts to find the best electricity rates
+            Join thousands of households nationwide who trust Power Scouts to find the best electricity rates
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
