@@ -75,9 +75,10 @@ export default function AboutSection() {
           {/* Content */}
           <div className="order-1 lg:order-2 space-y-4">
             <p className="text-base text-gray-600 leading-relaxed">
-              Our goal is simple. To empower you by simplifying your search for electricity 
-              companies and plans. Whether you're looking for the cheapest electricity rate 
-              or a plan that fits your needs, we're here to help you make the best choice.
+              We've cracked the code on Texas electricity shopping. While other comparison sites 
+              overwhelm you with options, we cut through the noise to surface only the plans that 
+              truly save you money. No gimmicks, no hidden fees—just transparent rates from 
+              trusted providers, backed by our team of energy experts who monitor the market daily.
             </p>
 
             {/* Stats List */}
