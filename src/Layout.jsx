@@ -85,37 +85,32 @@ export default function Layout({ children, currentPageName }) {
                   Service Areas
                   <ChevronDown className={`w-4 h-4 transition-transform ${serviceAreaOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className={`absolute top-full right-0 mt-2 w-[520px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
+                <div className={`absolute top-full right-0 mt-2 w-[480px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
                   serviceAreaOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
                 }`}>
-                  <div className="p-5">
-                    <div className="grid grid-cols-2 gap-6">
+                  <div className="p-4">
+                    <div className="grid grid-cols-2 gap-5">
                       {/* States Column */}
                       <div>
-                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
+                        <div className="flex items-center gap-2 mb-2.5 pb-2 border-b border-gray-100">
                           <Building className="w-4 h-4 text-[#0A5C8C]" />
                           <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide">States</h3>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           {topStates.map((state, index) => (
                             <Link 
                               key={index}
                               to={createPageUrl(state.page)} 
-                              className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium group"
+                              className="block px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
                               onClick={() => setServiceAreaOpen(false)}
                             >
-                              <div className="flex items-center justify-between">
-                                <span>{state.name}</span>
-                                <span className="text-xs text-gray-400 group-hover:text-[#0A5C8C] transition-colors">
-                                  {state.code}
-                                </span>
-                              </div>
+                              {state.name}
                             </Link>
                           ))}
                         </div>
                         <Link 
                           to={createPageUrl("AllStates")} 
-                          className="block mt-3 pt-3 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
+                          className="block mt-2.5 pt-2.5 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
                           onClick={() => setServiceAreaOpen(false)}
                         >
                           View All States →
@@ -124,16 +119,16 @@ export default function Layout({ children, currentPageName }) {
 
                       {/* Cities Column */}
                       <div>
-                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
+                        <div className="flex items-center gap-2 mb-2.5 pb-2 border-b border-gray-100">
                           <MapPin className="w-4 h-4 text-[#0A5C8C]" />
                           <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide">Cities</h3>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           {topCities.map((city, index) => (
                             <Link 
                               key={index}
                               to={createPageUrl("CityRates") + `?city=${city}`} 
-                              className="block px-3 py-2.5 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
+                              className="block px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
                               onClick={() => setServiceAreaOpen(false)}
                             >
                               {city}
@@ -142,7 +137,7 @@ export default function Layout({ children, currentPageName }) {
                         </div>
                         <Link 
                           to={createPageUrl("AllCities")} 
-                          className="block mt-3 pt-3 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
+                          className="block mt-2.5 pt-2.5 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
                           onClick={() => setServiceAreaOpen(false)}
                         >
                           View All Cities →
