@@ -492,7 +492,7 @@ export default function CityRates() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {cityPlans.map((plan) => {
+                      {topPlans.map((plan) => {
                         const monthlyBill = ((plan.rate_per_kwh / 100) * usage) + (plan.monthly_base_charge || 0);
                         return (
                           <tr key={plan.id} className="hover:bg-gray-50 transition-colors">
