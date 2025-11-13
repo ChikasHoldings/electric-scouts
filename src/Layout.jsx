@@ -228,7 +228,7 @@ export default function Layout({ children, currentPageName }) {
             {/* Menu Header */}
             <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-[#0A5C8C] to-[#084a6f]">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/54a98288c_ChatGPTImageNov12202508_20_04PM.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/100c53ddb_ChatGPTImageNov12202509_09_31PM.png"
                 alt="Power Scouts"
                 className="h-10"
               />
