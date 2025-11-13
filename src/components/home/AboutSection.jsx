@@ -63,7 +63,7 @@ export default function AboutSection() {
           </div>
 
           {/* Content */}
-          <div className="order-1 lg:order-2 space-y-6">
+          <div className="order-1 lg:order-2 space-y-4 text-center lg:text-left">
             <div className="inline-block">
               <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-full px-3 py-1.5 border border-blue-100">
                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
