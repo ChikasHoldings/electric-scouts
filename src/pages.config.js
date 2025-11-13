@@ -14,6 +14,8 @@ import TermsOfService from './pages/TermsOfService';
 import RenewableEnergy from './pages/RenewableEnergy';
 import Landing from './pages/Landing';
 import AllStates from './pages/AllStates';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import Layout from './Layout.jsx';
 
 
@@ -34,6 +36,8 @@ export const PAGES = {
     "RenewableEnergy": RenewableEnergy,
     "Landing": Landing,
     "AllStates": AllStates,
+    "Blog": Blog,
+    "BlogPost": BlogPost,
 }
 
 export const pagesConfig = {
