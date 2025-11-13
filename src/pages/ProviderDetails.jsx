@@ -225,10 +225,10 @@ export default function ProviderDetails() {
           <div className="absolute inset-0 bg-gradient-to-br from-white to-transparent"></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-4xl">
             {/* Breadcrumb for SEO */}
-            <nav className="mb-6 text-sm">
+            <nav className="mb-4 text-xs">
               <Link to={createPageUrl("Home")} className="text-blue-200 hover:text-white">Home</Link>
               <span className="mx-2 text-blue-300">/</span>
               <Link to={createPageUrl("AllProviders")} className="text-blue-200 hover:text-white">Providers</Link>
@@ -236,57 +236,57 @@ export default function ProviderDetails() {
               <span className="text-white">{providerName}</span>
             </nav>
 
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="grid lg:grid-cols-2 gap-6 items-center">
               <div>
                 {/* Provider Logo */}
-                <div className="bg-white rounded-xl px-6 py-4 inline-block mb-6 shadow-lg">
+                <div className="bg-white rounded-xl px-6 py-3 inline-block mb-4 shadow-lg">
                   <img 
                     src={provider.logo} 
                     alt={`${providerName} logo`}
-                    className="h-12 w-auto object-contain"
+                    className="h-10 w-auto object-contain"
                   />
                 </div>
 
-                <h1 className="text-4xl lg:text-5xl font-bold mb-4">
+                <h1 className="text-3xl lg:text-4xl font-bold mb-3">
                   {providerName} Electricity Plans
                 </h1>
-                <p className="text-xl text-blue-100 mb-6">
+                <p className="text-lg text-blue-100 mb-5">
                   {provider.description}
                 </p>
 
                 {/* Rating */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="text-2xl font-bold">{provider.rating}</span>
-                    <span className="text-blue-100">({provider.reviews} reviews)</span>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xl font-bold">{provider.rating}</span>
+                    <span className="text-blue-100 text-sm">({provider.reviews} reviews)</span>
                   </div>
                 </div>
               </div>
 
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                  <div className="text-2xl font-bold mb-1">{provider.minRate}</div>
-                  <div className="text-sm text-blue-100">Starting Rate</div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <div className="text-xl font-bold mb-1">{provider.minRate}</div>
+                  <div className="text-xs text-blue-100">Starting Rate</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                  <div className="text-2xl font-bold mb-1">{provider.planCount}+</div>
-                  <div className="text-sm text-blue-100">Available Plans</div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <div className="text-xl font-bold mb-1">{provider.planCount}+</div>
+                  <div className="text-xs text-blue-100">Available Plans</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                  <div className="text-2xl font-bold mb-1">{provider.customerCount}</div>
-                  <div className="text-sm text-blue-100">Customers</div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <div className="text-xl font-bold mb-1">{provider.customerCount}</div>
+                  <div className="text-xs text-blue-100">Customers</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                  <div className="text-2xl font-bold mb-1">{provider.cities.length}+</div>
-                  <div className="text-sm text-blue-100">Texas Cities</div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                  <div className="text-xl font-bold mb-1">{provider.cities.length}+</div>
+                  <div className="text-xs text-blue-100">Texas Cities</div>
                 </div>
               </div>
             </div>
 
             {/* CTA */}
-            <div className="mt-8 bg-white rounded-xl p-1.5 shadow-2xl max-w-2xl">
+            <div className="mt-6 bg-white rounded-xl p-1.5 shadow-2xl max-w-2xl">
               <div className="flex flex-col sm:flex-row items-stretch gap-2">
                 <div className="flex-1 flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-lg">
                   <MapPin className="w-4 h-4 text-[#0A5C8C] flex-shrink-0" />
