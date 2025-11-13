@@ -99,7 +99,7 @@ export default function TestimonialsSection() {
             <span className="text-gray-400">•</span>
             <span className="text-sm text-gray-700 font-semibold">1,200+ Verified Reviews</span>
           </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
             Trusted by Thousands of Texans
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -124,9 +124,6 @@ export default function TestimonialsSection() {
               Show More Reviews
               <Star className="w-4 h-4 ml-2 fill-amber-400 text-amber-400" />
             </Button>
-            <p className="text-sm text-gray-500 mt-3">
-              Showing {visibleCount} of {testimonials.length} reviews
-            </p>
           </div>
         )}
       </div>
