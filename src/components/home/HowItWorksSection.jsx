@@ -5,35 +5,35 @@ import { createPageUrl } from "@/utils";
 import { MapPin, Search, Zap, ArrowRight } from "lucide-react";
 
 const steps = [
-  {
-    number: "01",
-    icon: MapPin,
-    title: "Enter your ZIP code",
-    description: "Enter Your Zip Code to view the best electricity rates in your area.",
-    gradient: "from-blue-500 to-cyan-500"
-  },
-  {
-    number: "02",
-    icon: Search,
-    title: "Shop and compare plans",
-    description: "Shop & compare plans for one that fits your lifestyle.",
-    gradient: "from-purple-500 to-pink-500"
-  },
-  {
-    number: "03",
-    icon: Zap,
-    title: "Sign up in minutes",
-    description: "Sign-up in minutes online or over the phone- it's that simple.",
-    gradient: "from-orange-500 to-red-500"
-  }
-];
+{
+  number: "01",
+  icon: MapPin,
+  title: "Enter your ZIP code",
+  description: "Enter Your Zip Code to view the best electricity rates in your area.",
+  gradient: "from-blue-500 to-cyan-500"
+},
+{
+  number: "02",
+  icon: Search,
+  title: "Shop and compare plans",
+  description: "Shop & compare plans for one that fits your lifestyle.",
+  gradient: "from-purple-500 to-pink-500"
+},
+{
+  number: "03",
+  icon: Zap,
+  title: "Sign up in minutes",
+  description: "Sign-up in minutes online or over the phone- it's that simple.",
+  gradient: "from-orange-500 to-red-500"
+}];
+
 
 export default function HowItWorksSection() {
   return (
     <section className="py-16 lg:py-20 bg-gradient-to-b from-gray-50 via-white to-gray-50 relative overflow-hidden">
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
+        <div className="bg-slate-50 absolute inset-0" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, #000 1px, transparent 0)`,
           backgroundSize: '40px 40px'
         }}></div>
@@ -59,8 +59,8 @@ export default function HowItWorksSection() {
           <div className="hidden lg:block absolute top-16 left-[16.66%] right-[16.66%] h-0.5 bg-gradient-to-r from-blue-200 via-purple-200 to-orange-200"></div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {steps.map((step, index) => (
-              <div key={index} className="relative group">
+            {steps.map((step, index) =>
+            <div key={index} className="relative group">
                 {/* Step Card */}
                 <div className="relative">
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-teal-600 rounded-2xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
@@ -87,7 +87,7 @@ export default function HowItWorksSection() {
                   </div>
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -97,10 +97,10 @@ export default function HowItWorksSection() {
           <p className="text-base text-gray-300 mb-6">Compare rates and switch in minutes</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to={createPageUrl("CompareRates")}>
-              <Button 
+              <Button
                 size="lg"
-                className="group bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold px-10 py-5 text-base rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-              >
+                className="group bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold px-10 py-5 text-base rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+
                 Compare Rates Now
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
@@ -114,6 +114,6 @@ export default function HowItWorksSection() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
