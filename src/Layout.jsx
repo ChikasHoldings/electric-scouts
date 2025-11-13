@@ -149,13 +149,6 @@ export default function Layout({ children, currentPageName }) {
                 About Us
               </Link>
 
-              <Link
-                to={createPageUrl("UserSettings")}
-                className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium"
-              >
-                Settings
-              </Link>
-
               <div className="relative group">
                 <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-lg font-medium">
                   Resources
@@ -177,15 +170,6 @@ export default function Layout({ children, currentPageName }) {
               </div>
             </nav>
 
-            {/* Compare Rates Button */}
-            <div className="hidden lg:block">
-              <Link to={createPageUrl("CompareRates")}>
-                <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-semibold px-6 py-2 text-lg rounded-lg transition-all duration-300">
-                  Compare Rates
-                </Button>
-              </Link>
-            </div>
-
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -200,9 +184,6 @@ export default function Layout({ children, currentPageName }) {
         {mobileMenuOpen && (
           <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
             <div className="max-w-7xl mx-auto px-4 py-4 space-y-3">
-              <Link to={createPageUrl("CompareRates")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                Compare Rates
-              </Link>
               <Link to={createPageUrl("AllProviders")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Providers
               </Link>
@@ -211,9 +192,6 @@ export default function Layout({ children, currentPageName }) {
               </Link>
               <Link to={createPageUrl("AboutUs")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 About Us
-              </Link>
-              <Link to={createPageUrl("UserSettings")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                Settings
               </Link>
               <Link to={createPageUrl("Blog")} className="block text-gray-700 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Blog

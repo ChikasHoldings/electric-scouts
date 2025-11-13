@@ -1,5 +1,4 @@
 import Home from './pages/Home';
-import CompareRates from './pages/CompareRates';
 import AboutUs from './pages/AboutUs';
 import FAQ from './pages/FAQ';
 import BusinessRates from './pages/BusinessRates';
@@ -28,13 +27,11 @@ import MaineElectricity from './pages/MaineElectricity';
 import NewHampshireElectricity from './pages/NewHampshireElectricity';
 import RhodeIslandElectricity from './pages/RhodeIslandElectricity';
 import ConnecticutElectricity from './pages/ConnecticutElectricity';
-import UserSettings from './pages/UserSettings';
 import Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Home": Home,
-    "CompareRates": CompareRates,
     "AboutUs": AboutUs,
     "FAQ": FAQ,
     "BusinessRates": BusinessRates,
@@ -63,7 +60,6 @@ export const PAGES = {
     "NewHampshireElectricity": NewHampshireElectricity,
     "RhodeIslandElectricity": RhodeIslandElectricity,
     "ConnecticutElectricity": ConnecticutElectricity,
-    "UserSettings": UserSettings,
 }
 
 export const pagesConfig = {
