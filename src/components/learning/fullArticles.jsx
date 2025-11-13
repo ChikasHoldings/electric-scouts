@@ -1187,6 +1187,250 @@ Solution: Read the ESCO disclosure form carefully. Check contract length, early 
   }
 };
 
+  14: {
+    title: "Ohio Electricity Rates: Compare OH Power Plans & Save Money",
+    metaTitle: "Ohio Electricity Rates 2024: Compare Cheapest Plans in Cleveland, Columbus | Power Scouts",
+    metaDescription: "Compare Ohio electricity rates from 20+ suppliers. Find lowest power prices in Cleveland, Columbus, Cincinnati. Save $350-550 yearly on OH electricity bills.",
+    tags: ["Ohio Electricity", "Cleveland Power", "Columbus Electricity", "AEP Ohio", "Duke Energy OH"],
+    content: `
+<h2>Ohio's Competitive Electricity Market Explained</h2>
+
+<p>Ohio deregulated its electricity market in 2001, giving residential and business customers across most of the state the power to choose their electricity supplier. Today, approximately 20+ competitive retail electric suppliers (CRES providers) serve Ohio homes, creating opportunities for significant savings.</p>
+
+<p>Ohio's market operates under strict regulations enforced by the Public Utilities Commission of Ohio (PUCO), ensuring consumer protections while maintaining robust competition. Unlike some states, Ohio requires suppliers to clearly compare their rates to utility rates on every bill.</p>
+
+<p><strong>Key Fact:</strong> Ohio consumers have saved an estimated $8 billion since deregulation through competitive electricity rates and improved service.</p>
+
+<h2>Ohio Electricity Rates by Major City</h2>
+
+<p><strong>Cleveland (FirstEnergy territory):</strong> 8.1¢ to 11.8¢ per kWh<br>
+<strong>Columbus (AEP Ohio territory):</strong> 8.3¢ to 12.1¢ per kWh<br>
+<strong>Cincinnati (Duke Energy territory):</strong> 8.2¢ to 11.9¢ per kWh<br>
+<strong>Toledo (FirstEnergy territory):</strong> 8.0¢ to 11.7¢ per kWh<br>
+<strong>Akron (FirstEnergy territory):</strong> 8.1¢ to 11.8¢ per kWh<br>
+<strong>Dayton (AES Ohio territory):</strong> 8.4¢ to 12.2¢ per kWh</p>
+
+<p>An average Ohio household using 850 kWh monthly could pay $68.85 to $103.70 depending on their supplier choice. <strong>Annual savings potential: $418.20</strong> by shopping smart.</p>
+
+<div class="cta-box">
+<h3>Find Your Ohio Rate</h3>
+<p>Compare CRES providers in your Ohio utility territory. See rates updated daily.</p>
+<a href="/compare-rates" class="cta-button">Compare OH Rates Now</a>
+</div>
+
+<h2>Real Columbus Example: Family Savings</h2>
+
+<p>Michael and Lisa live in Columbus with their two kids. Their 2,000 square foot home in Clintonville uses about 1,000 kWh monthly on average.</p>
+
+<p><strong>Old Situation:</strong> They stayed on AEP Ohio's Standard Service Offer (SSO) rate of 11.5¢ per kWh. Monthly bills averaged $115.</p>
+
+<p><strong>What They Did:</strong> Used www.energychoice.ohio.gov to compare suppliers. Found IGS Energy offering a 12-month fixed rate at 8.7¢ per kWh with no monthly fees.</p>
+
+<p><strong>Results:</strong></p>
+<ul>
+<li>New monthly cost: $87</li>
+<li>Monthly savings: $28</li>
+<li>Annual savings: $336</li>
+<li>Two-year savings: $672</li>
+</ul>
+
+<p>The switch took 10 minutes online. They now compare suppliers every October and have saved over $1,000 in three years.</p>
+
+<h2>Top Ohio Electricity Suppliers (CRES Providers)</h2>
+
+<p><strong>AEP Energy:</strong> Affiliated with AEP Ohio utility but operates as separate competitive supplier. Strong in Columbus area with good fixed-rate options.</p>
+
+<p><strong>Direct Energy:</strong> Large nationwide supplier with competitive Ohio rates. Good customer service and multiple plan types.</p>
+
+<p><strong>Constellation:</strong> Major supplier with renewable and standard plans. Strong presence across all Ohio utility territories.</p>
+
+<p><strong>IGS Energy:</strong> Ohio-based supplier headquartered in Dublin. Competitive rates and strong local presence. Popular choice in Columbus.</p>
+
+<p><strong>Discount Power:</strong> Often has very competitive rates for high-usage customers. Check terms carefully.</p>
+
+<p><strong>Verde Energy:</strong> Specializes in 100% renewable energy plans. Premium pricing but truly clean energy.</p>
+
+<p><strong>Important:</strong> Only work with PUCO-certified CRES providers. Verify certification at www.puco.ohio.gov before signing any contract.</p>
+
+<h2>Ohio-Specific Electricity Rules</h2>
+
+<p><strong>Apples to Apples Comparison:</strong> Ohio operates www.energychoice.ohio.gov where you can compare certified CRES providers side-by-side. This tool shows how each supplier's rates compare to your utility's Standard Service Offer.</p>
+
+<p><strong>7-Day Rescission Period:</strong> Ohio law gives you 7 calendar days to cancel a new electricity contract without penalty after enrollment.</p>
+
+<p><strong>PUCO Certification Required:</strong> All competitive suppliers must be certified by the Public Utilities Commission of Ohio. Never work with uncertified suppliers.</p>
+
+<p><strong>Billing Transparency:</strong> Your utility bill must clearly show your CRES provider's charges separate from utility delivery charges. You can easily compare what you're paying to what you'd pay on the Standard Service Offer.</p>
+
+<p><strong>Guaranteed Savings Plans:</strong> Some suppliers offer plans guaranteeing savings compared to utility rates. If they don't save you money, they owe you a refund. Read terms carefully to understand how these work.</p>
+
+<h2>Ohio Seasonal Electricity Patterns</h2>
+
+<p><strong>Spring (March-May) - MODERATE USE:</strong> Mild Ohio springs keep electricity usage reasonable. Good time to shop for annual plans as rates typically soften.</p>
+
+<p><strong>Summer (June-August) - HIGH USE:</strong> Hot, humid Ohio summers drive AC usage. Monthly consumption can double for some households. Rates may increase but competition remains strong.</p>
+
+<p><strong>Fall (September-November) - BEST SHOPPING TIME:</strong> Usage drops and wholesale prices typically fall. Excellent window to lock in 12-month fixed rates before winter heating season.</p>
+
+<p><strong>Winter (December-February) - HIGH USE:</strong> Cold Ohio winters drive heating costs. Many homes use electric heat or heat pumps, significantly increasing winter consumption. Rates rise but competitive options remain available.</p>
+
+<p><strong>Pro Tip:</strong> Shop in September or early October. Lock in competitive rates before winter heating needs and before holiday busy seasons begin.</p>
+
+<div class="cta-box">
+<h3>Compare OH Suppliers Now</h3>
+<p>See current rates from all PUCO-certified suppliers in your utility territory.</p>
+<a href="/all-providers" class="cta-button">View All OH Suppliers</a>
+</div>
+
+<h2>Average Ohio Electricity Usage by Home Type</h2>
+
+<p><strong>Small Apartment (600-800 sq ft):</strong> 400-600 kWh monthly<br>
+<strong>1-Bedroom Apartment (800-1,000 sq ft):</strong> 550-750 kWh monthly<br>
+<strong>2-Bedroom Apartment (1,000-1,200 sq ft):</strong> 700-900 kWh monthly<br>
+<strong>Small House (1,200-1,700 sq ft):</strong> 800-1,100 kWh monthly<br>
+<strong>Medium House (1,700-2,300 sq ft):</strong> 1,000-1,400 kWh monthly<br>
+<strong>Large House (2,300-3,000 sq ft):</strong> 1,300-1,800 kWh monthly</p>
+
+<p>Usage peaks in summer (AC) and winter (heating). Spring and fall see the lowest consumption.</p>
+
+<h2>The Bottom Line for Ohio Residents</h2>
+
+<p>Ohio's electricity market offers genuine savings opportunities through energychoice.ohio.gov and careful supplier comparison. With PUCO oversight ensuring fair practices, Ohio consumers can shop with confidence.</p>
+
+<p>Smart Ohio consumers:</p>
+<ul>
+<li>Use energychoice.ohio.gov to compare certified suppliers</li>
+<li>Shop annually in September or October</li>
+<li>Choose 12-month fixed rates for price certainty</li>
+<li>Read supplier reviews and PUCO complaint data</li>
+<li>Set calendar reminders to shop before contracts expire</li>
+</ul>
+
+<p>This approach saves $300-550 annually compared to staying on utility Standard Service Offer rates.</p>
+`
+  },
+
+  15: {
+    title: "Illinois Electricity Rates: Complete Guide to IL Power Savings",
+    metaTitle: "Illinois Electricity Rates 2024: Compare Plans in Chicago & IL | Power Scouts",
+    metaDescription: "Compare Illinois electricity rates from 20+ suppliers. Find cheapest power in Chicago, Aurora, Naperville. Save $350-500 yearly on IL electricity bills.",
+    tags: ["Illinois Electricity", "Chicago Power", "ComEd Rates", "Ameren Illinois", "IL Electric"],
+    content: `
+<h2>Understanding Illinois Electricity Deregulation</h2>
+
+<p>Illinois deregulated electricity in 1997, becoming one of the first states to allow residential customer choice. Today, Illinois residents served by ComEd and Ameren Illinois can choose from 20+ competitive electricity suppliers, creating opportunities for significant savings.</p>
+
+<p>The Illinois Commerce Commission (ICC) regulates the market, requiring suppliers to meet strict standards. Illinois' "Plug In Illinois" website (www.pluginillinois.org) helps consumers compare certified suppliers easily.</p>
+
+<p><strong>Key Advantage:</strong> Illinois law requires suppliers to clearly show how their rates compare to utility rates, making it easy to identify genuine savings.</p>
+
+<h2>Illinois Electricity Rates by Region</h2>
+
+<p><strong>Chicago Area (ComEd):</strong> 7.9¢ to 11.5¢ per kWh<br>
+<strong>Aurora (ComEd):</strong> 7.8¢ to 11.4¢ per kWh<br>
+<strong>Naperville (ComEd):</strong> 7.9¢ to 11.5¢ per kWh<br>
+<strong>Rockford (ComEd):</strong> 7.7¢ to 11.3¢ per kWh<br>
+<strong>Springfield (Ameren Illinois):</strong> 8.1¢ to 11.7¢ per kWh<br>
+<strong>Peoria (Ameren Illinois):</strong> 8.0¢ to 11.6¢ per kWh</p>
+
+<p>Average Illinois household using 750 kWh monthly could pay $59.25 to $86.25 depending on supplier. <strong>Annual savings potential: $324</strong> through smart shopping.</p>
+
+<div class="cta-box">
+<h3>Compare Illinois Rates</h3>
+<p>See all certified suppliers serving your Illinois utility territory with current rates.</p>
+<a href="/compare-rates" class="cta-button">Compare IL Rates Now</a>
+</div>
+
+<h2>Real Chicago Example: Condo Savings</h2>
+
+<p>Priya lives in a 900-square-foot condo in Chicago's Lincoln Park. Her average usage is 600 kWh monthly.</p>
+
+<p><strong>Old Situation:</strong> Stayed on ComEd's standard supply rate of 10.8¢ per kWh. Monthly bills averaged $65.</p>
+
+<p><strong>What She Did:</strong> Used Plug In Illinois to compare suppliers. Found Constellation Energy offering 12-month fixed at 8.3¢ per kWh.</p>
+
+<p><strong>Results:</strong></p>
+<ul>
+<li>New monthly cost: $50</li>
+<li>Monthly savings: $15</li>
+<li>Annual savings: $180</li>
+</ul>
+
+<p>She now checks rates every fall and has saved over $550 in three years with minimal effort.</p>
+
+<h2>Top Illinois Electricity Suppliers</h2>
+
+<p><strong>Constellation Energy:</strong> Major supplier with strong Illinois presence. Competitive fixed rates and renewable options.</p>
+
+<p><strong>Direct Energy:</strong> Nationwide supplier with good Chicago-area rates and customer service.</p>
+
+<p><strong>Ameren Energy:</strong> Competitive arm of Ameren Illinois utility. Strong in central and southern Illinois.</p>
+
+<p><strong>Liberty Power:</strong> Focuses on renewable energy plans with competitive pricing.</p>
+
+<p><strong>Verde Energy:</strong> 100% renewable plans at reasonable premiums over standard rates.</p>
+
+<p>Always verify ICC certification at www.icc.illinois.gov before choosing any supplier.</p>
+
+<h2>Illinois Seasonal Patterns</h2>
+
+<p><strong>Best Shopping Time:</strong> September-October when wholesale prices drop before winter heating season begins.</p>
+
+<p>Illinois has hot summers and cold winters, creating dual usage peaks. Spring and fall offer the lowest electricity consumption and best shopping opportunities.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>Illinois' well-regulated market makes supplier switching straightforward and safe. Use www.pluginillinois.org to compare ICC-certified suppliers, choose 12-month fixed rates in fall, and save $300-500 annually.</p>
+`
+  },
+
+  16: {
+    title: "New Jersey Electricity Rates: NJ Power Shopping Guide",
+    metaTitle: "New Jersey Electricity Rates 2024: Compare Plans & Save | Power Scouts",
+    metaDescription: "Compare NJ electricity rates from 15+ suppliers. Find lowest power prices in Newark, Jersey City, Paterson. Save $300-450 yearly on New Jersey electricity.",
+    tags: ["New Jersey Electricity", "NJ Power Rates", "PSE&G Rates", "JCP&L Rates", "Atlantic City Electric"],
+    content: `
+<h2>New Jersey's Electricity Market Overview</h2>
+
+<p>New Jersey restructured its electricity market in 1999, allowing residential customers to choose third-party suppliers. However, New Jersey maintains strong consumer protections and requires suppliers to meet strict licensing requirements.</p>
+
+<p>The New Jersey Board of Public Utilities (BPU) regulates suppliers and operates www.njcleanenergy.com where you can compare options. New Jersey's market is smaller than Texas or Pennsylvania but still offers genuine savings opportunities.</p>
+
+<h2>New Jersey Electricity Rates by Utility</h2>
+
+<p><strong>Newark Area (PSE&G):</strong> 8.4¢ to 12.1¢ per kWh<br>
+<strong>Jersey City (PSE&G):</strong> 8.5¢ to 12.2¢ per kWh<br>
+<strong>Paterson (PSE&G):</strong> 8.4¢ to 12.1¢ per kWh<br>
+<strong>North Jersey (JCP&L):</strong> 8.6¢ to 12.3¢ per kWh<br>
+<strong>Atlantic City (ACE):</strong> 8.3¢ to 11.9¢ per kWh</p>
+
+<p>Average NJ household using 700 kWh monthly could save $200-300 annually by choosing competitive suppliers over utility rates.</p>
+
+<div class="cta-box">
+<h3>Find NJ Suppliers</h3>
+<p>Compare BPU-licensed electricity suppliers serving your New Jersey utility.</p>
+<a href="/compare-rates" class="cta-button">Compare NJ Rates</a>
+</div>
+
+<h2>Top New Jersey Suppliers</h2>
+
+<p><strong>Constellation:</strong> Strong NJ presence with competitive fixed rates.</p>
+
+<p><strong>Direct Energy:</strong> Major supplier across all NJ utility territories.</p>
+
+<p><strong>Liberty Power:</strong> Renewable energy focus with reasonable pricing.</p>
+
+<p><strong>South Jersey Energy:</strong> Regional supplier with competitive rates in southern NJ.</p>
+
+<p>Verify BPU licensing at www.nj.gov/bpu before switching suppliers.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>New Jersey offers moderate supplier competition with strong consumer protections. Shop annually in fall, choose fixed-rate plans, and save $250-400 yearly compared to utility rates.</p>
+`
+  }
+};
+
 export const getFullArticle = (articleId) => {
   return fullArticles[articleId] || null;
 };
