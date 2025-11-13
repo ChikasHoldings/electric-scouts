@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { 
   BookOpen, Zap, DollarSign, Leaf, TrendingDown, Shield, 
-  Clock, Users, ArrowRight, Search, CheckCircle, MapPin, Building2, Home, FileText, Star
+  Clock, Users, ArrowRight, CheckCircle, MapPin, Building2, Home, FileText, Star
 } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema, getArticleSchema } from "../components/SEOHead";
+import EnhancedSearch from "../components/learning/EnhancedSearch";
 
 // Comprehensive article database
 const articles = [
@@ -311,15 +311,16 @@ const colorClasses = {
 };
 
 export default function LearningCenter() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState(articles);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const filteredArticles = articles.filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      article.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      article.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+  const handleSearch = (results) => {
+    setSearchResults(results);
+  };
+
+  const filteredArticles = searchResults.filter(article => {
     const matchesCategory = selectedCategory === "All" || article.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesCategory;
   });
 
   const categories = ["All", ...new Set(articles.map(a => a.category))];
@@ -379,21 +380,15 @@ export default function LearningCenter() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-            {/* Search Bar */}
+            {/* Enhanced Search Bar */}
             <div className="mb-8 sm:mb-10">
-              <div className="relative max-w-2xl mx-auto">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search articles, topics, or cities..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 h-14 text-base border-2 shadow-lg rounded-xl"
-                />
-              </div>
-              {searchTerm && (
+              <EnhancedSearch 
+                articles={articles}
+                onSearch={handleSearch}
+              />
+              {searchResults.length !== articles.length && (
                 <p className="text-center text-gray-600 mt-3 text-sm">
-                  Found {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''}
+                  Found {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''} matching your search
                 </p>
               )}
             </div>
@@ -416,7 +411,7 @@ export default function LearningCenter() {
             </div>
 
             {/* Featured Article */}
-            {!searchTerm && selectedCategory === "All" && filteredArticles.length > 0 && (
+            {searchResults.length === articles.length && selectedCategory === "All" && filteredArticles.length > 0 && (
               <div className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                   <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
@@ -473,7 +468,7 @@ export default function LearningCenter() {
                   {selectedCategory === "All" ? "All Guides" : `${selectedCategory} Guides`}
                 </h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {(selectedCategory === "All" && !searchTerm ? filteredArticles.slice(1) : filteredArticles).map((article) => {
+                  {(selectedCategory === "All" && searchResults.length === articles.length ? filteredArticles.slice(1) : filteredArticles).map((article) => {
                     const Icon = article.icon;
                     const colors = colorClasses[article.color];
                     return (
@@ -518,11 +513,12 @@ export default function LearningCenter() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-600 mb-4">No articles found matching "{searchTerm}"</p>
+                <p className="text-xl text-gray-600 mb-4">No articles found matching your search</p>
+                <p className="text-sm text-gray-500 mb-6">Try different keywords or browse by category</p>
                 <Button 
                   variant="outline" 
                   onClick={() => {
-                    setSearchTerm("");
+                    setSearchResults(articles);
                     setSelectedCategory("All");
                   }}
                 >
