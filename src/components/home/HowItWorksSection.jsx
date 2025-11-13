@@ -7,7 +7,7 @@ const steps = [
   {
     number: "1",
     title: "Enter Your ZIP Code",
-    description: "Start by entering your ZIP code to see which electricity providers and plans are available in your area. We'll instantly show you personalized rates from trusted Texas providers."
+    description: "Enter your ZIP code to see available plans. We'll instantly show you personalized rates from trusted Texas providers."
   },
   {
     number: "2",
