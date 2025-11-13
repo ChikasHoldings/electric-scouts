@@ -1,124 +1,353 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Building2, TrendingDown, Shield, Clock, MapPin } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Building2, TrendingDown, Shield, Clock, MapPin, CheckCircle, 
+  Users, Zap, DollarSign, Award, PhoneCall, ArrowRight, ChevronDown
+} from "lucide-react";
 
 export default function BusinessRates() {
   const [zipCode, setZipCode] = useState("");
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const businessTypes = [
+    {
+      title: "Small Business",
+      usage: "< 10,000 kWh/month",
+      icon: Building2,
+      color: "blue",
+      examples: ["Retail Shops", "Small Offices", "Restaurants", "Salons"],
+      features: ["Flexible Contracts", "No Deposit Options", "Easy Online Management"]
+    },
+    {
+      title: "Medium Business",
+      usage: "10,000 - 50,000 kWh/month",
+      icon: Users,
+      color: "green",
+      examples: ["Warehouses", "Medical Offices", "Schools", "Gyms"],
+      features: ["Volume Discounts", "Dedicated Support", "Custom Solutions"]
+    },
+    {
+      title: "Large Enterprise",
+      usage: "> 50,000 kWh/month",
+      icon: Award,
+      color: "purple",
+      examples: ["Manufacturing", "Data Centers", "Hotels", "Hospitals"],
+      features: ["Custom Pricing", "Energy Management", "Priority Service"]
+    }
+  ];
+
+  const benefits = [
+    {
+      icon: DollarSign,
+      title: "Lower Rates",
+      description: "Access commercial rates that can save your business 10-30% compared to residential plans"
+    },
+    {
+      icon: Shield,
+      title: "Rate Protection",
+      description: "Lock in fixed rates to protect your business from market volatility and budget accurately"
+    },
+    {
+      icon: Clock,
+      title: "Fast Activation",
+      description: "Get your service activated quickly, often within 1-3 business days"
+    },
+    {
+      icon: Users,
+      title: "Dedicated Support",
+      description: "Work with commercial energy specialists who understand business needs"
+    }
+  ];
+
+  const faqs = [
+    {
+      id: 1,
+      question: "How are commercial electricity rates different from residential?",
+      answer: "Commercial rates are typically structured differently and often lower per kWh due to higher volume usage. Businesses may have access to demand charges, time-of-use pricing, and volume discounts not available to residential customers. Commercial plans also offer features like load profiling and dedicated account management."
+    },
+    {
+      id: 2,
+      question: "What information do I need to get a business electricity quote?",
+      answer: "You'll need your business ZIP code, estimated monthly usage (in kWh), business type, and desired contract length. Having your current electricity bill handy helps us provide the most accurate quote. For larger businesses, we may also need information about peak demand and operating hours."
+    },
+    {
+      id: 3,
+      question: "Can I get electricity for multiple business locations?",
+      answer: "Yes! We can help you manage electricity for multiple locations across Texas. Many providers offer multi-site management, consolidated billing, and volume discounts for businesses with multiple locations. Our commercial specialists can create a customized solution for your multi-location needs."
+    },
+    {
+      id: 4,
+      question: "Are there renewable energy options for businesses?",
+      answer: "Absolutely! Many businesses choose 100% renewable energy plans to reduce their carbon footprint and meet sustainability goals. Green energy plans are often competitively priced and can enhance your company's brand image while supporting clean energy development in Texas."
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-20">
+      <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-5xl lg:text-6xl font-bold mb-6">
-                Business Electricity Rates
-              </h1>
-              <p className="text-2xl opacity-90 mb-8">
-                Save on commercial electricity with competitive rates tailored to your business needs
-              </p>
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-3">
+              Commercial Electricity Rates for Texas Businesses
+            </h1>
+            <p className="text-lg text-blue-100">
+              Lower rates, flexible contracts, and dedicated support for your business
+            </p>
+          </div>
+        </div>
+      </div>
 
-              {/* Search */}
-              <div className="bg-white rounded-xl p-4 flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-lg">
-                  <MapPin className="w-5 h-5 text-gray-400" />
+      {/* Quick Quote Section */}
+      <div className="bg-white border-b shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl p-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Get a Free Business Quote</h2>
+              <p className="text-gray-600">Enter your ZIP code to see commercial rates in your area</p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-lg p-1.5 max-w-2xl mx-auto">
+              <div className="flex flex-col sm:flex-row items-stretch gap-2">
+                <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gray-50 rounded-xl">
+                  <MapPin className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
                   <Input
                     type="text"
                     placeholder="Enter business ZIP code"
                     value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
-                    className="border-0 bg-transparent focus-visible:ring-0 text-gray-900"
+                    onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
+                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-lg p-0 h-auto font-semibold"
                     maxLength={5}
                   />
                 </div>
-                <Button className="bg-coral-500 hover:bg-coral-600 text-white px-8 py-6 whitespace-nowrap">
-                  Get Quote
-                </Button>
+                <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                  <Button className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full">
+                    Get Quote
+                  </Button>
+                </Link>
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-              <Building2 className="w-20 h-20 text-white mb-4" />
-              <h3 className="text-2xl font-bold mb-4">Why Choose Us?</h3>
-              <ul className="space-y-3 text-lg opacity-90">
-                <li className="flex items-center gap-3">
-                  <TrendingDown className="w-5 h-5" />
-                  Competitive commercial rates
-                </li>
-                <li className="flex items-center gap-3">
-                  <Shield className="w-5 h-5" />
-                  No hidden fees
-                </li>
-                <li className="flex items-center gap-3">
-                  <Clock className="w-5 h-5" />
-                  Fast, easy signup process
-                </li>
-              </ul>
+            <div className="flex items-center justify-center gap-6 flex-wrap text-sm text-gray-600 mt-6">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span>Free Comparison</span>
+              </div>
+              <span className="text-gray-400">•</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span>No Obligation</span>
+              </div>
+              <span className="text-gray-400">•</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span>Fast Quotes</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Benefits Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Tailored Solutions for Every Business
-          </h2>
-          <p className="text-xl text-gray-600">
-            From small offices to large industrial facilities
-          </p>
-        </div>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Business Types Section */}
+        <section className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Electricity Solutions for Every Business Size
+            </h2>
+            <p className="text-xl text-gray-600">
+              From small startups to large enterprises, we have the right plan for you
+            </p>
+          </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            {
-              title: "Small Business",
-              usage: "< 10,000 kWh/month",
-              description: "Perfect for retail shops, offices, and small facilities"
-            },
-            {
-              title: "Medium Business",
-              usage: "10,000 - 50,000 kWh/month",
-              description: "Ideal for warehouses, restaurants, and growing companies"
-            },
-            {
-              title: "Large Enterprise",
-              usage: "> 50,000 kWh/month",
-              description: "Custom solutions for manufacturing and industrial operations"
-            }
-          ].map((tier, index) => (
-            <div key={index} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{tier.title}</h3>
-              <div className="text-teal-600 font-semibold mb-4">{tier.usage}</div>
-              <p className="text-gray-600">{tier.description}</p>
-            </div>
-          ))}
-        </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {businessTypes.map((type, index) => {
+              const Icon = type.icon;
+              return (
+                <Card key={index} className="border-2 hover:border-[#0A5C8C] hover:shadow-xl transition-all">
+                  <CardContent className="p-8">
+                    <div className={`w-16 h-16 bg-${type.color}-100 rounded-xl flex items-center justify-center mb-6`}>
+                      <Icon className={`w-8 h-8 text-${type.color}-600`} />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{type.title}</h3>
+                    <div className="text-[#0A5C8C] font-semibold mb-4">{type.usage}</div>
+                    
+                    <div className="mb-6">
+                      <p className="text-sm font-semibold text-gray-700 mb-2">Perfect for:</p>
+                      <ul className="space-y-1">
+                        {type.examples.map((example, i) => (
+                          <li key={i} className="text-sm text-gray-600">• {example}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="border-t pt-4">
+                      <p className="text-sm font-semibold text-gray-700 mb-2">Features:</p>
+                      <ul className="space-y-2">
+                        {type.features.map((feature, i) => (
+                          <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                            <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Benefits Section */}
+        <section className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Why Choose Power Scouts for Your Business?
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
+              return (
+                <Card key={index} className="border-2 hover:shadow-lg transition-all">
+                  <CardContent className="p-8 flex gap-6">
+                    <div className="w-14 h-14 bg-gradient-to-br from-teal-50 to-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-7 h-7 text-[#0A5C8C]" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{benefit.title}</h3>
+                      <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section className="mb-20">
+          <Card className="bg-gradient-to-br from-blue-50 to-green-50 border-0">
+            <CardContent className="p-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                Simple Process to Switch Your Business Electricity
+              </h2>
+              
+              <div className="grid md:grid-cols-4 gap-8">
+                {[
+                  { step: "1", title: "Get Quote", desc: "Enter your business info and usage" },
+                  { step: "2", title: "Compare Plans", desc: "Review commercial rates from 40+ providers" },
+                  { step: "3", title: "Choose Plan", desc: "Select the best plan for your business" },
+                  { step: "4", title: "Start Saving", desc: "Service activated in 1-3 business days" }
+                ].map((item, index) => (
+                  <div key={index} className="text-center">
+                    <div className="w-16 h-16 bg-[#0A5C8C] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                      {item.step}
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                    <p className="text-gray-600">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="mb-20">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Business Electricity FAQs
+          </h2>
+          <div className="space-y-4 max-w-4xl mx-auto">
+            {faqs.map((faq) => (
+              <Card 
+                key={faq.id} 
+                className="border-2 hover:border-[#0A5C8C] transition-all cursor-pointer overflow-hidden"
+                onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+              >
+                <CardContent className="p-0">
+                  <div className="flex items-center justify-between p-6">
+                    <h3 className="text-lg font-bold text-gray-900 pr-4">
+                      {faq.question}
+                    </h3>
+                    <ChevronDown 
+                      className={`w-5 h-5 text-[#0A5C8C] flex-shrink-0 transition-transform duration-300 ${
+                        openFaq === faq.id ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                  <div 
+                    className={`transition-all duration-300 ease-in-out ${
+                      openFaq === faq.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="px-6 pb-6 pt-0">
+                      <p className="text-gray-600 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
 
         {/* CTA Section */}
-        <div className="mt-16 bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-12 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Ready to Save on Your Business Energy Costs?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Speak with one of our commercial energy experts
-          </p>
-          <a
-            href="tel:855-475-8315"
-            className="inline-block bg-teal-500 hover:bg-teal-600 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
-          >
-            Call 855-475-8315
-          </a>
-        </div>
-      </div>
+        <section>
+          <Card className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white border-0">
+            <CardContent className="p-12 text-center">
+              <PhoneCall className="w-16 h-16 mx-auto mb-6 opacity-90" />
+              <h2 className="text-3xl font-bold mb-4">
+                Ready to Lower Your Business Energy Costs?
+              </h2>
+              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                Speak with a commercial energy specialist to find the best rates for your business
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="tel:855-475-8315">
+                  <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-8 py-6 text-lg font-bold">
+                    <PhoneCall className="w-5 h-5 mr-2" />
+                    Call 855-475-8315
+                  </Button>
+                </a>
+                <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                  <Button variant="outline" className="bg-white hover:bg-gray-100 text-[#0A5C8C] border-2 border-white px-8 py-6 text-lg font-bold">
+                    Compare Plans Online
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              </div>
 
-      <style>{`
-        .bg-coral-500 { background-color: #FF6B5B; }
-        .hover\\:bg-coral-600:hover { background-color: #E95A4A; }
-      `}</style>
+              <div className="flex items-center justify-center gap-6 flex-wrap text-sm mt-8">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>Free Consultation</span>
+                </div>
+                <span className="text-blue-300">•</span>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>Custom Solutions</span>
+                </div>
+                <span className="text-blue-300">•</span>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>Expert Support</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
     </div>
   );
 }
