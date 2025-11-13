@@ -29,7 +29,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                 {" "}for Your Home
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
-                Compare electricity rates from 40+ providers in TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT. Switch easily and save an average of $800 per year.
+                Compare electricity rates from 40+ providers across 12 deregulated states. Switch easily and save an average of $800 per year on your energy bills.
               </p>
             </div>
 
