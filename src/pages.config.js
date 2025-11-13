@@ -18,6 +18,8 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import TexasElectricity from './pages/TexasElectricity';
 import IllinoisElectricity from './pages/IllinoisElectricity';
+import OhioElectricity from './pages/OhioElectricity';
+import PennsylvaniaElectricity from './pages/PennsylvaniaElectricity';
 import Layout from './Layout.jsx';
 
 
@@ -42,6 +44,8 @@ export const PAGES = {
     "BlogPost": BlogPost,
     "TexasElectricity": TexasElectricity,
     "IllinoisElectricity": IllinoisElectricity,
+    "OhioElectricity": OhioElectricity,
+    "PennsylvaniaElectricity": PennsylvaniaElectricity,
 }
 
 export const pagesConfig = {
