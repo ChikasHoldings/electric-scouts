@@ -339,6 +339,166 @@ const articles = [
     readTime: "11 min",
     keywords: ["Philadelphia electricity", "Philly power rates", "PECO suppliers", "PA electricity", "Philadelphia energy"],
     relatedArticles: [12, 2, 1]
+  },
+  // TEXAS CITIES
+  {
+    id: 26,
+    category: "City Guides",
+    icon: Building2,
+    color: "orange",
+    title: "Austin Electricity Rates 2024: Compare Cheapest TX Power Plans",
+    description: "Compare Austin TX electricity from 40+ providers. Round Rock, Cedar Park, Pflugerville competitive areas. Save $600-850 yearly.",
+    image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=1200&q=80",
+    excerpt: "Austin metro area with 40+ competitive providers in surrounding cities. Find cheapest rates outside Austin Energy territory.",
+    readTime: "10 min",
+    keywords: ["Austin electricity", "Round Rock power", "Cedar Park electricity", "Pflugerville energy", "Austin Energy rates"],
+    relatedArticles: [11, 23, 24]
+  },
+  {
+    id: 27,
+    category: "City Guides",
+    icon: Building2,
+    color: "blue",
+    title: "San Antonio Electricity Rates 2024: Complete TX Power Guide",
+    description: "Compare San Antonio electricity options. CPS Energy territory and competitive suburbs. Save $600-800 yearly in eligible areas.",
+    image: "https://images.unsplash.com/photo-1568737948262-7f2e83ed98b3?w=1200&q=80",
+    excerpt: "San Antonio electricity market overview. CPS Energy coverage and competitive options in surrounding areas.",
+    readTime: "9 min",
+    keywords: ["San Antonio electricity", "CPS Energy", "San Antonio power rates", "Bexar County electricity"],
+    relatedArticles: [11, 23, 24]
+  },
+  {
+    id: 28,
+    category: "City Guides",
+    icon: Building2,
+    color: "green",
+    title: "Fort Worth Electricity Rates 2024: Tarrant County Power Guide",
+    description: "Compare Fort Worth TX electricity from 40+ providers. Serving Fort Worth, Arlington, North Richland Hills. Save $650-850 yearly.",
+    image: "https://images.unsplash.com/photo-1559661012-5cf78c123ae8?w=1200&q=80",
+    excerpt: "Fort Worth and Tarrant County competitive market with 40+ providers. Excellent DFW Metroplex savings opportunities.",
+    readTime: "10 min",
+    keywords: ["Fort Worth electricity", "Tarrant County power", "Arlington Texas electricity", "Oncor Fort Worth"],
+    relatedArticles: [11, 24, 23]
+  },
+  {
+    id: 29,
+    category: "City Guides",
+    icon: Building2,
+    color: "purple",
+    title: "El Paso Electricity Rates 2024: West Texas Power Guide",
+    description: "Compare El Paso TX electricity options. El Paso Electric territory with limited competitive access. Save $350-500 yearly.",
+    image: "https://images.unsplash.com/photo-1517639493569-5666a7556f98?w=1200&q=80",
+    excerpt: "El Paso electricity market differs from rest of Texas. Limited competitive options outside ERCOT grid.",
+    readTime: "8 min",
+    keywords: ["El Paso electricity", "El Paso Electric", "west Texas power", "El Paso energy rates"],
+    relatedArticles: [11, 23, 2]
+  },
+  // PENNSYLVANIA CITIES
+  {
+    id: 30,
+    category: "City Guides",
+    icon: Building2,
+    color: "blue",
+    title: "Pittsburgh Electricity Rates 2024: PA Power Comparison Guide",
+    description: "Compare Pittsburgh PA electricity from 25+ suppliers. Duquesne Light territory. Save $400-550 yearly with PA PUC licensed suppliers.",
+    image: "https://images.unsplash.com/photo-1611964562818-b6f8d41cb64c?w=1200&q=80",
+    excerpt: "Pittsburgh and Allegheny County competitive market. 25+ PA PUC certified suppliers serving Duquesne Light territory.",
+    readTime: "10 min",
+    keywords: ["Pittsburgh electricity", "Duquesne Light", "Pittsburgh power rates", "Allegheny County electricity"],
+    relatedArticles: [12, 25, 2]
+  },
+  {
+    id: 31,
+    category: "City Guides",
+    icon: Building2,
+    color: "green",
+    title: "Allentown Electricity Rates 2024: Lehigh Valley PA Power Guide",
+    description: "Compare Allentown PA electricity from 25+ PPL suppliers. Lehigh Valley, Bethlehem, Easton coverage. Save $380-500 yearly.",
+    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&q=80",
+    excerpt: "Allentown and Lehigh Valley competitive market. PPL Electric territory with 25+ certified suppliers.",
+    readTime: "9 min",
+    keywords: ["Allentown electricity", "PPL Electric", "Lehigh Valley power", "Bethlehem PA electricity"],
+    relatedArticles: [12, 30, 2]
+  },
+  // NEW YORK CITIES
+  {
+    id: 32,
+    category: "City Guides",
+    icon: Building2,
+    color: "orange",
+    title: "NYC Electricity Rates 2024: New York City ESCO Guide",
+    description: "Compare NYC electricity from 20+ ESCOs. Con Edison territory covering Manhattan, Brooklyn, Queens, Bronx, Staten Island. Save $300-450 yearly.",
+    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&q=80",
+    excerpt: "NYC ESCO market overview. 20+ suppliers serving Con Edison territory across all 5 boroughs.",
+    readTime: "11 min",
+    keywords: ["NYC electricity", "Con Edison rates", "Manhattan power", "Brooklyn electricity", "Queens energy"],
+    relatedArticles: [13, 33, 2]
+  },
+  {
+    id: 33,
+    category: "City Guides",
+    icon: Building2,
+    color: "blue",
+    title: "Buffalo Electricity Rates 2024: Western NY Power Guide",
+    description: "Compare Buffalo NY electricity from 18+ ESCOs. National Grid territory. Save $350-500 yearly in Erie County.",
+    image: "https://images.unsplash.com/photo-1549144511-f099e773c147?w=1200&q=80",
+    excerpt: "Buffalo and Erie County ESCO market. 18+ suppliers serving National Grid Western NY territory.",
+    readTime: "9 min",
+    keywords: ["Buffalo electricity", "National Grid Buffalo", "Western NY power", "Buffalo ESCO rates"],
+    relatedArticles: [13, 32, 34]
+  },
+  {
+    id: 34,
+    category: "City Guides",
+    icon: Building2,
+    color: "purple",
+    title: "Rochester Electricity Rates 2024: Finger Lakes NY Power Guide",
+    description: "Compare Rochester NY electricity from 16+ ESCOs. RG&E territory in Monroe County. Save $300-450 yearly.",
+    image: "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=1200&q=80",
+    excerpt: "Rochester and Monroe County ESCO market. 16+ suppliers serving Rochester Gas & Electric territory.",
+    readTime: "9 min",
+    keywords: ["Rochester electricity", "RG&E rates", "Monroe County power", "Rochester ESCO"],
+    relatedArticles: [13, 33, 32]
+  },
+  // OHIO CITIES
+  {
+    id: 35,
+    category: "City Guides",
+    icon: Building2,
+    color: "green",
+    title: "Cleveland Electricity Rates 2024: NEO Power Comparison Guide",
+    description: "Compare Cleveland OH electricity from 20+ suppliers. FirstEnergy/CEI territory. Save $400-550 yearly with PUCO certified suppliers.",
+    image: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=1200&q=80",
+    excerpt: "Cleveland and Cuyahoga County competitive market. 20+ PUCO-certified suppliers serving FirstEnergy territory.",
+    readTime: "10 min",
+    keywords: ["Cleveland electricity", "FirstEnergy Cleveland", "Cuyahoga County power", "Cleveland CEI rates"],
+    relatedArticles: [14, 36, 37]
+  },
+  {
+    id: 36,
+    category: "City Guides",
+    icon: Building2,
+    color: "orange",
+    title: "Columbus Electricity Rates 2024: Central Ohio Power Guide",
+    description: "Compare Columbus OH electricity from 20+ suppliers. AEP Ohio territory. Save $400-550 yearly in Franklin County.",
+    image: "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=1200&q=80",
+    excerpt: "Columbus and Franklin County competitive market. 20+ PUCO-certified suppliers serving AEP Ohio.",
+    readTime: "10 min",
+    keywords: ["Columbus electricity", "AEP Ohio", "Franklin County power", "Columbus energy rates"],
+    relatedArticles: [14, 35, 37]
+  },
+  {
+    id: 37,
+    category: "City Guides",
+    icon: Building2,
+    color: "blue",
+    title: "Cincinnati Electricity Rates 2024: SW Ohio Power Guide",
+    description: "Compare Cincinnati OH electricity from 18+ suppliers. Duke Energy Ohio territory. Save $400-550 yearly in Hamilton County.",
+    image: "https://images.unsplash.com/photo-1574268602187-425e1f21a3c9?w=1200&q=80",
+    excerpt: "Cincinnati and Hamilton County competitive market. 18+ PUCO-certified suppliers serving Duke Energy Ohio.",
+    readTime: "9 min",
+    keywords: ["Cincinnati electricity", "Duke Energy Ohio", "Hamilton County power", "Cincinnati energy rates"],
+    relatedArticles: [14, 35, 36]
   }
 ];
 
