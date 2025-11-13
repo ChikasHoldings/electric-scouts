@@ -214,14 +214,14 @@ export default function Layout({ children, currentPageName }) {
           <>
             {/* Backdrop with blur */}
             <div 
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] lg:hidden transition-opacity duration-300"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] lg:hidden transition-opacity duration-300"
               onClick={() => setMobileMenuOpen(false)}
               style={{ animation: 'fadeIn 0.3s ease-out' }}
             />
             
             {/* Slide-in Menu Panel */}
             <div 
-              className="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-white shadow-2xl z-[70] lg:hidden overflow-y-auto"
+              className="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-white shadow-2xl z-[1000] lg:hidden overflow-y-auto"
               style={{ animation: 'slideInRight 0.3s ease-out' }}
             >
               {/* Menu Header */}
@@ -604,7 +604,7 @@ export default function Layout({ children, currentPageName }) {
       {showBackToTop && !mobileMenuOpen && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 w-12 h-12 bg-[#FF6B35] text-white rounded-full shadow-xl hover:shadow-2xl transition-all z-50 flex items-center justify-center hover:scale-110 transform group touch-manipulation"
+          className="fixed bottom-6 right-6 w-12 h-12 bg-[#FF6B35] text-white rounded-full shadow-xl hover:shadow-2xl transition-all z-[998] flex items-center justify-center hover:scale-110 transform group touch-manipulation"
           aria-label="Back to top"
         >
           <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
