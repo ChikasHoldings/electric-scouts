@@ -16,7 +16,7 @@ import PlanCard from "../components/compare/PlanCard";
 const cityData = {
   "Houston": {
     county: "Harris County",
-    population: "2.3 million",
+    population: "2,300,000+",
     zipCodes: ["77002", "77019", "77024", "77027", "77056", "77063", "77098"],
     avgRate: "8.9¢/kWh",
     avgMonthlyBill: "$128",
@@ -27,7 +27,7 @@ const cityData = {
   },
   "Dallas": {
     county: "Dallas County",
-    population: "1.3 million",
+    population: "1,300,000+",
     zipCodes: ["75201", "75202", "75204", "75205", "75214", "75219", "75230"],
     avgRate: "9.1¢/kWh",
     avgMonthlyBill: "$132",
@@ -38,7 +38,7 @@ const cityData = {
   },
   "Austin": {
     county: "Travis County",
-    population: "978 thousand",
+    population: "978,000+",
     zipCodes: ["78701", "78702", "78703", "78704", "78731", "78745", "78757"],
     avgRate: "9.3¢/kWh",
     avgMonthlyBill: "$135",
@@ -49,7 +49,7 @@ const cityData = {
   },
   "San Antonio": {
     county: "Bexar County",
-    population: "1.5 million",
+    population: "1,500,000+",
     zipCodes: ["78201", "78209", "78212", "78216", "78232", "78249", "78258"],
     avgRate: "8.8¢/kWh",
     avgMonthlyBill: "$127",
@@ -60,7 +60,7 @@ const cityData = {
   },
   "Fort Worth": {
     county: "Tarrant County",
-    population: "927 thousand",
+    population: "927,000+",
     zipCodes: ["76102", "76104", "76107", "76109", "76116", "76132", "76244"],
     avgRate: "9.0¢/kWh",
     avgMonthlyBill: "$130",
@@ -71,7 +71,7 @@ const cityData = {
   },
   "Plano": {
     county: "Collin County",
-    population: "286 thousand",
+    population: "286,000+",
     zipCodes: ["75023", "75024", "75025", "75074", "75075", "75093", "75094"],
     avgRate: "9.2¢/kWh",
     avgMonthlyBill: "$133",
@@ -82,7 +82,7 @@ const cityData = {
   },
   "Arlington": {
     county: "Tarrant County",
-    population: "398 thousand",
+    population: "398,000+",
     zipCodes: ["76001", "76010", "76011", "76012", "76013", "76015", "76016"],
     avgRate: "9.1¢/kWh",
     avgMonthlyBill: "$131",
@@ -93,7 +93,7 @@ const cityData = {
   },
   "Corpus Christi": {
     county: "Nueces County",
-    population: "326 thousand",
+    population: "326,000+",
     zipCodes: ["78401", "78404", "78405", "78411", "78412", "78413", "78414"],
     avgRate: "8.7¢/kWh",
     avgMonthlyBill: "$125",
@@ -104,7 +104,7 @@ const cityData = {
   },
   "El Paso": {
     county: "El Paso County",
-    population: "679 thousand",
+    population: "679,000+",
     zipCodes: ["79901", "79902", "79903", "79904", "79912", "79924", "79936"],
     avgRate: "9.4¢/kWh",
     avgMonthlyBill: "$136",
@@ -115,7 +115,7 @@ const cityData = {
   },
   "Irving": {
     county: "Dallas County",
-    population: "239 thousand",
+    population: "239,000+",
     zipCodes: ["75038", "75039", "75060", "75061", "75062", "75063", "75039"],
     avgRate: "9.0¢/kWh",
     avgMonthlyBill: "$130",
@@ -126,7 +126,7 @@ const cityData = {
   },
   "Frisco": {
     county: "Collin County",
-    population: "200 thousand",
+    population: "200,000+",
     zipCodes: ["75033", "75034", "75035", "75068"],
     avgRate: "9.2¢/kWh",
     avgMonthlyBill: "$133",
@@ -137,7 +137,7 @@ const cityData = {
   },
   "McKinney": {
     county: "Collin County",
-    population: "195 thousand",
+    population: "195,000+",
     zipCodes: ["75069", "75070", "75071", "75072"],
     avgRate: "9.1¢/kWh",
     avgMonthlyBill: "$131",
@@ -181,7 +181,7 @@ export default function CityRates() {
         <div className="absolute inset-0 opacity-10">
           <img src={city.image} alt={`${cityName} skyline`} className="w-full h-full object-cover" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-3xl">
             {/* Breadcrumb for SEO */}
             <nav className="mb-6 text-sm">
