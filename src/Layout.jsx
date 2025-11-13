@@ -393,9 +393,9 @@ export default function Layout({ children, currentPageName }) {
             {/* Brand Column */}
             <div className="col-span-2 md:col-span-3 lg:col-span-1">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/54a98288c_ChatGPTImageNov12202508_20_04PM.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/f61f9bbae_ChatGPTImageNov12202509_09_31PM.png"
                 alt="Power Scouts - Compare Electricity Rates Nationwide"
-                className="h-9 mb-4 brightness-0 invert"
+                className="h-9 mb-4"
               />
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
                 Your trusted electricity comparison platform for deregulated markets nationwide. Compare rates from 40+ providers in TX, PA, NY, OH, IL, NJ, MD & more. Save up to $800 per year.
