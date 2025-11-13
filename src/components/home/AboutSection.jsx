@@ -42,9 +42,9 @@ export default function AboutSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Image */}
           <div className="order-2 lg:order-1">
-            <div className="relative rounded-xl overflow-hidden shadow-lg h-full min-h-[500px]">
+            <div className="relative rounded-xl overflow-hidden shadow-lg h-full">
               <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/34b7db789_portrait-happy-multi-ethnic-family-embracing-adopted-kids-bonding-together.jpg"
+                src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800&q=80"
                 alt="Happy family enjoying their home"
                 className="w-full h-full object-cover" />
             </div>
@@ -53,10 +53,10 @@ export default function AboutSection() {
           {/* Content */}
           <div className="order-1 lg:order-2 space-y-6">
             <p className="text-lg text-gray-600 leading-relaxed">
-              We've cracked the code on electricity shopping across 12 competitive energy markets. While other comparison sites 
+              We've cracked the code on Texas electricity shopping. While other comparison sites 
               overwhelm you with options, we cut through the noise to surface only the plans that 
               truly save you money. No gimmicks, no hidden fees—just transparent rates from 
-              trusted providers, backed by our team of energy experts who monitor markets daily.
+              trusted providers, backed by our team of energy experts who monitor the market daily.
             </p>
 
             {/* Stats List */}
@@ -64,8 +64,8 @@ export default function AboutSection() {
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-[#FF6B35] rounded-full flex-shrink-0"></div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900">150,000+</span>
-                  <span className="text-base text-gray-600 ml-2">Households switched and saved nationwide</span>
+                  <span className="text-lg font-bold text-gray-900">50,000+</span>
+                  <span className="text-base text-gray-600 ml-2">Texans switched and saved</span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -78,7 +78,7 @@ export default function AboutSection() {
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-[#FF6B35] rounded-full flex-shrink-0"></div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900">$700+</span>
+                  <span className="text-lg font-bold text-gray-900">$600+</span>
                   <span className="text-base text-gray-600 ml-2">Average annual savings per household</span>
                 </div>
               </div>

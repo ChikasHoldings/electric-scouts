@@ -15,9 +15,9 @@ const articles = [
     category: "Getting Started",
     icon: BookOpen,
     color: "blue",
-    title: "Understanding Electricity Deregulation",
-    description: "Learn how deregulated electricity markets work and why you have the power to choose your provider in 12 states.",
-    content: "Twelve states across the U.S. have deregulated electricity markets, giving residents and businesses the power to choose their electricity provider. This means you're not stuck with one utility company – you can shop around for the best rates, plan types, and customer service. Your local utility company still maintains the power lines and handles outages, but you choose who supplies your electricity and how much you pay. States with electricity choice include Texas, Illinois, Ohio, Pennsylvania, New York, New Jersey, Maryland, Massachusetts, Maine, New Hampshire, Rhode Island, and Connecticut.",
+    title: "Understanding Texas Electricity Deregulation",
+    description: "Learn how the deregulated Texas electricity market works and why you have the power to choose your provider.",
+    content: "Since 2002, most of Texas has enjoyed a deregulated electricity market, giving residents and businesses the power to choose their electricity provider. This means you're not stuck with one utility company – you can shop around for the best rates, plan types, and customer service. Your local utility company (like Oncor, CenterPoint, or AEP Texas) still maintains the power lines and handles outages, but you choose who supplies your electricity and how much you pay.",
     readTime: "5 min"
   },
   {
@@ -27,7 +27,7 @@ const articles = [
     color: "green",
     title: "Fixed vs. Variable Rate Plans: Which Is Right for You?",
     description: "Compare the pros and cons of fixed and variable rate electricity plans to find the best option for your needs.",
-    content: "Fixed-rate plans lock in your electricity rate for the contract term (typically 6, 12, or 24 months), protecting you from market price fluctuations. You'll pay the same rate per kWh throughout your contract, making budgeting easier. Variable-rate plans change monthly based on market conditions and can go up or down. They offer flexibility with no long-term commitment but less predictability. Most consumers prefer fixed-rate plans for stability, especially during peak demand seasons when prices tend to spike.",
+    content: "Fixed-rate plans lock in your electricity rate for the contract term (typically 6, 12, or 24 months), protecting you from market price fluctuations. You'll pay the same rate per kWh throughout your contract, making budgeting easier. Variable-rate plans change monthly based on market conditions and can go up or down. They offer flexibility with no long-term commitment but less predictability. Most Texans prefer fixed-rate plans for stability, especially during summer when demand (and prices) spike.",
     readTime: "7 min"
   },
   {
@@ -35,9 +35,9 @@ const articles = [
     category: "Saving Money",
     icon: TrendingDown,
     color: "purple",
-    title: "10 Ways to Lower Your Electricity Bill",
+    title: "10 Ways to Lower Your Electricity Bill in Texas",
     description: "Practical tips and strategies to reduce your monthly electricity costs and save hundreds of dollars per year.",
-    content: "1. Compare rates regularly – Electricity rates change frequently in deregulated markets. 2. Choose the right plan – Match your usage to plan incentives. 3. Adjust your thermostat – Every degree counts. 4. Use ceiling fans – They make rooms feel 4°F cooler. 5. Seal air leaks – Stop paying to condition the outdoors. 6. Upgrade to LED bulbs – Use 75% less energy than incandescent. 7. Unplug devices – Eliminate phantom power drain. 8. Use appliances efficiently – Run full loads during off-peak hours. 9. Maintain your HVAC – Regular service improves efficiency. 10. Consider time-of-use plans – Save by using power during off-peak hours.",
+    content: "1. Compare rates regularly – Texas electricity rates change frequently. 2. Choose the right plan – Match your usage to plan incentives. 3. Adjust your thermostat – Every degree counts in summer. 4. Use ceiling fans – They make rooms feel 4°F cooler. 5. Seal air leaks – Stop paying to cool the outdoors. 6. Upgrade to LED bulbs – Use 75% less energy than incandescent. 7. Unplug devices – Eliminate phantom power drain. 8. Use appliances efficiently – Run full loads during off-peak hours. 9. Maintain your HVAC – Regular service improves efficiency. 10. Consider time-of-use plans – Save by using power during off-peak hours.",
     readTime: "10 min"
   },
   {
@@ -47,7 +47,7 @@ const articles = [
     color: "green",
     title: "Green Energy Plans: How to Go Solar Without Panels",
     description: "Discover how 100% renewable energy plans work and how you can support clean energy without installing solar panels.",
-    content: "You don't need solar panels on your roof to use renewable energy. Many electricity providers offer 100% renewable energy plans powered by wind and solar farms. When you choose a green energy plan, your provider ensures that renewable energy equivalent to your usage is added to the grid. These plans are often competitively priced with traditional plans and help reduce your carbon footprint while supporting clean energy development. Look for plans labeled 100% renewable or check the renewable percentage in the plan details.",
+    content: "You don't need solar panels on your roof to use renewable energy. Many Texas electricity providers offer 100% renewable energy plans powered by Texas wind and solar farms. When you choose a green energy plan, your provider ensures that renewable energy equivalent to your usage is added to the grid. These plans are often competitively priced with traditional plans and help reduce your carbon footprint while supporting clean energy development in Texas. Look for plans labeled 100% renewable or check the renewable percentage in the Electricity Facts Label.",
     readTime: "6 min"
   },
   {
@@ -55,9 +55,9 @@ const articles = [
     category: "Understanding Bills",
     icon: Zap,
     color: "yellow",
-    title: "How to Read Your Electricity Bill",
+    title: "How to Read Your Texas Electricity Bill",
     description: "Decode your electricity bill and understand exactly what you're paying for each month.",
-    content: "Your electricity bill has several key components: 1. Energy Charge – The cost per kWh you used (e.g., 10¢ × 1,000 kWh = $100). 2. Base Charge – A fixed monthly fee covering administrative costs ($5-$15 typically). 3. Delivery/Distribution Charges – Fees paid to your utility company for maintaining power lines. 4. Total Usage – How many kWh you consumed during the billing period. Understanding these components helps you compare plans accurately. When comparing, look at the total estimated bill, not just the per-kWh rate, as base charges and delivery fees vary by provider.",
+    content: "Your electricity bill has several key components: 1. Energy Charge – The cost per kWh you used (e.g., 10¢ × 1,000 kWh = $100). 2. Base Charge – A fixed monthly fee covering administrative costs ($5-$15 typically). 3. TDU Delivery Charges – Fees paid to your utility company for maintaining power lines (set by the state). 4. Total Usage – How many kWh you consumed during the billing period. Understanding these components helps you compare plans accurately. When comparing, look at the total estimated bill, not just the per-kWh rate, as base charges and TDU fees vary by provider.",
     readTime: "8 min"
   },
   {
@@ -67,7 +67,7 @@ const articles = [
     color: "blue",
     title: "How to Switch Electricity Providers Without Hassle",
     description: "A step-by-step guide to switching providers seamlessly with no interruption to your power.",
-    content: "Switching electricity providers is easier than you think. 1. Compare plans – Use Power Scouts to find better rates. 2. Check your current contract – Note any early termination fees. 3. Choose your new plan – Consider rate, contract length, and features. 4. Sign up – Online or by phone with your account information. 5. Let your new provider handle the rest – They coordinate with your old provider. 6. Your power stays on – No interruption during the switch. The entire process typically takes 1-3 business days. Moving? That's the perfect time to switch since you won't owe an early termination fee.",
+    content: "Switching electricity providers is easier than you think. 1. Compare plans – Use Power Scouts to find better rates. 2. Check your current contract – Note any early termination fees. 3. Choose your new plan – Consider rate, contract length, and features. 4. Sign up – Online or by phone with your meter number. 5. Let your new provider handle the rest – They coordinate with your old provider. 6. Your power stays on – No interruption during the switch. The entire process typically takes 1-3 business days. Moving? That's the perfect time to switch since you won't owe an early termination fee.",
     readTime: "6 min"
   },
   {
@@ -77,7 +77,7 @@ const articles = [
     color: "orange",
     title: "When to Switch: Timing Your Contract Renewal",
     description: "Learn the best time to switch providers and how to avoid automatic renewals at higher rates.",
-    content: "Many consumers overpay for electricity because they miss their contract renewal window. Your provider must notify you before your contract ends. This is the critical time to shop for new rates – don't wait! If you don't choose a new plan, you'll automatically renew, often at a higher rate. Set a calendar reminder for 45 days before your contract ends. Rates can vary significantly throughout the year, with lower rates typically available in spring and fall. During your renewal window, you can switch without penalty. Moving is also penalty-free, making it an ideal time to find better rates.",
+    content: "Many Texans overpay for electricity because they miss their contract renewal window. Your provider must notify you 30-60 days before your contract ends. This is the critical time to shop for new rates – don't wait! If you don't choose a new plan, you'll automatically renew, often at a higher rate. Set a calendar reminder for 45 days before your contract ends. Rates can vary significantly throughout the year, with lower rates typically available in spring and fall. During your renewal window, you can switch without penalty. Moving is also penalty-free, making it an ideal time to find better rates.",
     readTime: "7 min"
   },
   {
@@ -87,7 +87,7 @@ const articles = [
     color: "red",
     title: "Hidden Fees to Watch Out For",
     description: "Identify common electricity plan fees and avoid surprises on your bill.",
-    content: "Understanding fees helps you compare plans accurately: 1. Base/Customer Charge – Fixed monthly fee ($5-$15 typically), regardless of usage. 2. Early Termination Fee (ETF) – Charged if you cancel before contract ends ($100-$300 typically). 3. Late Payment Fee – Usually $5-$10 for late payments. 4. Disconnect/Reconnect Fees – Charged if service is turned off for non-payment. 5. Paper Bill Fee – Some providers charge $2-$5 for paper statements. All fees must be disclosed in the plan documents. When comparing plans, look at the total estimated bill, not just the per-kWh rate. Some low rates come with high base charges that make them more expensive overall.",
+    content: "Understanding fees helps you compare plans accurately: 1. Base/Customer Charge – Fixed monthly fee ($5-$15 typically), regardless of usage. 2. Early Termination Fee (ETF) – Charged if you cancel before contract ends ($100-$300 typically). 3. Late Payment Fee – Usually $5-$10 for late payments. 4. Disconnect/Reconnect Fees – Charged if service is turned off for non-payment. 5. Paper Bill Fee – Some providers charge $2-$5 for paper statements. All fees must be disclosed in the Electricity Facts Label (EFL). When comparing plans, look at the total estimated bill, not just the per-kWh rate. Some low rates come with high base charges that make them more expensive overall.",
     readTime: "8 min"
   },
   {
@@ -95,9 +95,9 @@ const articles = [
     category: "Summer Tips",
     icon: Zap,
     color: "orange",
-    title: "Managing High Electricity Bills During Summer",
+    title: "Surviving Texas Summer: Managing High Electricity Bills",
     description: "Special strategies for keeping your electricity costs under control during the hottest months.",
-    content: "Summer heat can send electricity bills soaring. Here's how to keep cool without breaking the bank: 1. Set your thermostat to 78°F when home – Each degree lower increases costs by 6-8%. 2. Use programmable thermostats – Increase temperature when away. 3. Close blinds during the day – Block out heat from direct sunlight. 4. Run ceiling fans – They make rooms feel cooler using less energy. 5. Avoid using ovens – Cook outdoors or use smaller appliances. 6. Schedule AC maintenance – Clean filters and coils improve efficiency. 7. Consider a time-of-use plan – Save by using power during off-peak hours. 8. Seal ductwork – Prevent conditioned air from escaping. Remember, your AC accounts for 40-50% of summer electricity usage.",
+    content: "Texas summers can send electricity bills soaring. Here's how to keep cool without breaking the bank: 1. Set your thermostat to 78°F when home – Each degree lower increases costs by 6-8%. 2. Use programmable thermostats – Increase temperature when away. 3. Close blinds during the day – Block out heat from direct sunlight. 4. Run ceiling fans – They make rooms feel cooler using less energy. 5. Avoid using ovens – Cook outdoors or use smaller appliances. 6. Schedule AC maintenance – Clean filters and coils improve efficiency. 7. Consider a time-of-use plan – Save by cooling your home during off-peak hours. 8. Seal ductwork – Prevent cooled air from escaping. Remember, your AC accounts for 40-50% of summer electricity usage.",
     readTime: "9 min"
   },
   {
@@ -107,7 +107,7 @@ const articles = [
     color: "teal",
     title: "Choosing the Right Contract Length",
     description: "Find the perfect balance between savings and flexibility with the right contract term.",
-    content: "Contract length significantly impacts your rate and flexibility. Short-term (1-6 months): Higher rates but maximum flexibility. Good if you're moving soon or expect rates to drop. Medium-term (12 months): Most popular option, balancing competitive rates with reasonable commitment. Ideal for most households. Long-term (24-36 months): Lowest rates but less flexibility. Best if you're staying long-term and want maximum savings. Month-to-month: No contract but variable rates that can spike. Consider your situation: Are you moving soon? How long do you plan to stay? Do you prefer rate stability or flexibility? Most consumers choose 12-month plans for the best balance.",
+    content: "Contract length significantly impacts your rate and flexibility. Short-term (1-6 months): Higher rates but maximum flexibility. Good if you're moving soon or expect rates to drop. Medium-term (12 months): Most popular option, balancing competitive rates with reasonable commitment. Ideal for most households. Long-term (24-36 months): Lowest rates but less flexibility. Best if you're staying long-term and want maximum savings. Month-to-month: No contract but variable rates that can spike. Consider your situation: Are you moving soon? How long do you plan to stay? Do you prefer rate stability or flexibility? Most Texans choose 12-month plans for the best balance.",
     readTime: "6 min"
   }
 ];
@@ -144,7 +144,7 @@ export default function LearningCenter() {
               Learning Center
             </h1>
             <p className="text-lg text-blue-100">
-              Expert guides to help you save money and understand electricity markets
+              Expert guides to help you save money and understand Texas electricity
             </p>
           </div>
         </div>
