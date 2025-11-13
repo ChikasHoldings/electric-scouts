@@ -235,8 +235,8 @@ export default function CityRates() {
               Cheap Electricity Rates in {cityName}, Texas
             </h1>
             <p className="text-lg text-blue-100 mb-5">
-              Compare electricity plans from {city.providers}+ providers serving {city.county}. 
-              Average rates starting at {city.avgRate} with potential savings up to $800/year.
+              Compare {dynamicStats ? dynamicStats.totalPlans : '100+'} electricity plans from {dynamicStats ? dynamicStats.uniqueProviders : city.providers}+ providers serving {city.county}. 
+              Rates starting at {dynamicStats ? dynamicStats.lowestRate : city.avgRate} with potential savings up to $800/year.
             </p>
 
             {/* Quick Stats - Dynamic Data */}
