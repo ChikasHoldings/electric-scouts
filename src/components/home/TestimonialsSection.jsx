@@ -76,11 +76,16 @@ const testimonials = [
 
 
 export default function TestimonialsSection() {
-  const [showAll, setShowAll] = useState(false);
-  const visibleTestimonials = showAll ? testimonials : testimonials.slice(0, 10);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const visibleTestimonials = testimonials.slice(0, visibleCount);
+  const hasMore = visibleCount < testimonials.length;
+
+  const loadMore = () => {
+    setVisibleCount(prev => Math.min(prev + 3, testimonials.length));
+  };
 
   return (
-    <section className="py-12 lg:py-16 bg-slate-50">
+    <section className="py-16 lg:py-20 bg-gradient-to-b from-slate-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -102,98 +107,26 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        {/* Reviews Grid - Balanced Layout */}
-        <div className="space-y-5 mb-10">
-          {/* First Row - 4 cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {visibleTestimonials.slice(0, 4).map((review, index) => (
-              <ReviewCard key={index} review={review} />
-            ))}
-          </div>
-          
-          {/* Second Row - 3 cards */}
-          {visibleTestimonials.length > 4 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleTestimonials.slice(4, 7).map((review, index) => (
-                <ReviewCard key={index + 4} review={review} />
-              ))}
-            </div>
-          )}
-          
-          {/* Third Row - 3 cards */}
-          {visibleTestimonials.length > 7 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleTestimonials.slice(7, 10).map((review, index) => (
-                <ReviewCard key={index + 7} review={review} />
-              ))}
-            </div>
-          )}
-          
-          {/* Fourth Row - 4 cards (if showing all) */}
-          {visibleTestimonials.length > 10 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {visibleTestimonials.slice(10, 14).map((review, index) => (
-                <ReviewCard key={index + 10} review={review} />
-              ))}
-            </div>
-          )}
-          
-          {/* Fifth Row - 4 cards */}
-          {visibleTestimonials.length > 14 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {visibleTestimonials.slice(14, 18).map((review, index) => (
-                <ReviewCard key={index + 14} review={review} />
-              ))}
-            </div>
-          )}
-          
-          {/* Sixth Row - 3 cards */}
-          {visibleTestimonials.length > 18 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleTestimonials.slice(18, 21).map((review, index) => (
-                <ReviewCard key={index + 18} review={review} />
-              ))}
-            </div>
-          )}
-          
-          {/* Seventh Row - 3 cards */}
-          {visibleTestimonials.length > 21 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleTestimonials.slice(21, 24).map((review, index) => (
-                <ReviewCard key={index + 21} review={review} />
-              ))}
-            </div>
-          )}
-          
-          {/* Eighth Row - 3 cards */}
-          {visibleTestimonials.length > 24 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleTestimonials.slice(24, 27).map((review, index) => (
-                <ReviewCard key={index + 24} review={review} />
-              ))}
-            </div>
-          )}
-          
-          {/* Ninth Row - 3 cards */}
-          {visibleTestimonials.length > 27 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleTestimonials.slice(27, 30).map((review, index) => (
-                <ReviewCard key={index + 27} review={review} />
-              ))}
-            </div>
-          )}
+        {/* Reviews Grid - Consistent 3 Column Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          {visibleTestimonials.map((review, index) => (
+            <ReviewCard key={index} review={review} />
+          ))}
         </div>
 
         {/* Load More Button */}
-        {!showAll && (
+        {hasMore && (
           <div className="text-center">
             <Button
-              onClick={() => setShowAll(true)}
+              onClick={loadMore}
               className="px-10 py-6 text-base font-semibold bg-[#0A5C8C] hover:bg-[#084a6f] text-white shadow-lg hover:shadow-xl transition-all"
             >
-              Load More Reviews
+              Show More Reviews
               <Star className="w-4 h-4 ml-2 fill-amber-400 text-amber-400" />
             </Button>
+            <p className="text-sm text-gray-500 mt-3">
+              Showing {visibleCount} of {testimonials.length} reviews
+            </p>
           </div>
         )}
       </div>
