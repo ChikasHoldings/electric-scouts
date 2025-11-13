@@ -14,6 +14,7 @@ import ProvidersSection from "../components/home/ProvidersSection";
 import HowItWorksSection from "../components/home/HowItWorksSection";
 import TestimonialsSection from "../components/home/TestimonialsSection";
 import SEOHead, { getOrganizationSchema, getServiceSchema } from "../components/SEOHead";
+import { FooterDisclaimer } from "../components/DataDisclaimer";
 
 export default function Home() {
   const [zipCode, setZipCode] = useState("");

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import PlanCard from "../components/compare/PlanCard";
 import { getProvidersForZipCode, getProviderDetails } from "../components/compare/providerAvailability";
+import DataDisclaimer, { FooterDisclaimer } from "../components/DataDisclaimer";
 
 // City-specific data for SEO
 const cityData = {
@@ -627,6 +628,11 @@ export default function CityRates() {
             </div>
           </div>
         </section>
+
+        {/* Data Disclaimer */}
+        <div className="mb-12">
+          <DataDisclaimer variant="compact" />
+        </div>
       </div>
 
       {/* SEO Footer Content */}
@@ -651,6 +657,8 @@ export default function CityRates() {
           </div>
         </div>
       </div>
+
+      <FooterDisclaimer />
     </div>
   );
 }

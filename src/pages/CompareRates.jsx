@@ -13,6 +13,7 @@ import {
   getCityFromZip,
   providerServesZip 
 } from "../components/compare/providerAvailability";
+import DataDisclaimer, { FooterDisclaimer } from "../components/DataDisclaimer";
 
 export default function CompareRates() {
   const [step, setStep] = useState(1);
@@ -304,6 +305,11 @@ export default function CompareRates() {
                 </Card>
               ))}
             </div>
+
+            {/* Data Disclaimer */}
+            <div className="mt-8">
+              <DataDisclaimer variant="compact" />
+            </div>
           </div>
 
           {/* All Other Plans - Table View */}
@@ -535,6 +541,8 @@ export default function CompareRates() {
             </div>
           )}
         </div>
+
+        <FooterDisclaimer />
       </div>
     );
   }
