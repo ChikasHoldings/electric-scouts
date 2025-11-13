@@ -60,7 +60,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="relative group">
                 <button className="flex items-center gap-1 text-gray-700 hover:text-[#0A5C8C] transition-colors text-base font-medium">
                   Residential
-                  <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
+                  <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
                 </button>
                 <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-5 z-50 border border-gray-100">
                   <div className="grid grid-cols-2 gap-5">
@@ -119,7 +119,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="relative group">
                 <button className="flex items-center gap-1 text-gray-700 hover:text-[#0A5C8C] transition-colors text-base font-medium">
                   Resources
-                  <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
+                  <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
                 </button>
                 <div className="absolute top-full right-0 mt-2 w-40 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-3 z-50 border border-gray-100">
                   <div className="space-y-1.5">
