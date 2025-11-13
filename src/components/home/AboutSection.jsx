@@ -49,12 +49,12 @@ export default function AboutSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Image with Overlay */}
           <div className="order-2 lg:order-1 group">
-            <div className="relative rounded-2xl overflow-hidden shadow-xl transform hover:scale-105 transition-all duration-500">
+            <div className="relative rounded-2xl overflow-hidden shadow-xl transform hover:scale-105 transition-all duration-500 h-full">
               <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
               <img
-                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80"
-                alt="Professional team helping customers"
-                className="w-full h-auto" />
+                src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800&q=80"
+                alt="Happy family enjoying their home"
+                className="w-full h-full object-cover" />
 
               {/* Floating Badge */}
               <div className="absolute bottom-4 right-4 bg-white rounded-xl px-4 py-3 shadow-xl z-20 transform group-hover:translate-y-[-6px] transition-transform duration-300">
