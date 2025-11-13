@@ -271,7 +271,7 @@ export default function Layout({ children, currentPageName }) {
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 w-11 h-11 bg-gradient-to-br from-blue-600 to-cyan-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all z-50 flex items-center justify-center hover:scale-110 transform group"
+          className="fixed bottom-6 right-6 w-11 h-11 bg-[#FF6B35] text-white rounded-full shadow-xl hover:shadow-2xl transition-all z-50 flex items-center justify-center hover:scale-110 transform group"
         >
           <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
         </button>
