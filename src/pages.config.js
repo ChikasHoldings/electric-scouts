@@ -16,6 +16,8 @@ import Landing from './pages/Landing';
 import AllStates from './pages/AllStates';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import TexasElectricity from './pages/TexasElectricity';
+import IllinoisElectricity from './pages/IllinoisElectricity';
 import Layout from './Layout.jsx';
 
 
@@ -38,6 +40,8 @@ export const PAGES = {
     "AllStates": AllStates,
     "Blog": Blog,
     "BlogPost": BlogPost,
+    "TexasElectricity": TexasElectricity,
+    "IllinoisElectricity": IllinoisElectricity,
 }
 
 export const pagesConfig = {
