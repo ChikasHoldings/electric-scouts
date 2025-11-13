@@ -257,7 +257,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link to={createPageUrl("CompareRates") + "?planType=variable"} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Variable Rate Plans
                 </Link>
-                <Link to={createPageUrl("CompareRates") + "?renewable=true"} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                <Link to={createPageUrl("RenewableEnergy")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Renewable Energy
                 </Link>
                 <Link to={createPageUrl("CompareRates") + "?contract=12"} className="block text-gray-400 hover:text-white text-sm transition-colors">
