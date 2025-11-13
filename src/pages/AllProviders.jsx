@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 const providers = [
   {
     name: "TXU Energy",
-    logo: "https://logo.clearbit.com/txu.com",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/33e89f5a5_id7UEhjySO_1762886832466.png",
     rating: 4.5,
     reviews: 2340,
     description: "Texas' largest electricity provider with a wide range of plan options and competitive rates.",
@@ -17,17 +17,8 @@ const providers = [
     minRate: "8.9¢/kWh"
   },
   {
-    name: "Reliant Energy",
-    logo: "https://logo.clearbit.com/reliant.com",
-    rating: 4.3,
-    reviews: 1890,
-    description: "Trusted provider offering flexible plans and excellent customer service since 2000.",
-    features: ["Rewards Program", "Same-Day Service", "Smart Home Integration"],
-    minRate: "9.2¢/kWh"
-  },
-  {
     name: "Gexa Energy",
-    logo: "https://logo.clearbit.com/gexaenergy.com",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/81171c099_idcT-olPyu_1762886748078.png",
     rating: 4.4,
     reviews: 1560,
     description: "100% renewable energy plans with transparent pricing and no hidden fees.",
@@ -35,35 +26,8 @@ const providers = [
     minRate: "8.7¢/kWh"
   },
   {
-    name: "Direct Energy",
-    logo: "https://logo.clearbit.com/directenergy.com",
-    rating: 4.2,
-    reviews: 1420,
-    description: "Nationwide provider with competitive rates and various plan lengths to fit your needs.",
-    features: ["Price Protection", "Online Account Management", "Energy Efficiency Tips"],
-    minRate: "9.5¢/kWh"
-  },
-  {
-    name: "Green Mountain Energy",
-    logo: "https://logo.clearbit.com/greenmountainenergy.com",
-    rating: 4.6,
-    reviews: 1780,
-    description: "Leading renewable energy provider committed to sustainability and clean power.",
-    features: ["100% Renewable", "Carbon Offset Programs", "Community Support"],
-    minRate: "9.8¢/kWh"
-  },
-  {
-    name: "4Change Energy",
-    logo: "https://logo.clearbit.com/4changeenergy.com",
-    rating: 4.3,
-    reviews: 980,
-    description: "Affordable electricity plans with straightforward pricing and no surprises.",
-    features: ["Simple Plans", "Auto Pay Discount", "Paperless Billing"],
-    minRate: "8.5¢/kWh"
-  },
-  {
     name: "Frontier Utilities",
-    logo: "https://logo.clearbit.com/frontierutilities.com",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e38feed2c_Screenshot45.png",
     rating: 4.1,
     reviews: 850,
     description: "Customer-focused provider with competitive rates for residential and business.",
@@ -72,7 +36,7 @@ const providers = [
   },
   {
     name: "Rhythm Energy",
-    logo: "https://logo.clearbit.com/gotrhythm.com",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/46a5a0738_id6k09mhoA_1762886791027.png",
     rating: 4.5,
     reviews: 1240,
     description: "Modern energy provider with innovative plans and smart home technology support.",
@@ -80,17 +44,8 @@ const providers = [
     minRate: "9.1¢/kWh"
   },
   {
-    name: "Veteran Energy",
-    logo: "https://logo.clearbit.com/veteranenergy.com",
-    rating: 4.4,
-    reviews: 670,
-    description: "Veteran-owned company offering special rates and benefits for military families.",
-    features: ["Military Discounts", "Patriotic Support", "Transparent Pricing"],
-    minRate: "9.3¢/kWh"
-  },
-  {
     name: "Express Energy",
-    logo: "https://logo.clearbit.com/expressenergy.com",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/5f35b8e44_idy542OFcd_logos.png",
     rating: 4.2,
     reviews: 920,
     description: "Fast setup and competitive plans designed for today's busy lifestyle.",
@@ -98,22 +53,67 @@ const providers = [
     minRate: "9.6¢/kWh"
   },
   {
-    name: "Payless Power",
-    logo: "https://logo.clearbit.com/paylesspower.com",
-    rating: 4.0,
-    reviews: 1120,
-    description: "Prepaid electricity with no deposit required and flexible payment options.",
-    features: ["No Deposit", "Prepaid Options", "Daily Usage Alerts"],
-    minRate: "10.2¢/kWh"
+    name: "Discount Power",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/cbf862895_Screenshot46.png",
+    rating: 4.3,
+    reviews: 1150,
+    description: "Simple and affordable electricity plans with no hidden fees or surprises.",
+    features: ["Low Rates", "No Deposit Required", "Easy Signup"],
+    minRate: "8.4¢/kWh"
   },
   {
-    name: "CleanSky Energy",
-    logo: "https://logo.clearbit.com/cleanskyenergy.com",
+    name: "Ambit Energy",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/eb7ecacc8_idT9p2RC1n_1762848661994.png",
+    rating: 4.2,
+    reviews: 980,
+    description: "Reliable energy provider with competitive rates and excellent customer rewards.",
+    features: ["Customer Rewards", "Fixed Rate Plans", "Online Management"],
+    minRate: "9.3¢/kWh"
+  },
+  {
+    name: "Constellation Energy",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/de83cbefc_idvO6_xjIY_logos.png",
+    rating: 4.4,
+    reviews: 1680,
+    description: "National leader in clean energy with innovative plans for homes and businesses.",
+    features: ["Renewable Options", "Smart Energy Tools", "Flexible Plans"],
+    minRate: "9.2¢/kWh"
+  },
+  {
+    name: "Chariot Energy",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/1f7bec713_idEK1dDtu1_logos.png",
+    rating: 4.5,
+    reviews: 1320,
+    description: "100% renewable energy provider with transparent pricing and local solar options.",
+    features: ["100% Solar", "Smart Technology", "Local Support"],
+    minRate: "9.5¢/kWh"
+  },
+  {
+    name: "Champion Energy",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c489ac96d_idabZcuDLC_1762848446410.png",
     rating: 4.3,
-    reviews: 780,
-    description: "Committed to clean energy with competitive rates and eco-friendly initiatives.",
-    features: ["Solar Programs", "Green Technology", "Community Projects"],
-    minRate: "9.4¢/kWh"
+    reviews: 1050,
+    description: "Texas-based provider offering straightforward plans with reliable service.",
+    features: ["Fixed & Variable Plans", "No Surprises", "Quick Setup"],
+    minRate: "8.9¢/kWh"
+  },
+  {
+    name: "BKV Energy",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/208618693_idecUVsTjb_logos.png",
+    rating: 4.4,
+    reviews: 890,
+    description: "Innovative energy solutions with competitive rates and renewable options.",
+    features: ["Green Energy", "Competitive Rates", "Modern Platform"],
+    minRate: "9.0¢/kWh"
+  },
+  {
+    name: "APG&E",
+    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/ab225f2ac_idy5Qy7KTo_1762848313421.png",
+    rating: 4.2,
+    reviews: 760,
+    description: "Affordable and sustainable energy plans with excellent customer service.",
+    features: ["Low Rates", "Green Options", "24/7 Support"],
+    minRate: "8.6¢/kWh"
   }
 ];
 
