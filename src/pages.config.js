@@ -20,6 +20,8 @@ import TexasElectricity from './pages/TexasElectricity';
 import IllinoisElectricity from './pages/IllinoisElectricity';
 import OhioElectricity from './pages/OhioElectricity';
 import PennsylvaniaElectricity from './pages/PennsylvaniaElectricity';
+import NewYorkElectricity from './pages/NewYorkElectricity';
+import NewJerseyElectricity from './pages/NewJerseyElectricity';
 import Layout from './Layout.jsx';
 
 
@@ -46,6 +48,8 @@ export const PAGES = {
     "IllinoisElectricity": IllinoisElectricity,
     "OhioElectricity": OhioElectricity,
     "PennsylvaniaElectricity": PennsylvaniaElectricity,
+    "NewYorkElectricity": NewYorkElectricity,
+    "NewJerseyElectricity": NewJerseyElectricity,
 }
 
 export const pagesConfig = {
