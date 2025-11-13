@@ -8,7 +8,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 800,
     providerCount: 45,
-    cities: ['Houston', 'Dallas', 'Austin', 'San Antonio', 'Fort Worth', 'Arlington', 'Plano', 'Corpus Christi']
+    cities: ['Houston', 'Dallas', 'Austin', 'San Antonio', 'Fort Worth', 'El Paso', 'Arlington', 'Corpus Christi']
   },
   IL: {
     name: 'Illinois',
@@ -17,7 +17,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 700,
     providerCount: 36,
-    cities: ['Chicago', 'Aurora', 'Naperville', 'Joliet', 'Rockford', 'Springfield']
+    cities: ['Chicago', 'Aurora', 'Naperville', 'Joliet', 'Rockford', 'Springfield', 'Elgin', 'Peoria']
   },
   OH: {
     name: 'Ohio',
@@ -26,7 +26,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 760,
     providerCount: 40,
-    cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton']
+    cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton', 'Parma', 'Canton']
   },
   PA: {
     name: 'Pennsylvania',
@@ -35,7 +35,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 750,
     providerCount: 38,
-    cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading', 'Scranton', 'Lancaster']
+    cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Reading', 'Erie', 'Scranton', 'Bethlehem', 'Lancaster']
   },
   NY: {
     name: 'New York',
@@ -44,7 +44,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 740,
     providerCount: 42,
-    cities: ['New York City', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse', 'Albany']
+    cities: ['New York City', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse', 'Albany', 'New Rochelle', 'Mount Vernon']
   },
   NJ: {
     name: 'New Jersey',
@@ -53,7 +53,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 720,
     providerCount: 35,
-    cities: ['Newark', 'Jersey City', 'Paterson', 'Elizabeth', 'Trenton', 'Camden']
+    cities: ['Newark', 'Jersey City', 'Paterson', 'Elizabeth', 'Edison', 'Woodbridge', 'Lakewood', 'Toms River']
   },
   MD: {
     name: 'Maryland',
@@ -62,7 +62,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 680,
     providerCount: 32,
-    cities: ['Baltimore', 'Columbia', 'Germantown', 'Silver Spring', 'Waldorf', 'Ellicott City']
+    cities: ['Baltimore', 'Columbia', 'Germantown', 'Silver Spring', 'Waldorf', 'Glen Burnie', 'Ellicott City', 'Frederick']
   },
   MA: {
     name: 'Massachusetts',
@@ -71,7 +71,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 710,
     providerCount: 34,
-    cities: ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell', 'Brockton']
+    cities: ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell', 'Brockton', 'Quincy', 'Lynn']
   },
   ME: {
     name: 'Maine',
@@ -80,7 +80,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 620,
     providerCount: 22,
-    cities: ['Portland', 'Lewiston', 'Bangor', 'South Portland', 'Auburn', 'Biddeford']
+    cities: ['Portland', 'Lewiston', 'Bangor', 'South Portland', 'Auburn', 'Biddeford', 'Sanford', 'Augusta']
   },
   NH: {
     name: 'New Hampshire',
@@ -89,7 +89,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 640,
     providerCount: 25,
-    cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Rochester', 'Salem']
+    cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Rochester', 'Salem', 'Dover', 'Merrimack']
   },
   RI: {
     name: 'Rhode Island',
@@ -98,7 +98,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 660,
     providerCount: 26,
-    cities: ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence', 'Woonsocket']
+    cities: ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence', 'Woonsocket', 'Coventry', 'Cumberland']
   },
   CT: {
     name: 'Connecticut',
@@ -107,7 +107,7 @@ export const DEREGULATED_STATES = {
     marketType: 'Fully Deregulated',
     avgSavings: 690,
     providerCount: 30,
-    cities: ['Bridgeport', 'New Haven', 'Hartford', 'Stamford', 'Waterbury', 'Norwalk']
+    cities: ['Bridgeport', 'New Haven', 'Hartford', 'Stamford', 'Waterbury', 'Norwalk', 'Danbury', 'New Britain']
   }
 };
 
