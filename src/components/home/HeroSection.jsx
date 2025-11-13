@@ -47,7 +47,7 @@ export default function HeroSection({ zipCode, setZipCode, onCompare }) {
                 </span>
               </h1>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Compare plans and save up to $800 annually on your electricity bills.
+                Compare plans from 40+ providers and save up to $800 annually on your electricity bills.
               </p>
             </div>
 
