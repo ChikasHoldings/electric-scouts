@@ -82,7 +82,7 @@ export default function Home() {
                   <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">
                     Enter Your ZIP Code
                   </h3>
-                  <div className="space-y-5 sm:space-y-4">
+                  <div className="space-y-5">
                     <Input
                       type="text"
                       placeholder="Enter ZIP code"
