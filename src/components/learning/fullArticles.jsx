@@ -1651,8 +1651,6 @@ Optimization focus: LED high-bay fixtures with motion sensors, forklift charging
 export const getFullArticle = (articleId) => {
   return fullArticles[articleId] || null;
 };
-
-  50: {
     title: "Texas Electricity Rates Guide: How to Find the Cheapest Plans in 2024",
     metaTitle: "Texas Electricity Rates 2024: Find Cheapest Plans & Save $800+ | Power Scouts",
     metaDescription: "Complete Texas electricity guide for Houston, Dallas, Austin, San Antonio. Compare 40+ TX providers, find lowest rates, avoid common mistakes. Save $600-900 yearly.",
