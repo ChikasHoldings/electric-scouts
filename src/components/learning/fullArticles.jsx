@@ -263,6 +263,138 @@ A: Yes! Renters have the same right as homeowners to choose electricity provider
 
 <p><strong>Next steps:</strong> <a href="/article?id=2">Learn how to compare electricity rates effectively</a>, understand <a href="/article?id=3">different plan types</a>, and explore <a href="/all-states">state-specific electricity guides</a> for your area.</p>
 `
+  },
+
+  2: {
+    title: "How to Compare Electricity Rates and Save $500+ Per Year",
+    metaTitle: "How to Compare Electricity Rates: Step-by-Step Guide to Save $500+ | Power Scouts",
+    metaDescription: "Master electricity rate comparison with this expert guide. Learn how to find the lowest rates, avoid hidden fees, and save $500-800 annually. Free tools included.",
+    tags: ["Compare Electricity Rates", "Save Money", "Shopping Guide", "Rate Comparison", "Consumer Tips"],
+    content: `
+<h2>Why Comparing Electricity Rates Actually Matters</h2>
+
+<p>Sarah from <a href="/city-rates?city=Dallas">Dallas</a> discovered she was paying 13.8¢ per kWh without realizing it. When she finally spent 20 minutes comparing electricity rates online, she found a plan at 9.4¢ per kWh from a top-rated provider.</p>
+
+<p>With her 2,000 kWh monthly usage, that rate difference saves her <strong>$88 per month or $1,056 per year</strong>. That's a vacation. That's a new laptop. That's dinner out twice a month for a year. And all it cost was 20 minutes of her time.</p>
+
+<p>This is why <a href="/article?id=1">understanding deregulated electricity markets</a> and actively comparing rates is one of the highest-ROI activities you can do. Yet 68% of eligible consumers never shop for better rates, leaving hundreds of dollars on the table annually.</p>
+
+<h2>Step 1: Gather Your Current Information</h2>
+
+<p>Before comparing rates, collect these key details from your most recent electricity bill:</p>
+
+<ul>
+<li><strong>Current rate per kWh:</strong> Found in your bill's rate schedule or EFL</li>
+<li><strong>Average monthly usage:</strong> Check 3-6 months of bills for accurate average (usage varies seasonally)</li>
+<li><strong>Contract end date:</strong> Critical for avoiding <a href="/article?id=79">early termination fees</a></li>
+<li><strong>ZIP code or ESI ID:</strong> <a href="/article?id=97">Your ESI ID</a> identifies your specific service location</li>
+<li><strong>Current total monthly bill:</strong> Including all fees and charges for comparison</li>
+</ul>
+
+<p>Don't have your bill? <a href="/article?id=9">Learn how to read your electricity bill</a> to find these critical details. Understanding your bill is the foundation of smart electricity shopping.</p>
+
+<h2>Step 2: Determine Your True Average Usage</h2>
+
+<p>Using the wrong usage level when comparing rates is a critical mistake. Here's why: electricity plans are often priced differently at 500, 1000, and 2000 kWh usage levels due to tiered rate structures.</p>
+
+<p><strong>How to calculate accurate average usage:</strong></p>
+
+<ol>
+<li>Collect your last 12 months of electricity bills (or at least 6 months)</li>
+<li>Add up total kWh used across all months</li>
+<li>Divide by number of months</li>
+<li>Round to nearest 100 kWh for comparison purposes</li>
+</ol>
+
+<p><strong>Example calculation:</strong><br>
+Jan: 950 kWh, Feb: 880 kWh, Mar: 780 kWh, Apr: 650 kWh, May: 1,200 kWh, Jun: 1,850 kWh, Jul: 2,100 kWh, Aug: 2,250 kWh, Sep: 1,650 kWh, Oct: 920 kWh, Nov: 850 kWh, Dec: 1,020 kWh<br>
+Total: 15,100 kWh ÷ 12 months = <strong>1,258 kWh average</strong> (round to 1,250 kWh for comparison)</p>
+
+<p>If you don't have 12 months of history, use your utility's estimate or check <a href="/article?id=94">average electricity usage by home size</a> as a starting point. A 2,000 sq ft home in Texas typically uses 1,200-1,600 kWh monthly depending on insulation and AC efficiency.</p>
+
+<h2>Step 3: Understand What You're Actually Comparing</h2>
+
+<p>Not all electricity rates are created equal. The advertised rate is only part of your total cost:</p>
+
+<p><strong>Advertised Energy Charge:</strong> The base per-kWh rate (e.g., 9.5¢/kWh)</p>
+
+<p><strong><a href="/article?id=76">TDU Delivery Charges</a>:</strong> Utility fees for maintaining power lines (adds 3.5-6¢/kWh)</p>
+
+<p><strong>Monthly Base Charge:</strong> Fixed fee charged monthly regardless of usage ($0-15)</p>
+
+<p><strong>Usage Credits:</strong> Some plans offer bill credits that affect total cost</p>
+
+<p><strong>Minimum Usage Fees:</strong> Penalties if you use below a certain threshold</p>
+
+<p><strong>Taxes:</strong> Varies by location (typically 2-8% of bill)</p>
+
+<p><strong>Real Example:</strong> A plan advertising "9.5¢/kWh" actually costs:<br>
+Energy: 9.5¢ + TDU delivery: 4.5¢ + Base charge: $9.95÷1000kWh = 1¢<br>
+<strong>True total rate: 15¢/kWh</strong></p>
+
+<p>This is why you must compare total estimated monthly bills at YOUR usage level, not just advertised rates. Use our <a href="/compare-rates">comparison tool</a> which automatically calculates total costs including all fees.</p>
+
+<div class="cta-box">
+<h3>Compare Rates the Easy Way</h3>
+<p>Our free tool shows total costs at your exact usage, including all fees and TDU charges.</p>
+<a href="/compare-rates" class="cta-button">Compare Rates Now</a>
+</div>
+
+<h2>Step 4: Compare Apples to Apples</h2>
+
+<p>When evaluating electricity plans, compare these critical factors:</p>
+
+<p><strong>Rate Type:</strong> <a href="/article?id=3">Fixed vs variable rates</a> have different risk/reward profiles. Fixed rates offer budget certainty, variable rates offer flexibility and potential savings during low-demand periods.</p>
+
+<p><strong>Contract Length:</strong> <a href="/article?id=87">12-month plans typically offer best rates</a>, while 24-36 month plans cost slightly more but provide longer price protection. <a href="/article?id=81">Month-to-month plans</a> cost 15-25% more but offer ultimate flexibility.</p>
+
+<p><strong>Early Termination Fee:</strong> Critical if you might move. Range from $0-500. Read the fine print before signing.</p>
+
+<p><strong>Renewable Energy Percentage:</strong> If <a href="/renewable-energy">environmental impact matters</a>, look for 50-100% renewable plans. Many cost the same as traditional plans.</p>
+
+<p><strong>Customer Reviews:</strong> Check state regulatory websites for <a href="/article?id=105">legitimate provider reviews</a> and complaint ratios. Don't trust Google reviews alone.</p>
+
+<p><strong>Provider Reputation:</strong> Verify providers are licensed with your state's Public Utility Commission. <a href="/article?id=6">Avoid unlicensed scam operations</a>.</p>
+
+<h2>Real-World Comparison Examples</h2>
+
+<p><strong>Houston Family (1,500 kWh monthly):</strong><br>
+Compared 40+ <a href="/texas-electricity">Texas providers</a><br>
+Found rate: 9.1¢/kWh (was paying 12.5¢)<br>
+<strong>Savings: $612/year</strong></p>
+
+<p><strong>Chicago Apartment (720 kWh monthly):</strong><br>
+Compared 20+ <a href="/illinois-electricity">Illinois suppliers</a><br>
+Found rate: 8.5¢/kWh (was paying 11.6¢)<br>
+<strong>Savings: $268/year</strong></p>
+
+<p><strong>Philadelphia Couple (850 kWh monthly):</strong><br>
+Compared 25+ <a href="/pennsylvania-electricity">Pennsylvania suppliers</a><br>
+Found rate: 8.2¢/kWh (was paying 10.9¢)<br>
+<strong>Savings: $275/year</strong></p>
+
+<h2>Common Rate Comparison Mistakes to Avoid</h2>
+
+<p>Don't fall into these traps that cost consumers hundreds:</p>
+
+<p><strong>Mistake #1: Only looking at advertised rate</strong> - Always calculate total cost including TDU fees</p>
+
+<p><strong>Mistake #2: Comparing at wrong usage level</strong> - Use YOUR actual average, not the default 1,000 kWh</p>
+
+<p><strong>Mistake #3: Ignoring contract end date</strong> - Missing renewal window costs $300-800 in higher auto-renewal rates</p>
+
+<p><strong>Mistake #4: Falling for gimmick plans</strong> - <a href="/article?id=101">"Free nights" plans</a> only work for 35% of households</p>
+
+<p><strong>Mistake #5: Not reading the EFL</strong> - Hidden fees and conditions lurk in fine print</p>
+
+<p>Read our complete guide to <a href="/article?id=95">electricity shopping mistakes</a> to avoid all common pitfalls.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>Comparing electricity rates isn't complicated, but it does require attention to detail. Follow these steps and you'll consistently pay less than neighbors who accept whatever rate they're given. This process takes 20-30 minutes annually and saves $500-800 every year.</p>
+
+<p><strong>Next steps:</strong> <a href="/compare-rates">Compare rates in your area now</a>, learn about <a href="/article?id=3">different plan types</a>, and explore our <a href="/all-states">state-specific electricity guides</a> for targeted local advice.</p>
+`
   }
 };
 
