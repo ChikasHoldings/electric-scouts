@@ -45,7 +45,7 @@ export default function AboutSection() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl h-full">
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/86a6bbb00_portrait-happy-multi-ethnic-family-embracing-adopted-kids-bonding-together.jpg"
-                alt="Happy family enjoying their home"
+                alt="Happy multi-ethnic family embracing at home, representing satisfied electricity customers saving money with Power Scouts"
                 className="w-full h-full object-cover" />
             </div>
           </div>

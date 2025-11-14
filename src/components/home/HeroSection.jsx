@@ -87,7 +87,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
           <div className="relative hidden lg:block">
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/25aa21e12_Screenshot47.png"
-              alt="Electricity comparison dashboard"
+              alt="Interactive electricity rate comparison dashboard showing multiple provider plans with pricing and savings calculations"
               className="w-full h-auto" />
           </div>
         </div>
