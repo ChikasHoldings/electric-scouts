@@ -1469,8 +1469,7 @@ Illinois has aggressive renewable energy standards. ComEd territory suppliers of
 
 <p><strong>Related guides:</strong> Learn about <a href="/article?id=103">community solar programs</a>, compare <a href="/article?id=77">solar panels vs electricity plans</a>, or explore <a href="/article?id=84">advanced renewable energy topics</a>. For state-specific renewable options, check your <a href="/all-states">state electricity guide</a>.</p>
 `
-  }
-};
+  },
 
   72: {
     title: "Average Electricity Bill by State 2024: Complete Cost Breakdown",
