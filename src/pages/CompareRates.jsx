@@ -685,7 +685,7 @@ export default function CompareRates() {
           </Card>
 
           {/* Informational Cards */}
-          <div className="grid sm:grid-cols-3 gap-4 mt-8">
+          <div className="grid sm:grid-cols-3 gap-4 mt-12">
             <Card className="border-2 bg-white hover:shadow-lg transition-shadow">
               <CardContent className="p-5 text-center">
                 <h3 className="font-bold text-gray-900 mb-2">Save Up to $800/Year</h3>
