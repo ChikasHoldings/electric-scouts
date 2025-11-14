@@ -2001,8 +2001,9 @@ Other appliances: 2,500 kWh<br>
   }
 };
 
-  81: {
-    title: "Month-to-Month Electricity Plans: Complete Flexibility Guide",
+export const getFullArticle = (articleId) => {
+  return fullArticles[articleId] || null;
+};
     metaTitle: "Month-to-Month Electricity Plans: No Contract Power Guide | Power Scouts",
     metaDescription: "No-contract electricity plans explained. Compare month-to-month vs long-term contracts, rates, and flexibility. Find best no-commitment options.",
     tags: ["Month to Month", "No Contract Electricity", "Flexible Plans", "Short Term Electricity", "No Commitment"],
