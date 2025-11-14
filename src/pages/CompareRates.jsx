@@ -544,6 +544,63 @@ export default function CompareRates() {
               </Button>
             </div>
           )}
+
+          {/* Informational Content Section */}
+          <div className="mt-16 bg-white rounded-xl shadow-md border border-gray-200 p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Understanding Your Electricity Options</h2>
+            
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Why Compare Electricity Rates?</h3>
+                <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                  In deregulated electricity markets, you have the power to choose your provider. Competition among 40+ companies means lower rates and better service. The average household saves $500-800 annually just by comparing plans once per year.
+                </p>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Don't let your contract auto-renew at higher rates. Shopping takes 10 minutes and puts hundreds of dollars back in your pocket every year.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">How to Choose the Right Plan</h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>Compare Total Cost:</strong> Look at estimated monthly bills at your usage level, not just per-kWh rates</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>Match Contract Length:</strong> Choose 12-month plans for best rate-flexibility balance</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>Read the Fine Print:</strong> Check early termination fees and auto-renewal terms</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                    <span><strong>Verify Provider:</strong> Ensure they're licensed with your state's Public Utility Commission</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6 border border-blue-100">
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Frequently Asked Questions</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 mb-1">Will my power go out when I switch providers?</p>
+                  <p className="text-sm text-gray-600">No. Your local utility still delivers power through the same infrastructure. Only your billing company changes.</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 mb-1">How long does switching take?</p>
+                  <p className="text-sm text-gray-600">Enrollment takes 5-10 minutes online. Your new service activates within 1-2 billing cycles (typically 14-45 days).</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 mb-1">Can I switch anytime?</p>
+                  <p className="text-sm text-gray-600">You can switch anytime, but may face early termination fees if you cancel before your contract ends. Wait until contract expiration for penalty-free switching.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -702,15 +759,6 @@ export default function CompareRates() {
             Show My Rates
           </Button>
         </div>
-      </div>
-    );
-  }
-
-  // Step 4: Informational content at bottom of results (after showing results)
-  if (showResults) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-        {/* ... existing results rendering code above ... */}
       </div>
     );
   }
