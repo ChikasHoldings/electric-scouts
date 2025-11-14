@@ -35,7 +35,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
 
             {/* Enhanced ZIP Code Input */}
             <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-1.5 hover:shadow-2xl hover:border-gray-300 transition-all duration-300">
-              <div className="flex flex-col sm:flex-row items-stretch gap-2.5">
+              <div className="flex flex-col sm:flex-row items-stretch gap-3 sm:gap-2.5">
                 <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gray-50 rounded-xl">
                   <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF6B35] flex-shrink-0" />
                   <Input
@@ -43,7 +43,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                     placeholder="Enter ZIP code"
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-lg sm:text-xl p-0 h-auto placeholder:text-gray-400 font-bold touch-manipulation"
+                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-xl sm:text-2xl p-0 h-auto placeholder:text-gray-400 font-bold touch-manipulation"
                     maxLength={5}
                     inputMode="numeric"
                   />
@@ -51,7 +51,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                 <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')} className="w-full sm:w-auto">
                   <Button
                     disabled={zipCode.length !== 5}
-                    className="w-full sm:w-auto px-10 py-5 text-lg sm:text-xl font-bold rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A] hover:from-[#e55a2b] hover:to-[#e6703f] text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 touch-manipulation active:scale-95">
+                    className="w-full sm:w-auto px-10 py-6 h-auto text-lg sm:text-xl font-bold rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A] hover:from-[#e55a2b] hover:to-[#e6703f] text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 touch-manipulation active:scale-95">
                     Compare Now
                   </Button>
                 </Link>

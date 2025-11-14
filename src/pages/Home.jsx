@@ -82,14 +82,14 @@ export default function Home() {
                   <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">
                     Enter Your ZIP Code
                   </h3>
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-4 sm:space-y-4">
                     <Input
                       type="text"
                       placeholder="Enter ZIP code"
                       maxLength={5}
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                      className="h-14 text-lg font-semibold border-2 touch-manipulation rounded-xl"
+                      className="h-14 text-xl font-semibold border-2 touch-manipulation rounded-xl"
                       inputMode="numeric"
                       aria-label="ZIP code to compare electricity plans"
                     />
