@@ -979,6 +979,300 @@ export const fullArticles = {
 </div>
 <h2>The Bottom Line</h2>
 <p>Concord's competitive market with NH PUC oversight offers safe shopping. Save $250+ yearly.</p>`
+  },
+
+  72: {
+    title: "Average Electricity Bill by State 2024: Complete Cost Breakdown",
+    metaTitle: "Average Electricity Bill by State 2024: Cost Comparison & Rankings | Power Scouts",
+    metaDescription: "Compare average electricity bills across all 50 US states. See state rankings, why costs vary 3x, and how to save $500+ in deregulated markets.",
+    tags: ["Average Electricity Bill", "Electricity Cost by State", "State Energy Rankings", "Power Bill Comparison", "Electricity Rates"],
+    content: `<h2>How Much is the Average Electricity Bill?</h2>
+<p>The average American household pays <strong>$137 per month</strong> for electricity, but this national average hides massive state-by-state differences. Hawaii residents pay $185/month on average, while New Mexico residents pay just $79/month - a 234% difference.</p>
+<h2>Average Electricity Bills by State (2024)</h2>
+<p><strong>Highest Average Bills:</strong><br>
+1. Hawaii: $185/month (31.7¢/kWh)<br>
+2. California: $154/month (26.4¢/kWh)<br>
+3. Connecticut: $147/month (23.8¢/kWh)<br>
+4. Massachusetts: $142/month (22.9¢/kWh)<br>
+5. New York: $139/month (20.1¢/kWh)</p>
+<p><strong>Lowest Average Bills:</strong><br>
+1. New Mexico: $79/month (12.1¢/kWh)<br>
+2. Utah: $84/month (10.9¢/kWh)<br>
+3. Idaho: $87/month (10.2¢/kWh)<br>
+4. Washington: $92/month (9.8¢/kWh)<br>
+5. Louisiana: $95/month (11.5¢/kWh)</p>
+<div class="cta-box">
+<h3>Save in Deregulated States</h3>
+<p>Texas, Pennsylvania, Ohio, and 9 other states let you choose providers and save $500+ yearly.</p>
+<a href="/compare-rates" class="cta-button">Compare Your Rates</a>
+</div>
+<h2>Why Deregulated States Save More</h2>
+<p>In Texas, the average household pays $128/month despite high usage (1,200 kWh) because competition keeps rates at 9.5¢/kWh average. Connecticut residents pay $147/month for much less usage (650 kWh) because they're stuck with monopoly utility rates.</p>
+<h2>The Bottom Line</h2>
+<p>If you live in TX, PA, OH, NY, IL, NJ, MD, MA, CT, ME, NH, or RI - you have power to choose. Compare rates annually and save $400-800.</p>`
+  },
+
+  73: {
+    title: "What is a Kilowatt-Hour (kWh)? Electricity Usage Explained",
+    metaTitle: "What is a Kilowatt-Hour (kWh)? Understanding Electricity Usage | Power Scouts",
+    metaDescription: "Learn what kWh means, how electricity is measured and billed, and how to calculate your power consumption. Master electricity basics.",
+    tags: ["kWh Explained", "Kilowatt Hour", "Electricity Measurement", "Understanding kWh", "Power Usage"],
+    content: `<h2>What is a Kilowatt-Hour?</h2>
+<p>A kilowatt-hour (kWh) is the standard unit for measuring electricity consumption. It represents using 1,000 watts of power for one hour.</p>
+<p><strong>Simple Example:</strong> Running a 100-watt light bulb for 10 hours uses 1 kWh of electricity (100 watts × 10 hours = 1,000 watt-hours = 1 kWh).</p>
+<h2>Real-World kWh Usage Examples</h2>
+<ul>
+<li><strong>Central AC:</strong> Uses about 3 kWh per hour (costs 30¢/hour at 10¢/kWh)</li>
+<li><strong>Refrigerator:</strong> Uses 1.5-2 kWh per day (costs 15-20¢/day)</li>
+<li><strong>Electric oven:</strong> Uses 2-3 kWh per hour of cooking</li>
+<li><strong>LED light bulb:</strong> Uses just 0.01 kWh per hour</li>
+<li><strong>Desktop computer:</strong> Uses 0.1-0.3 kWh per hour</li>
+</ul>
+<div class="cta-box">
+<h3>Calculate Your Costs</h3>
+<p>Enter your ZIP code to see exact rates and calculate your monthly electricity costs.</p>
+<a href="/compare-rates" class="cta-button">Calculate My Bill</a>
+</div>
+<h2>How to Calculate kWh Usage</h2>
+<p><strong>Formula:</strong> (Watts × Hours Used) ÷ 1,000 = kWh</p>
+<p><strong>Example:</strong> 1,500-watt space heater running 8 hours daily<br>
+= (1,500 watts × 8 hours) ÷ 1,000<br>
+= 12 kWh per day<br>
+= 360 kWh per month<br>
+= $36/month at 10¢/kWh</p>
+<h2>The Bottom Line</h2>
+<p>Understanding kWh helps you calculate costs, compare electricity rates accurately, and identify which appliances drive your bills highest.</p>`
+  },
+
+  74: {
+    title: "How to Lower Your Electricity Bill: 25 Proven Money-Saving Tips",
+    metaTitle: "How to Lower Your Electricity Bill: 25 Expert Tips to Save $500+ | Power Scouts",
+    metaDescription: "Reduce electricity bills by 30-50% with 25 proven strategies. From simple habit changes to provider switching - complete money-saving guide.",
+    tags: ["Lower Electricity Bill", "Reduce Power Costs", "Electricity Saving Tips", "Cut Energy Bills", "Money Saving Strategies"],
+    content: `<h2>Quick Wins: Instant Electricity Savings</h2>
+<p><strong>1. Switch Your Provider</strong> - Saves $500-800/year in deregulated states<br>
+<strong>2. Raise AC to 78°F</strong> - Saves $40-60/month in summer<br>
+<strong>3. Use LED Bulbs</strong> - Saves $75/year, costs $20 upfront<br>
+<strong>4. Unplug Vampire Devices</strong> - Saves $100-150/year<br>
+<strong>5. Use Ceiling Fans</strong> - Saves $25-40/month when used with AC</p>
+<h2>Big Impact Changes</h2>
+<p><strong>6. Install Programmable Thermostat</strong> - Saves $180/year<br>
+<strong>7. Seal Air Leaks</strong> - Saves $200-300/year<br>
+<strong>8. Add Insulation</strong> - Saves $300-500/year<br>
+<strong>9. Upgrade to Energy Star Appliances</strong> - Saves $100-300/year per appliance<br>
+<strong>10. Install Solar Screens</strong> - Saves $150-250/year</p>
+<div class="cta-box">
+<h3>Biggest Saver: Switch Providers</h3>
+<p>Switching to a competitive electricity plan saves more than all other tips combined - with zero effort.</p>
+<a href="/compare-rates" class="cta-button">Compare Rates Now</a>
+</div>
+<h2>The Bottom Line</h2>
+<p>Start with the highest-impact changes: switch providers ($500-800/year), adjust thermostat ($400-700/year), and seal leaks ($200-300/year). These three actions alone can cut bills by $1,100-1,800 annually.</p>`
+  },
+
+  75: {
+    title: "Prepaid Electricity: Complete Guide to Pay-As-You-Go Power Plans",
+    metaTitle: "Prepaid Electricity Plans: Complete Pay-As-You-Go Guide | No Deposit | Power Scouts",
+    metaDescription: "Prepaid electricity explained: costs, benefits, best providers. No deposits, no credit checks, total control. Compare prepaid vs postpaid plans.",
+    tags: ["Prepaid Electricity", "Pay As You Go Power", "No Deposit Electricity", "Prepaid Energy", "No Credit Check"],
+    content: `<h2>What is Prepaid Electricity?</h2>
+<p>Prepaid electricity (pay-as-you-go) works like a prepaid phone. You pay for power <strong>before</strong> you use it, and the provider deducts from your balance as you consume electricity.</p>
+<h2>Prepaid vs Postpaid Electricity</h2>
+<p><strong>Prepaid Benefits:</strong></p>
+<ul>
+<li>No deposit required ($0 vs $150-500 for postpaid)</li>
+<li>No credit check needed</li>
+<li>No long-term contract</li>
+<li>Real-time usage monitoring</li>
+<li>No surprise bills</li>
+<li>No late fees or disconnect fees</li>
+</ul>
+<p><strong>Prepaid Drawbacks:</strong></p>
+<ul>
+<li>Rates typically 10-20% higher than best postpaid plans</li>
+<li>Power disconnects when balance hits $0 (usually with 24-48 hour warning)</li>
+<li>Requires active balance management</li>
+<li>Limited provider selection</li>
+</ul>
+<div class="cta-box">
+<h3>Compare Prepaid Options</h3>
+<p>See prepaid electricity rates in your area from verified providers.</p>
+<a href="/compare-rates" class="cta-button">Compare Prepaid Plans</a>
+</div>
+<h2>Who Should Choose Prepaid?</h2>
+<p>Prepaid electricity makes sense for:</p>
+<ul>
+<li>People with poor or no credit history</li>
+<li>Those who can't afford $200-500 deposits</li>
+<li>Short-term residents (3-6 months)</li>
+<li>People wanting total usage control and transparency</li>
+<li>Those recovering from past utility debt</li>
+</ul>
+<h2>The Bottom Line</h2>
+<p>Prepaid electricity costs 10-20% more but requires zero upfront money and no credit. If you can qualify for postpaid with good rates, that saves more long-term.</p>`
+  },
+
+  76: {
+    title: "TDU Delivery Charges Explained: Why You Pay More Than Your Rate",
+    metaTitle: "TDU Delivery Charges Explained: Understanding Electricity Delivery Fees | Power Scouts",
+    metaDescription: "Learn about TDU charges, delivery fees, and why your electricity bill is higher than your per-kWh rate. Complete transmission & distribution breakdown.",
+    tags: ["TDU Charges", "Delivery Fees", "Transmission Charges", "Oncor Fees", "CenterPoint Charges"],
+    content: `<h2>What Are TDU Charges?</h2>
+<p>TDU (Transmission and Distribution Utility) charges are fees you pay to maintain the power lines, poles, and infrastructure that deliver electricity to your home. In deregulated markets, these fees are separate from your electricity supply rate.</p>
+<p><strong>Your Total Bill = Supply Rate + TDU Delivery Charges + Taxes</strong></p>
+<h2>How Much Are TDU Charges?</h2>
+<p>In Texas (most common deregulated market), TDU charges vary by utility company:</p>
+<ul>
+<li><strong>Oncor:</strong> ~$0.045/kWh or $45/month for 1,000 kWh</li>
+<li><strong>CenterPoint:</strong> ~$0.041/kWh or $41/month for 1,000 kWh</li>
+<li><strong>AEP Texas:</strong> ~$0.049/kWh or $49/month for 1,000 kWh</li>
+<li><strong>TNMP:</strong> ~$0.067/kWh or $67/month for 1,000 kWh</li>
+</ul>
+<p>These fees are <strong>not controlled by your electricity provider</strong> and are the same regardless of which provider you choose.</p>
+<div class="cta-box">
+<h3>Compare True Total Costs</h3>
+<p>Our comparison tool shows you supply rate + TDU charges for accurate monthly estimates.</p>
+<a href="/compare-rates" class="cta-button">See True Costs</a>
+</div>
+<h2>Real Example: Total Bill Calculation</h2>
+<p>Sarah in Dallas uses 1,000 kWh monthly with Oncor delivery:</p>
+<ul>
+<li>Provider supply rate: 9.5¢/kWh = $95</li>
+<li>Oncor TDU charges: 4.5¢/kWh = $45</li>
+<li>Total before taxes: $140</li>
+<li><strong>Effective rate: 14¢/kWh</strong> (not the advertised 9.5¢)</li>
+</ul>
+<h2>The Bottom Line</h2>
+<p>Always factor in TDU charges when comparing plans. A plan advertising 10¢/kWh actually costs 14-15¢/kWh total with delivery fees.</p>`
+  },
+
+  77: {
+    title: "Solar Panels vs Electricity Plans: Which Saves More Money?",
+    metaTitle: "Solar Panels vs Competitive Electricity: ROI Analysis & Cost Comparison | Power Scouts",
+    metaDescription: "Solar panels cost $15,000-30,000 vs competitive electricity at $0 upfront. Complete ROI analysis shows which option saves more money.",
+    tags: ["Solar vs Electricity", "Solar Panel Cost", "Solar ROI", "Renewable Energy Comparison", "Solar Savings"],
+    content: `<h2>Solar Panels: The Investment</h2>
+<p><strong>Average Installation Cost:</strong> $18,000-28,000 (before incentives)<br>
+<strong>After Federal Tax Credit (30%):</strong> $12,600-19,600<br>
+<strong>Payback Period:</strong> 8-12 years<br>
+<strong>Annual Savings:</strong> $800-1,400 after payback</p>
+<h2>Competitive Electricity Plans: The Alternative</h2>
+<p><strong>Upfront Cost:</strong> $0<br>
+<strong>Annual Savings vs Utility Default:</strong> $500-800<br>
+<strong>Payback Period:</strong> Immediate<br>
+<strong>Flexibility:</strong> Can switch plans anytime</p>
+<h2>25-Year Cost Comparison (Texas Example)</h2>
+<p><strong>Scenario: Houston home using 1,500 kWh monthly</strong></p>
+<p><strong>Option 1: Keep Utility Default (12.5¢/kWh)</strong><br>
+Total 25-year cost: $56,250</p>
+<p><strong>Option 2: Solar Panels ($18,000 system)</strong><br>
+Installation: $18,000<br>
+Reduced bills: Save $1,200/year × 25 years = $30,000<br>
+Net savings: $12,000 over 25 years</p>
+<p><strong>Option 3: Competitive Electricity (9.2¢/kWh average)</strong><br>
+Total 25-year cost: $41,400<br>
+Savings vs default: $14,850 over 25 years</p>
+<div class="cta-box">
+<h3>Start Saving Today with $0 Investment</h3>
+<p>Switch to competitive electricity now, then add solar later if desired.</p>
+<a href="/compare-rates" class="cta-button">Compare Electricity Rates</a>
+</div>
+<h2>The Bottom Line</h2>
+<p>Competitive electricity plans offer immediate savings with zero investment. Solar panels offer larger long-term savings but require $12,000-20,000 upfront. Many smart consumers do both: switch to cheap electricity first, then add solar panels when financially ready.</p>`
+  },
+
+  78: {
+    title: "Small Business Electricity: Complete Guide to Commercial Rates",
+    metaTitle: "Small Business Electricity Rates: Commercial Power Guide | Save $5,000+ | Power Scouts",
+    metaDescription: "Complete guide to small business electricity rates, demand charges, and commercial plans. Save $2,000-15,000 yearly on business power bills.",
+    tags: ["Small Business Electricity", "Commercial Rates", "Business Power Plans", "Demand Charges", "Commercial Energy"],
+    content: `<h2>How Small Business Electricity Differs</h2>
+<p>Commercial electricity rates work differently than residential:</p>
+<ul>
+<li><strong>Higher Usage:</strong> Average small business uses 5,000-50,000 kWh monthly vs 900 kWh residential</li>
+<li><strong>Demand Charges:</strong> Pay for peak kW usage, not just total kWh</li>
+<li><strong>Complex Rate Structures:</strong> Time-of-use pricing common</li>
+<li><strong>Better Negotiating Power:</strong> High usage = better rates</li>
+</ul>
+<h2>Average Small Business Electricity Costs</h2>
+<p><strong>Retail Store (1,500 sq ft):</strong> $350-600/month<br>
+<strong>Restaurant:</strong> $800-2,500/month<br>
+<strong>Office (5,000 sq ft):</strong> $600-1,200/month<br>
+<strong>Small Manufacturing:</strong> $2,000-8,000/month</p>
+<div class="cta-box">
+<h3>Get Commercial Rate Quotes</h3>
+<p>Compare business electricity rates from 30+ commercial providers.</p>
+<a href="/compare-rates" class="cta-button">Compare Business Rates</a>
+</div>
+<h2>Real Business Example</h2>
+<p>Mario's Pizza in Houston was paying 11.8¢/kWh (effective rate with demand charges) for 8,500 kWh monthly = $1,003/month. After shopping commercial plans, they found a provider at 8.9¢/kWh effective = $757/month. <strong>Annual savings: $2,952.</strong></p>
+<h2>The Bottom Line</h2>
+<p>Small businesses save $2,000-15,000 yearly by shopping commercial electricity rates. Higher usage means bigger savings - it's worth comparing annually.</p>`
+  },
+
+  79: {
+    title: "Electricity Early Termination Fees: How to Avoid or Minimize Them",
+    metaTitle: "Electricity Early Termination Fees: Complete Guide to Avoiding ETF Penalties | Power Scouts",
+    metaDescription: "Learn about electricity contract cancellation fees, when you can cancel penalty-free, and how to minimize early termination charges.",
+    tags: ["Early Termination Fee", "Cancel Electricity Contract", "ETF Electricity", "Break Contract", "Cancellation Penalties"],
+    content: `<h2>What Are Early Termination Fees?</h2>
+<p>Early Termination Fees (ETF) are penalties charged when you cancel an electricity contract before it ends. Fees typically range from <strong>$50-500</strong> depending on contract length and time remaining.</p>
+<h2>Common ETF Structures</h2>
+<ul>
+<li><strong>Flat Fee:</strong> $150-250 regardless of remaining term</li>
+<li><strong>Per-Month Remaining:</strong> $10-20 × months left</li>
+<li><strong>Percentage of Balance:</strong> 20-50% of remaining contract value</li>
+<li><strong>Zero ETF Plans:</strong> Some plans have no cancellation fees</li>
+</ul>
+<h2>When You Can Cancel Penalty-Free</h2>
+<p>You can legally cancel without ETF in these situations:</p>
+<ul>
+<li><strong>Moving out of service area:</strong> Proof of relocation required</li>
+<li><strong>Provider raises rates:</strong> Contract price increases void ETF</li>
+<li><strong>Provider changes terms:</strong> Material contract modifications</li>
+<li><strong>During renewal window:</strong> Usually 14-30 days before contract end</li>
+<li><strong>Within 3-day rescission period:</strong> Cancel within 72 hours of enrollment</li>
+</ul>
+<div class="cta-box">
+<h3>Find Zero-ETF Plans</h3>
+<p>Compare electricity plans with no early termination fees in your area.</p>
+<a href="/compare-rates" class="cta-button">See No-ETF Plans</a>
+</div>
+<h2>The Bottom Line</h2>
+<p>Always read the EFL (Electricity Facts Label) for exact ETF details before signing. If moving is possible, choose plans with low or zero early termination fees.</p>`
+  },
+
+  80: {
+    title: "Best Time to Switch Electricity Providers: Timing Your Switch for Maximum Savings",
+    metaTitle: "Best Time to Switch Electricity Providers: Seasonal Rate Guide | Power Scouts",
+    metaDescription: "Learn when to shop for electricity to get lowest rates. Seasonal pricing patterns revealed - save 20-30% by timing your switch correctly.",
+    tags: ["Best Time Switch", "Electricity Seasonal Pricing", "When to Shop Rates", "Timing Strategy", "Rate Patterns"],
+    content: `<h2>When Are Electricity Rates Lowest?</h2>
+<p>Electricity rates follow predictable seasonal patterns. Understanding these patterns helps you lock in the best rates.</p>
+<p><strong>Cheapest Months to Shop (October-November):</strong><br>
+Rates average 8.5-9.8¢/kWh as providers compete before winter demand</p>
+<p><strong>Moderate Months (March-April, September):</strong><br>
+Rates average 9.2-10.5¢/kWh during shoulder seasons</p>
+<p><strong>Expensive Months (June-August, December-February):</strong><br>
+Rates spike to 10.5-13.2¢/kWh during peak demand</p>
+<h2>The $400 Difference Example</h2>
+<p>The Johnson family in Dallas shops for electricity twice yearly:</p>
+<p><strong>Wrong Timing (July shopping):</strong><br>
+Best available rate: 11.8¢/kWh<br>
+Monthly bill (1,500 kWh): $177<br>
+Annual cost: $2,124</p>
+<p><strong>Right Timing (October shopping):</strong><br>
+Best available rate: 8.9¢/kWh<br>
+Monthly bill (1,500 kWh): $134<br>
+Annual cost: $1,608<br>
+<strong>Savings from timing: $516/year</strong></p>
+<div class="cta-box">
+<h3>Check Current Rates</h3>
+<p>See what rates are available right now in your area.</p>
+<a href="/compare-rates" class="cta-button">Compare Today's Rates</a>
+</div>
+<h2>The Bottom Line</h2>
+<p>Shop for electricity in October-November for best rates. Set a calendar reminder 60-90 days before your contract ends to compare during optimal pricing windows.</p>`
   }
 };
 
