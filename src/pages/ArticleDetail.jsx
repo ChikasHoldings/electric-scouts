@@ -179,7 +179,7 @@ const articles = [
     color: "purple",
     title: "New York Electricity Rates: Complete NY Power Shopping Guide",
     description: "Compare New York electricity rates from 20+ ESCO suppliers. Find lowest power prices in NYC, Buffalo, and Rochester.",
-    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1543716627-839b54c40519?w=1200&q=80", // New York City skyline
     excerpt: "New York's regulated ESCO market offers savings with strong consumer protections. Save $300-500 annually.",
     readTime: "11 min",
     keywords: ["New York electricity", "NYC power rates", "ESCO suppliers"],
@@ -205,7 +205,7 @@ const articles = [
     color: "orange",
     title: "Illinois Electricity Rates: Complete Guide to IL Power Savings",
     description: "Compare Illinois electricity rates from 20+ suppliers. Find cheapest power in Chicago, Aurora, and Naperville.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1583528306385-8c52736f8e1f?w=1200&q=80", // Chicago skyline
     excerpt: "Illinois deregulation since 1997 gives Chicago-area residents excellent supplier options. Save $350-500 yearly.",
     readTime: "10 min",
     keywords: ["Illinois electricity", "Chicago power", "ComEd rates"],
@@ -218,7 +218,7 @@ const articles = [
     color: "blue",
     title: "New Jersey Electricity Rates: NJ Power Shopping Guide",
     description: "Compare NJ electricity rates from 15+ suppliers. Find lowest power prices in Newark, Jersey City, and Paterson.",
-    image: "https://images.unsplash.com/photo-1589756823695-278bc8eac975?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=1200&q=80", // Newark/Jersey City
     excerpt: "New Jersey's regulated market offers solid savings with strong BPU oversight. Save $300-450 yearly.",
     readTime: "9 min",
     keywords: ["New Jersey electricity", "NJ power", "PSE&G rates"],
@@ -231,7 +231,7 @@ const articles = [
     color: "purple",
     title: "Maryland Electricity Rates: Complete MD Power Comparison Guide",
     description: "Compare Maryland electricity rates from 15+ suppliers. Find cheapest power in Baltimore, Frederick, and Rockville.",
-    image: "https://images.unsplash.com/photo-1590932722660-b2e3c71b1379?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=1200&q=80", // Baltimore skyline
     excerpt: "Maryland's competitive market with PSC protections helps residents save $300-450 annually on electricity.",
     readTime: "9 min",
     keywords: ["Maryland electricity", "Baltimore power", "BGE rates"],
@@ -257,7 +257,7 @@ const articles = [
     color: "orange",
     title: "Connecticut Electricity Rates: CT Power Shopping Guide",
     description: "Compare Connecticut electricity rates from 12+ suppliers. Find cheapest power in Hartford, New Haven, and Stamford.",
-    image: "https://images.unsplash.com/photo-1569149646689-5e8bbdbbd944?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=1200&q=80", // Hartford/Connecticut
     excerpt: "Connecticut's PURA-regulated market offers moderate competition and real savings. Save $250-400 yearly.",
     readTime: "8 min",
     keywords: ["Connecticut electricity", "CT power", "Eversource CT"],
@@ -270,7 +270,7 @@ const articles = [
     color: "blue",
     title: "Maine Electricity Rates: Complete ME Power Comparison Guide",
     description: "Compare Maine electricity rates from 8+ suppliers. Find cheapest power in Portland, Bangor, and Lewiston.",
-    image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?w=1200&q=80", // Portland Maine lighthouse
     excerpt: "Maine's smaller competitive market still offers real savings opportunities. Save $200-350 yearly on electricity.",
     readTime: "7 min",
     keywords: ["Maine electricity", "Portland power", "CMP rates"],
@@ -283,7 +283,7 @@ const articles = [
     color: "purple",
     title: "New Hampshire Electricity Rates: NH Power Shopping Guide",
     description: "Compare NH electricity rates from 8+ suppliers. Find cheapest power in Manchester, Nashua, and Concord.",
-    image: "https://images.unsplash.com/photo-1606403726988-eb685c61c9b6?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1572454591674-2739f30d8c40?w=1200&q=80", // New Hampshire mountains
     excerpt: "New Hampshire offers modest supplier competition with PUC oversight. Save $200-350 yearly on electricity.",
     readTime: "7 min",
     keywords: ["New Hampshire electricity", "NH power", "Eversource NH"],
@@ -296,7 +296,7 @@ const articles = [
     color: "green",
     title: "Rhode Island Electricity Rates: RI Power Comparison Guide",
     description: "Compare Rhode Island electricity rates from 8+ suppliers. Find cheapest power in Providence, Warwick, and Cranston.",
-    image: "https://images.unsplash.com/photo-1602984891859-69d29e64b886?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1559621398-a69d8c0e0401?w=1200&q=80", // Providence Rhode Island
     excerpt: "Rhode Island's competitive market with PUC licensing offers genuine savings. Save $200-320 yearly on electricity.",
     readTime: "7 min",
     keywords: ["Rhode Island electricity", "RI power", "National Grid RI"],
