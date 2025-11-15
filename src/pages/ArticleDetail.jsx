@@ -795,7 +795,7 @@ const articles = [
     color: "blue",
     title: "Cranston RI Electricity Rates 2024: Providence County Power Guide",
     description: "Compare Cranston RI electricity from 8+ suppliers. National Grid territory. Save $240-340 yearly near Providence.",
-    image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c4af296bf_ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg",
     excerpt: "Cranston competitive market adjacent to Providence. 8+ PUC-licensed suppliers serving National Grid RI.",
     readTime: "8 min",
     keywords: ["Cranston electricity", "National Grid Cranston", "Cranston RI power", "Cranston energy"],
