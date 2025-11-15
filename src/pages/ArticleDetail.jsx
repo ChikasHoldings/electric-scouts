@@ -938,7 +938,7 @@ const articles = [
     color: "orange",
     title: "Concord NH Electricity Rates 2024: Capital Region NH Power Guide",
     description: "Compare Concord NH electricity from 8+ suppliers. Eversource territory. Save $260-370 yearly in Merrimack County.",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg",
     excerpt: "Concord and Merrimack County competitive market. 8+ PUC-licensed suppliers serving Eversource NH capital.",
     readTime: "8 min",
     keywords: ["Concord NH electricity", "Eversource Concord", "Merrimack County power", "Concord New Hampshire energy"],

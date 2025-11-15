@@ -396,7 +396,7 @@ const cities = [
     avgRate: "11.8¢/kWh",
     providers: 16,
     savings: "$540/yr",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg"
   },
   // Rhode Island Cities
   {
