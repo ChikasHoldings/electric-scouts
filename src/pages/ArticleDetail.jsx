@@ -403,7 +403,7 @@ const articles = [
     color: "blue",
     title: "Pittsburgh Electricity Rates 2024: PA Power Comparison Guide",
     description: "Compare Pittsburgh PA electricity from 25+ suppliers. Duquesne Light territory. Save $400-550 yearly with PA PUC licensed suppliers.",
-    image: "https://images.unsplash.com/photo-1611964562818-b6f8d41cb64c?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a1fa80de5_162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg",
     excerpt: "Pittsburgh and Allegheny County competitive market. 25+ PA PUC certified suppliers serving Duquesne Light territory.",
     readTime: "10 min",
     keywords: ["Pittsburgh electricity", "Duquesne Light", "Pittsburgh power rates", "Allegheny County electricity"],

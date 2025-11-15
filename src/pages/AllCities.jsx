@@ -159,7 +159,7 @@ const cities = [
     avgRate: "10.1¢/kWh",
     providers: 30,
     savings: "$690/yr",
-    image: "https://images.unsplash.com/photo-1611964562818-b6f8d41cb64c?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a1fa80de5_162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
   },
   {
     name: "Allentown",
