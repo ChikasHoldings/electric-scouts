@@ -22,7 +22,7 @@ export default function AllStates() {
   const stateImages = {
     'TX': 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&q=80', // Austin - Texas State Capitol
     'IL': 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80', // Springfield, IL State Capitol
-    'OH': 'https://images.unsplash.com/photo-1570126614967-316209f1e7d6?w=800&q=80', // Columbus, OH Statehouse
+    'OH': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/8cb27999c_ChatGPTImageNov15202502_43_31PM.png', // Columbus, OH Statehouse
     'PA': 'https://images.unsplash.com/photo-1575489272413-cb506258027e?w=800&q=80', // Harrisburg, PA State Capitol
     'NY': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80', // Albany, NY Capitol Building
     'NJ': 'https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=800&q=80', // Trenton, NJ State House
