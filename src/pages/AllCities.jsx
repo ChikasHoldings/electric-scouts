@@ -293,7 +293,7 @@ const cities = [
     avgRate: "11.3¢/kWh",
     providers: 21,
     savings: "$590/yr",
-    image: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e90708aeb_d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
   },
   {
     name: "Springfield",

@@ -626,7 +626,7 @@ const articles = [
     color: "orange",
     title: "Worcester Electricity Rates 2024: Central MA Power Guide",
     description: "Compare Worcester MA electricity from 12+ suppliers. National Grid territory. Save $300-420 yearly in Worcester County.",
-    image: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e90708aeb_d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg",
     excerpt: "Worcester and Worcester County competitive market. 12+ DPU-licensed suppliers serving National Grid Central MA.",
     readTime: "9 min",
     keywords: ["Worcester electricity", "National Grid Worcester", "Worcester County power", "Worcester MA energy"],
