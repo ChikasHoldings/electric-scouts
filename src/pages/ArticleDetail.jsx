@@ -769,7 +769,7 @@ const articles = [
     color: "green",
     title: "Providence RI Electricity Rates 2024: Complete RI Metro Power Guide",
     description: "Compare Providence RI electricity from 8+ suppliers. National Grid territory. Save $260-360 yearly in Providence County.",
-    image: "https://images.unsplash.com/photo-1602984891859-69d29e64b886?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/3a56f40c4_3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg",
     excerpt: "Providence and Providence County competitive market. 8+ PUC-licensed suppliers serving National Grid RI capital.",
     readTime: "9 min",
     keywords: ["Providence electricity", "National Grid Providence", "Providence County power", "Providence RI energy"],
