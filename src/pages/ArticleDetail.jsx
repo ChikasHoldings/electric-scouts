@@ -310,7 +310,7 @@ const articles = [
     color: "orange",
     title: "Houston Electricity Rates 2024: Complete Guide for Harris County",
     description: "Compare Houston electricity from 45+ providers serving Harris County, Katy, Pearland, The Woodlands. Save $800+ yearly.",
-    image: "https://images.unsplash.com/photo-1577894947058-fccf5cf3f8ac?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/15b59cb95_b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg",
     excerpt: "Houston's massive competitive market gives 2.3M residents unmatched power to save. Find the cheapest rates.",
     readTime: "12 min",
     keywords: ["Houston electricity", "Harris County power", "Katy electricity", "Pearland power", "The Woodlands energy"],
