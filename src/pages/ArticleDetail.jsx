@@ -782,7 +782,7 @@ const articles = [
     color: "orange",
     title: "Warwick RI Electricity Rates 2024: Kent County Power Guide",
     description: "Compare Warwick RI electricity from 8+ suppliers. National Grid territory. Save $250-350 yearly in Kent County.",
-    image: "https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d9b752924_a37c566e-4168-4be1-a823-20bf311f7ed9.jpg",
     excerpt: "Warwick and Kent County competitive market. 8+ PUC-licensed suppliers serving National Grid RI's second city.",
     readTime: "8 min",
     keywords: ["Warwick electricity", "National Grid Warwick", "Kent County power", "Warwick RI energy"],
