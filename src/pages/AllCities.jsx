@@ -16,7 +16,7 @@ const cities = [
     avgRate: "8.9¢/kWh",
     providers: 45,
     savings: "$850/yr",
-    image: "https://images.unsplash.com/photo-1577894947058-fccf5cf3f8ac?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/15b59cb95_b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
   {
     name: "Dallas",
