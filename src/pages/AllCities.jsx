@@ -26,7 +26,7 @@ const cities = [
     avgRate: "9.1¢/kWh",
     providers: 42,
     savings: "$820/yr",
-    image: "https://images.unsplash.com/photo-1552083974-186346191183?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
   {
     name: "Austin",

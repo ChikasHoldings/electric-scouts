@@ -323,7 +323,7 @@ const articles = [
     color: "blue",
     title: "Dallas Electricity Rates 2024: DFW Metroplex Shopping Guide",
     description: "Compare Dallas-Fort Worth electricity from 40+ providers. Serving Dallas, Plano, Irving, Garland, Frisco. Save $700+ yearly.",
-    image: "https://images.unsplash.com/photo-1552083974-186346191183?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg",
     excerpt: "DFW's 7.5M residents have access to 40+ competitive providers. Master the DFW electricity market.",
     readTime: "11 min",
     keywords: ["Dallas electricity", "DFW power rates", "Plano electricity", "Irving energy", "Frisco power", "Fort Worth electricity"],
