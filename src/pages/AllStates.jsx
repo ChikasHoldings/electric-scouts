@@ -18,20 +18,20 @@ export default function AllStates() {
     state.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // State images map
+  // State capital images map
   const stateImages = {
-    'TX': 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&q=80', // Texas Capitol
-    'IL': 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80', // Chicago skyline
-    'OH': 'https://images.unsplash.com/photo-1604246851544-2b2d471f671a?w=800&q=80', // Cleveland
-    'PA': 'https://images.unsplash.com/photo-1590086782792-42dd2350140d?w=800&q=80', // Philadelphia
-    'NY': 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80', // NYC skyline
-    'NJ': 'https://images.unsplash.com/photo-1589756823695-278bc8eac975?w=800&q=80', // New Jersey
-    'MD': 'https://images.unsplash.com/photo-1590932722660-b2e3c71b1379?w=800&q=80', // Baltimore
-    'MA': 'https://images.unsplash.com/photo-1572636661577-f6d05cbb7682?w=800&q=80', // Boston
-    'ME': 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=800&q=80', // Maine coast
-    'NH': 'https://images.unsplash.com/photo-1606403726988-eb685c61c9b6?w=800&q=80', // New Hampshire
-    'RI': 'https://images.unsplash.com/photo-1602984891859-69d29e64b886?w=800&q=80', // Rhode Island
-    'CT': 'https://images.unsplash.com/photo-1569149646689-5e8bbdbbd944?w=800&q=80'  // Connecticut
+    'TX': 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&q=80', // Austin - Texas State Capitol
+    'IL': 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80', // Springfield, IL State Capitol
+    'OH': 'https://images.unsplash.com/photo-1570126614967-316209f1e7d6?w=800&q=80', // Columbus, OH Statehouse
+    'PA': 'https://images.unsplash.com/photo-1575489272413-cb506258027e?w=800&q=80', // Harrisburg, PA State Capitol
+    'NY': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80', // Albany, NY Capitol Building
+    'NJ': 'https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=800&q=80', // Trenton, NJ State House
+    'MD': 'https://images.unsplash.com/photo-1600298881974-6be191ceeda1?w=800&q=80', // Annapolis, MD State House
+    'MA': 'https://images.unsplash.com/photo-1571939228382-b2f2b585ce15?w=800&q=80', // Boston, MA State House
+    'ME': 'https://images.unsplash.com/photo-1606146127717-b075030d0481?w=800&q=80', // Augusta, ME State House
+    'NH': 'https://images.unsplash.com/photo-1606403726988-eb685c61c9b6?w=800&q=80', // Concord, NH State House
+    'RI': 'https://images.unsplash.com/photo-1572295727871-7638149ea3d7?w=800&q=80', // Providence, RI State House
+    'CT': 'https://images.unsplash.com/photo-1586083702768-190ae093d34d?w=800&q=80'  // Hartford, CT State Capitol
   };
 
   const breadcrumbData = getBreadcrumbSchema([
@@ -131,13 +131,18 @@ export default function AllStates() {
               return (
                 <Card key={index} className="overflow-hidden hover:shadow-xl transition-all duration-300 border hover:border-[#0A5C8C] group">
                   {/* State Image */}
-                  <div className="relative h-36 overflow-hidden">
+                  <div className="relative h-36 overflow-hidden bg-gray-200">
                     <img 
                       src={stateImages[state.code]} 
-                      alt={`${state.fullName} electricity rates`}
+                      alt={`${state.fullName} State Capitol - Electricity Rates and Providers`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.style.backgroundColor = '#0A5C8C';
+                      }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                     <div className="absolute bottom-3 left-3">
                       <h3 className="text-lg font-bold text-white">{state.fullName}</h3>
                     </div>
