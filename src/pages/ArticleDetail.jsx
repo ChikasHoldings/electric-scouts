@@ -691,7 +691,7 @@ const articles = [
     color: "blue",
     title: "Bridgeport Electricity Rates 2024: Fairfield County CT Power Guide",
     description: "Compare Bridgeport CT electricity from 12+ suppliers. United Illuminating territory. Save $260-390 yearly.",
-    image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/4e2eca8a2_770d9cd5-f0df-4175-80a1-078211ed206a.jpg",
     excerpt: "Bridgeport and Fairfield County competitive market. 12+ PURA-licensed suppliers serving UI coastal CT.",
     readTime: "8 min",
     keywords: ["Bridgeport electricity", "United Illuminating Bridgeport", "Fairfield County power", "Bridgeport CT energy"],

@@ -334,7 +334,7 @@ const cities = [
     avgRate: "11.9¢/kWh",
     providers: 18,
     savings: "$540/yr",
-    image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/4e2eca8a2_770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
   },
   // Maine Cities
   {
