@@ -386,7 +386,7 @@ const cities = [
     avgRate: "11.7¢/kWh",
     providers: 16,
     savings: "$550/yr",
-    image: "https://images.unsplash.com/photo-1560184897-ae75f418493e?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/0497c3089_89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
   },
   {
     name: "Concord",
