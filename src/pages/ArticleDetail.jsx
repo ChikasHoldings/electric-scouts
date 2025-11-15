@@ -376,7 +376,7 @@ const articles = [
     color: "green",
     title: "Fort Worth Electricity Rates 2024: Tarrant County Power Guide",
     description: "Compare Fort Worth TX electricity from 40+ providers. Serving Fort Worth, Arlington, North Richland Hills. Save $650-850 yearly.",
-    image: "https://images.unsplash.com/photo-1559661012-5cf78c123ae8?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/10a0998d3_87a80756-c4b5-44c5-bc05-259fef05ca68.jpg",
     excerpt: "Fort Worth and Tarrant County competitive market with 40+ providers. Excellent DFW Metroplex savings opportunities.",
     readTime: "10 min",
     keywords: ["Fort Worth electricity", "Tarrant County power", "Arlington Texas electricity", "Oncor Fort Worth"],

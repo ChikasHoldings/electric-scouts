@@ -56,7 +56,7 @@ const cities = [
     avgRate: "9.0¢/kWh",
     providers: 41,
     savings: "$810/yr",
-    image: "https://images.unsplash.com/photo-1559661012-5cf78c123ae8?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/10a0998d3_87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
   // Illinois Cities
   {
