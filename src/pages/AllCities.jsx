@@ -16,7 +16,7 @@ const cities = [
     avgRate: "8.9¢/kWh",
     providers: 45,
     savings: "$850/yr",
-    image: "https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1577894947058-fccf5cf3f8ac?w=400&h=300&fit=crop"
   },
   {
     name: "Dallas",
@@ -67,7 +67,7 @@ const cities = [
     avgRate: "9.8¢/kWh",
     providers: 36,
     savings: "$750/yr",
-    image: "https://images.unsplash.com/photo-1583528306385-8c52736f8e1f?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   {
     name: "Aurora",
@@ -77,7 +77,7 @@ const cities = [
     avgRate: "9.9¢/kWh",
     providers: 34,
     savings: "$720/yr",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   {
     name: "Naperville",
@@ -149,7 +149,7 @@ const cities = [
     avgRate: "10.2¢/kWh",
     providers: 32,
     savings: "$680/yr",
-    image: "https://images.unsplash.com/photo-1548913891-2f6c0feeae98?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1575489272413-cb506258027e?w=400&h=300&fit=crop"
   },
   {
     name: "Pittsburgh",
@@ -180,7 +180,7 @@ const cities = [
     avgRate: "11.5¢/kWh",
     providers: 28,
     savings: "$620/yr",
-    image: "https://images.unsplash.com/photo-1543716627-839b54c40519?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&h=300&fit=crop"
   },
   {
     name: "Buffalo",
@@ -252,7 +252,7 @@ const cities = [
     avgRate: "10.4¢/kWh",
     providers: 29,
     savings: "$670/yr",
-    image: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?w=400&h=300&fit=crop"
   },
   {
     name: "Frederick",
@@ -283,7 +283,7 @@ const cities = [
     avgRate: "11.2¢/kWh",
     providers: 22,
     savings: "$600/yr",
-    image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1571939228382-b2f2b585ce15?w=400&h=300&fit=crop"
   },
   {
     name: "Worcester",
@@ -314,7 +314,7 @@ const cities = [
     avgRate: "11.8¢/kWh",
     providers: 19,
     savings: "$550/yr",
-    image: "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop"
   },
   {
     name: "New Haven",
@@ -345,7 +345,7 @@ const cities = [
     avgRate: "11.5¢/kWh",
     providers: 17,
     savings: "$570/yr",
-    image: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400&h=300&fit=crop"
   },
   {
     name: "Lewiston",
@@ -376,7 +376,7 @@ const cities = [
     avgRate: "11.6¢/kWh",
     providers: 17,
     savings: "$560/yr",
-    image: "https://images.unsplash.com/photo-1572454591674-2739f30d8c40?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1606403726988-eb685c61c9b6?w=400&h=300&fit=crop"
   },
   {
     name: "Nashua",
@@ -407,7 +407,7 @@ const cities = [
     avgRate: "11.9¢/kWh",
     providers: 15,
     savings: "$530/yr",
-    image: "https://images.unsplash.com/photo-1559621398-a69d8c0e0401?w=400&h=300&fit=crop"
+    image: "https://images.unsplash.com/photo-1572636661577-f6d05cbb7682?w=400&h=300&fit=crop"
   },
   {
     name: "Warwick",
