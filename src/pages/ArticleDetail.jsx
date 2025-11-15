@@ -678,7 +678,7 @@ const articles = [
     color: "orange",
     title: "New Haven Electricity Rates 2024: South Central CT Power Guide",
     description: "Compare New Haven CT electricity from 12+ suppliers. United Illuminating territory. Save $280-410 yearly.",
-    image: "https://images.unsplash.com/photo-1569149646689-5e8bbdbbd944?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/7add50838_ab8c9932-5234-436a-b781-91c450b67ab0.jpg",
     excerpt: "New Haven and New Haven County competitive market. 12+ PURA-licensed suppliers serving UI territory.",
     readTime: "9 min",
     keywords: ["New Haven electricity", "United Illuminating", "New Haven County power", "New Haven CT energy"],

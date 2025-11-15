@@ -324,7 +324,7 @@ const cities = [
     avgRate: "11.7¢/kWh",
     providers: 19,
     savings: "$560/yr",
-    image: "https://images.unsplash.com/photo-1569149646689-5e8bbdbbd944?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/7add50838_ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
   },
   {
     name: "Bridgeport",
