@@ -314,7 +314,7 @@ const cities = [
     avgRate: "11.8¢/kWh",
     providers: 19,
     savings: "$550/yr",
-    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c2fba1722_ottawa-street.jpg"
   },
   {
     name: "New Haven",
