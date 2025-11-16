@@ -886,7 +886,7 @@ const articles = [
     color: "orange",
     title: "Frederick MD Electricity Rates 2024: Western Maryland Power Guide",
     description: "Compare Frederick MD electricity from 14+ suppliers. Potomac Edison territory. Save $320-440 yearly in Frederick County.",
-    image: "https://images.unsplash.com/photo-1590932722660-b2e3c71b1379?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/157b9914f_98350fd0-49c8-4087-8479-0d390c853bf3.jpg",
     excerpt: "Frederick and Frederick County competitive market. 14+ PSC-licensed suppliers serving Potomac Edison Western MD.",
     readTime: "9 min",
     keywords: ["Frederick electricity", "Potomac Edison", "Frederick County power", "Frederick MD energy"],

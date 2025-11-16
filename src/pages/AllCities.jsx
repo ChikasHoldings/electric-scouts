@@ -262,7 +262,7 @@ const cities = [
     avgRate: "10.5¢/kWh",
     providers: 27,
     savings: "$660/yr",
-    image: "https://images.unsplash.com/photo-1590932722660-b2e3c71b1379?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/157b9914f_98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
   },
   {
     name: "Rockville",
