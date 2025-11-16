@@ -180,7 +180,7 @@ const cities = [
     avgRate: "11.5¢/kWh",
     providers: 28,
     savings: "$620/yr",
-    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/ee1816945_b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
   },
   {
     name: "Buffalo",

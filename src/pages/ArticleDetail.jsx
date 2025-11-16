@@ -430,7 +430,7 @@ const articles = [
     color: "orange",
     title: "NYC Electricity Rates 2024: New York City ESCO Guide",
     description: "Compare NYC electricity from 20+ ESCOs. Con Edison territory covering Manhattan, Brooklyn, Queens, Bronx, Staten Island. Save $300-450 yearly.",
-    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/ee1816945_b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg",
     excerpt: "NYC ESCO market overview. 20+ suppliers serving Con Edison territory across all 5 boroughs.",
     readTime: "11 min",
     keywords: ["NYC electricity", "Con Edison rates", "Manhattan power", "Brooklyn electricity", "Queens energy"],
