@@ -274,15 +274,8 @@ const articles = [
     relatedArticles: [106, 107, 1]
   }
 ];
-    description: "Compare San Antonio electricity options. CPS Energy territory and competitive suburbs. Save $600-800 yearly in eligible areas.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9afbd2a3e_136ff412-03e2-40c7-8934-8517d2404665.jpg",
-    excerpt: "San Antonio electricity market overview. CPS Energy coverage and competitive options in surrounding areas.",
-    readTime: "9 min",
-    keywords: ["San Antonio electricity", "CPS Energy", "San Antonio power rates", "Bexar County electricity"],
-    relatedArticles: [11, 23, 24]
-  },
-  {
-    id: 28,
+
+const colorClasses = {
     category: "City Guides",
     icon: Building2,
     color: "green",
@@ -1337,12 +1330,6 @@ const articles = [
 ];
 
 const colorClasses = {
-  blue: { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-200" },
-  green: { bg: "bg-green-50", text: "text-green-600", border: "border-green-200" },
-  purple: { bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-200" },
-  orange: { bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-200" },
-  teal: { bg: "bg-teal-50", text: "text-teal-600", border: "border-teal-200" }
-};
 
 export default function ArticleDetail() {
   const location = window.location;
