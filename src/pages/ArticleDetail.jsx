@@ -10,11 +10,10 @@ import {
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import { getFullArticle } from "../components/learning/fullArticles";
 import ArticleRecommendations from "../components/learning/ArticleRecommendations";
-import ReadingAnalytics, { trackDailyReading } from "../components/learning/ReadingAnalytics";
+import { trackDailyReading } from "../components/learning/ReadingAnalytics";
 
-// Complete articles data - all 71 articles
+// Article database - Only articles with 500+ words of content
 const articles = [
-  // Getting Started
   {
     id: 1,
     category: "Getting Started",
@@ -22,7 +21,7 @@ const articles = [
     color: "blue",
     title: "Understanding Deregulated Electricity Markets: Your Complete Guide",
     description: "Learn how energy deregulation works and how it can save you hundreds on your electricity bills each year.",
-    image: "https://images.unsplash.com/photo-1509390144164-4f1c5f9c61b7?w=1200&q=80", // electrical power grid
+    image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=80",
     excerpt: "Discover how choosing your electricity provider can save you $500-800 per year in competitive energy markets across 12 states.",
     readTime: "8 min",
     keywords: ["deregulated electricity", "energy deregulation", "choose electricity provider"],
@@ -39,7 +38,7 @@ const articles = [
     excerpt: "Learn the exact process energy experts use to find the lowest rates and avoid hidden fees that cost you money.",
     readTime: "10 min",
     keywords: ["compare electricity rates", "save money electricity", "electricity shopping guide"],
-    relatedArticles: [1, 3, 11]
+    relatedArticles: [1, 3, 5]
   },
   {
     id: 3,
@@ -52,7 +51,7 @@ const articles = [
     excerpt: "See actual bills from families who chose fixed vs variable rates and discover which option is right for you.",
     readTime: "12 min",
     keywords: ["fixed rate electricity", "variable rate electricity", "best electricity plan type"],
-    relatedArticles: [1, 2, 7]
+    relatedArticles: [1, 2, 5]
   },
   {
     id: 4,
@@ -61,67 +60,53 @@ const articles = [
     color: "green",
     title: "Green Energy Plans: Save Money While Saving the Planet",
     description: "How 100% renewable electricity plans work and why they often cost the same as traditional plans.",
-    image: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&q=80", // wind turbines green energy
+    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80",
     excerpt: "Thousands of families power their homes with 100% renewable energy without paying extra. Here's how you can too.",
     readTime: "7 min",
     keywords: ["renewable energy plans", "green electricity", "100% renewable energy"],
-    relatedArticles: [1, 2, 8]
+    relatedArticles: [1, 2, 5]
   },
   {
     id: 5,
     category: "Business Energy",
     icon: Building2,
     color: "blue",
-    title: "Business Electricity Rates: Complete Commercial Power Guide 2024",
+    title: "Business Electricity Rates: Complete Commercial Power Guide 2026",
     description: "Compare business electricity rates and save thousands on commercial power bills. Expert guide for small business and enterprise.",
-    image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80", // office building business
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
     excerpt: "Small businesses save $2,000-10,000 annually by shopping commercial electricity rates. Here's your complete guide.",
     readTime: "11 min",
     keywords: ["business electricity rates", "commercial power", "small business energy"],
-    relatedArticles: [1, 2, 11]
+    relatedArticles: [1, 2, 3]
   },
   {
-    id: 6,
-    category: "Consumer Protection",
-    icon: Shield,
-    color: "purple",
-    title: "How to Avoid Electricity Scams and Find Legitimate Providers",
-    description: "Identify electricity scams, door-to-door fraud, and fake providers. Learn to verify legitimate licensed companies.",
-    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&q=80",
-    excerpt: "Door-to-door electricity scams cost consumers millions annually. Learn the red flags and protect yourself.",
+    id: 106,
+    category: "City Guides",
+    icon: MapPin,
+    color: "teal",
+    title: "Nashua NH Electricity Rates 2026: Complete Guide to Save $550+ Annually",
+    description: "Compare Nashua NH electricity rates from 16+ suppliers. Find cheapest power in Hillsborough County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/0497c3089_89e68724-f3a0-408a-b82b-21c7f26fe660.jpg",
+    excerpt: "Nashua residents can choose from 16+ competitive electricity suppliers while Eversource delivers power. Save $550+ annually.",
     readTime: "9 min",
-    keywords: ["electricity scams", "provider fraud", "door-to-door sales", "legitimate providers"],
-    relatedArticles: [1, 10, 2]
+    keywords: ["Nashua electricity", "NH power rates", "Eversource Nashua"],
+    relatedArticles: [107, 108, 1]
   },
-  // STATE GUIDES
   {
-    id: 11,
-    category: "State Guides",
+    id: 107,
+    category: "City Guides",
     icon: MapPin,
-    color: "orange",
-    title: "Texas Electricity Rates Guide: Find the Cheapest Plans in 2024",
-    description: "Everything Texas residents need to know about finding the lowest electricity rates in Houston, Dallas, Austin, and beyond.",
-    image: "https://images.unsplash.com/photo-1577894947058-fccf5cf3f8ac?w=1200&q=80", // Houston skyline
-    excerpt: "Texas has 40+ providers. This guide shows you exactly how to find the cheapest rates and avoid common mistakes.",
-    readTime: "12 min",
-    keywords: ["Texas electricity rates", "cheapest Texas electricity", "Texas power plans"],
-    relatedArticles: [1, 2, 12]
+    color: "teal",
+    title: "Concord NH Electricity Rates 2026: Capital City Power Guide - Save $540+",
+    description: "Compare Concord NH electricity rates from 16+ Eversource suppliers. Find cheapest power in Merrimack County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg",
+    excerpt: "Concord's state capital residents save an average of $540 annually by comparing 16+ competitive electricity suppliers.",
+    readTime: "9 min",
+    keywords: ["Concord NH electricity", "Merrimack County power", "Eversource Concord"],
+    relatedArticles: [106, 108, 1]
   },
   {
-    id: 12,
-    category: "State Guides",
-    icon: MapPin,
-    color: "blue",
-    title: "Pennsylvania Electricity Rates: Complete Guide to PA Power Savings",
-    description: "Compare Pennsylvania electricity rates from 25+ providers. Find the cheapest power plans in Philadelphia and Pittsburgh.",
-    image: "https://images.unsplash.com/photo-1548913891-2f6c0feeae98?w=1200&q=80", // Philadelphia skyline
-    excerpt: "Pennsylvania consumers save $400-600 yearly by shopping for competitive electricity suppliers. Here's your complete guide.",
-    readTime: "11 min",
-    keywords: ["Pennsylvania electricity rates", "PA power", "Philadelphia electricity"],
-    relatedArticles: [1, 2, 13]
-  },
-  {
-    id: 13,
+    id: 108,
     category: "State Guides",
     icon: MapPin,
     color: "purple",
@@ -266,44 +251,30 @@ const articles = [
   {
     id: 24,
     category: "City Guides",
-    icon: Building2,
-    color: "blue",
-    title: "Dallas Electricity Rates 2024: DFW Metroplex Shopping Guide",
-    description: "Compare Dallas-Fort Worth electricity from 40+ providers. Serving Dallas, Plano, Irving, Garland, Frisco. Save $700+ yearly.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg",
-    excerpt: "DFW's 7.5M residents have access to 40+ competitive providers. Master the DFW electricity market.",
-    readTime: "11 min",
-    keywords: ["Dallas electricity", "DFW power rates", "Plano electricity", "Irving energy", "Frisco power", "Fort Worth electricity"],
-    relatedArticles: [11, 23, 2]
+    icon: MapPin,
+    color: "teal",
+    title: "Concord NH Electricity Rates 2026: Capital City Power Guide - Save $540+",
+    description: "Compare Concord NH electricity rates from 16+ Eversource suppliers. Find cheapest power in Merrimack County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg",
+    excerpt: "Concord's state capital residents save an average of $540 annually by comparing 16+ competitive electricity suppliers.",
+    readTime: "9 min",
+    keywords: ["Concord NH electricity", "Merrimack County power", "Eversource Concord"],
+    relatedArticles: [106, 108, 1]
   },
   {
-    id: 25,
+    id: 108,
     category: "City Guides",
-    icon: Building2,
-    color: "purple",
-    title: "Philadelphia Electricity Rates 2024: Complete Philly Metro Guide",
-    description: "Compare Philadelphia electricity from 25+ PECO suppliers. Serving Philly, Chester, Delaware, Montgomery counties. Save $500+ yearly.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/857445e3d_01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg",
-    excerpt: "Philadelphia's competitive market with PA PUC oversight offers safe, effective savings for 1.5M households.",
-    readTime: "11 min",
-    keywords: ["Philadelphia electricity", "Philly power rates", "PECO suppliers", "PA electricity", "Philadelphia energy"],
-    relatedArticles: [12, 2, 1]
-  },
-  {
-    id: 26,
-    category: "City Guides",
-    icon: Building2,
-    color: "orange",
-    title: "Austin Electricity Rates 2024: Compare Cheapest TX Power Plans",
-    description: "Compare Austin TX electricity from 40+ providers. Round Rock, Cedar Park, Pflugerville competitive areas. Save $600-850 yearly.",
-    image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=1200&q=80",
-    excerpt: "Austin metro area with 40+ competitive providers in surrounding cities. Find cheapest rates outside Austin Energy territory.",
-    readTime: "10 min",
-    keywords: ["Austin electricity", "Round Rock power", "Cedar Park electricity", "Pflugerville energy", "Austin Energy rates"],
-    relatedArticles: [11, 23, 24]
-  },
-  {
-    id: 27,
+    icon: MapPin,
+    color: "teal",
+    title: "Warwick RI Electricity Rates 2026: Kent County Power Guide - Save $520+",
+    description: "Compare Warwick RI electricity rates from 15+ National Grid suppliers. Find cheapest power in Kent County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d9b752924_a37c566e-4168-4be1-a823-20bf311f7ed9.jpg",
+    excerpt: "Warwick residents save an average of $520 per year by shopping 15+ competitive electricity suppliers serving Kent County.",
+    readTime: "9 min",
+    keywords: ["Warwick electricity", "Kent County RI power", "National Grid Warwick"],
+    relatedArticles: [106, 107, 1]
+  }
+];
     category: "City Guides",
     icon: Building2,
     color: "blue",
@@ -1535,11 +1506,6 @@ export default function ArticleDetail() {
             </div>
           </div>
         </article>
-
-        {/* Reading Analytics */}
-        <div className="mt-8">
-          <ReadingAnalytics allArticles={articles} />
-        </div>
 
         {/* AI-Powered Article Recommendations */}
         <ArticleRecommendations 
