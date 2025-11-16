@@ -252,7 +252,7 @@ const cities = [
     avgRate: "10.4¢/kWh",
     providers: 29,
     savings: "$670/yr",
-    image: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b957702cc_f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
   },
   {
     name: "Frederick",

@@ -600,7 +600,7 @@ const articles = [
     color: "purple",
     title: "Baltimore Electricity Rates 2024: Complete MD Metro Power Guide",
     description: "Compare Baltimore MD electricity from 15+ suppliers. BGE territory. Save $380-500 yearly in Baltimore County.",
-    image: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b957702cc_f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg",
     excerpt: "Baltimore City and County competitive market. 15+ PSC-licensed suppliers serving BGE territory.",
     readTime: "10 min",
     keywords: ["Baltimore electricity", "BGE rates", "Baltimore power", "Baltimore County electricity", "MD energy"],
