@@ -102,8 +102,8 @@ export const getOrganizationSchema = () => ({
   "description": "Compare electricity rates from 40+ providers across 17 deregulated states. Save up to $800 per year on your electricity bills.",
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+1-855-475-8315",
     "contactType": "Customer Service",
+    "email": "support@powerscouts.com",
     "areaServed": ["US"],
     "availableLanguage": ["English"]
   },
