@@ -11,28 +11,22 @@ import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 export default function AllStates() {
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
-  const [zipFilter, setZipFilter] = useState("");
-  const [zipValidation, setZipValidation] = useState(null);
   const states = getAllDeregulatedStates();
 
-  const handleZipSearch = () => {
-    if (zipFilter.length === 5) {
-      const validation = validateZipCode(zipFilter);
-      setZipValidation(validation);
-    } else if (zipFilter.length === 0) {
-      setZipValidation(null);
-    }
-  };
+  // Real-time ZIP validation and filtering
+  const zipValidation = searchTerm.length === 5 && /^\d{5}$/.test(searchTerm) 
+    ? validateZipCode(searchTerm) 
+    : null;
 
   const filteredStates = states.filter(state => {
-    // First filter by name search
+    // Check if search term is a 5-digit ZIP code
+    if (zipValidation?.valid && zipValidation?.state) {
+      return state.code === zipValidation.state;
+    }
+    
+    // Otherwise filter by name search
     const nameMatch = state.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       state.fullName.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Then filter by ZIP if a valid ZIP validation exists
-    if (zipValidation?.valid && zipValidation?.state) {
-      return nameMatch && state.code === zipValidation.state;
-    }
     
     return nameMatch;
   });
