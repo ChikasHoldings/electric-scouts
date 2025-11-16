@@ -860,7 +860,7 @@ const articles = [
     color: "purple",
     title: "Paterson NJ Electricity Rates 2024: Passaic County Power Guide",
     description: "Compare Paterson NJ electricity from 15+ suppliers. PSE&G territory. Save $310-430 yearly in Passaic County.",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/58fce9716_8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg",
     excerpt: "Paterson and Passaic County competitive market. 15+ BPU-licensed suppliers serving PSE&G North Jersey.",
     readTime: "9 min",
     keywords: ["Paterson electricity", "PSE&G Paterson", "Passaic County power", "Paterson NJ energy"],
