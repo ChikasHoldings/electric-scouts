@@ -415,7 +415,7 @@ export default function Layout({ children, currentPageName }) {
                 className="h-12 sm:h-14 mb-4"
               />
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                Your trusted electricity comparison platform for deregulated markets nationwide. Compare rates from 40+ providers in TX, PA, NY, OH, IL, NJ, MD & more. Save up to $800 per year.
+                Compare electricity rates from 40+ providers nationwide. Save up to $800/year.
               </p>
               <div className="flex gap-2">
                 <a href="#" aria-label="Follow us on Facebook" className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
