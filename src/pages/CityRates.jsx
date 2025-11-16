@@ -16,7 +16,9 @@ import { calculateMonthlyBill } from "../components/compare/dataValidation";
 
 // City-specific data for SEO
 const cityData = {
-  "Houston": {
+  "Houston-TX": {
+    state: "Texas",
+    stateCode: "TX",
     county: "Harris County",
     population: "2,300,000+",
     zipCodes: ["77002", "77019", "77024", "77027", "77056", "77063", "77098"],
@@ -25,9 +27,24 @@ const cityData = {
     providers: 45,
     neighborhoods: ["Downtown Houston", "The Heights", "Montrose", "River Oaks", "Midtown", "Galleria", "Memorial"],
     description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to over 45 electricity providers in the deregulated market.",
-    image: "https://images.unsplash.com/photo-1577894947058-fccf5cf3f8ac?w=1200&h=600&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/15b59cb95_b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
-  "Dallas": {
+  "Houston": {
+    state: "Texas",
+    stateCode: "TX",
+    county: "Harris County",
+    population: "2,300,000+",
+    zipCodes: ["77002", "77019", "77024", "77027", "77056", "77063", "77098"],
+    avgRate: "8.9¢/kWh",
+    avgMonthlyBill: "$128",
+    providers: 45,
+    neighborhoods: ["Downtown Houston", "The Heights", "Montrose", "River Oaks", "Midtown", "Galleria", "Memorial"],
+    description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to over 45 electricity providers in the deregulated market.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/15b59cb95_b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
+  },
+  "Dallas-TX": {
+    state: "Texas",
+    stateCode: "TX",
     county: "Dallas County",
     population: "1,300,000+",
     zipCodes: ["75201", "75202", "75204", "75205", "75214", "75219", "75230"],
@@ -36,9 +53,24 @@ const cityData = {
     providers: 42,
     neighborhoods: ["Downtown Dallas", "Uptown", "Deep Ellum", "Highland Park", "Oak Lawn", "Lake Highlands", "North Dallas"],
     description: "Dallas residents benefit from competitive electricity rates with access to over 42 providers offering a wide range of fixed and variable rate plans.",
-    image: "https://images.unsplash.com/photo-1552083974-186346191183?w=1200&h=600&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
-  "Austin": {
+  "Dallas": {
+    state: "Texas",
+    stateCode: "TX",
+    county: "Dallas County",
+    population: "1,300,000+",
+    zipCodes: ["75201", "75202", "75204", "75205", "75214", "75219", "75230"],
+    avgRate: "9.1¢/kWh",
+    avgMonthlyBill: "$132",
+    providers: 42,
+    neighborhoods: ["Downtown Dallas", "Uptown", "Deep Ellum", "Highland Park", "Oak Lawn", "Lake Highlands", "North Dallas"],
+    description: "Dallas residents benefit from competitive electricity rates with access to over 42 providers offering a wide range of fixed and variable rate plans.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
+  },
+  "Austin-TX": {
+    state: "Texas",
+    stateCode: "TX",
     county: "Travis County",
     population: "978,000+",
     zipCodes: ["78701", "78702", "78703", "78704", "78731", "78745", "78757"],
@@ -47,9 +79,24 @@ const cityData = {
     providers: 38,
     neighborhoods: ["Downtown Austin", "South Congress", "East Austin", "West Lake Hills", "Hyde Park", "Zilker", "Mueller"],
     description: "Austin, the state capital and tech hub, provides residents with competitive electricity rates and numerous green energy options from 38+ providers.",
-    image: "https://images.unsplash.com/photo-1587166287897-57569859d3fe?w=1200&h=600&fit=crop"
+    image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=400&h=300&fit=crop"
   },
-  "San Antonio": {
+  "Austin": {
+    state: "Texas",
+    stateCode: "TX",
+    county: "Travis County",
+    population: "978,000+",
+    zipCodes: ["78701", "78702", "78703", "78704", "78731", "78745", "78757"],
+    avgRate: "9.3¢/kWh",
+    avgMonthlyBill: "$135",
+    providers: 38,
+    neighborhoods: ["Downtown Austin", "South Congress", "East Austin", "West Lake Hills", "Hyde Park", "Zilker", "Mueller"],
+    description: "Austin, the state capital and tech hub, provides residents with competitive electricity rates and numerous green energy options from 38+ providers.",
+    image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=400&h=300&fit=crop"
+  },
+  "San Antonio-TX": {
+    state: "Texas",
+    stateCode: "TX",
     county: "Bexar County",
     population: "1,500,000+",
     zipCodes: ["78201", "78209", "78212", "78216", "78232", "78249", "78258"],
@@ -58,9 +105,24 @@ const cityData = {
     providers: 40,
     neighborhoods: ["Downtown San Antonio", "Alamo Heights", "Stone Oak", "The Dominion", "Southtown", "King William", "Medical Center"],
     description: "San Antonio offers some of the most competitive electricity rates in Texas, with 40+ providers serving the area's residential and commercial customers.",
-    image: "https://images.unsplash.com/photo-1583582183923-4cf85c286e8f?w=1200&h=600&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9afbd2a3e_136ff412-03e2-40c7-8934-8517d2404665.jpg"
   },
-  "Fort Worth": {
+  "San Antonio": {
+    state: "Texas",
+    stateCode: "TX",
+    county: "Bexar County",
+    population: "1,500,000+",
+    zipCodes: ["78201", "78209", "78212", "78216", "78232", "78249", "78258"],
+    avgRate: "8.8¢/kWh",
+    avgMonthlyBill: "$127",
+    providers: 40,
+    neighborhoods: ["Downtown San Antonio", "Alamo Heights", "Stone Oak", "The Dominion", "Southtown", "King William", "Medical Center"],
+    description: "San Antonio offers some of the most competitive electricity rates in Texas, with 40+ providers serving the area's residential and commercial customers.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9afbd2a3e_136ff412-03e2-40c7-8934-8517d2404665.jpg"
+  },
+  "Fort Worth-TX": {
+    state: "Texas",
+    stateCode: "TX",
     county: "Tarrant County",
     population: "927,000+",
     zipCodes: ["76102", "76104", "76107", "76109", "76116", "76132", "76244"],
@@ -69,7 +131,20 @@ const cityData = {
     providers: 41,
     neighborhoods: ["Downtown Fort Worth", "Cultural District", "Sundance Square", "West 7th", "Ridglea", "Tanglewood", "Alliance"],
     description: "Fort Worth residents enjoy access to competitive electricity rates from 41+ providers in the deregulated Texas energy market.",
-    image: "https://images.unsplash.com/photo-1580853039160-f0376b92f928?w=1200&h=600&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/10a0998d3_87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
+  },
+  "Fort Worth": {
+    state: "Texas",
+    stateCode: "TX",
+    county: "Tarrant County",
+    population: "927,000+",
+    zipCodes: ["76102", "76104", "76107", "76109", "76116", "76132", "76244"],
+    avgRate: "9.0¢/kWh",
+    avgMonthlyBill: "$130",
+    providers: 41,
+    neighborhoods: ["Downtown Fort Worth", "Cultural District", "Sundance Square", "West 7th", "Ridglea", "Tanglewood", "Alliance"],
+    description: "Fort Worth residents enjoy access to competitive electricity rates from 41+ providers in the deregulated Texas energy market.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/10a0998d3_87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
   "Plano": {
     county: "Collin County",
