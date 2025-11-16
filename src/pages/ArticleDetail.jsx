@@ -93,58 +93,6 @@ const articles = [
     keywords: ["electricity scams", "provider fraud", "door-to-door sales", "legitimate providers"],
     relatedArticles: [1, 10, 2]
   },
-  {
-    id: 7,
-    category: "Money Saving",
-    icon: TrendingDown,
-    color: "green",
-    title: "Contract Renewal Strategy: Save $300+ Every Year",
-    description: "Master electricity contract renewal timing. Learn when to shop, avoid auto-renewal penalties, and negotiate better rates.",
-    image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=1200&q=80", // contract signing document
-    excerpt: "Most people overpay $300-800 yearly by letting contracts auto-renew. Here's how to avoid this expensive mistake.",
-    readTime: "10 min",
-    keywords: ["contract renewal", "auto-renewal", "electricity contracts", "renewal strategy"],
-    relatedArticles: [2, 3, 10]
-  },
-  {
-    id: 8,
-    category: "Seasonal Tips",
-    icon: Zap,
-    color: "orange",
-    title: "Beat the Heat: Summer Electricity Saving Strategies",
-    description: "Proven tactics to lower your electricity bill during hot summer months without sacrificing comfort.",
-    image: "https://images.unsplash.com/photo-1552799446-159ba9523315?w=1200&q=80", // summer sun heat
-    excerpt: "These 10 strategies helped families cut summer electricity bills by 30-40% while staying comfortable.",
-    readTime: "8 min",
-    keywords: ["summer electricity savings", "lower AC costs", "reduce summer bills"],
-    relatedArticles: [2, 3, 5]
-  },
-  {
-    id: 9,
-    category: "Understanding Bills",
-    icon: FileText,
-    color: "teal",
-    title: "How to Read Your Electricity Bill and Spot Overcharges",
-    description: "Learn to decode your electricity bill and identify hidden fees that cost you money every month.",
-    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&q=80", // utility bill document
-    excerpt: "Understanding your bill is the first step to saving money. This guide shows you exactly what to look for.",
-    readTime: "7 min",
-    keywords: ["read electricity bill", "understand electricity bill", "electricity bill explained"],
-    relatedArticles: [1, 2, 10]
-  },
-  {
-    id: 10,
-    category: "Switching Providers",
-    icon: Users,
-    color: "blue",
-    title: "How to Switch Electricity Providers Without Hassle",
-    description: "Step-by-step guide to switching providers seamlessly with no power interruption.",
-    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&q=80",
-    excerpt: "Switching takes 10 minutes online and could save you $500+ per year. Here's exactly what to do.",
-    readTime: "6 min",
-    keywords: ["switch electricity provider", "change power company", "electricity provider switch"],
-    relatedArticles: [1, 2, 3]
-  },
   // STATE GUIDES
   {
     id: 11,
@@ -302,7 +250,6 @@ const articles = [
     keywords: ["Rhode Island electricity", "RI power", "National Grid RI"],
     relatedArticles: [1, 2, 11]
   },
-  // MAJOR CITY GUIDES
   {
     id: 23,
     category: "City Guides",
@@ -342,7 +289,6 @@ const articles = [
     keywords: ["Philadelphia electricity", "Philly power rates", "PECO suppliers", "PA electricity", "Philadelphia energy"],
     relatedArticles: [12, 2, 1]
   },
-  // TEXAS CITIES
   {
     id: 26,
     category: "City Guides",
@@ -395,7 +341,6 @@ const articles = [
     keywords: ["El Paso electricity", "El Paso Electric", "west Texas power", "El Paso energy rates"],
     relatedArticles: [11, 23, 2]
   },
-  // PENNSYLVANIA CITIES
   {
     id: 30,
     category: "City Guides",
@@ -422,7 +367,6 @@ const articles = [
     keywords: ["Allentown electricity", "PPL Electric", "Lehigh Valley power", "Bethlehem PA electricity"],
     relatedArticles: [12, 30, 2]
   },
-  // NEW YORK CITIES
   {
     id: 32,
     category: "City Guides",
@@ -462,7 +406,6 @@ const articles = [
     keywords: ["Rochester electricity", "RG&E rates", "Monroe County power", "Rochester ESCO"],
     relatedArticles: [13, 33, 32]
   },
-  // OHIO CITIES
   {
     id: 35,
     category: "City Guides",
@@ -944,7 +887,6 @@ const articles = [
     keywords: ["Concord NH electricity", "Eversource Concord", "Merrimack County power", "Concord New Hampshire energy"],
     relatedArticles: [21, 56, 57]
   },
-  // EVERGREEN SEO CONTENT
   {
     id: 72,
     category: "Saving Money",
