@@ -169,7 +169,7 @@ const cities = [
     avgRate: "10.3¢/kWh",
     providers: 28,
     savings: "$670/yr",
-    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b41923a04_cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
   },
   // New York Cities
   {

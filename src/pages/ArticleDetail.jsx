@@ -416,7 +416,7 @@ const articles = [
     color: "green",
     title: "Allentown Electricity Rates 2024: Lehigh Valley PA Power Guide",
     description: "Compare Allentown PA electricity from 25+ PPL suppliers. Lehigh Valley, Bethlehem, Easton coverage. Save $380-500 yearly.",
-    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b41923a04_cfe7691c-4b4d-4429-966f-1475a915d13d.jpg",
     excerpt: "Allentown and Lehigh Valley competitive market. PPL Electric territory with 25+ certified suppliers.",
     readTime: "9 min",
     keywords: ["Allentown electricity", "PPL Electric", "Lehigh Valley power", "Bethlehem PA electricity"],
