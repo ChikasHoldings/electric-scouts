@@ -18,7 +18,7 @@ export default function IllinoisElectricity() {
     avgRate: "8.8¢/kWh",
     avgMonthlyBill: "$126",
     topCities: ["Chicago", "Aurora", "Naperville", "Joliet", "Rockford", "Springfield"],
-    topProviders: ["Constellation", "Direct Energy", "Amigo Energy", "Cirro Energy", "IGS Energy", "Verde Energy"],
+    topProviders: ["Constellation", "Direct Energy", "IGS Energy", "Verde Energy", "Amigo Energy", "Starion Energy"],
     faqs: [
       {
         id: 1,

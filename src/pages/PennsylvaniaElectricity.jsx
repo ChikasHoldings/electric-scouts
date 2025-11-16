@@ -18,7 +18,7 @@ export default function PennsylvaniaElectricity() {
     avgRate: "9.1¢/kWh",
     avgMonthlyBill: "$131",
     topCities: ["Philadelphia", "Pittsburgh", "Allentown", "Erie", "Reading", "Scranton", "Lancaster"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "Palmco Energy", "IGS Energy", "Public Power"],
+    topProviders: ["Constellation", "Direct Energy", "Green Mountain Energy", "Champion Energy", "Verde Energy", "IGS Energy"],
     faqs: [
       {
         id: 1,

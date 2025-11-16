@@ -18,7 +18,7 @@ export default function NewHampshireElectricity() {
     avgRate: "10.5¢/kWh",
     avgMonthlyBill: "$151",
     topCities: ["Manchester", "Nashua", "Concord", "Derry", "Rochester", "Salem"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "Residents Energy", "Liberty Power", "Think Energy"],
+    topProviders: ["Constellation", "Verde Energy", "Direct Energy", "Liberty Power", "Residents Energy", "NextEra Energy"],
     faqs: [
       {
         id: 1,

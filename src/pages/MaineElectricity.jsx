@@ -18,7 +18,7 @@ export default function MaineElectricity() {
     avgRate: "9.8¢/kWh",
     avgMonthlyBill: "$141",
     topCities: ["Portland", "Lewiston", "Bangor", "South Portland", "Auburn", "Biddeford"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "Residents Energy", "Liberty Power", "Think Energy"],
+    topProviders: ["Constellation", "Verde Energy", "Direct Energy", "Residents Energy", "Standard Power", "Liberty Power"],
     faqs: [
       {
         id: 1,

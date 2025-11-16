@@ -18,7 +18,7 @@ export default function ConnecticutElectricity() {
     avgRate: "10.8¢/kWh",
     avgMonthlyBill: "$155",
     topCities: ["Bridgeport", "New Haven", "Hartford", "Stamford", "Waterbury", "Norwalk"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "Residents Energy", "Liberty Power", "Think Energy"],
+    topProviders: ["Constellation", "Verde Energy", "Direct Energy", "Liberty Power", "Residents Energy", "NextEra Energy"],
     faqs: [
       {
         id: 1,

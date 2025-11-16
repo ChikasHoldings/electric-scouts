@@ -18,7 +18,7 @@ export default function OhioElectricity() {
     avgRate: "8.6¢/kWh",
     avgMonthlyBill: "$124",
     topCities: ["Columbus", "Cleveland", "Cincinnati", "Toledo", "Akron", "Dayton"],
-    topProviders: ["AEP Energy", "Constellation", "Direct Energy", "IGS Energy", "Palmco Energy", "Verde Energy"],
+    topProviders: ["Constellation", "Direct Energy", "IGS Energy", "AEP Energy", "Energy Harbor", "Verde Energy"],
     faqs: [
       {
         id: 1,

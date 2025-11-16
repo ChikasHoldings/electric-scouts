@@ -18,7 +18,7 @@ export default function MassachusettsElectricity() {
     avgRate: "11.1¢/kWh",
     avgMonthlyBill: "$159",
     topCities: ["Boston", "Worcester", "Springfield", "Cambridge", "Lowell", "Brockton"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "Residents Energy", "Liberty Power", "Think Energy"],
+    topProviders: ["Constellation", "Verde Energy", "Direct Energy", "Liberty Power", "Residents Energy", "NextEra Energy"],
     faqs: [
       {
         id: 1,

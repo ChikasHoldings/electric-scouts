@@ -18,7 +18,7 @@ export default function RhodeIslandElectricity() {
     avgRate: "11.3¢/kWh",
     avgMonthlyBill: "$162",
     topCities: ["Providence", "Warwick", "Cranston", "Pawtucket", "East Providence", "Woonsocket"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "Residents Energy", "Liberty Power", "Think Energy"],
+    topProviders: ["Constellation", "Verde Energy", "Direct Energy", "Liberty Power", "Residents Energy", "Standard Power"],
     faqs: [
       {
         id: 1,

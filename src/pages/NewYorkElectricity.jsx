@@ -18,7 +18,7 @@ export default function NewYorkElectricity() {
     avgRate: "10.2¢/kWh",
     avgMonthlyBill: "$146",
     topCities: ["New York City", "Buffalo", "Rochester", "Yonkers", "Syracuse", "Albany"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "XOOM Energy", "IGS Energy", "Starion Energy"],
+    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "Liberty Power", "XOOM Energy", "IDT Energy"],
     faqs: [
       {
         id: 1,
