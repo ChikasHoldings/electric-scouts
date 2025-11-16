@@ -107,19 +107,18 @@ const articles = [
   },
   {
     id: 108,
-    category: "State Guides",
+    category: "City Guides",
     icon: MapPin,
-    color: "purple",
-    title: "New York Electricity Rates: Complete NY Power Shopping Guide",
-    description: "Compare New York electricity rates from 20+ ESCO suppliers. Find lowest power prices in NYC, Buffalo, and Rochester.",
-    image: "https://images.unsplash.com/photo-1543716627-839b54c40519?w=1200&q=80", // New York City skyline
-    excerpt: "New York's regulated ESCO market offers savings with strong consumer protections. Save $300-500 annually.",
-    readTime: "11 min",
-    keywords: ["New York electricity", "NYC power rates", "ESCO suppliers"],
-    relatedArticles: [1, 2, 14]
-  },
-  {
-    id: 14,
+    color: "teal",
+    title: "Warwick RI Electricity Rates 2026: Kent County Power Guide - Save $520+",
+    description: "Compare Warwick RI electricity rates from 15+ National Grid suppliers. Find cheapest power in Kent County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d9b752924_a37c566e-4168-4be1-a823-20bf311f7ed9.jpg",
+    excerpt: "Warwick residents save an average of $520 per year by shopping 15+ competitive electricity suppliers serving Kent County.",
+    readTime: "9 min",
+    keywords: ["Warwick electricity", "Kent County RI power", "National Grid Warwick"],
+    relatedArticles: [106, 107, 1]
+  }
+];
     category: "State Guides",
     icon: MapPin,
     color: "green",
