@@ -254,7 +254,7 @@ export default function TexasElectricity() {
             ].map((city, index) => (
               <Link 
                 key={index}
-                to={city.hasArticle ? createPageUrl("ArticleDetail") + `?slug=${city.slug}` : createPageUrl("CityRates") + `?city=${city.name}`}
+                to={createPageUrl("CityRates") + `?city=${city.name}`}
                 className="group"
               >
                 <Card className="hover:shadow-lg hover:border-[#0A5C8C] transition-all border h-full">
