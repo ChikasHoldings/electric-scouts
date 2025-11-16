@@ -45,7 +45,7 @@ const articles = [
     color: "purple",
     title: "Fixed Rate vs Variable Rate: Which Saves You More Money?",
     description: "Real customer examples show you which electricity plan type works best for different situations.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/354f5e658_man-cunting-stack-coins.jpg",
     excerpt: "See actual bills from families who chose fixed vs variable rates and discover which option is right for you.",
     readTime: "12 min",
     keywords: ["fixed rate electricity", "variable rate electricity", "best electricity plan type"],
