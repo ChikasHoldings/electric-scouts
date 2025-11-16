@@ -171,11 +171,11 @@ export default function Layout({ children, currentPageName }) {
                           {topCities.map((city, index) => (
                             <Link 
                               key={index}
-                              to={createPageUrl("CityRates") + `?city=${city}`} 
+                              to={createPageUrl("CityRates") + `?city=${city.name}&state=${city.state}`} 
                               className="block px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
                               onClick={() => setServiceAreaOpen(false)}
                             >
-                              {city}
+                              {city.name}
                             </Link>
                           ))}
                         </div>
@@ -434,19 +434,19 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Popular Cities</h3>
               <div className="space-y-2">
-                <Link to={createPageUrl("CityRates") + "?city=Houston"} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                <Link to={createPageUrl("CityRates") + "?city=Houston&state=TX"} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Houston
                 </Link>
-                <Link to={createPageUrl("CityRates") + "?city=Dallas"} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                <Link to={createPageUrl("CityRates") + "?city=Dallas&state=TX"} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Dallas
                 </Link>
-                <Link to={createPageUrl("CityRates") + "?city=Austin"} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                <Link to={createPageUrl("CityRates") + "?city=Austin&state=TX"} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Austin
                 </Link>
-                <Link to={createPageUrl("CityRates") + "?city=San Antonio"} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                <Link to={createPageUrl("CityRates") + "?city=San Antonio&state=TX"} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   San Antonio
                 </Link>
-                <Link to={createPageUrl("CityRates") + "?city=Fort Worth"} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                <Link to={createPageUrl("CityRates") + "?city=Fort Worth&state=TX"} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Fort Worth
                 </Link>
                 <Link to={createPageUrl("AllCities")} className="block text-[#FF6B35] hover:text-[#FF8C5A] text-sm transition-colors font-medium">
