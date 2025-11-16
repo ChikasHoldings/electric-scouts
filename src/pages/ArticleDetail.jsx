@@ -808,7 +808,7 @@ const articles = [
     color: "purple",
     title: "Syracuse NY Electricity Rates 2024: Central NY Power Guide",
     description: "Compare Syracuse NY electricity from 16+ ESCOs. National Grid territory. Save $320-440 yearly in Onondaga County.",
-    image: "https://images.unsplash.com/photo-1599930113854-d6d7fd521f10?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d40d4c2a0_8af97b79-9633-405b-a443-c8df9b48d0cf.jpg",
     excerpt: "Syracuse and Onondaga County ESCO market. 16+ DPS-licensed ESCOs serving National Grid Central NY.",
     readTime: "9 min",
     keywords: ["Syracuse electricity", "National Grid Syracuse", "Onondaga County power", "Syracuse NY ESCO"],

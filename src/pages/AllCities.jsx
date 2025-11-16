@@ -210,7 +210,7 @@ const cities = [
     avgRate: "11.0¢/kWh",
     providers: 23,
     savings: "$630/yr",
-    image: "https://images.unsplash.com/photo-1599930113854-d6d7fd521f10?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d40d4c2a0_8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
   },
   // New Jersey Cities
   {
