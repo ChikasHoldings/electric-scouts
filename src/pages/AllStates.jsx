@@ -72,48 +72,16 @@ export default function AllStates() {
               Compare electricity providers in 12 states where you have the power to choose. Find your state to unlock savings.
             </p>
             
-            {/* Search Bars */}
-            <div className="grid sm:grid-cols-2 gap-3 max-w-2xl">
-              {/* State Name Search */}
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search by state name..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-11 pr-4 h-11 sm:h-12 bg-white border-0 shadow-lg text-sm rounded-lg focus-visible:ring-2 focus-visible:ring-white/20 touch-manipulation"
-                />
-              </div>
-              
-              {/* ZIP Code Search */}
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Or enter ZIP code..."
-                    value={zipFilter}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      setZipFilter(value);
-                      if (value.length === 0) {
-                        setZipValidation(null);
-                      }
-                    }}
-                    onKeyPress={(e) => e.key === 'Enter' && handleZipSearch()}
-                    className="pl-11 pr-4 h-11 sm:h-12 bg-white border-0 shadow-lg text-sm rounded-lg focus-visible:ring-2 focus-visible:ring-white/20 touch-manipulation"
-                    maxLength={5}
-                  />
-                </div>
-                <Button
-                  onClick={handleZipSearch}
-                  className="h-11 sm:h-12 px-4 bg-white text-[#0A5C8C] hover:bg-blue-50 font-semibold shadow-lg"
-                  disabled={zipFilter.length !== 5}
-                >
-                  Search
-                </Button>
-              </div>
+            {/* Unified Search Bar */}
+            <div className="relative max-w-xl">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search by state name or ZIP code..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-11 sm:pl-12 pr-4 h-11 sm:h-12 bg-white border-0 shadow-lg text-sm sm:text-base rounded-lg focus-visible:ring-2 focus-visible:ring-white/20 touch-manipulation text-gray-900 placeholder:text-gray-400"
+              />
             </div>
             
             {/* ZIP Validation Feedback */}
