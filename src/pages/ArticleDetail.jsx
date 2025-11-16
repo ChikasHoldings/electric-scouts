@@ -127,7 +127,8 @@ const colorClasses = {
   orange: { bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-200" },
   teal: { bg: "bg-teal-50", text: "text-teal-600", border: "border-teal-200" }
 };
-    image: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=1200&q=80", // Cleveland skyline
+
+export default function ArticleDetail() {
     excerpt: "Ohio's competitive market with PUCO oversight makes shopping safe and profitable. Save $350-550 yearly.",
     readTime: "10 min",
     keywords: ["Ohio electricity", "Cleveland power", "Columbus electricity"],
@@ -1333,6 +1334,12 @@ const colorClasses = {
 ];
 
 const colorClasses = {
+  blue: { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-200" },
+  green: { bg: "bg-green-50", text: "text-green-600", border: "border-green-200" },
+  purple: { bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-200" },
+  orange: { bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-200" },
+  teal: { bg: "bg-teal-50", text: "text-teal-600", border: "border-teal-200" }
+};
 
 export default function ArticleDetail() {
   const location = window.location;
