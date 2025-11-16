@@ -273,11 +273,11 @@ export default function LearningCenter() {
                         className="overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 hover:border-[#0A5C8C] cursor-pointer group"
                       >
                         <div className="grid md:grid-cols-2 gap-0">
-                          <div className="relative h-48 md:h-64 overflow-hidden">
+                          <div className="relative h-48 md:h-full overflow-hidden">
                             <img 
                               src={featured.image} 
                               alt={featured.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             <div className={`absolute top-4 left-4 px-3 py-1 ${colors.bg} ${colors.text} rounded-full text-xs font-bold uppercase`}>
