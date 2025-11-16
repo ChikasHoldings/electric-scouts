@@ -233,19 +233,31 @@ export default function TexasElectricity() {
           </div>
         </section>
 
-        {/* Top Cities Section */}
+        {/* Top Cities with Articles Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-5">
-            Top Cities in {stateData.fullName}
+            Texas City Electricity Guides
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {stateData.topCities.map((city, index) => (
+          <p className="text-sm text-gray-600 mb-5">
+            In-depth electricity rate comparisons and provider guides for major Texas cities
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {[
+              { name: "Houston", hasArticle: true, slug: "houston-electricity-rates-guide" },
+              { name: "Dallas", hasArticle: true, slug: "dallas-electricity-rates-guide" },
+              { name: "Austin", hasArticle: true, slug: "austin-electricity-rates-guide" },
+              { name: "San Antonio", hasArticle: true, slug: "san-antonio-electricity-rates-guide" },
+              { name: "Fort Worth", hasArticle: true, slug: "fort-worth-electricity-rates-guide" },
+              { name: "El Paso", hasArticle: false },
+              { name: "Arlington", hasArticle: false },
+              { name: "Plano", hasArticle: false }
+            ].map((city, index) => (
               <Link 
                 key={index}
-                to={createPageUrl("CityRates") + `?city=${city.name}`}
+                to={city.hasArticle ? createPageUrl("ArticleDetail") + `?slug=${city.slug}` : createPageUrl("CityRates") + `?city=${city.name}`}
                 className="group"
               >
-                <Card className="hover:shadow-lg hover:border-[#0A5C8C] transition-all border">
+                <Card className="hover:shadow-lg hover:border-[#0A5C8C] transition-all border h-full">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
@@ -256,7 +268,7 @@ export default function TexasElectricity() {
                           {city.name}
                         </h3>
                         <p className="text-xs text-gray-500">
-                          Compare plans in {city.name}
+                          {city.hasArticle ? 'Read full guide →' : 'Compare rates →'}
                         </p>
                       </div>
                       <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#0A5C8C] transition-colors flex-shrink-0" />
@@ -266,7 +278,7 @@ export default function TexasElectricity() {
               </Link>
             ))}
           </div>
-          <div className="text-center mt-5">
+          <div className="text-center">
             <Link to={createPageUrl("AllCities")} className="text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors">
               View all Texas cities →
             </Link>
