@@ -24,20 +24,30 @@ export default function Layout({ children, currentPageName }) {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [serviceAreaOpen, setServiceAreaOpen] = useState(false);
 
+  // Performance: Debounce scroll handler
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          setShowBackToTop(window.scrollY > 400);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Scroll to top on route change and close mobile menu
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-      setShowBackToTop(window.scrollY > 400);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {

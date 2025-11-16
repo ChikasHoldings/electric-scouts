@@ -18,6 +18,19 @@ export default function SEOHead({
     const siteUrl = window.location.origin;
     const fullUrl = canonical ? `${siteUrl}${canonical}` : window.location.href;
     const defaultImage = image || `${siteUrl}/og-image.png`;
+    
+    // Add preconnect for performance
+    const addPreconnect = (href) => {
+      if (!document.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'preconnect';
+        link.href = href;
+        document.head.appendChild(link);
+      }
+    };
+    
+    addPreconnect('https://qtrypzzcjebvfcihiynt.supabase.co');
+    addPreconnect('https://images.unsplash.com');
 
     // Helper function to update or create meta tag
     const updateMetaTag = (selector, attribute, content) => {
