@@ -249,28 +249,18 @@ export default function AllStates() {
           <div className="text-center py-12">
             <p className="text-gray-600 mb-4">
               {zipValidation?.valid ? (
-                <>No deregulated markets found for ZIP code "{zipFilter}"</>
+                <>No deregulated markets found for ZIP code "{searchTerm}"</>
               ) : searchTerm ? (
                 <>No states found matching "{searchTerm}"</>
               ) : (
                 <>No states found</>
               )}
             </p>
-            <div className="flex gap-2 justify-center">
-              {searchTerm && (
-                <Button variant="outline" onClick={() => setSearchTerm("")}>
-                  Clear Name Search
-                </Button>
-              )}
-              {zipValidation && (
-                <Button variant="outline" onClick={() => {
-                  setZipFilter('');
-                  setZipValidation(null);
-                }}>
-                  Clear ZIP Search
-                </Button>
-              )}
-            </div>
+            {searchTerm && (
+              <Button variant="outline" onClick={() => setSearchTerm("")}>
+                Clear Search
+              </Button>
+            )}
           </div>
         )}
       </div>
