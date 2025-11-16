@@ -13,7 +13,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: ${baseUrl}/sitemap.xml
+Sitemap: ${baseUrl}/sitemap
 
 # Crawl-delay for search engines
 Crawl-delay: 1
