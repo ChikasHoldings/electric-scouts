@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -12,8 +14,8 @@ import { getFullArticle } from "../components/learning/fullArticles";
 import ArticleRecommendations from "../components/learning/ArticleRecommendations";
 import { trackDailyReading } from "../components/learning/ReadingAnalytics";
 
-// Article database - Only articles with 500+ words of content
-const articles = [
+// Fallback articles
+const fallbackArticles = [
   {
     id: 1,
     category: "Getting Started",
@@ -133,7 +135,30 @@ export default function ArticleDetail() {
   
   // Get article ID from URL
   const urlParams = new URLSearchParams(location.search);
-  const articleId = parseInt(urlParams.get('id'));
+  const articleId = urlParams.get('id');
+
+  // Fetch articles from database
+  const { data: dbArticles, isLoading } = useQuery({
+    queryKey: ['articles'],
+    queryFn: () => base44.entities.Article.list('-created_date'),
+    initialData: [],
+  });
+
+  // Map database articles to expected format
+  const articles = dbArticles.length > 0 ? dbArticles.map(article => ({
+    id: article.id,
+    category: article.category,
+    icon: MapPin,
+    color: "teal",
+    title: article.title,
+    description: article.meta_description,
+    image: article.featured_image,
+    excerpt: article.excerpt,
+    readTime: article.read_time,
+    keywords: article.keywords || [],
+    relatedArticles: article.related_articles || []
+  })) : fallbackArticles;
+
   const article = articles.find(a => a.id === articleId);
 
   // Scroll to top on mount and track reading - depend on full location to detect changes
@@ -141,6 +166,17 @@ export default function ArticleDetail() {
     window.scrollTo(0, 0);
     trackDailyReading();
   }, [location.search, articleId]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0A5C8C] mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading article...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!article) {
     return (
@@ -161,8 +197,9 @@ export default function ArticleDetail() {
   const Icon = article.icon;
   const colors = colorClasses[article.color];
 
-  // Get full article content
-  const fullArticle = getFullArticle(articleId);
+  // Try to get full article content from database or fallback
+  const dbArticle = dbArticles.find(a => a.id === articleId);
+  const fullArticle = dbArticle?.data?.content ? { content: dbArticle.data.content } : getFullArticle(articleId);
 
   const articleSchema = getArticleSchema({
     title: fullArticle?.metaTitle || article.title,
