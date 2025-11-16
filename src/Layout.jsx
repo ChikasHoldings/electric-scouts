@@ -490,9 +490,6 @@ export default function Layout({ children, currentPageName }) {
                 <Link to={createPageUrl("LearningCenter")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Learning Center
                 </Link>
-                <Link to={createPageUrl("BusinessRates")} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Business Rates
-                </Link>
                 <Link to={createPageUrl("HomeConcierge")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Home Concierge
                 </Link>
