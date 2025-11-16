@@ -456,7 +456,7 @@ const articles = [
     color: "purple",
     title: "Rochester Electricity Rates 2024: Finger Lakes NY Power Guide",
     description: "Compare Rochester NY electricity from 16+ ESCOs. RG&E territory in Monroe County. Save $300-450 yearly.",
-    image: "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9c65443c8_dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg",
     excerpt: "Rochester and Monroe County ESCO market. 16+ suppliers serving Rochester Gas & Electric territory.",
     readTime: "9 min",
     keywords: ["Rochester electricity", "RG&E rates", "Monroe County power", "Rochester ESCO"],

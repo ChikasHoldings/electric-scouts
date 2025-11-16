@@ -200,7 +200,7 @@ const cities = [
     avgRate: "10.9¢/kWh",
     providers: 24,
     savings: "$640/yr",
-    image: "https://images.unsplash.com/photo-1559087867-ce4c91325525?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9c65443c8_dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
   },
   {
     name: "Syracuse",
