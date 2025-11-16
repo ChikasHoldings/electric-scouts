@@ -231,17 +231,20 @@ export default function CityRates() {
   const [cityName, setCityName] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
 
-  // Get city from URL
+  // Get city and state from URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const city = urlParams.get('city') || 'Houston';
-    setCityName(city);
+    const cityParam = urlParams.get('city') || 'Houston';
+    const stateParam = urlParams.get('state') || 'TX';
+    const cityKey = `${cityParam}-${stateParam}`;
+    setCityName(cityKey);
     
     // Set page title for SEO
-    document.title = `Cheap Electricity Rates in ${city}, TX | Compare ${city} Energy Plans`;
+    const cityInfo = cityData[cityKey] || cityData[cityParam] || cityData["Houston"];
+    document.title = `Cheap Electricity Rates in ${cityParam}, ${cityInfo.stateCode} | Compare ${cityParam} Energy Plans`;
   }, []);
 
-  const city = cityData[cityName] || cityData["Houston"];
+  const city = cityData[cityName] || cityData[cityName.split('-')[0]] || cityData["Houston"];
 
   const { data: plans, isLoading } = useQuery({
     queryKey: ['plans'],
@@ -280,11 +283,11 @@ export default function CityRates() {
               <span className="mx-2 text-blue-300">/</span>
               <Link to={createPageUrl("AllCities")} className="text-blue-200 hover:text-white">Service Areas</Link>
               <span className="mx-2 text-blue-300">/</span>
-              <span className="text-white">{cityName}</span>
+              <span className="text-white">{cityName.split('-')[0]}</span>
             </nav>
 
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
-              Cheap Electricity Rates in {cityName}, Texas
+              Cheap Electricity Rates in {cityName.split('-')[0]}, {city.state}
             </h1>
             <p className="text-lg text-blue-100 mb-5">
               Compare electricity plans from {city.providers}+ providers serving {city.county}. 
@@ -341,17 +344,16 @@ export default function CityRates() {
         {/* About Section - SEO Content */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Electricity Providers in {cityName}, TX
+            Electricity Providers in {cityName.split('-')[0]}, {city.stateCode}
           </h2>
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-lg leading-relaxed mb-4">
-              {city.description} Finding the best electricity plan in {cityName} is easier than ever 
+              {city.description} Finding the best electricity plan in {cityName.split('-')[0]} is easier than ever 
               with Power Scouts' free comparison tool.
             </p>
             <p className="text-lg leading-relaxed">
-              Whether you're moving to {cityName}, looking to switch providers, or simply want to reduce your 
-              monthly electricity bill, our platform helps you compare plans from top-rated providers including 
-              TXU Energy, Reliant, Gexa Energy, and many more. We serve all neighborhoods in {city.county} 
+              Whether you're moving to {cityName.split('-')[0]}, looking to switch providers, or simply want to reduce your 
+              monthly electricity bill, our platform helps you compare plans from top-rated providers. We serve all neighborhoods in {city.county} 
               including {city.neighborhoods.slice(0, 3).join(", ")}, and beyond.
             </p>
           </div>
