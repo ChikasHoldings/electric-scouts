@@ -94,12 +94,9 @@ export default function AllStates() {
                 {zipValidation.valid ? (
                   <div className="flex items-center gap-2 text-white text-sm">
                     <CheckCircle className="w-4 h-4" />
-                    <span>Showing electricity options for {zipValidation.stateFullName} (ZIP: {zipFilter})</span>
+                    <span>Showing electricity options for {zipValidation.stateFullName} (ZIP: {searchTerm})</span>
                     <button 
-                      onClick={() => {
-                        setZipFilter('');
-                        setZipValidation(null);
-                      }}
+                      onClick={() => setSearchTerm('')}
                       className="ml-auto underline hover:no-underline"
                     >
                       Clear
