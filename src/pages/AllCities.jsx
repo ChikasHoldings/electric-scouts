@@ -283,7 +283,7 @@ const cities = [
     avgRate: "11.2¢/kWh",
     providers: 22,
     savings: "$600/yr",
-    image: "https://images.unsplash.com/photo-1571939228382-b2f2b585ce15?w=400&h=300&fit=crop"
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/44bb8debd_6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
   },
   {
     name: "Worcester",

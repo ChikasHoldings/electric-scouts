@@ -613,7 +613,7 @@ const articles = [
     color: "green",
     title: "Boston Electricity Rates 2024: Complete MA Metro Power Guide",
     description: "Compare Boston MA electricity from 12+ suppliers. Eversource/National Grid territory. Save $330-450 yearly.",
-    image: "https://images.unsplash.com/photo-1572636661577-f6d05cbb7682?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/44bb8debd_6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg",
     excerpt: "Boston competitive market serving 600K+ households. 12+ DPU-licensed suppliers across multiple territories.",
     readTime: "10 min",
     keywords: ["Boston electricity", "Eversource Boston", "National Grid Boston", "Boston power rates", "MA energy"],
