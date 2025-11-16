@@ -145,7 +145,7 @@ export default function AllStates() {
           </h2>
           <p className="text-sm text-gray-600">
             {zipValidation?.valid ? (
-              <>Showing {filteredStates.length} state for ZIP code {zipFilter}</>
+              <>Showing {filteredStates.length} state for ZIP code {searchTerm}</>
             ) : (
               <>{filteredStates.length} state{filteredStates.length !== 1 ? 's' : ''} found</>
             )}
