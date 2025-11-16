@@ -159,7 +159,7 @@ export default function AllProviders() {
                 placeholder="Search providers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-11 sm:pl-12 h-11 sm:h-12 bg-white border-0 shadow-lg text-sm sm:text-base touch-manipulation"
+                className="pl-11 sm:pl-12 h-11 sm:h-12 bg-white border-0 shadow-lg text-sm sm:text-base touch-manipulation text-gray-900 placeholder:text-gray-400"
               />
             </div>
           </div>
