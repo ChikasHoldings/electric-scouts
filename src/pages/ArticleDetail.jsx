@@ -847,7 +847,7 @@ const articles = [
     color: "blue",
     title: "Joliet IL Electricity Rates 2024: Will County Power Guide",
     description: "Compare Joliet IL electricity from 18+ suppliers. ComEd territory. Save $340-460 yearly in Will County.",
-    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/214455956_58463eb0-e880-4c1a-b78b-be40c42fb456.jpg",
     excerpt: "Joliet and Will County competitive market. 18+ ICC-licensed suppliers serving ComEd southwest Chicago suburbs.",
     readTime: "9 min",
     keywords: ["Joliet electricity", "ComEd Joliet", "Will County power", "Joliet IL energy"],
