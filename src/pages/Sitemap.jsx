@@ -50,6 +50,23 @@ export default function Sitemap() {
       { url: createPageUrl("CityRates") + "?city=Columbus", priority: 0.7, changefreq: "weekly" },
       { url: createPageUrl("CityRates") + "?city=Philadelphia", priority: 0.7, changefreq: "weekly" },
       { url: createPageUrl("CityRates") + "?city=New York City", priority: 0.8, changefreq: "weekly" },
+      
+      // Learning Center Articles
+      { url: createPageUrl("ArticleDetail") + "?id=1", priority: 0.7, changefreq: "monthly" },
+      { url: createPageUrl("ArticleDetail") + "?id=2", priority: 0.7, changefreq: "monthly" },
+      { url: createPageUrl("ArticleDetail") + "?id=3", priority: 0.7, changefreq: "monthly" },
+      { url: createPageUrl("ArticleDetail") + "?id=4", priority: 0.7, changefreq: "monthly" },
+      { url: createPageUrl("ArticleDetail") + "?id=5", priority: 0.7, changefreq: "monthly" },
+      { url: createPageUrl("ArticleDetail") + "?id=106", priority: 0.6, changefreq: "monthly" },
+      { url: createPageUrl("ArticleDetail") + "?id=107", priority: 0.6, changefreq: "monthly" },
+      { url: createPageUrl("ArticleDetail") + "?id=108", priority: 0.6, changefreq: "monthly" },
+      
+      // Provider pages (major providers)
+      { url: createPageUrl("ProviderDetails") + "?provider=TXU Energy", priority: 0.7, changefreq: "weekly" },
+      { url: createPageUrl("ProviderDetails") + "?provider=Reliant Energy", priority: 0.7, changefreq: "weekly" },
+      { url: createPageUrl("ProviderDetails") + "?provider=Gexa Energy", priority: 0.7, changefreq: "weekly" },
+      { url: createPageUrl("ProviderDetails") + "?provider=Direct Energy", priority: 0.7, changefreq: "weekly" },
+      { url: createPageUrl("ProviderDetails") + "?provider=Green Mountain Energy", priority: 0.7, changefreq: "weekly" },
     ];
 
     // Generate XML sitemap

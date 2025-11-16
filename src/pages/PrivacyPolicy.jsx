@@ -1,14 +1,21 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import SEOHead from "../components/SEOHead";
+import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 
 export default function PrivacyPolicy() {
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Privacy Policy", url: "/privacy-policy" }
+  ]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Privacy Policy - Power Scouts"
-        description="Power Scouts privacy policy. Learn how we protect your data when you compare electricity rates."
+        title="Privacy Policy - Power Scouts | How We Protect Your Data"
+        description="Power Scouts privacy policy. Learn how we protect your personal information and data when you compare electricity rates. We do not sell your information. Industry-standard security measures."
+        keywords="privacy policy, data protection, electricity comparison privacy, personal information security"
         canonical="/privacy-policy"
+        structuredData={breadcrumbData}
       />
 
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-12">

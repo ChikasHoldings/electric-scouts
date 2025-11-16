@@ -1,14 +1,21 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import SEOHead from "../components/SEOHead";
+import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 
 export default function TermsOfService() {
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Terms of Service", url: "/terms-of-service" }
+  ]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Terms of Service - Power Scouts"
-        description="Power Scouts terms of service. Understand your rights when using our electricity comparison platform."
+        title="Terms of Service - Power Scouts | User Agreement & Guidelines"
+        description="Power Scouts terms of service and user agreement. Understand your rights, responsibilities, and legal terms when using our free electricity rate comparison platform."
+        keywords="terms of service, user agreement, electricity comparison terms, service guidelines, legal terms"
         canonical="/terms-of-service"
+        structuredData={breadcrumbData}
       />
 
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-12">
