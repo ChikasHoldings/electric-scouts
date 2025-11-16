@@ -888,6 +888,45 @@ const articles = [
     relatedArticles: [21, 56, 57]
   },
   {
+    id: 106,
+    category: "City Guides",
+    icon: MapPin,
+    color: "teal",
+    title: "Nashua NH Electricity Rates 2026: Complete Guide to Save $550+ Annually",
+    description: "Compare Nashua NH electricity rates from 16+ suppliers. Find cheapest power in Hillsborough County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/0497c3089_89e68724-f3a0-408a-b82b-21c7f26fe660.jpg",
+    excerpt: "Nashua residents can choose from 16+ competitive electricity suppliers while Eversource delivers power. Save $550+ annually.",
+    readTime: "9 min",
+    keywords: ["Nashua electricity", "NH power rates", "Eversource Nashua"],
+    relatedArticles: [107, 108, 1]
+  },
+  {
+    id: 107,
+    category: "City Guides",
+    icon: MapPin,
+    color: "teal",
+    title: "Concord NH Electricity Rates 2026: Capital City Power Guide - Save $540+",
+    description: "Compare Concord NH electricity rates from 16+ Eversource suppliers. Find cheapest power in Merrimack County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg",
+    excerpt: "Concord's state capital residents save an average of $540 annually by comparing 16+ competitive electricity suppliers.",
+    readTime: "9 min",
+    keywords: ["Concord NH electricity", "Merrimack County power", "Eversource Concord"],
+    relatedArticles: [106, 108, 1]
+  },
+  {
+    id: 108,
+    category: "City Guides",
+    icon: MapPin,
+    color: "teal",
+    title: "Warwick RI Electricity Rates 2026: Kent County Power Guide - Save $520+",
+    description: "Compare Warwick RI electricity rates from 15+ National Grid suppliers. Find cheapest power in Kent County.",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d9b752924_a37c566e-4168-4be1-a823-20bf311f7ed9.jpg",
+    excerpt: "Warwick residents save an average of $520 per year by shopping 15+ competitive electricity suppliers serving Kent County.",
+    readTime: "9 min",
+    keywords: ["Warwick electricity", "Kent County RI power", "National Grid Warwick"],
+    relatedArticles: [106, 107, 1]
+  },
+  {
     id: 72,
     category: "Saving Money",
     icon: DollarSign,
