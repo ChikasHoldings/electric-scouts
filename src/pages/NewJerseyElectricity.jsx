@@ -18,7 +18,7 @@ export default function NewJerseyElectricity() {
     avgRate: "9.5¢/kWh",
     avgMonthlyBill: "$137",
     topCities: ["Newark", "Jersey City", "Paterson", "Elizabeth", "Trenton", "Camden"],
-    topProviders: ["Constellation", "Direct Energy", "Starion Energy", "Verde Energy", "Liberty Power", "Residents Energy"],
+    topProviders: ["Constellation", "Direct Energy", "Green Mountain Energy", "Verde Energy", "Starion Energy", "Liberty Power"],
     faqs: [
       {
         id: 1,

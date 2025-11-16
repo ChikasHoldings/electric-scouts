@@ -18,7 +18,7 @@ export default function MarylandElectricity() {
     avgRate: "9.3¢/kWh",
     avgMonthlyBill: "$134",
     topCities: ["Baltimore", "Columbia", "Germantown", "Silver Spring", "Waldorf", "Ellicott City"],
-    topProviders: ["Constellation", "Direct Energy", "Verde Energy", "WGL Energy", "Liberty Power", "Residents Energy"],
+    topProviders: ["Constellation", "Direct Energy", "WGL Energy", "Verde Energy", "Liberty Power", "Residents Energy"],
     faqs: [
       {
         id: 1,
