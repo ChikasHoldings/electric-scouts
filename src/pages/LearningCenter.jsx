@@ -273,7 +273,7 @@ export default function LearningCenter() {
                         className="overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 hover:border-[#0A5C8C] cursor-pointer group"
                       >
                         <div className="grid md:grid-cols-2 gap-0">
-                          <div className="relative h-64 md:h-full overflow-hidden">
+                          <div className="relative h-48 md:h-64 overflow-hidden">
                             <img 
                               src={featured.image} 
                               alt={featured.title}

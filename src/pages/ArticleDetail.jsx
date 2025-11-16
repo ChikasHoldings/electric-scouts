@@ -245,7 +245,7 @@ export default function ArticleDetail() {
 
         <article className="bg-white rounded-2xl shadow-xl border-2 overflow-hidden">
           {/* Hero Image */}
-          <div className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
+          <div className="relative h-56 sm:h-64 lg:h-72 overflow-hidden">
             <img 
               src={article.image} 
               alt={article.title}
