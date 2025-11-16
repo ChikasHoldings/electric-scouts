@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Award, Users, Heart, CheckCircle, ArrowRight, Phone } from "lucide-react";
+import { Award, Users, Heart, CheckCircle, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEOHead, { getBreadcrumbSchema, getOrganizationSchema } from "../components/SEOHead";
 
@@ -264,10 +264,10 @@ export default function AboutUs() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <a href="tel:855-475-8315">
+            <a href="mailto:support@powerscouts.com">
               <Button variant="outline" className="bg-white hover:bg-gray-100 text-[#0A5C8C] border-2 border-white px-8 py-6 text-lg font-bold rounded-lg">
-                <Phone className="w-5 h-5 mr-2" />
-                Call 855-475-8315
+                <Mail className="w-5 h-5 mr-2" />
+                Email Us
               </Button>
             </a>
           </div>

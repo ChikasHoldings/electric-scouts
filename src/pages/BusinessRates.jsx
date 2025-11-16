@@ -8,10 +8,18 @@ import {
   Building2, TrendingDown, Shield, Clock, MapPin, CheckCircle, 
   Users, Zap, DollarSign, Award, Mail, ArrowRight, ChevronDown
 } from "lucide-react";
+import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function BusinessRates() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Business Rates", url: "/business-rates" }
+  ]);
+
+  const faqSchema = getFAQSchema(faqs);
 
   const businessTypes = [
     {
@@ -93,6 +101,13 @@ export default function BusinessRates() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEOHead
+        title="Commercial Electricity Rates 2026 - Business Energy Plans Comparison | Power Scouts"
+        description="Compare business electricity rates from 40+ providers across 12 states. Save 15-30% on commercial power bills. Fixed & variable business energy plans. Volume discounts for warehouses, retail, offices, manufacturing. Multi-location billing. Dedicated account managers. Free quote."
+        keywords="business electricity rates, commercial electricity, commercial power rates, business energy plans, small business electricity, multi-location electricity, warehouse electricity rates, retail electricity rates"
+        canonical="/business-rates"
+        structuredData={[breadcrumbData, faqSchema]}
+      />
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
