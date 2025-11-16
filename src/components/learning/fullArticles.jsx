@@ -562,7 +562,7 @@ Bill predictability: None</p>
 
 <h2>Do Renewable Energy Plans Cost More?</h2>
 
-<p><strong>2024 Reality: Often No - Sometimes Less!</strong></p>
+<p><strong>2026 Reality: Often No - Sometimes Less!</strong></p>
 
 <p>In competitive markets, 100% renewable plans frequently beat traditional fossil fuel electricity prices:</p>
 
