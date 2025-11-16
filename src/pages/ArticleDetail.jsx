@@ -414,33 +414,35 @@ export default function ArticleDetail() {
         }
         
         .article-content .cta-box {
-          background: linear-gradient(135deg, #EBF8FF 0%, #E6FFFA 100%);
-          border: 2px solid #90CDF4;
-          border-radius: 1rem;
-          padding: 2rem;
+          background: linear-gradient(135deg, #e0f7fa 0%, #e1f5fe 100%);
+          border: 2px solid #4dd0e1;
+          border-radius: 1.5rem;
+          padding: 2.5rem;
           margin: 2rem 0;
           text-align: center;
         }
         
         .article-content .cta-box h3 {
           color: #0A5C8C;
-          font-size: 1.5rem;
+          font-size: 1.75rem;
           font-weight: 700;
-          margin: 0 0 0.75rem 0;
+          margin: 0 0 1rem 0;
         }
         
         .article-content .cta-box p {
           color: #4a5568;
-          margin-bottom: 1rem;
+          font-size: 1rem;
+          margin-bottom: 1.5rem;
         }
         
         .article-content .cta-button {
           display: inline-block;
           background: #FF6B35;
           color: white;
-          padding: 0.75rem 2rem;
-          border-radius: 0.75rem;
+          padding: 1rem 2.5rem;
+          border-radius: 0.5rem;
           font-weight: 600;
+          font-size: 1.125rem;
           text-decoration: none;
           transition: all 0.3s ease;
         }
