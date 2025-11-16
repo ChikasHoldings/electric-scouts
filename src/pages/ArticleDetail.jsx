@@ -574,7 +574,7 @@ const articles = [
     color: "orange",
     title: "Newark Electricity Rates 2024: North Jersey Power Guide",
     description: "Compare Newark NJ electricity from 15+ suppliers. PSE&G territory. Save $350-480 yearly in Essex County.",
-    image: "https://images.unsplash.com/photo-1589756823695-278bc8eac975?w=1200&q=80",
+    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/419f775bc_1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg",
     excerpt: "Newark and Essex County competitive market. 15+ BPU-licensed suppliers serving PSE&G territory.",
     readTime: "9 min",
     keywords: ["Newark electricity", "PSE&G Newark", "Essex County power", "Newark NJ energy"],
