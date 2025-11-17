@@ -282,7 +282,7 @@ Return ONLY a JSON array of recommended article IDs in order of relevance, like:
           const Icon = article.icon;
           const colors = colorClasses[article.color];
           return (
-            <a key={article.id} href={createPageUrl("ArticleDetail") + `?id=${article.id}`}>
+            <Link key={article.id} to={`${createPageUrl("ArticleDetail")}?id=${article.id}`}>
               <Card className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-[#0A5C8C] h-full">
                 <div className="relative h-32 sm:h-40 overflow-hidden rounded-t-xl">
                   <img 
