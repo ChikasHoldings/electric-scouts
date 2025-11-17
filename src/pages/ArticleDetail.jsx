@@ -334,6 +334,11 @@ export default function ArticleDetail() {
           allArticles={articles}
         />
 
+        {/* AI-Powered Content Suggestions */}
+        <div className="mt-8">
+          <ArticleSuggestions currentArticleId={article.id} currentCategory={article.category} />
+        </div>
+
         {/* Bottom CTA */}
         <div className="mt-12">
           <Card className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white border-0">
