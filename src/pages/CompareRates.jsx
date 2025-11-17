@@ -178,9 +178,9 @@ export default function CompareRates() {
   };
 
   const filteredPlans = plans.filter(plan => {
-    // When zipCode is set and we have provider availability data, filter by ZIP
-    // If no providers found for ZIP (new area), show all plans as fallback
-    if (zipCode && availableProviders.length > 0) {
+    // When zipCode is set, filter by provider availability
+    // This now includes state-level fallback, so all valid ZIPs will show results
+    if (zipCode) {
       if (!providerServesZip(plan.provider_name, zipCode)) {
         return false;
       }
