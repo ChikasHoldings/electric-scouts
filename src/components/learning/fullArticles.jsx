@@ -752,7 +752,7 @@ Annual cost: $24,000-96,000</p>
 <div class="cta-box">
 <h3>Get Commercial Rate Quotes</h3>
 <p>Compare business electricity rates from 30+ commercial providers in your area.</p>
-<a href="?page=CompareRates" class="cta-button">Compare Business Rates</a>
+<a href="/app/CompareRates" class="cta-button">Compare Business Rates</a>
 </div>
 
 <h2>Understanding Demand Charges: The Hidden Cost</h2>
