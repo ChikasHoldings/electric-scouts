@@ -604,7 +604,7 @@ Traditional plans: 9.3-11.2¢/kWh<br>
 <div class="cta-box">
 <h3>Compare 100% Renewable Plans</h3>
 <p>See renewable electricity plans that match or beat traditional rates in your area.</p>
-<a href="?page=CompareRates" class="cta-button">Compare Green Energy Plans</a>
+<a href="/app/CompareRates" class="cta-button">Compare Green Energy Plans</a>
 </div>
 
 <h2>How to Verify You're Getting True Renewable Energy</h2>
