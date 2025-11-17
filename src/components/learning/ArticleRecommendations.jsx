@@ -308,7 +308,7 @@ Return ONLY a JSON array of recommended article IDs in order of relevance, like:
                   </span>
                 </CardContent>
               </Card>
-            </a>
+            </Link>
           );
         })}
       </div>
