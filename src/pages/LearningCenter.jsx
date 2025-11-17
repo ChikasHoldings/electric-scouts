@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema, getArticleSchema } from "../components/SEOHead";
 import EnhancedSearch from "../components/learning/EnhancedSearch";
+import ArticleSuggestions from "../components/learning/ArticleSuggestions";
 
 // Fallback local articles for initial display
 const fallbackArticles = [
@@ -130,6 +131,7 @@ const colorClasses = {
 
 export default function LearningCenter() {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [currentSearchTerm, setCurrentSearchTerm] = useState("");
 
   // Fetch articles from database
   const { data: dbArticles, isLoading } = useQuery({
@@ -160,8 +162,9 @@ export default function LearningCenter() {
     setSearchResults(articles);
   }, [dbArticles]);
 
-  const handleSearch = (results) => {
+  const handleSearch = (results, searchTerm) => {
     setSearchResults(results);
+    setCurrentSearchTerm(searchTerm || "");
   };
 
   const filteredArticles = searchResults.filter(article => {
@@ -238,6 +241,16 @@ export default function LearningCenter() {
                 </p>
               )}
             </div>
+
+            {/* AI Suggestions */}
+            {currentSearchTerm && (
+              <div className="mb-8">
+                <ArticleSuggestions 
+                  searchTerm={currentSearchTerm} 
+                  currentCategory={selectedCategory !== "All" ? selectedCategory : null}
+                />
+              </div>
+            )}
 
             {/* Category Pills */}
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-center mb-8 sm:mb-10">

@@ -12,6 +12,7 @@ import {
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import { getFullArticle } from "../components/learning/fullArticles";
 import ArticleRecommendations from "../components/learning/ArticleRecommendations";
+import ArticleSuggestions from "../components/learning/ArticleSuggestions";
 import { trackDailyReading } from "../components/learning/ReadingAnalytics";
 
 // Fallback articles
