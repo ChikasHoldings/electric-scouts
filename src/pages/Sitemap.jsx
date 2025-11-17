@@ -70,27 +70,37 @@ export default function Sitemap() {
       // New Jersey cities
       { url: createPageUrl("CityRates") + "?city=Newark&state=NJ", priority: 0.7, changefreq: "weekly" },
       { url: createPageUrl("CityRates") + "?city=Jersey City&state=NJ", priority: 0.7, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Paterson&state=NJ", priority: 0.6, changefreq: "weekly" },
       
       // Maryland cities
       { url: createPageUrl("CityRates") + "?city=Baltimore&state=MD", priority: 0.7, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Frederick&state=MD", priority: 0.6, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Rockville&state=MD", priority: 0.6, changefreq: "weekly" },
       
       // Massachusetts cities
       { url: createPageUrl("CityRates") + "?city=Boston&state=MA", priority: 0.8, changefreq: "weekly" },
       { url: createPageUrl("CityRates") + "?city=Worcester&state=MA", priority: 0.6, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Springfield&state=MA", priority: 0.6, changefreq: "weekly" },
       
       // Connecticut cities
       { url: createPageUrl("CityRates") + "?city=Hartford&state=CT", priority: 0.6, changefreq: "weekly" },
       { url: createPageUrl("CityRates") + "?city=New Haven&state=CT", priority: 0.6, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Bridgeport&state=CT", priority: 0.6, changefreq: "weekly" },
       
       // Maine cities
       { url: createPageUrl("CityRates") + "?city=Portland&state=ME", priority: 0.6, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Lewiston&state=ME", priority: 0.5, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Bangor&state=ME", priority: 0.5, changefreq: "weekly" },
       
       // New Hampshire cities
       { url: createPageUrl("CityRates") + "?city=Manchester&state=NH", priority: 0.6, changefreq: "weekly" },
       { url: createPageUrl("CityRates") + "?city=Nashua&state=NH", priority: 0.6, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Concord&state=NH", priority: 0.5, changefreq: "weekly" },
       
       // Rhode Island cities
       { url: createPageUrl("CityRates") + "?city=Providence&state=RI", priority: 0.6, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Warwick&state=RI", priority: 0.5, changefreq: "weekly" },
+      { url: createPageUrl("CityRates") + "?city=Cranston&state=RI", priority: 0.5, changefreq: "weekly" },
       
       // Learning Center Articles
       { url: createPageUrl("ArticleDetail") + "?id=1", priority: 0.7, changefreq: "monthly" },
