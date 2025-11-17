@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown } from "lucide-react";
+import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X } from "lucide-react";
 import { validateZipCode } from "../components/compare/stateData";
 import { 
   getProvidersForZipCode, 
@@ -38,6 +38,10 @@ export default function CompareRates() {
   const [filterTerm, setFilterTerm] = useState("all");
   const [filterProvider, setFilterProvider] = useState("all");
   const [filterPlanType, setFilterPlanType] = useState("all");
+  const [filterRenewable, setFilterRenewable] = useState("all");
+  const [filterContractLength, setFilterContractLength] = useState("all");
+  const [filterFeatures, setFilterFeatures] = useState([]);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [cityName, setCityName] = useState("");
   const [availableProviders, setAvailableProviders] = useState([]);
 
@@ -164,6 +168,25 @@ export default function CompareRates() {
 
     if (filterPlanType !== "all") {
       filtered = filtered.filter(p => p.plan_type === filterPlanType);
+    }
+
+    // Advanced Filters
+    if (filterRenewable !== "all") {
+      const renewableValue = parseInt(filterRenewable);
+      filtered = filtered.filter(p => p.renewable_percentage >= renewableValue);
+    }
+
+    if (filterContractLength !== "all") {
+      const contractValue = parseInt(filterContractLength);
+      filtered = filtered.filter(p => p.contract_length === contractValue);
+    }
+
+    // Feature filters (simulated - would need actual data in plans)
+    if (filterFeatures.length > 0) {
+      filtered = filtered.filter(p => {
+        // For demo purposes - in production, plans would have features array
+        return true; // Would check if plan has all selected features
+      });
     }
 
     return filtered;
@@ -303,11 +326,23 @@ export default function CompareRates() {
               {/* Filters */}
               <Card className="mb-6 border-2">
                 <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Filter className="w-4 h-4 text-[#0A5C8C]" />
-                    <span className="text-sm font-bold text-gray-900">Filter Plans</span>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Filter className="w-4 h-4 text-[#0A5C8C]" />
+                      <span className="text-sm font-bold text-gray-900">Filter Plans</span>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                      className="text-xs text-[#0A5C8C] hover:text-[#084a6f]"
+                    >
+                      {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
+                    </Button>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+                  {/* Basic Filters */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
                     <Select value={filterRate} onValueChange={setFilterRate}>
                       <SelectTrigger className="h-10">
                         <SelectValue placeholder="Rate" />
@@ -353,9 +388,103 @@ export default function CompareRates() {
                         <SelectItem value="fixed">Fixed Rate</SelectItem>
                         <SelectItem value="variable">Variable Rate</SelectItem>
                         <SelectItem value="prepaid">Prepaid</SelectItem>
+                        <SelectItem value="indexed">Indexed</SelectItem>
+                        <SelectItem value="time-of-use">Time-of-Use</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Advanced Filters */}
+                  {showAdvancedFilters && (
+                    <div className="border-t pt-3 space-y-3">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <Select value={filterContractLength} onValueChange={setFilterContractLength}>
+                          <SelectTrigger className="h-10">
+                            <SelectValue placeholder="Contract Length" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Any Length</SelectItem>
+                            <SelectItem value="3">3 Months</SelectItem>
+                            <SelectItem value="6">6 Months</SelectItem>
+                            <SelectItem value="12">12 Months</SelectItem>
+                            <SelectItem value="24">24 Months</SelectItem>
+                            <SelectItem value="36">36 Months</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <Select value={filterRenewable} onValueChange={setFilterRenewable}>
+                          <SelectTrigger className="h-10">
+                            <SelectValue placeholder="Renewable %" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Any Renewable</SelectItem>
+                            <SelectItem value="25">25%+ Renewable</SelectItem>
+                            <SelectItem value="50">50%+ Renewable</SelectItem>
+                            <SelectItem value="100">100% Renewable</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        {propertyType === 'business' && (
+                          <Select>
+                            <SelectTrigger className="h-10">
+                              <SelectValue placeholder="Business Features" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="demand">Demand Charges</SelectItem>
+                              <SelectItem value="tiered">Tiered Pricing</SelectItem>
+                              <SelectItem value="custom">Custom Quotes</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </div>
+
+                      {/* Plan Features */}
+                      <div>
+                        <label className="text-xs font-semibold text-gray-700 mb-2 block">Plan Features:</label>
+                        <div className="flex flex-wrap gap-2">
+                          {['No Deposit', 'Online Bill Pay', 'Mobile App', 'Auto Pay Discount', 'Paperless Billing'].map((feature) => (
+                            <button
+                              key={feature}
+                              onClick={() => {
+                                setFilterFeatures(prev => 
+                                  prev.includes(feature) 
+                                    ? prev.filter(f => f !== feature)
+                                    : [...prev, feature]
+                                );
+                              }}
+                              className={`px-3 py-1.5 text-xs rounded-full border-2 transition-all ${
+                                filterFeatures.includes(feature)
+                                  ? 'bg-[#0A5C8C] border-[#0A5C8C] text-white'
+                                  : 'border-gray-300 text-gray-600 hover:border-[#0A5C8C]'
+                              }`}
+                            >
+                              {feature}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Clear Filters Button */}
+                      <div className="flex justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFilterRate("all");
+                            setFilterTerm("all");
+                            setFilterProvider("all");
+                            setFilterPlanType("all");
+                            setFilterRenewable("all");
+                            setFilterContractLength("all");
+                            setFilterFeatures([]);
+                          }}
+                          className="text-xs"
+                        >
+                          Clear All Filters
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
               
