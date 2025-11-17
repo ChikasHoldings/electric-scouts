@@ -211,7 +211,7 @@ export default function IllinoisElectricity() {
             ].map((city, index) => (
               <Link 
                 key={index}
-                to={createPageUrl("CityRates") + `?city=${city.name}`}
+                to={createPageUrl("CityRates") + `?city=${city.name}&state=IL`}
                 className="group"
               >
                 <Card className="hover:shadow-lg hover:border-[#0A5C8C] transition-all border h-full">
