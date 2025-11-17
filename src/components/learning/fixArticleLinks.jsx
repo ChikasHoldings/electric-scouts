@@ -14,8 +14,11 @@ export function fixArticleLinks(htmlContent) {
     '/bill-analyzer': 'BillAnalyzer',
     '/business-electricity': 'BusinessElectricity',
     '/renewable-energy': 'RenewableEnergy',
+    '/home-concierge': 'HomeConcierge',
     '/faq': 'FAQ',
     '/about-us': 'AboutUs',
+    '/privacy-policy': 'PrivacyPolicy',
+    '/terms-of-service': 'TermsOfService',
     
     // State pages
     '/texas-electricity': 'TexasElectricity',
@@ -35,31 +38,69 @@ export function fixArticleLinks(htmlContent) {
     '/all-states': 'AllStates',
     '/all-cities': 'AllCities',
     '/all-providers': 'AllProviders',
-    
-    // Special city rates format - keep as is, it uses URL params correctly
-    // '/city-rates?city=': 'CityRates'
   };
 
   let fixedContent = htmlContent;
 
   // Replace each mapped link
   Object.entries(linkMappings).forEach(([oldPath, pageName]) => {
-    // Match href="oldPath" (with or without trailing slash)
-    const regex = new RegExp(`href=["']${oldPath}/?["']`, 'g');
-    fixedContent = fixedContent.replace(regex, `href="/app/${pageName}"`);
+    // Match href="oldPath" or href="/oldPath" (with or without trailing slash)
+    const patterns = [
+      new RegExp(`href=["']${oldPath}/?["']`, 'gi'),
+      new RegExp(`href=["']${oldPath.substring(1)}/?["']`, 'gi'), // without leading slash
+    ];
+    
+    patterns.forEach(regex => {
+      fixedContent = fixedContent.replace(regex, `href="/app/${pageName}"`);
+    });
   });
 
-  // Fix city-rates links specifically (they have query params)
+  // Fix city-rates links (with query params)
   fixedContent = fixedContent.replace(
-    /href=["']\/city-rates\?([^"']+)["']/g,
+    /href=["']\/city-rates\?([^"']+)["']/gi,
+    'href="/app/CityRates?$1"'
+  );
+  
+  // Fix city-rates without leading slash
+  fixedContent = fixedContent.replace(
+    /href=["']city-rates\?([^"']+)["']/gi,
     'href="/app/CityRates?$1"'
   );
 
-  // Fix any article links that might be using old format
-  // Links to other articles should use: /app/ArticleDetail?id={id}
+  // Fix any article links using old format
   fixedContent = fixedContent.replace(
-    /href=["']\/article\?id=([^"']+)["']/g,
+    /href=["']\/article\?id=([^"']+)["']/gi,
     'href="/app/ArticleDetail?id=$1"'
+  );
+  
+  // Fix article links without leading slash
+  fixedContent = fixedContent.replace(
+    /href=["']article\?id=([^"']+)["']/gi,
+    'href="/app/ArticleDetail?id=$1"
+  );
+
+  // Fix provider details links
+  fixedContent = fixedContent.replace(
+    /href=["']\/provider-details\?provider=([^"']+)["']/gi,
+    'href="/app/ProviderDetails?provider=$1"'
+  );
+  
+  fixedContent = fixedContent.replace(
+    /href=["']provider-details\?provider=([^"']+)["']/gi,
+    'href="/app/ProviderDetails?provider=$1"'
+  );
+
+  // Fix any remaining relative links that start with / and aren't external
+  // This catches any links we might have missed
+  fixedContent = fixedContent.replace(
+    /href=["']\/((?!app\/|http|https|www|\#)[a-zA-Z0-9\-_]+)["']/gi,
+    (match, path) => {
+      // Convert kebab-case to PascalCase
+      const pageName = path.split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join('');
+      return `href="/app/${pageName}"`;
+    }
   );
 
   return fixedContent;
