@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, DollarSign, Clock, Award, AlertCircle, Leaf } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import CustomQuoteModal from "../components/business/CustomQuoteModal";
 
 export default function BusinessElectricity() {
   const [zipCode, setZipCode] = useState("");
@@ -416,6 +417,34 @@ export default function BusinessElectricity() {
           </div>
         </section>
 
+        {/* Custom Quote CTA */}
+        <Card className="border-2 bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white mb-12">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-2xl font-bold mb-3">Need a Custom Solution?</h3>
+            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+              For complex energy needs, multiple locations, or usage over 200,000 kWh/month, our energy consultants can negotiate custom rates on your behalf. Upload your current bill for faster quotes.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button 
+                onClick={() => setShowCustomQuoteModal(true)}
+                className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-bold px-8 py-4 text-lg"
+              >
+                Request Custom Quote
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              <Link to={createPageUrl("BusinessQuoteDashboard")}>
+                <Button className="bg-white/10 hover:bg-white/20 text-white font-bold px-8 py-4 text-lg border-2 border-white/30">
+                  <FileText className="w-5 h-5 mr-2" />
+                  Track Quotes
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-4 text-xs text-blue-200">
+              Free consultation • No obligation • 24-48 hour response
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Final CTA */}
         <section className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] rounded-2xl p-10 text-center text-white">
           <h2 className="text-2xl lg:text-3xl font-bold mb-3">
@@ -450,6 +479,13 @@ export default function BusinessElectricity() {
           </div>
         </section>
       </div>
+
+      {showCustomQuoteModal && (
+        <CustomQuoteModal 
+          onClose={() => setShowCustomQuoteModal(false)}
+          initialData={{ zipCode, businessType, monthlyUsage }}
+        />
+      )}
     </div>
   );
 }
