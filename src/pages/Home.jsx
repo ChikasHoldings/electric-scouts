@@ -84,21 +84,20 @@ export default function Home() {
                     Enter Your ZIP Code
                   </h3>
                   <div className="space-y-5">
-                    <Input
-                      type="text"
-                      placeholder="Enter ZIP code"
-                      maxLength={5}
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                      className="h-14 text-xl font-semibold border-2 touch-manipulation rounded-xl"
-                      inputMode="numeric"
-                      aria-label="ZIP code to compare electricity plans"
-                    />
+                    <div className="h-14 px-4 py-3 border-2 rounded-xl bg-white">
+                      <ValidatedZipInput
+                        value={zipCode}
+                        onChange={setZipCode}
+                        placeholder="Enter ZIP code"
+                        className="text-xl"
+                        onValidationChange={setIsZipValid}
+                      />
+                    </div>
 
                     <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
                       <Button
                         className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-14 text-base font-bold touch-manipulation rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300"
-                        disabled={zipCode.length !== 5}>
+                        disabled={!isZipValid}>
                         Compare Rates Now
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
