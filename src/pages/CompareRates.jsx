@@ -251,13 +251,12 @@ export default function CompareRates() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="relative w-24 h-24 mx-auto mb-6">
-            <div className="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+          <div className="relative w-16 h-16 mx-auto mb-4">
             <div className="absolute inset-0 border-4 border-[#0A5C8C] rounded-full border-t-transparent animate-spin"></div>
-            <Zap className="absolute inset-0 m-auto w-10 h-10 text-[#FF6B35]" />
+            <Zap className="absolute inset-0 m-auto w-7 h-7 text-[#FF6B35]" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Finding Your Best Rates</h2>
-          <p className="text-gray-600">Comparing plans from {availableProviders.length} verified providers...</p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-1">Finding Your Best Rates</h2>
+          <p className="text-sm text-gray-600">Comparing plans from {availableProviders.length} verified providers...</p>
         </div>
       </div>
     );
@@ -267,16 +266,16 @@ export default function CompareRates() {
   if (showResults) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        {/* Compact Header */}
-        <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Award className="w-6 h-6 text-yellow-400" />
-              <h1 className="text-2xl sm:text-3xl font-bold">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Award className="w-5 h-5 text-yellow-400" />
+              <h1 className="text-xl sm:text-2xl font-semibold">
                 {businessFlow ? 'Your Business Energy Solutions' : 'Your Personalized Rate Comparison'}
               </h1>
             </div>
-            <p className="text-center text-sm text-blue-100">
+            <p className="text-center text-xs text-blue-100">
               {filteredPlans.length} plans available in {cityName} (ZIP: {zipCode})
               {businessFlow && businessInfo.industryType && ` • ${businessInfo.industryType}`}
               {businessFlow && businessInfo.monthlyUsage && ` • ${parseInt(businessInfo.monthlyUsage).toLocaleString()} kWh/mo`}
@@ -287,13 +286,13 @@ export default function CompareRates() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Top 3 Recommended Plans */}
-          <div className="mb-12">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-                <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
+          <div className="mb-10">
+            <div className="text-center mb-5">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1 flex items-center justify-center gap-2">
+                <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
                 {businessFlow ? 'Top 3 Business Plans' : 'Top 3 Recommended Plans'}
               </h2>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600">
                 {businessFlow && businessInfo.monthlyUsage 
                   ? `Best commercial rates based on ${parseInt(businessInfo.monthlyUsage).toLocaleString()} kWh usage`
                   : 'Best rates for your area based on 1,000 kWh usage'}
@@ -302,59 +301,57 @@ export default function CompareRates() {
             
             <div className="grid md:grid-cols-3 gap-4">
               {topPlans.map((plan, index) => (
-                <Card key={plan.id} className="relative overflow-hidden border-2 hover:border-[#FF6B35] transition-all hover:shadow-2xl group">
+                <Card key={plan.id} className="relative overflow-hidden border hover:border-[#FF6B35] transition-all hover:shadow-lg group">
                   {/* Rank Badge */}
-                  <div className="absolute top-0 right-0 z-10">
-                    <div className={`text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl shadow-lg ${
-                      index === 0 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                      index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-500' :
-                      'bg-gradient-to-r from-orange-600 to-orange-700'
+                  <div className="absolute top-3 right-3 z-10">
+                    <div className={`text-white text-[10px] font-semibold px-2 py-1 rounded-md ${
+                      index === 0 ? 'bg-yellow-500' :
+                      index === 1 ? 'bg-gray-400' :
+                      'bg-orange-600'
                     }`}>
-                      {index === 0 ? '🥇 BEST' : index === 1 ? '🥈 2ND' : '🥉 3RD'}
+                      {index === 0 ? 'BEST' : index === 1 ? '2ND' : '3RD'}
                     </div>
                   </div>
                   
-                  <CardContent className="p-6">
+                  <CardContent className="p-5">
                     {/* Provider Info */}
                     <div className="mb-4">
-                      <div className="h-12 flex items-center justify-center mb-3">
+                      <div className="h-10 flex items-center justify-center mb-2">
                         {getProviderLogo(plan.provider_name) ? (
                           <img 
                             src={getProviderLogo(plan.provider_name)} 
                             alt={plan.provider_name}
-                            className="h-10 w-auto object-contain"
+                            className="h-8 w-auto object-contain"
                           />
                         ) : (
-                          <div className="w-full h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
-                            <span className="text-sm font-bold text-white">{plan.provider_name}</span>
-                          </div>
+                          <span className="text-sm font-semibold text-gray-900">{plan.provider_name}</span>
                         )}
                       </div>
                       <p className="text-xs text-gray-600 text-center line-clamp-1">{plan.plan_name}</p>
                     </div>
                     
                     {/* Rate Display */}
-                    <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-4 mb-4 text-center border-2 border-blue-100">
-                      <div className="text-4xl font-bold text-[#0A5C8C] mb-1">{plan.rate_per_kwh}¢</div>
-                      <div className="text-xs text-gray-500 uppercase tracking-wide">per kWh</div>
+                    <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-3 mb-3 text-center border border-blue-100">
+                      <div className="text-3xl font-bold text-[#0A5C8C]">{plan.rate_per_kwh}¢</div>
+                      <div className="text-[10px] text-gray-500 uppercase tracking-wide">per kWh</div>
                     </div>
                     
                     {/* Details */}
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between items-center text-sm">
+                    <div className="space-y-1.5 mb-3 text-xs">
+                      <div className="flex justify-between items-center">
                         <span className="text-gray-600">Est. Monthly:</span>
-                        <span className="font-bold text-gray-900">${calculateBill(plan)}</span>
+                        <span className="font-semibold text-gray-900">${calculateBill(plan)}</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm">
+                      <div className="flex justify-between items-center">
                         <span className="text-gray-600">Contract:</span>
-                        <span className="font-bold text-gray-900">{plan.contract_length || 'Variable'} months</span>
+                        <span className="font-semibold text-gray-900">{plan.contract_length || 'Variable'} months</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm">
+                      <div className="flex justify-between items-center">
                         <span className="text-gray-600">Type:</span>
-                        <span className="font-semibold text-gray-900 capitalize">{plan.plan_type}</span>
+                        <span className="font-medium text-gray-900 capitalize">{plan.plan_type}</span>
                       </div>
                       {plan.renewable_percentage >= 50 && (
-                        <div className="flex items-center justify-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mt-2">
+                        <div className="flex items-center justify-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-md text-[10px] font-medium mt-2">
                           <Leaf className="w-3 h-3" />
                           {plan.renewable_percentage}% Renewable
                         </div>
@@ -363,9 +360,9 @@ export default function CompareRates() {
 
                     {/* CTA */}
                     <a href={getProviderWebsite(plan.provider_name)} target="_blank" rel="noopener noreferrer" className="block">
-                      <Button className="w-full bg-gradient-to-r from-[#FF6B35] to-[#e55a2b] hover:from-[#e55a2b] hover:to-[#cc4a1f] text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
+                      <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm font-semibold py-2.5 rounded-lg transition-all">
                         Get This Plan
-                        <ArrowRight className="w-4 h-4 ml-2" />
+                        <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                       </Button>
                     </a>
                   </CardContent>
@@ -376,34 +373,34 @@ export default function CompareRates() {
 
           {/* All Other Plans */}
           {otherPlans.length > 0 && (
-            <div className="mb-12">
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-1">More Available Plans</h2>
-                <p className="text-sm text-gray-600">Additional options in your area</p>
+            <div className="mb-10">
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 mb-0.5">More Available Plans</h2>
+                <p className="text-xs text-gray-600">Additional options in your area</p>
               </div>
 
               {/* Filters */}
-              <Card className="mb-6 border-2">
+              <Card className="mb-5 border">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <Filter className="w-4 h-4 text-[#0A5C8C]" />
-                      <span className="text-sm font-bold text-gray-900">Filter Plans</span>
+                      <span className="text-sm font-semibold text-gray-900">Filter Plans</span>
                     </div>
                     <Button 
                       variant="ghost" 
                       size="sm"
                       onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                      className="text-xs text-[#0A5C8C] hover:text-[#084a6f]"
+                      className="text-xs text-[#0A5C8C] hover:text-[#084a6f] h-7"
                     >
-                      {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
+                      {showAdvancedFilters ? 'Hide' : 'Show'} Advanced
                     </Button>
                   </div>
 
                   {/* Basic Filters */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
                     <Select value={filterRate} onValueChange={setFilterRate}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9 text-sm">
                         <SelectValue placeholder="Rate" />
                       </SelectTrigger>
                       <SelectContent>
@@ -415,7 +412,7 @@ export default function CompareRates() {
                     </Select>
 
                     <Select value={filterTerm} onValueChange={setFilterTerm}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9 text-sm">
                         <SelectValue placeholder="Term" />
                       </SelectTrigger>
                       <SelectContent>
@@ -427,7 +424,7 @@ export default function CompareRates() {
                     </Select>
 
                     <Select value={filterProvider} onValueChange={setFilterProvider}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9 text-sm">
                         <SelectValue placeholder="Provider" />
                       </SelectTrigger>
                       <SelectContent>
@@ -439,7 +436,7 @@ export default function CompareRates() {
                     </Select>
 
                     <Select value={filterPlanType} onValueChange={setFilterPlanType}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9 text-sm">
                         <SelectValue placeholder="Type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -455,10 +452,10 @@ export default function CompareRates() {
 
                   {/* Advanced Filters */}
                   {showAdvancedFilters && (
-                    <div className="border-t pt-3 space-y-3">
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="border-t pt-3 mt-3 space-y-3">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
                         <Select value={filterContractLength} onValueChange={setFilterContractLength}>
-                          <SelectTrigger className="h-10">
+                          <SelectTrigger className="h-9 text-sm">
                             <SelectValue placeholder="Contract Length" />
                           </SelectTrigger>
                           <SelectContent>
@@ -472,7 +469,7 @@ export default function CompareRates() {
                         </Select>
 
                         <Select value={filterRenewable} onValueChange={setFilterRenewable}>
-                          <SelectTrigger className="h-10">
+                          <SelectTrigger className="h-9 text-sm">
                             <SelectValue placeholder="Renewable %" />
                           </SelectTrigger>
                           <SelectContent>
@@ -485,7 +482,7 @@ export default function CompareRates() {
 
                         {propertyType === 'business' && (
                           <Select>
-                            <SelectTrigger className="h-10">
+                            <SelectTrigger className="h-9 text-sm">
                               <SelectValue placeholder="Business Features" />
                             </SelectTrigger>
                             <SelectContent>
@@ -499,8 +496,8 @@ export default function CompareRates() {
 
                       {/* Plan Features */}
                       <div>
-                        <label className="text-xs font-semibold text-gray-700 mb-2 block">Plan Features:</label>
-                        <div className="flex flex-wrap gap-2">
+                        <label className="text-xs font-medium text-gray-700 mb-1.5 block">Plan Features:</label>
+                        <div className="flex flex-wrap gap-1.5">
                           {['No Deposit', 'Online Bill Pay', 'Mobile App', 'Auto Pay Discount', 'Paperless Billing'].map((feature) => (
                             <button
                               key={feature}
@@ -511,7 +508,7 @@ export default function CompareRates() {
                                     : [...prev, feature]
                                 );
                               }}
-                              className={`px-3 py-1.5 text-xs rounded-full border-2 transition-all ${
+                              className={`px-2.5 py-1 text-xs rounded-md border transition-all ${
                                 filterFeatures.includes(feature)
                                   ? 'bg-[#0A5C8C] border-[#0A5C8C] text-white'
                                   : 'border-gray-300 text-gray-600 hover:border-[#0A5C8C]'
@@ -548,62 +545,60 @@ export default function CompareRates() {
               </Card>
               
               {/* Desktop Table */}
-              <div className="hidden lg:block bg-white rounded-xl shadow-md border-2 overflow-hidden">
+              <div className="hidden lg:block bg-white rounded-lg border overflow-hidden">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Provider</th>
-                      <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Rate</th>
-                      <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Est. Monthly</th>
-                      <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Contract</th>
-                      <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Type</th>
-                      <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Action</th>
+                    <tr className="bg-gray-50 border-b">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Provider</th>
+                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700">Rate</th>
+                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700">Est. Monthly</th>
+                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700">Contract</th>
+                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700">Type</th>
+                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {getFilteredOtherPlans().map((plan, index) => (
-                      <tr key={plan.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50 transition-colors border-b border-gray-100`}>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
+                      <tr key={plan.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-blue-50/50 transition-colors border-b`}>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2.5">
                             {getProviderLogo(plan.provider_name) ? (
                               <img 
                                 src={getProviderLogo(plan.provider_name)} 
                                 alt={plan.provider_name}
-                                className="h-8 w-auto object-contain"
+                                className="h-7 w-auto object-contain"
                               />
                             ) : (
-                              <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center">
-                                <span className="text-xs font-bold text-[#0A5C8C]">{plan.provider_name.substring(0, 2)}</span>
-                              </div>
+                              <span className="text-xs font-semibold text-gray-900">{plan.provider_name.substring(0, 2)}</span>
                             )}
                             <div>
-                              <div className="font-semibold text-gray-900 text-sm">{plan.provider_name}</div>
+                              <div className="font-medium text-gray-900 text-sm">{plan.provider_name}</div>
                               <div className="text-xs text-gray-500 truncate max-w-xs">{plan.plan_name}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="text-xl font-bold text-[#0A5C8C]">{plan.rate_per_kwh}¢</div>
+                        <td className="px-4 py-3 text-center">
+                          <div className="text-lg font-semibold text-[#0A5C8C]">{plan.rate_per_kwh}¢</div>
                         </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="text-lg font-bold text-gray-900">${calculateBill(plan)}</div>
+                        <td className="px-4 py-3 text-center">
+                          <div className="text-base font-semibold text-gray-900">${calculateBill(plan)}</div>
                         </td>
-                        <td className="px-6 py-4 text-center">
-                          <span className="text-sm font-medium text-gray-900">{plan.contract_length || 'Variable'} mo</span>
+                        <td className="px-4 py-3 text-center">
+                          <span className="text-sm font-medium text-gray-900">{plan.contract_length || 'Var'} mo</span>
                         </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 capitalize">
+                        <td className="px-4 py-3 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-blue-50 text-blue-700 capitalize">
                               {plan.plan_type}
                             </span>
                             {plan.renewable_percentage >= 50 && (
-                              <Leaf className="w-4 h-4 text-green-600" />
+                              <Leaf className="w-3.5 h-3.5 text-green-600" />
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-center">
+                        <td className="px-4 py-3 text-center">
                           <a href={getProviderWebsite(plan.provider_name)} target="_blank" rel="noopener noreferrer">
-                            <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-6 py-2 rounded-lg font-semibold text-sm">
+                            <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-5 py-1.5 rounded-lg font-medium text-sm">
                               View Plan
                             </Button>
                           </a>
@@ -615,57 +610,55 @@ export default function CompareRates() {
               </div>
 
               {/* Mobile Cards */}
-              <div className="lg:hidden space-y-3">
+              <div className="lg:hidden space-y-2.5">
                 {getFilteredOtherPlans().map((plan) => (
-                  <Card key={plan.id} className="border-2 hover:border-[#0A5C8C] transition-all">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
+                  <Card key={plan.id} className="border hover:border-[#0A5C8C] transition-all">
+                    <CardContent className="p-3.5">
+                      <div className="flex items-center gap-2.5 mb-2.5">
                         {getProviderLogo(plan.provider_name) ? (
                           <img 
                             src={getProviderLogo(plan.provider_name)} 
                             alt={plan.provider_name}
-                            className="h-8 w-auto object-contain"
+                            className="h-7 w-auto object-contain"
                           />
                         ) : (
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center">
-                            <span className="text-xs font-bold text-[#0A5C8C]">{plan.provider_name.substring(0, 2)}</span>
-                          </div>
+                          <span className="text-xs font-semibold text-gray-900">{plan.provider_name.substring(0, 3)}</span>
                         )}
                         <div className="flex-1">
-                          <div className="font-bold text-gray-900 text-sm">{plan.provider_name}</div>
+                          <div className="font-semibold text-gray-900 text-sm">{plan.provider_name}</div>
                           <div className="text-xs text-gray-500 truncate">{plan.plan_name}</div>
                         </div>
                       </div>
                       
-                      <div className="flex gap-2 mb-3">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 capitalize">
+                      <div className="flex gap-1.5 mb-2.5">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-blue-50 text-blue-700 capitalize">
                           {plan.plan_type}
                         </span>
                         {plan.renewable_percentage >= 50 && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                            <Leaf className="w-3 h-3 mr-1" />
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-green-50 text-green-700">
+                            <Leaf className="w-3 h-3 mr-0.5" />
                             Green
                           </span>
                         )}
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 mb-3 bg-gray-50 rounded-lg p-3">
+                      <div className="grid grid-cols-3 gap-2 mb-2.5 bg-gray-50 rounded-lg p-2.5">
                         <div className="text-center">
-                          <div className="text-xs text-gray-600">Rate</div>
-                          <div className="text-lg font-bold text-[#0A5C8C]">{plan.rate_per_kwh}¢</div>
+                          <div className="text-[10px] text-gray-600">Rate</div>
+                          <div className="text-base font-semibold text-[#0A5C8C]">{plan.rate_per_kwh}¢</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-xs text-gray-600">Monthly</div>
-                          <div className="text-lg font-bold text-gray-900">${calculateBill(plan)}</div>
+                          <div className="text-[10px] text-gray-600">Monthly</div>
+                          <div className="text-base font-semibold text-gray-900">${calculateBill(plan)}</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-xs text-gray-600">Term</div>
+                          <div className="text-[10px] text-gray-600">Term</div>
                           <div className="text-sm font-medium text-gray-900">{plan.contract_length || 'Var'} mo</div>
                         </div>
                       </div>
 
                       <a href={getProviderWebsite(plan.provider_name)} target="_blank" rel="noopener noreferrer" className="block">
-                        <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-semibold rounded-lg">
+                        <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm font-medium py-2 rounded-lg">
                           View Plan
                         </Button>
                       </a>
@@ -675,9 +668,9 @@ export default function CompareRates() {
               </div>
 
               {getFilteredOtherPlans().length === 0 && (
-                <div className="bg-white rounded-xl border-2 border-gray-200 p-12 text-center">
-                  <p className="text-gray-600 text-lg">No plans match the selected filters.</p>
-                  <p className="text-sm text-gray-500 mt-2">Try adjusting your filter criteria above</p>
+                <div className="bg-white rounded-lg border p-8 text-center">
+                  <p className="text-gray-600 text-sm">No plans match the selected filters.</p>
+                  <p className="text-xs text-gray-500 mt-1">Try adjusting your filter criteria above</p>
                 </div>
               )}
             </div>
@@ -817,17 +810,17 @@ export default function CompareRates() {
   if (step === 1) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-5">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1.5">
               Find Your Best Electricity Rate
             </h1>
-            <p className="text-gray-600 text-lg">Enter your ZIP code to get started</p>
+            <p className="text-gray-600 text-base">Enter your ZIP code to get started</p>
           </div>
 
-          <Card className="shadow-2xl border-2 max-w-lg mx-auto mb-6">
-            <CardContent className="p-8">
-              <div className="mb-7">
+          <Card className="shadow-xl border max-w-lg mx-auto mb-6">
+            <CardContent className="p-6">
+              <div className="mb-5">
                 <Input
                   type="text"
                   placeholder="Enter ZIP Code"
@@ -838,34 +831,34 @@ export default function CompareRates() {
                   }}
                   maxLength={5}
                   inputMode="numeric"
-                  className="h-16 text-center text-3xl font-bold tracking-widest border-2 focus:border-[#0A5C8C] rounded-xl"
+                  className="h-14 text-center text-2xl font-semibold tracking-widest border focus:border-[#0A5C8C] rounded-lg"
                   onKeyPress={(e) => e.key === 'Enter' && handleZipSubmit()}
                 />
                 {zipError && (
-                  <p className="text-sm text-red-600 mt-3 text-center font-medium">{zipError}</p>
+                  <p className="text-sm text-red-600 mt-2 text-center">{zipError}</p>
                 )}
               </div>
 
               <Button 
                 onClick={handleZipSubmit}
-                className="w-full bg-gradient-to-r from-[#FF6B35] to-[#e55a2b] hover:from-[#e55a2b] hover:to-[#cc4a1f] text-white h-16 text-xl font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all"
+                className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-12 text-base font-semibold rounded-lg transition-all"
                 disabled={zipCode.length !== 5}
               >
                 Compare Rates Now
-                <ArrowRight className="w-6 h-6 ml-2" />
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
 
-              <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-500">
+              <div className="mt-4 flex items-center justify-center gap-5 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <CheckCircle className="w-3.5 h-3.5 text-green-600" />
                   <span>100% Free</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <CheckCircle className="w-3.5 h-3.5 text-green-600" />
                   <span>Instant Results</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <CheckCircle className="w-3.5 h-3.5 text-green-600" />
                   <span>No Obligation</span>
                 </div>
               </div>
@@ -873,25 +866,25 @@ export default function CompareRates() {
           </Card>
 
           {/* Informational Cards */}
-          <div className="grid sm:grid-cols-3 gap-4 mt-12">
-            <Card className="border-2 bg-white hover:shadow-lg transition-shadow">
-              <CardContent className="p-5 text-center">
-                <h3 className="font-bold text-gray-900 mb-2">Save Up to $800/Year</h3>
-                <p className="text-xs text-gray-600">Average household savings by comparing electricity rates annually</p>
+          <div className="grid sm:grid-cols-3 gap-3 mt-8">
+            <Card className="border bg-white hover:shadow-md transition-shadow">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold text-gray-900 text-sm mb-1">Save Up to $800/Year</h3>
+                <p className="text-xs text-gray-600">Average household savings by comparing rates annually</p>
               </CardContent>
             </Card>
 
-            <Card className="border-2 bg-white hover:shadow-lg transition-shadow">
-              <CardContent className="p-5 text-center">
-                <h3 className="font-bold text-gray-900 mb-2">40+ Providers</h3>
-                <p className="text-xs text-gray-600">Compare rates from verified electricity companies in your area</p>
+            <Card className="border bg-white hover:shadow-md transition-shadow">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold text-gray-900 text-sm mb-1">40+ Providers</h3>
+                <p className="text-xs text-gray-600">Compare rates from verified companies in your area</p>
               </CardContent>
             </Card>
 
-            <Card className="border-2 bg-white hover:shadow-lg transition-shadow">
-              <CardContent className="p-5 text-center">
-                <h3 className="font-bold text-gray-900 mb-2">2 Minute Process</h3>
-                <p className="text-xs text-gray-600">Quick and easy comparison - no credit card or commitment needed</p>
+            <Card className="border bg-white hover:shadow-md transition-shadow">
+              <CardContent className="p-4 text-center">
+                <h3 className="font-semibold text-gray-900 text-sm mb-1">2 Minute Process</h3>
+                <p className="text-xs text-gray-600">Quick and easy - no credit card or commitment needed</p>
               </CardContent>
             </Card>
           </div>
@@ -910,34 +903,32 @@ export default function CompareRates() {
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-5">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1.5">
               Select Your Property Type
             </h1>
-            <p className="text-gray-600 text-lg">This helps us show you the most relevant plans</p>
+            <p className="text-gray-600 text-base">This helps us show you the most relevant plans</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="grid md:grid-cols-3 gap-3 mb-5">
             {propertyTypes.map((type) => (
               <Card
                 key={type.value}
-                className={`cursor-pointer transition-all hover:shadow-2xl border-2 ${
+                className={`cursor-pointer transition-all hover:shadow-lg border ${
                   propertyType === type.value 
-                    ? 'border-[#0A5C8C] shadow-xl scale-105' 
+                    ? 'border-[#0A5C8C] shadow-md scale-[1.02]' 
                     : 'border-gray-200 hover:border-[#0A5C8C]'
                 }`}
                 onClick={() => setPropertyType(type.value)}
               >
-                <CardContent className="p-6 text-center">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${type.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                    <type.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="font-bold text-gray-900 text-lg mb-2">{type.label}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{type.desc}</p>
+                <CardContent className="p-5 text-center">
+                  <type.icon className="w-8 h-8 text-[#0A5C8C] mx-auto mb-3" />
+                  <h3 className="font-semibold text-gray-900 text-base mb-1">{type.label}</h3>
+                  <p className="text-xs text-gray-600 mb-2">{type.desc}</p>
                   {propertyType === type.value && (
-                    <div className="flex items-center justify-center gap-1 text-[#0A5C8C] font-semibold text-sm">
-                      <CheckCircle className="w-5 h-5" />
+                    <div className="flex items-center justify-center gap-1 text-[#0A5C8C] text-xs font-medium">
+                      <CheckCircle className="w-4 h-4" />
                       Selected
                     </div>
                   )}
@@ -948,24 +939,22 @@ export default function CompareRates() {
 
           <Button 
             onClick={handlePropertyTypeSubmit}
-            className="w-full bg-gradient-to-r from-[#FF6B35] to-[#e55a2b] hover:from-[#e55a2b] hover:to-[#cc4a1f] text-white h-16 text-xl font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all disabled:opacity-50"
+            className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-12 text-base font-semibold rounded-lg transition-all disabled:opacity-50"
             disabled={!propertyType}
           >
             Continue to Preferences
-            <ArrowRight className="w-6 h-6 ml-2" />
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
 
           {/* Informational Cards */}
-          <div className="mt-8">
-            <Card className="border-2 bg-gradient-to-r from-blue-50 to-green-50">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#0A5C8C] to-[#084a6f] rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Zap className="w-6 h-6 text-white" />
-                  </div>
+          <div className="mt-6">
+            <Card className="border bg-gradient-to-r from-blue-50 to-green-50">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Zap className="w-5 h-5 text-[#0A5C8C] mt-0.5" />
                   <div className="flex-1">
-                    <h3 className="font-bold text-gray-900 mb-2 text-lg">Why We Ask This</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <h3 className="font-semibold text-gray-900 mb-1 text-sm">Why We Ask This</h3>
+                    <p className="text-xs text-gray-600 leading-relaxed">
                       Different property types have different energy needs and usage patterns. By knowing your property type, we can show you plans specifically designed for your situation - whether it's residential fixed-rate plans for homes, flexible options for apartments, or commercial rates for businesses.
                     </p>
                   </div>
@@ -989,39 +978,39 @@ export default function CompareRates() {
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-5">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1.5">
               What Matters Most to You?
             </h1>
-            <p className="text-gray-600 text-lg">Select your preferences or skip to see all plans</p>
+            <p className="text-gray-600 text-base">Select your preferences or skip to see all plans</p>
           </div>
 
-          <Card className="mb-6 shadow-2xl border-2">
-            <CardContent className="p-6 sm:p-8">
-              <div className="grid sm:grid-cols-2 gap-4">
+          <Card className="mb-5 shadow-lg border">
+            <CardContent className="p-5">
+              <div className="grid sm:grid-cols-2 gap-3">
                 {preferenceOptions.map((option) => (
                   <div
                     key={option.key}
-                    className={`p-5 rounded-xl border-2 cursor-pointer transition-all ${
+                    className={`p-4 rounded-lg border cursor-pointer transition-all ${
                       preferences[option.key]
-                        ? 'border-[#0A5C8C] bg-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                        ? 'border-[#0A5C8C] bg-blue-50 shadow-md'
+                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                     }`}
                     onClick={() => togglePreference(option.key)}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                    <div className="flex items-start gap-2.5">
+                      <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 transition-all ${
                         preferences[option.key]
                           ? 'bg-[#0A5C8C] border-[#0A5C8C]'
                           : 'border-gray-300 bg-white'
                       }`}>
                         {preferences[option.key] && (
-                          <CheckCircle className="w-5 h-5 text-white" />
+                          <CheckCircle className="w-4 h-4 text-white" />
                         )}
                       </div>
                       <div className="flex-1">
-                        <div className="font-bold text-gray-900 mb-1 flex items-center gap-2">
+                        <div className="font-semibold text-gray-900 text-sm mb-0.5 flex items-center gap-1.5">
                           <option.icon className="w-4 h-4" />
                           {option.label}
                         </div>
@@ -1034,47 +1023,43 @@ export default function CompareRates() {
             </CardContent>
           </Card>
 
-          <div className="flex gap-3 mb-8">
+          <div className="flex gap-2.5 mb-6">
             <Button 
               onClick={() => handlePreferencesSubmit()}
               variant="outline"
-              className="flex-1 h-14 text-lg font-semibold border-2 hover:bg-gray-50"
+              className="flex-1 h-11 text-sm font-medium border hover:bg-gray-50"
             >
               Skip - Show All
             </Button>
             <Button 
               onClick={handlePreferencesSubmit}
-              className="flex-1 bg-gradient-to-r from-[#FF6B35] to-[#e55a2b] hover:from-[#e55a2b] hover:to-[#cc4a1f] text-white h-14 text-lg font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all"
+              className="flex-1 bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-11 text-sm font-semibold rounded-lg transition-all"
             >
               Find My Plans
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </div>
 
           {/* Informational Cards */}
-          <div className="grid sm:grid-cols-2 gap-4">
-            <Card className="border-2 bg-white hover:shadow-lg transition-shadow">
-              <CardContent className="p-5">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Award className="w-5 h-5 text-white" />
-                  </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Card className="border bg-white hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-2.5">
+                  <Award className="w-5 h-5 text-yellow-600 mt-0.5" />
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1 text-sm">Personalized Results</h3>
+                    <h3 className="font-semibold text-gray-900 mb-0.5 text-sm">Personalized Results</h3>
                     <p className="text-xs text-gray-600">Your preferences help us rank the best plans for your specific needs and budget</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-2 bg-white hover:shadow-lg transition-shadow">
-              <CardContent className="p-5">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
+            <Card className="border bg-white hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1 text-sm">No Wrong Choice</h3>
+                    <h3 className="font-semibold text-gray-900 mb-0.5 text-sm">No Wrong Choice</h3>
                     <p className="text-xs text-gray-600">Don't worry - you can still see all available plans regardless of your selections</p>
                   </div>
                 </div>
