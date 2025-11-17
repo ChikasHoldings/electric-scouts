@@ -138,31 +138,65 @@ export default function ArticleDetail() {
   const urlParams = new URLSearchParams(location.search);
   const articleId = urlParams.get('id');
 
-  // Fetch articles from database
+  // Fetch articles from database - get ALL articles
   const { data: dbArticles, isLoading } = useQuery({
     queryKey: ['articles'],
-    queryFn: () => base44.entities.Article.list('-created_date'),
+    queryFn: () => base44.entities.Article.list('-created_date', 1000),
     initialData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes
     cacheTime: 15 * 60 * 1000, // 15 minutes
   });
 
-  // Map database articles to expected format
+  // Map database articles to expected format with proper icons
+  const getCategoryIcon = (category) => {
+    const iconMap = {
+      "Getting Started": BookOpen,
+      "Saving Money": DollarSign,
+      "Plan Types": Zap,
+      "Renewable Energy": Leaf,
+      "Business Energy": Building2,
+      "City Guides": MapPin,
+      "State Guides": MapPin,
+      "Understanding Bills": FileText,
+      "Consumer Protection": Shield,
+      "Switching Providers": TrendingDown,
+      "Seasonal Tips": Clock
+    };
+    return iconMap[category] || BookOpen;
+  };
+
+  const getCategoryColor = (category) => {
+    const colorMap = {
+      "Getting Started": "blue",
+      "Saving Money": "green",
+      "Plan Types": "purple",
+      "Renewable Energy": "green",
+      "Business Energy": "blue",
+      "City Guides": "teal",
+      "State Guides": "teal",
+      "Understanding Bills": "orange",
+      "Consumer Protection": "purple",
+      "Switching Providers": "orange",
+      "Seasonal Tips": "blue"
+    };
+    return colorMap[category] || "blue";
+  };
+
   const articles = dbArticles.length > 0 ? dbArticles.map(article => ({
     id: article.id,
     category: article.category,
-    icon: MapPin,
-    color: "teal",
+    icon: getCategoryIcon(article.category),
+    color: getCategoryColor(article.category),
     title: article.title,
     description: article.meta_description,
-    image: article.featured_image,
+    image: article.featured_image || "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=80",
     excerpt: article.excerpt,
     readTime: article.read_time,
     keywords: article.keywords || [],
     relatedArticles: article.related_articles || []
   })) : fallbackArticles;
 
-  const article = articles.find(a => a.id === articleId);
+  const article = articles.find(a => String(a.id) === String(articleId));
 
   // Scroll to top on mount and track reading - depend on full location to detect changes
   useEffect(() => {
@@ -201,7 +235,7 @@ export default function ArticleDetail() {
   const colors = colorClasses[article.color];
 
   // Get full article content from database
-  const dbArticle = dbArticles.find(a => a.id === articleId);
+  const dbArticle = dbArticles.find(a => String(a.id) === String(articleId));
   const fullArticle = dbArticle?.content ? { 
     content: dbArticle.content,
     metaTitle: dbArticle.meta_title,
