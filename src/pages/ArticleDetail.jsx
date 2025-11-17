@@ -251,27 +251,49 @@ export default function ArticleDetail() {
     tags: articleData.tags
   } : getFullArticle(articleId);
 
+  // Generate optimized SEO data
+  const articlePublishDate = articleData?.created_date || new Date().toISOString();
+  const articleModifiedDate = articleData?.updated_date || articlePublishDate;
+  
+  // Optimized meta title with category and brand
+  const optimizedTitle = fullArticle?.metaTitle || 
+    `${article.title} | ${article.category} Guide | Power Scouts`;
+  
+  // Optimized meta description with excerpt and CTA
+  const optimizedDescription = fullArticle?.metaDescription || 
+    `${article.excerpt || article.description} Compare electricity rates and save up to $800/year. Free guide from Power Scouts.`;
+  
+  // Combine article keywords with tags for better SEO
+  const optimizedKeywords = [
+    ...(fullArticle?.tags || []),
+    ...article.keywords,
+    `${article.category.toLowerCase()} electricity`,
+    'compare electricity rates',
+    'power scouts',
+    'save money electricity'
+  ].filter((v, i, a) => a.indexOf(v) === i).slice(0, 15).join(", ");
+
   const articleSchema = getArticleSchema({
     title: fullArticle?.metaTitle || article.title,
     description: fullArticle?.metaDescription || article.description,
     image: article.image,
-    datePublished: "2024-01-15",
-    dateModified: "2024-01-15"
+    datePublished: articlePublishDate,
+    dateModified: articleModifiedDate
   });
 
   const breadcrumbData = getBreadcrumbSchema([
-    { name: "Home", url: "/" },
-    { name: "Learning Center", url: "/learning-center" },
-    { name: article.title, url: `/article?id=${article.id}` }
+    { name: "Home", url: "/app/Home" },
+    { name: "Learning Center", url: "/app/LearningCenter" },
+    { name: article.title, url: `/app/ArticleDetail?id=${article.id}` }
   ]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title={fullArticle?.metaTitle || `${article.title} | Power Scouts Learning Center`}
-        description={fullArticle?.metaDescription || article.description}
-        keywords={fullArticle?.tags?.join(", ") || article.keywords.join(", ")}
-        canonical={`/article?id=${article.id}`}
+        title={optimizedTitle}
+        description={optimizedDescription}
+        keywords={optimizedKeywords}
+        canonical={`/app/ArticleDetail?id=${article.id}`}
         image={article.image}
         type="article"
         structuredData={[articleSchema, breadcrumbData]}
