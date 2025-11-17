@@ -29,6 +29,7 @@ import BillAnalyzer from './pages/BillAnalyzer';
 import Sitemap from './pages/Sitemap';
 import Robots from './pages/Robots';
 import ArticleDetail from './pages/ArticleDetail';
+import BusinessElectricity from './pages/BusinessElectricity';
 import __Layout from './Layout.jsx';
 
 
@@ -64,6 +65,7 @@ export const PAGES = {
     "Sitemap": Sitemap,
     "Robots": Robots,
     "ArticleDetail": ArticleDetail,
+    "BusinessElectricity": BusinessElectricity,
 }
 
 export const pagesConfig = {
