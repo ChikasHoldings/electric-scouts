@@ -55,6 +55,16 @@ export function fixArticleLinks(htmlContent) {
 
   let fixedContent = htmlContent;
 
+  // First, fix any existing /app/ links that might be broken
+  Object.entries(linkMappings).forEach(([oldPath, pageName]) => {
+    // Fix /app/old-path format
+    const kebabPath = oldPath.replace(/^\//, '');
+    fixedContent = fixedContent.replace(
+      new RegExp(`href=["']/app/${kebabPath}/?["']`, 'gi'),
+      `href="/app/${pageName}"`
+    );
+  });
+
   // Replace each mapped link
   Object.entries(linkMappings).forEach(([oldPath, pageName]) => {
     // Escape special regex characters in the path
