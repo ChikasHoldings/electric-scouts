@@ -31,6 +31,7 @@ import Robots from './pages/Robots';
 import ArticleDetail from './pages/ArticleDetail';
 import BusinessElectricity from './pages/BusinessElectricity';
 import BusinessQuoteDashboard from './pages/BusinessQuoteDashboard';
+import NotFound from './pages/NotFound';
 import __Layout from './Layout.jsx';
 
 
@@ -68,6 +69,7 @@ export const PAGES = {
     "ArticleDetail": ArticleDetail,
     "BusinessElectricity": BusinessElectricity,
     "BusinessQuoteDashboard": BusinessQuoteDashboard,
+    "NotFound": NotFound,
 }
 
 export const pagesConfig = {

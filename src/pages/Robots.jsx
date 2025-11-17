@@ -1,92 +1,84 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Copy, Check } from "lucide-react";
+import { useEffect } from 'react';
 
 export default function Robots() {
-  const [copied, setCopied] = useState(false);
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-  
-  const robotsTxt = `# robots.txt for Power Scouts
-# Allow all search engines to crawl the site
-
-User-agent: *
+  useEffect(() => {
+    const robotsContent = `User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: ${baseUrl}/sitemap
+# Sitemaps
+Sitemap: ${window.location.origin}/sitemap
 
-# Crawl-delay for search engines
+# Crawl-delay
 Crawl-delay: 1
 
-# Block specific paths if needed (currently none)
-# Disallow: /admin/
-# Disallow: /private/
-`;
+# Disallow admin or private areas (if any)
+Disallow: /api/
+Disallow: /admin/
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(robotsTxt);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+# Allow all electricity comparison pages
+Allow: /compare-rates
+Allow: /all-providers
+Allow: /all-states
+Allow: /all-cities
+Allow: /learning-center
+Allow: /faq
+
+# Popular state pages
+Allow: /texas-electricity
+Allow: /illinois-electricity
+Allow: /ohio-electricity
+Allow: /pennsylvania-electricity
+Allow: /new-york-electricity
+Allow: /new-jersey-electricity
+Allow: /maryland-electricity
+Allow: /massachusetts-electricity
+Allow: /maine-electricity
+Allow: /new-hampshire-electricity
+Allow: /rhode-island-electricity
+Allow: /connecticut-electricity`;
+
+    // Create a downloadable file
+    const blob = new Blob([robotsContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'robots.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Robots.txt File</h1>
-          <p className="text-gray-600 mb-8">
-            The robots.txt file tells search engine crawlers which pages they can and cannot access on your site.
-            This configuration allows all search engines to crawl all pages of Power Scouts.
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Robots.txt</h1>
+          <p className="text-gray-600 mb-6">
+            This is the robots.txt file for search engine crawlers.
           </p>
-          
-          <div className="relative">
-            <div className="absolute top-4 right-4 z-10">
-              <Button
-                onClick={handleCopy}
-                size="sm"
-                variant="outline"
-                className="bg-white"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4 mr-2" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy
-                  </>
-                )}
-              </Button>
-            </div>
-            
-            <div className="bg-gray-900 rounded-lg p-6 overflow-x-auto">
-              <pre className="text-green-400 text-sm font-mono whitespace-pre">
-{robotsTxt}
-              </pre>
-            </div>
-          </div>
+          <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
+{`User-agent: *
+Allow: /
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h2 className="font-bold text-gray-900 mb-2">Implementation Instructions:</h2>
-            <ul className="text-sm text-gray-700 space-y-2 list-disc list-inside">
-              <li>Copy the content above and save it as <code className="bg-white px-2 py-1 rounded">robots.txt</code> in your website root directory</li>
-              <li>Make sure the file is accessible at: <code className="bg-white px-2 py-1 rounded">{baseUrl}/robots.txt</code></li>
-              <li>Test your robots.txt file using Google Search Console's robots.txt Tester tool</li>
-              <li>The sitemap URL points to your XML sitemap for search engines to discover all pages</li>
-            </ul>
-          </div>
+# Sitemaps
+Sitemap: ${window.location.origin}/sitemap
 
-          <div className="mt-6 p-4 bg-green-50 rounded-lg">
-            <h2 className="font-bold text-gray-900 mb-2">What This Configuration Does:</h2>
-            <ul className="text-sm text-gray-700 space-y-2 list-disc list-inside">
-              <li><strong>User-agent: *</strong> - Applies rules to all search engine crawlers</li>
-              <li><strong>Allow: /</strong> - Allows crawling of all pages</li>
-              <li><strong>Sitemap:</strong> - Tells crawlers where to find your XML sitemap</li>
-              <li><strong>Crawl-delay: 1</strong> - Requests crawlers to wait 1 second between requests (reduces server load)</li>
-            </ul>
-          </div>
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin or private areas
+Disallow: /api/
+Disallow: /admin/
+
+# Allow all comparison pages
+Allow: /compare-rates
+Allow: /all-providers
+Allow: /all-states
+Allow: /all-cities
+Allow: /learning-center
+Allow: /faq`}
+          </pre>
         </div>
       </div>
     </div>
