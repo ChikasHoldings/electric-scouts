@@ -138,13 +138,16 @@ export default function ArticleDetail() {
   const urlParams = new URLSearchParams(location.search);
   const articleId = urlParams.get('id');
 
-  // Fetch articles from database - get ALL articles
+  // Fetch articles from database
   const { data: dbArticles, isLoading } = useQuery({
     queryKey: ['articles'],
-    queryFn: () => base44.entities.Article.list('-created_date', 1000),
+    queryFn: async () => {
+      const articles = await base44.entities.Article.list('-created_date', 1000);
+      return articles;
+    },
     initialData: [],
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    cacheTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: 10 * 60 * 1000,
+    cacheTime: 15 * 60 * 1000,
   });
 
   // Map database articles to expected format with proper icons
@@ -182,7 +185,7 @@ export default function ArticleDetail() {
     return colorMap[category] || "blue";
   };
 
-  const articles = dbArticles.length > 0 ? dbArticles.map(article => ({
+  const articles = dbArticles && dbArticles.length > 0 ? dbArticles.map(article => ({
     id: article.id,
     category: article.category,
     icon: getCategoryIcon(article.category),
