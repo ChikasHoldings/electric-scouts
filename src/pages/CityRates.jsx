@@ -747,10 +747,10 @@ export default function CityRates() {
     image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80"
   };
 
-  // Generate dynamic SEO data
-  const seoTitle = `${displayCityName} ${city.stateCode} Electricity Rates 2026 - Save ${city.avgMonthlyBill}/Month | Power Scouts`;
-  const seoDescription = `Compare electricity rates in ${displayCityName}, ${city.state} from ${city.providers}+ providers. Average rate: ${city.avgRate}. ${city.description}`;
-  const seoKeywords = `${displayCityName} electricity rates, ${displayCityName} ${city.stateCode} power plans, electricity providers ${displayCityName}, ${city.county} electricity, ${displayCityName} energy rates, compare electricity ${displayCityName}, cheapest electricity ${displayCityName}`;
+  // Generate dynamic SEO data with city-specific details
+  const seoTitle = `${displayCityName}, ${city.stateCode} Electricity Rates 2025 - Compare ${city.providers}+ Providers | Power Scouts`;
+  const seoDescription = `Compare ${displayCityName} electricity rates from ${city.providers}+ providers. Average ${city.avgRate} (est. ${city.avgMonthlyBill}/mo). Serving ${city.county}, population ${city.population}. ${city.description.substring(0, 100)}... Switch & save today - 100% free comparison.`;
+  const seoKeywords = `${displayCityName} electricity rates, ${displayCityName} ${city.stateCode} electricity providers, cheap electricity ${displayCityName}, ${displayCityName} power companies, electricity rates ${city.county}, best electricity rates ${displayCityName}, compare electricity ${displayCityName}, ${displayCityName} energy plans, ${displayCityName.toLowerCase()} electric rates, ${city.state.toLowerCase()} electricity, ${displayCityName} fixed rate electricity, ${displayCityName} variable rate plans, renewable energy ${displayCityName}, ${city.neighborhoods.slice(0, 3).join(' electricity, ')} electricity`;
 
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "/" },
@@ -760,20 +760,27 @@ export default function CityRates() {
 
   const serviceData = getServiceSchema(city.state);
 
-  const faqData = getFAQSchema([
+  const cityFaqs = [
     {
       question: `What is the average electricity rate in ${displayCityName}, ${city.stateCode}?`,
-      answer: `The average electricity rate in ${displayCityName} is approximately ${city.avgRate}, though rates vary by provider, plan type, and usage level.`
+      answer: `The average electricity rate in ${displayCityName} is approximately ${city.avgRate}, though rates vary by provider, plan type, and usage level. With Power Scouts, you can compare rates from all ${city.providers}+ providers serving ${city.county} to find the best deal for your home.`
     },
     {
       question: `How do I switch electricity providers in ${displayCityName}?`,
-      answer: `Switching electricity providers in ${displayCityName} is easy. Simply compare plans, select your preferred plan, and sign up. Your new provider handles the switch.`
+      answer: `Switching electricity providers in ${displayCityName} is easy. Simply compare plans on Power Scouts, select your preferred plan, and sign up online or by phone. Your new provider will handle the switch with your current provider, and your power will never be interrupted during the transition.`
     },
     {
       question: `Are there renewable energy options in ${displayCityName}?`,
-      answer: `Yes! Many electricity providers in ${displayCityName} offer renewable energy plans sourced from wind and solar farms.`
+      answer: `Yes! Many electricity providers in ${displayCityName} offer renewable energy plans sourced from wind and solar farms. Green energy plans are often competitively priced and help reduce your carbon footprint while supporting clean energy development in ${city.state}.`
+    },
+    {
+      question: `What's the best electricity plan for ${displayCityName} residents?`,
+      answer: `The best electricity plan depends on your usage, budget, and preferences. Fixed-rate plans offer price stability, while variable-rate plans may have lower rates but fluctuate monthly. For most ${displayCityName} residents, a 12 or 24-month fixed-rate plan provides the best balance of savings and predictability.`
     }
-  ]);
+  ];
+  
+  const faqData = getFAQSchema(cityFaqs);
+  const localBusinessData = getLocalBusinessSchema(displayCityName, city.state, city.county);
 
   const { data: plans, isLoading } = useQuery({
     queryKey: ['plans'],
@@ -805,7 +812,7 @@ export default function CityRates() {
         keywords={seoKeywords}
         canonical={`/city-rates?city=${displayCityName}&state=${city.stateCode}`}
         image={city.image}
-        structuredData={[breadcrumbData, serviceData, faqData]}
+        structuredData={[breadcrumbData, serviceData, faqData, localBusinessData]}
       />
 
       {/* Hero Section - SEO Optimized */}
@@ -1142,28 +1149,7 @@ export default function CityRates() {
             {displayCityName} Electricity FAQs
           </h2>
           <div className="space-y-4">
-            {[
-              {
-                id: 1,
-                question: `What is the average electricity rate in ${displayCityName}, ${city.stateCode}?`,
-                answer: `The average electricity rate in ${displayCityName} is approximately ${city.avgRate}, though rates vary by provider, plan type, and usage level. With Power Scouts, you can compare rates from all ${city.providers}+ providers serving ${city.county} to find the best deal for your home.`
-              },
-              {
-                id: 2,
-                question: `How do I switch electricity providers in ${displayCityName}?`,
-                answer: `Switching electricity providers in ${displayCityName} is easy. Simply compare plans on Power Scouts, select your preferred plan, and sign up online or by phone. Your new provider will handle the switch with your current provider, and your power will never be interrupted during the transition.`
-              },
-              {
-                id: 3,
-                question: `Are there renewable energy options in ${displayCityName}?`,
-                answer: `Yes! Many electricity providers in ${displayCityName} offer renewable energy plans sourced from wind and solar farms. Green energy plans are often competitively priced and help reduce your carbon footprint while supporting clean energy development in ${city.state}.`
-              },
-              {
-                id: 4,
-                question: `What's the best electricity plan for ${displayCityName} residents?`,
-                answer: `The best electricity plan depends on your usage, budget, and preferences. Fixed-rate plans offer price stability, while variable-rate plans may have lower rates but fluctuate monthly. For most ${displayCityName} residents, a 12 or 24-month fixed-rate plan provides the best balance of savings and predictability.`
-              }
-            ].map((faq) => (
+            {cityFaqs.map((faq) => (
               <Card 
                 key={faq.id} 
                 className="border-2 hover:border-[#0A5C8C] transition-all cursor-pointer overflow-hidden"
