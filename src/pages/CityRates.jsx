@@ -716,10 +716,36 @@ export default function CityRates() {
     setCityName(cityKey);
   }, []);
 
-  // Always prioritize the full city-state key, only fallback to Houston-TX if city doesn't exist
+  // Always prioritize the full city-state key, generate generic data if city doesn't exist
   const cityKey = cityName;
-  const city = cityData[cityKey] || cityData["Houston-TX"];
   const displayCityName = cityName.split('-')[0];
+  const stateCode = cityName.split('-')[1] || 'TX';
+  
+  // State-level defaults for when specific city isn't in database
+  const stateDefaults = {
+    'TX': { avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 40, state: "Texas", county: "Local County" },
+    'IL': { avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 35, state: "Illinois", county: "Local County" },
+    'OH': { avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 36, state: "Ohio", county: "Local County" },
+    'PA': { avgRate: "10.2¢/kWh", avgMonthlyBill: "$147", providers: 30, state: "Pennsylvania", county: "Local County" },
+    'NY': { avgRate: "11.0¢/kWh", avgMonthlyBill: "$158", providers: 25, state: "New York", county: "Local County" },
+    'NJ': { avgRate: "10.6¢/kWh", avgMonthlyBill: "$152", providers: 26, state: "New Jersey", county: "Local County" },
+    'MD': { avgRate: "10.4¢/kWh", avgMonthlyBill: "$150", providers: 28, state: "Maryland", county: "Local County" },
+    'MA': { avgRate: "11.3¢/kWh", avgMonthlyBill: "$162", providers: 21, state: "Massachusetts", county: "Local County" },
+    'CT': { avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 19, state: "Connecticut", county: "Local County" },
+    'ME': { avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 16, state: "Maine", county: "Local County" },
+    'NH': { avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16, state: "New Hampshire", county: "Local County" },
+    'RI': { avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 15, state: "Rhode Island", county: "Local County" }
+  };
+  
+  const city = cityData[cityKey] || {
+    ...stateDefaults[stateCode],
+    stateCode: stateCode,
+    population: "Local residents",
+    zipCodes: ["00000"],
+    neighborhoods: [`Downtown ${displayCityName}`, `North ${displayCityName}`, `South ${displayCityName}`, `East ${displayCityName}`, `West ${displayCityName}`],
+    description: `${displayCityName} residents have access to competitive electricity rates in the deregulated ${stateDefaults[stateCode]?.state || 'energy'} market.`,
+    image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80"
+  };
 
   // Generate dynamic SEO data
   const seoTitle = `${displayCityName} ${city.stateCode} Electricity Rates 2026 - Save ${city.avgMonthlyBill}/Month | Power Scouts`;
