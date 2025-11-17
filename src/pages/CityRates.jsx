@@ -12,7 +12,7 @@ import {
 import PlanCard from "../components/compare/PlanCard";
 import { getProvidersForZipCode, getProviderDetails } from "../components/compare/providerAvailability";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
-import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
+import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema, getLocalBusinessSchema } from "../components/SEOHead";
 import ValidatedZipInput from "../components/ValidatedZipInput";
 
 // Comprehensive city data for all states
