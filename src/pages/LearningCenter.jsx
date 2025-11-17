@@ -202,7 +202,7 @@ export default function LearningCenter() {
   // Update search results when articles change
   React.useEffect(() => {
     setSearchResults(articles);
-  }, [dbArticles]);
+  }, [articles]);
 
   const handleSearch = (results, searchTerm) => {
     setSearchResults(results);
