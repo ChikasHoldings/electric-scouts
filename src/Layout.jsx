@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf } from "lucide-react";
+import { ChevronDown, Menu, X, ArrowUp, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf } from "lucide-react";
+import ValidatedZipInput from "./components/ValidatedZipInput";
 
 const topStates = [
   { name: "Texas", code: "TX", page: "TexasElectricity" },
@@ -28,6 +29,8 @@ export default function Layout({ children, currentPageName }) {
   const [scrolled, setScrolled] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [serviceAreaOpen, setServiceAreaOpen] = useState(false);
+  const [zipCode, setZipCode] = useState("");
+  const [isZipValid, setIsZipValid] = useState(false);
 
   // Google Analytics
   useEffect(() => {

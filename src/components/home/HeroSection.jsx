@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 export default function HeroSection({ zipCode, setZipCode }) {
+  const [isZipValid, setIsZipValid] = useState(false);
   return (
     <section className="bg-slate-50 pt-16 pb-10 relative overflow-hidden sm:pt-24 sm:pb-16 lg:pt-32 lg:pb-20">
       {/* Animated Background Elements */}

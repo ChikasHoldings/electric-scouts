@@ -7,15 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, DollarSign, Clock, Award, AlertCircle, Leaf } from "lucide-react";
+import { Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, DollarSign, Clock, Award, AlertCircle, Leaf } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import CustomQuoteModal from "../components/business/CustomQuoteModal";
+import ValidatedZipInput from "../components/ValidatedZipInput";
 
 export default function BusinessElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [monthlyUsage, setMonthlyUsage] = useState("");
   const [showCustomQuoteModal, setShowCustomQuoteModal] = useState(false);
+  const [isZipValid, setIsZipValid] = useState(false);
 
   const { data: plans } = useQuery({
     queryKey: ['plans'],
@@ -105,15 +107,12 @@ export default function BusinessElectricity() {
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-2 block">ZIP Code</label>
-                    <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
-                      <MapPin className="w-4 h-4 text-[#0A5C8C]" />
-                      <Input
-                        type="text"
-                        placeholder="Business ZIP"
+                    <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+                      <ValidatedZipInput
                         value={zipCode}
-                        onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                        className="border-0 bg-transparent focus-visible:ring-0 p-0 text-gray-900"
-                        maxLength={5}
+                        onChange={setZipCode}
+                        placeholder="Business ZIP"
+                        onValidationChange={setIsZipValid}
                       />
                     </div>
                   </div>
@@ -145,7 +144,7 @@ export default function BusinessElectricity() {
                 </div>
                 <Button 
                   onClick={handleBusinessQuoteSubmit}
-                  disabled={!zipCode || !businessType || !monthlyUsage}
+                  disabled={!isZipValid || !businessType || !monthlyUsage}
                   className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-bold py-3 rounded-lg"
                 >
                   Get Business Quotes

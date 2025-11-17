@@ -434,6 +434,7 @@ const cities = [
 export default function AllCities() {
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
+  const [isZipValid, setIsZipValid] = useState(false);
 
   const filteredCities = cities.filter(city =>
     city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

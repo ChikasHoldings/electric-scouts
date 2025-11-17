@@ -4,16 +4,16 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  MapPin, Zap, Users, Building2, TrendingDown, CheckCircle, 
-  ArrowRight, DollarSign, Clock, Shield, Star, Leaf, ChevronDown 
+  Zap, TrendingDown, CheckCircle, 
+  ArrowRight, DollarSign, Shield, Star, Leaf, ChevronDown 
 } from "lucide-react";
 import PlanCard from "../components/compare/PlanCard";
 import { getProvidersForZipCode, getProviderDetails } from "../components/compare/providerAvailability";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
+import ValidatedZipInput from "../components/ValidatedZipInput";
 
 // Comprehensive city data for all states
 const cityData = {
@@ -705,6 +705,7 @@ export default function CityRates() {
   const [usage, setUsage] = useState(1000);
   const [cityName, setCityName] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+  const [isZipValid, setIsZipValid] = useState(false);
 
   // Get city and state from URL
   useEffect(() => {
@@ -828,19 +829,20 @@ export default function CityRates() {
             {/* CTA */}
             <div className="bg-white rounded-xl p-1.5 shadow-2xl max-w-2xl">
               <div className="flex flex-col sm:flex-row items-stretch gap-2">
-                <div className="flex-1 flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-lg">
-                  <MapPin className="w-4 h-4 text-[#0A5C8C] flex-shrink-0" />
-                  <Input
-                    type="text"
-                    placeholder={`Enter ${displayCityName} ZIP code`}
+                <div className="flex-1 px-4 py-3 bg-gray-50 rounded-lg">
+                  <ValidatedZipInput
                     value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                    className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-gray-900 text-base p-0 h-auto font-semibold"
-                    maxLength={5}
+                    onChange={setZipCode}
+                    placeholder={`Enter ${displayCityName} ZIP code`}
+                    className="text-base"
+                    onValidationChange={setIsZipValid}
                   />
                 </div>
                 <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
-                  <Button className="w-full sm:w-auto px-6 py-5 text-base font-bold rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full">
+                  <Button 
+                    className="w-full sm:w-auto px-6 py-5 text-base font-bold rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full"
+                    disabled={!isZipValid && zipCode.length > 0}
+                  >
                     Compare Rates
                   </Button>
                 </Link>
@@ -1180,19 +1182,20 @@ export default function CityRates() {
           
           <div className="bg-white rounded-2xl p-1.5 shadow-2xl max-w-2xl mx-auto mb-6">
             <div className="flex flex-col sm:flex-row items-stretch gap-2">
-              <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gray-50 rounded-xl">
-                <MapPin className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
-                <Input
-                  type="text"
-                  placeholder={`Enter your ${displayCityName} ZIP code`}
+              <div className="flex-1 px-5 py-4 bg-gray-50 rounded-xl">
+                <ValidatedZipInput
                   value={zipCode}
-                  onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                  className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-gray-900 text-lg p-0 h-auto font-semibold"
-                  maxLength={5}
+                  onChange={setZipCode}
+                  placeholder={`Enter your ${displayCityName} ZIP code`}
+                  className="text-lg"
+                  onValidationChange={setIsZipValid}
                 />
               </div>
               <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
-                <Button className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full">
+                <Button 
+                  className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full"
+                  disabled={!isZipValid && zipCode.length > 0}
+                >
                   Compare Now
                 </Button>
               </Link>

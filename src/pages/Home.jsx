@@ -4,9 +4,9 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MapPin, Star, ArrowRight, Users, Award, TrendingUp, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import ValidatedZipInput from "../components/ValidatedZipInput";
 import HeroSection from "../components/home/HeroSection";
 import AnnouncementBanner from "../components/home/AnnouncementBanner";
 import AboutSection from "../components/home/AboutSection";
@@ -17,6 +17,7 @@ import SEOHead, { getOrganizationSchema, getServiceSchema } from "../components/
 
 export default function Home() {
   const [zipCode, setZipCode] = useState("");
+  const [isZipValid, setIsZipValid] = useState(false);
 
   const structuredData = [
     getOrganizationSchema(),

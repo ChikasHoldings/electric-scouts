@@ -4,13 +4,15 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, MapPin, CheckCircle, Zap, TrendingDown, ArrowRight } from "lucide-react";
+import { Search, CheckCircle, Zap, TrendingDown, ArrowRight } from "lucide-react";
 import { getAllDeregulatedStates, validateZipCode, getStateByZip } from "../components/compare/stateData";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import ValidatedZipInput from "../components/ValidatedZipInput";
 
 export default function AllStates() {
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
+  const [isZipValid, setIsZipValid] = useState(false);
   const states = getAllDeregulatedStates();
 
   // Real-time ZIP validation and filtering
