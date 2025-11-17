@@ -710,10 +710,16 @@ export default function CityRates() {
   // Get city and state from URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const cityParam = urlParams.get('city') || 'Houston';
-    const stateParam = urlParams.get('state') || 'TX';
-    const cityKey = `${cityParam}-${stateParam}`;
-    setCityName(cityKey);
+    const cityParam = urlParams.get('city');
+    const stateParam = urlParams.get('state');
+    
+    if (cityParam && stateParam) {
+      const cityKey = `${cityParam}-${stateParam}`;
+      setCityName(cityKey);
+    } else {
+      // Only default if no params at all
+      setCityName('Houston-TX');
+    }
   }, []);
 
   // Always prioritize the full city-state key, generate generic data if city doesn't exist
