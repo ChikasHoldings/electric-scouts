@@ -55,27 +55,13 @@ export function fixArticleLinks(htmlContent) {
 
   let fixedContent = htmlContent;
 
-  // First, fix any existing /app/ links that might be broken
+  // Step 1: Convert valid mapped links to proper format
   Object.entries(linkMappings).forEach(([oldPath, pageName]) => {
-    // Fix /app/old-path format
-    const kebabPath = oldPath.replace(/^\//, '');
-    fixedContent = fixedContent.replace(
-      new RegExp(`href=["']/app/${kebabPath}/?["']`, 'gi'),
-      `href="/app/${pageName}"`
-    );
-  });
-
-  // Replace each mapped link
-  Object.entries(linkMappings).forEach(([oldPath, pageName]) => {
-    // Escape special regex characters in the path
     const escapedPath = oldPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    
-    // Match href="oldPath" or href="/oldPath" (with or without trailing slash)
     const patterns = [
       new RegExp(`href=["']${escapedPath}/?["']`, 'gi'),
     ];
     
-    // Also handle paths without leading slash (if oldPath starts with /)
     if (oldPath.startsWith('/') && oldPath.length > 1) {
       patterns.push(new RegExp(`href=["']${escapedPath.substring(1)}/?["']`, 'gi'));
     }
@@ -120,37 +106,35 @@ export function fixArticleLinks(htmlContent) {
     'href="/app/ProviderDetails?provider=$1"'
   );
 
-  // Remove links to non-existent pages by converting them to plain text
-  // Match <a> tags with href to internal pages
+  // Step 2: Remove ALL remaining internal links (anything not external)
+  // Remove /app/ links that don't point to valid pages
   fixedContent = fixedContent.replace(
     /<a\s+([^>]*?)href=["']\/app\/([^"'?]+)(\?[^"']*)?["']([^>]*)>(.*?)<\/a>/gi,
     (match, beforeHref, pageName, queryString, afterHref, linkText) => {
-      // Check if the page exists in our valid pages list
       if (validPages.includes(pageName)) {
-        // Keep the link as is
-        return match;
+        return match; // Keep valid links
       } else {
-        // Remove the link, keep only the text content
-        return linkText;
+        return linkText; // Remove invalid links, keep text
       }
     }
   );
 
-  // Also remove any remaining relative links that don't map to valid pages
+  // Remove any relative links that aren't external or anchors
   fixedContent = fixedContent.replace(
-    /<a\s+([^>]*?)href=["']\/((?!app\/|http|https|www|\#)[a-zA-Z0-9\-_]+)["']([^>]*)>(.*?)<\/a>/gi,
-    (match, beforeHref, path, afterHref, linkText) => {
-      // Convert kebab-case to PascalCase to check if page exists
-      const pageName = path.split('-')
+    /<a\s+([^>]*?)href=["'](?!http|https:\/\/|www\.|mailto:|tel:|#)([^"']+)["']([^>]*)>(.*?)<\/a>/gi,
+    (match, beforeHref, href, afterHref, linkText) => {
+      // If it starts with /, remove leading slash and check
+      const cleanPath = href.replace(/^\//, '').split('?')[0].split('#')[0];
+      
+      // Try to match to a valid page
+      const pageName = cleanPath.split('-')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join('');
       
       if (validPages.includes(pageName)) {
-        // Fix the link to proper format
         return `<a ${beforeHref}href="/app/${pageName}"${afterHref}>${linkText}</a>`;
       } else {
-        // Remove the link, keep only the text
-        return linkText;
+        return linkText; // Remove link, keep text
       }
     }
   );
