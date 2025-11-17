@@ -11,10 +11,20 @@ import { MapPin, Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 
 export default function BusinessElectricity() {
+  const [step, setStep] = useState(1);
   const [zipCode, setZipCode] = useState("");
-  const [businessType, setBusinessType] = useState("");
-  const [monthlyUsage, setMonthlyUsage] = useState("");
-  const [selectedState, setSelectedState] = useState("");
+  const [businessInfo, setBusinessInfo] = useState({
+    businessType: "",
+    industryType: "",
+    monthlyUsage: "",
+    peakDemand: "",
+    numberOfLocations: "1",
+    energyGoals: [],
+    currentProvider: "",
+    contractEndDate: ""
+  });
+  const [showResults, setShowResults] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: plans } = useQuery({
     queryKey: ['plans'],
@@ -44,10 +54,439 @@ export default function BusinessElectricity() {
     { value: "industrial", label: "Industrial", usage: "> 200,000 kWh/month", employees: "500+" }
   ];
 
+  const industryTypes = [
+    "Retail", "Restaurant/Food Service", "Office/Professional Services", "Healthcare/Medical",
+    "Manufacturing", "Warehouse/Distribution", "Hospitality/Hotel", "Education",
+    "Technology/Data Center", "Real Estate/Property Management", "Agriculture", "Other"
+  ];
+
+  const energyGoalOptions = [
+    { value: "cost", label: "Reduce Energy Costs", icon: DollarSign },
+    { value: "sustainability", label: "Sustainability/Green Energy", icon: Leaf },
+    { value: "predictability", label: "Budget Predictability", icon: Clock },
+    { value: "demand", label: "Manage Peak Demand", icon: Zap }
+  ];
+
+  const handleZipSubmit = () => {
+    if (zipCode.length === 5) {
+      setStep(2);
+    }
+  };
+
+  const handleBusinessInfoSubmit = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowResults(true);
+    }, 2000);
+  };
+
+  const toggleEnergyGoal = (goal) => {
+    setBusinessInfo(prev => ({
+      ...prev,
+      energyGoals: prev.energyGoals.includes(goal)
+        ? prev.energyGoals.filter(g => g !== goal)
+        : [...prev.energyGoals, goal]
+    }));
+  };
+
+  // Filter and sort plans based on business profile
+  const getRecommendedPlans = () => {
+    let filtered = [...plans];
+    
+    // Basic filtering (would be more sophisticated in production)
+    if (businessInfo.energyGoals.includes('sustainability')) {
+      filtered = filtered.filter(p => p.renewable_percentage >= 50);
+    }
+    
+    return filtered.sort((a, b) => a.rate_per_kwh - b.rate_per_kwh).slice(0, 6);
+  };
+
+  const calculateBusinessBill = (plan) => {
+    const usage = parseInt(businessInfo.monthlyUsage) || 10000;
+    const baseCharge = plan.monthly_base_charge || 0;
+    const energyCharge = (plan.rate_per_kwh / 100) * usage;
+    return Math.round(baseCharge + energyCharge);
+  };
+
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Business Electricity", url: "/business-electricity" }
   ]);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="relative w-24 h-24 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-blue-100 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-[#0A5C8C] rounded-full border-t-transparent animate-spin"></div>
+            <Building2 className="absolute inset-0 m-auto w-10 h-10 text-[#FF6B35]" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Analyzing Your Business Needs</h2>
+          <p className="text-gray-600">Finding the best commercial rates for your business...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Results page
+  if (showResults) {
+    const recommendedPlans = getRecommendedPlans();
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <SEOHead
+          title="Business Electricity Rates - Commercial & Industrial Power Plans | Power Scouts"
+          description="Compare business electricity rates for small businesses, large commercial facilities, and industrial operations across 12 states."
+          keywords="business electricity rates, commercial electricity providers"
+          canonical="/business-electricity"
+          structuredData={breadcrumbData}
+        />
+
+        {/* Results Header */}
+        <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Award className="w-6 h-6 text-yellow-400" />
+              <h1 className="text-2xl sm:text-3xl font-bold">Your Business Energy Solutions</h1>
+            </div>
+            <p className="text-center text-sm text-blue-100">
+              {recommendedPlans.length} plans recommended for {businessInfo.industryType} in ZIP {zipCode}
+            </p>
+            <div className="flex justify-center gap-4 mt-4 text-xs">
+              <span className="bg-white/10 px-3 py-1 rounded-full">Est. Usage: {parseInt(businessInfo.monthlyUsage).toLocaleString()} kWh/mo</span>
+              <span className="bg-white/10 px-3 py-1 rounded-full">{businessInfo.numberOfLocations} Location(s)</span>
+              {businessInfo.energyGoals.includes('sustainability') && (
+                <span className="bg-green-500/20 px-3 py-1 rounded-full flex items-center gap-1">
+                  <Leaf className="w-3 h-3" />
+                  Green Energy Priority
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Business Profile Summary */}
+          <Card className="border-2 mb-8 bg-gradient-to-br from-blue-50 to-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900">Your Business Profile</h2>
+                <Button variant="outline" size="sm" onClick={() => setShowResults(false)}>
+                  Edit Details
+                </Button>
+              </div>
+              <div className="grid md:grid-cols-4 gap-4">
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Industry</div>
+                  <div className="font-semibold text-gray-900">{businessInfo.industryType}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Business Size</div>
+                  <div className="font-semibold text-gray-900 capitalize">{businessInfo.businessType}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Monthly Usage</div>
+                  <div className="font-semibold text-gray-900">{parseInt(businessInfo.monthlyUsage).toLocaleString()} kWh</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Peak Demand</div>
+                  <div className="font-semibold text-gray-900">{businessInfo.peakDemand} kW</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recommended Plans */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Recommended Business Plans</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recommendedPlans.map((plan, index) => (
+                <Card key={plan.id} className="border-2 hover:border-[#FF6B35] transition-all hover:shadow-xl">
+                  <CardContent className="p-6">
+                    {index < 3 && (
+                      <div className="mb-3">
+                        <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded">
+                          Top {index + 1} Match
+                        </span>
+                      </div>
+                    )}
+                    <h3 className="font-bold text-gray-900 mb-1">{plan.provider_name}</h3>
+                    <p className="text-xs text-gray-600 mb-4">{plan.plan_name}</p>
+                    
+                    <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-4 mb-4">
+                      <div className="text-3xl font-bold text-[#0A5C8C] mb-1">{plan.rate_per_kwh}¢</div>
+                      <div className="text-xs text-gray-600">per kWh</div>
+                      <div className="mt-2 pt-2 border-t border-gray-200">
+                        <div className="text-sm text-gray-700">Est. Monthly Bill</div>
+                        <div className="text-2xl font-bold text-gray-900">${calculateBusinessBill(plan)}</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mb-4 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Contract:</span>
+                        <span className="font-semibold">{plan.contract_length || 'Flexible'} months</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Type:</span>
+                        <span className="font-semibold capitalize">{plan.plan_type}</span>
+                      </div>
+                      {plan.renewable_percentage > 0 && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Renewable:</span>
+                          <span className="font-semibold text-green-600 flex items-center gap-1">
+                            <Leaf className="w-3 h-3" />
+                            {plan.renewable_percentage}%
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white">
+                      Get Quote
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Custom Quote CTA */}
+          <Card className="border-2 bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white">
+            <CardContent className="p-8 text-center">
+              <h3 className="text-2xl font-bold mb-3">Need a Custom Solution?</h3>
+              <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+                For complex energy needs, multiple locations, or usage over 200,000 kWh/month, our energy consultants can negotiate custom rates on your behalf.
+              </p>
+              <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-bold px-8 py-4 text-lg">
+                Request Custom Quote
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              <div className="mt-4 text-xs text-blue-200">
+                Free consultation • No obligation • 24-48 hour response
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 1: ZIP Code
+  if (step === 1) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+              Business Electricity Comparison
+            </h1>
+            <p className="text-gray-600 text-lg">Enter your business ZIP code to get started</p>
+          </div>
+
+          <Card className="shadow-2xl border-2 max-w-lg mx-auto">
+            <CardContent className="p-8">
+              <div className="mb-7">
+                <Input
+                  type="text"
+                  placeholder="Enter Business ZIP Code"
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
+                  maxLength={5}
+                  inputMode="numeric"
+                  className="h-16 text-center text-3xl font-bold tracking-widest border-2 focus:border-[#0A5C8C] rounded-xl"
+                  onKeyPress={(e) => e.key === 'Enter' && handleZipSubmit()}
+                />
+              </div>
+
+              <Button 
+                onClick={handleZipSubmit}
+                className="w-full bg-gradient-to-r from-[#FF6B35] to-[#e55a2b] hover:from-[#e55a2b] hover:to-[#cc4a1f] text-white h-16 text-xl font-bold rounded-xl shadow-lg"
+                disabled={zipCode.length !== 5}
+              >
+                Continue
+                <ArrowRight className="w-6 h-6 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2: Detailed Business Information
+  if (step === 2) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+              Tell Us About Your Business
+            </h1>
+            <p className="text-gray-600 text-lg">Help us find the perfect energy solution for your needs</p>
+          </div>
+
+          <Card className="shadow-2xl border-2">
+            <CardContent className="p-8 space-y-6">
+              {/* Business Size */}
+              <div>
+                <label className="text-sm font-bold text-gray-900 mb-3 block">Business Size</label>
+                <div className="grid md:grid-cols-2 gap-3">
+                  {businessTypes.map((type) => (
+                    <div
+                      key={type.value}
+                      onClick={() => setBusinessInfo(prev => ({ ...prev, businessType: type.value }))}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        businessInfo.businessType === type.value
+                          ? 'border-[#0A5C8C] bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="font-bold text-gray-900 mb-1">{type.label}</div>
+                      <div className="text-xs text-gray-600">{type.usage}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Industry Type */}
+              <div>
+                <label className="text-sm font-bold text-gray-900 mb-2 block">Industry Type</label>
+                <Select value={businessInfo.industryType} onValueChange={(val) => setBusinessInfo(prev => ({ ...prev, industryType: val }))}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select your industry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {industryTypes.map((industry) => (
+                      <SelectItem key={industry} value={industry}>{industry}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Usage & Demand */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-bold text-gray-900 mb-2 block">Average Monthly Usage (kWh)</label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., 15000"
+                    value={businessInfo.monthlyUsage}
+                    onChange={(e) => setBusinessInfo(prev => ({ ...prev, monthlyUsage: e.target.value.replace(/\D/g, '') }))}
+                    className="h-12"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-bold text-gray-900 mb-2 block">Peak Demand (kW)</label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., 50"
+                    value={businessInfo.peakDemand}
+                    onChange={(e) => setBusinessInfo(prev => ({ ...prev, peakDemand: e.target.value.replace(/\D/g, '') }))}
+                    className="h-12"
+                  />
+                </div>
+              </div>
+
+              {/* Number of Locations */}
+              <div>
+                <label className="text-sm font-bold text-gray-900 mb-2 block">Number of Locations</label>
+                <Select value={businessInfo.numberOfLocations} onValueChange={(val) => setBusinessInfo(prev => ({ ...prev, numberOfLocations: val }))}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 Location</SelectItem>
+                    <SelectItem value="2-5">2-5 Locations</SelectItem>
+                    <SelectItem value="6-10">6-10 Locations</SelectItem>
+                    <SelectItem value="10+">10+ Locations</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Energy Goals */}
+              <div>
+                <label className="text-sm font-bold text-gray-900 mb-3 block">Energy Goals (Select all that apply)</label>
+                <div className="grid md:grid-cols-2 gap-3">
+                  {energyGoalOptions.map((goal) => (
+                    <div
+                      key={goal.value}
+                      onClick={() => toggleEnergyGoal(goal.value)}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        businessInfo.energyGoals.includes(goal.value)
+                          ? 'border-[#0A5C8C] bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <goal.icon className="w-5 h-5 text-[#0A5C8C]" />
+                        <span className="font-semibold text-gray-900 text-sm">{goal.label}</span>
+                        {businessInfo.energyGoals.includes(goal.value) && (
+                          <CheckCircle className="w-4 h-4 text-[#0A5C8C] ml-auto" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Current Provider (Optional) */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-bold text-gray-900 mb-2 block">Current Provider (Optional)</label>
+                  <Input
+                    type="text"
+                    placeholder="e.g., TXU Energy"
+                    value={businessInfo.currentProvider}
+                    onChange={(e) => setBusinessInfo(prev => ({ ...prev, currentProvider: e.target.value }))}
+                    className="h-12"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-bold text-gray-900 mb-2 block">Contract End Date (Optional)</label>
+                  <Input
+                    type="date"
+                    value={businessInfo.contractEndDate}
+                    onChange={(e) => setBusinessInfo(prev => ({ ...prev, contractEndDate: e.target.value }))}
+                    className="h-12"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <Button 
+                onClick={handleBusinessInfoSubmit}
+                className="w-full bg-gradient-to-r from-[#FF6B35] to-[#e55a2b] hover:from-[#e55a2b] hover:to-[#cc4a1f] text-white h-16 text-xl font-bold rounded-xl shadow-lg"
+                disabled={!businessInfo.businessType || !businessInfo.industryType || !businessInfo.monthlyUsage}
+              >
+                Find Business Plans
+                <ArrowRight className="w-6 h-6 ml-2" />
+              </Button>
+
+              <div className="flex items-center justify-center gap-6 text-xs text-gray-500">
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Free Comparison</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>No Obligation</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Custom Quotes Available</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -90,57 +529,34 @@ export default function BusinessElectricity() {
               </div>
             </div>
 
-            {/* Business Quote Form */}
+            {/* Quick Start CTA */}
             <Card className="border-0 shadow-2xl">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Get a Custom Business Quote</h3>
-                <div className="grid md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">ZIP Code</label>
-                    <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
-                      <MapPin className="w-4 h-4 text-[#0A5C8C]" />
-                      <Input
-                        type="text"
-                        placeholder="Business ZIP"
-                        value={zipCode}
-                        onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                        className="border-0 bg-transparent focus-visible:ring-0 p-0 text-gray-900"
-                        maxLength={5}
-                      />
-                    </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Get Started in 2 Minutes</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Answer a few quick questions about your business and we'll show you personalized rate comparisons instantly.
+                </p>
+                <Button 
+                  onClick={() => setStep(1)}
+                  className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-bold py-3 rounded-lg"
+                >
+                  Start Business Comparison
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+                <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                    <span>Free</span>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">Business Type</label>
-                    <Select value={businessType} onValueChange={setBusinessType}>
-                      <SelectTrigger className="bg-gray-50">
-                        <SelectValue placeholder="Select business type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {businessTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label} - {type.usage}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                    <span>No Obligation</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                    <span>Instant Results</span>
                   </div>
                 </div>
-                <div className="mb-4">
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Monthly Usage (kWh)</label>
-                  <Input
-                    type="text"
-                    placeholder="e.g., 15000"
-                    value={monthlyUsage}
-                    onChange={(e) => setMonthlyUsage(e.target.value.replace(/\D/g, ''))}
-                    className="bg-gray-50"
-                  />
-                </div>
-                <Link to={createPageUrl("CompareRates") + `?zip=${zipCode}&type=business`}>
-                  <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-bold py-3 rounded-lg">
-                    Get Business Quotes
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
               </CardContent>
             </Card>
           </div>
