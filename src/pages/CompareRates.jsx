@@ -48,12 +48,11 @@ export default function CompareRates() {
 
 
 
-  // Load ZIP code from URL or localStorage on mount
+  // Load ZIP code from URL on mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const zipFromUrl = urlParams.get('zip');
-    const savedZip = localStorage.getItem('compareRatesZip');
-    
+
     if (zipFromUrl && zipFromUrl.length === 5) {
       const validation = validateZipCode(zipFromUrl);
       if (validation.valid) {
@@ -71,10 +70,8 @@ export default function CompareRates() {
         setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
         setStep(1);
       }
-    } else if (savedZip && savedZip.length === 5) {
-      setZipCode(savedZip);
-      setStep(2);
     }
+    // Always start at step 1 if no ZIP in URL
   }, []);
 
   // Scroll to top when results are shown
