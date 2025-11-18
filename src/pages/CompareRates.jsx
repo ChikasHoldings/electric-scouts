@@ -1027,23 +1027,6 @@ export default function CompareRates() {
             </Button>
           </div>
 
-          {/* Business CTA */}
-          <div className="mt-6 text-center">
-            <div className="inline-block bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg p-5 transform hover:scale-105 transition-all">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
-                <Building2 className="w-5 h-5 text-white" />
-              </div>
-              <p className="text-base font-bold text-white mb-1">Looking for Business Rates?</p>
-              <p className="text-xs text-white/90 mb-3">Get custom quotes for commercial properties</p>
-              <Link to={createPageUrl("BusinessElectricity") + (zipCode ? `?zip=${zipCode}` : '')}>
-                <Button size="sm" className="bg-white text-orange-600 hover:bg-orange-50 font-bold px-5 shadow-md">
-                  Get Business Quotes
-                  <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-
           {/* Informational Card */}
           <div className="mt-6">
             <Card className="border bg-gradient-to-r from-blue-50 to-green-50">
@@ -1061,6 +1044,23 @@ export default function CompareRates() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Business CTA */}
+          <div className="mt-6 text-center">
+            <div className="inline-block bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg p-5 transform hover:scale-105 transition-all">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
+                <Building2 className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-base font-bold text-white mb-1">Looking for Business Rates?</p>
+              <p className="text-xs text-white/90 mb-3">Get custom quotes for commercial properties</p>
+              <Link to={createPageUrl("BusinessElectricity") + (zipCode ? `?zip=${zipCode}` : '')}>
+                <Button size="sm" className="bg-white text-orange-600 hover:bg-orange-50 font-bold px-5 shadow-md">
+                  Get Business Quotes
+                  <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
