@@ -88,16 +88,16 @@ export default function RenewableCompareRates() {
   // Filter plans for renewable energy only (>= 90% renewable)
   const renewablePlans = allPlans.filter(plan => {
     const matchesZip = plan.zip_codes?.includes(zipCode);
-    const isRenewable = plan.renewable_percentage >= 90;
-    const matchesContract = !contractLength || plan.contract_length.toString() === contractLength;
+    const isRenewable = plan.renewable_percentage && plan.renewable_percentage >= 90;
+    const matchesContract = !contractLength || plan.contract_length?.toString() === contractLength;
     return matchesZip && isRenewable && matchesContract;
   });
 
   // Sort plans
   const sortedPlans = [...renewablePlans].sort((a, b) => {
-    if (sortBy === "rate") return a.rate_per_kwh - b.rate_per_kwh;
-    if (sortBy === "contract") return a.contract_length - b.contract_length;
-    if (sortBy === "renewable") return b.renewable_percentage - a.renewable_percentage;
+    if (sortBy === "rate") return (a.rate_per_kwh || 0) - (b.rate_per_kwh || 0);
+    if (sortBy === "contract") return (a.contract_length || 0) - (b.contract_length || 0);
+    if (sortBy === "renewable") return (b.renewable_percentage || 0) - (a.renewable_percentage || 0);
     return 0;
   });
 
@@ -403,8 +403,8 @@ export default function RenewableCompareRates() {
             </div>
 
             {/* Sort Controls */}
-            <div className="flex items-center justify-between bg-white rounded-lg border-2 border-green-200 p-4">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white rounded-lg border-2 border-green-200 p-4 gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm font-medium text-gray-700">Sort by:</span>
                 <div className="flex gap-2">
                   <Button
