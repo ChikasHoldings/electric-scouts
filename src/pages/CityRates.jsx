@@ -1148,9 +1148,6 @@ export default function CityRates() {
                 </div>
               ))}
             </div>
-            <p className="text-gray-600 mt-6 text-sm">
-              Common ZIP codes: {city.zipCodes.join(", ")}, and more
-            </p>
           </div>
         </section>
 
