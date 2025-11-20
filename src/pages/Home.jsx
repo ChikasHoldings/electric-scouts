@@ -39,6 +39,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <div style={{ display: 'none' }}>Impact-Site-Verification: b525f1ec-7df1-4e7d-9920-d9d12cfb21f5</div>
       <SEOHead
         title="Compare Electricity Rates - Save Up to $800/Year in 12 States | Power Scouts"
         description="Compare electricity rates from 40+ providers in TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT. Find the best electricity plan for your home - fixed rates, renewable energy, variable plans. Free comparison tool, instant results. Serving Houston, Dallas, Chicago, Philadelphia, NYC & 100+ cities. Switch & save today."
