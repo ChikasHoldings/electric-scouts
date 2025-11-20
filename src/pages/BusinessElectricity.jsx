@@ -142,14 +142,25 @@ export default function BusinessElectricity() {
                     className="bg-gray-50"
                   />
                 </div>
-                <Button 
-                  onClick={handleBusinessQuoteSubmit}
-                  disabled={!isZipValid || !businessType || !monthlyUsage}
-                  className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-bold py-3 rounded-lg"
-                >
-                  Get Business Quotes
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <div className="space-y-3">
+                  <Link to={createPageUrl("BusinessCompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                    <Button 
+                      disabled={!isZipValid}
+                      className="w-full bg-[#0A5C8C] hover:bg-[#084a6f] text-white font-bold py-3 rounded-lg"
+                    >
+                      Compare Business Rates
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                  <Button 
+                    onClick={handleBusinessQuoteSubmit}
+                    disabled={!isZipValid || !businessType || !monthlyUsage}
+                    variant="outline"
+                    className="w-full border-2 font-bold py-3 rounded-lg"
+                  >
+                    Request Custom Quote
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
