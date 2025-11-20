@@ -49,9 +49,17 @@ export default function Layout({ children, currentPageName }) {
     `;
     document.head.appendChild(script2);
 
+    // Impact verification and tracking
+    const script3 = document.createElement('script');
+    script3.innerHTML = `
+      (function(i,m,p,a,c,t){c.ire_o=p;c[p]=c[p]||function(){(c[p].a=c[p].a||[]).push(arguments)};t=a.createElement(m);var z=a.getElementsByTagName(m)[0];t.async=1;t.src=i;z.parentNode.insertBefore(t,z)})('https://utt.impactcdn.com/P-A6678174-7176-4cd3-8122-5478d9605f6d1.js','script','impactStat',document,window);impactStat('transformLinks');impactStat('trackImpression');
+    `;
+    document.head.appendChild(script3);
+
     return () => {
       document.head.removeChild(script1);
       document.head.removeChild(script2);
+      document.head.removeChild(script3);
     };
   }, []);
 
