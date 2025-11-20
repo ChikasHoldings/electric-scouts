@@ -33,7 +33,7 @@ export default function Layout({ children, currentPageName }) {
   const [zipCode, setZipCode] = useState("");
   const [isZipValid, setIsZipValid] = useState(false);
 
-  // Google Analytics
+  // Google Analytics & SEO Meta Tags
   useEffect(() => {
     const script1 = document.createElement('script');
     script1.async = true;
@@ -48,6 +48,17 @@ export default function Layout({ children, currentPageName }) {
       gtag('config', 'G-76JDWREHD2');
     `;
     document.head.appendChild(script2);
+    
+    // Add language attribute for SEO
+    document.documentElement.setAttribute('lang', 'en');
+    
+    // Add viewport meta if not present
+    if (!document.querySelector('meta[name="viewport"]')) {
+      const viewport = document.createElement('meta');
+      viewport.name = 'viewport';
+      viewport.content = 'width=device-width, initial-scale=1, maximum-scale=5';
+      document.head.appendChild(viewport);
+    }
 
     return () => {
       document.head.removeChild(script1);

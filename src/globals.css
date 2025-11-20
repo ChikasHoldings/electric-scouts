@@ -23,10 +23,17 @@ css
     height: auto;
     max-width: 100%;
     content-visibility: auto;
+    /* Add explicit dimensions to prevent CLS */
+    aspect-ratio: attr(width) / attr(height);
   }
 
   /* Improve heading hierarchy for SEO */
-  h1, h2, h3 {
+  h1 {
+    @apply scroll-mt-20;
+    /* SEO: Only one H1 per page */
+  }
+  
+  h2, h3, h4, h5, h6 {
     @apply scroll-mt-20;
   }
   
@@ -38,6 +45,11 @@ css
   /* Optimize fonts */
   @font-face {
     font-display: swap;
+  }
+  
+  /* SEO: Improve link visibility for crawlers */
+  a[href] {
+    text-decoration-skip-ink: auto;
   }
 }
 

@@ -284,3 +284,42 @@ export const getWebPageSchema = (title, description, url) => ({
     "name": "Power Scouts"
   }
 });
+
+// Helper function to generate HowTo schema
+export const getHowToSchema = (name, description, steps) => ({
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": name,
+  "description": description,
+  "step": steps.map((step, index) => ({
+    "@type": "HowToStep",
+    "position": index + 1,
+    "name": step.name,
+    "text": step.text
+  }))
+});
+
+// Helper function to generate ItemList schema
+export const getItemListSchema = (name, items) => ({
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": name,
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "url": item.url ? `${window.location.origin}${item.url}` : undefined
+  }))
+});
+
+// Helper function to generate SearchAction schema
+export const getSearchActionSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": window.location.origin,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": `${window.location.origin}/compare-rates?zip={search_term_string}`,
+    "query-input": "required name=search_term_string"
+  }
+});
