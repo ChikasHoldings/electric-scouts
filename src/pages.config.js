@@ -34,6 +34,7 @@ import BusinessQuoteDashboard from './pages/BusinessQuoteDashboard';
 import NotFound from './pages/NotFound';
 import RenewableCompareRates from './pages/RenewableCompareRates';
 import BusinessCompareRates from './pages/BusinessCompareRates';
+import SavingsCalculator from './pages/SavingsCalculator';
 import __Layout from './Layout.jsx';
 
 
@@ -74,6 +75,7 @@ export const PAGES = {
     "NotFound": NotFound,
     "RenewableCompareRates": RenewableCompareRates,
     "BusinessCompareRates": BusinessCompareRates,
+    "SavingsCalculator": SavingsCalculator,
 }
 
 export const pagesConfig = {
