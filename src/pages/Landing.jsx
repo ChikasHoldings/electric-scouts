@@ -39,19 +39,19 @@ export default function Landing() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="max-w-4xl mx-auto text-center">
             {/* Trust Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full mb-4">
               <Sparkles className="w-4 h-4 text-yellow-300" />
-              <span className="text-sm font-semibold">Trusted by 10,000+ Texas Residents</span>
+              <span className="text-xs font-semibold">Trusted by 10,000+ Customers</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              Stop Overpaying for Electricity in Texas
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              Compare Electricity Rates & Save Up to $800/Year
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl md:text-2xl text-blue-100 mb-8">
-              Compare rates from 40+ providers in 60 seconds and save up to $800 per year
+            <p className="text-lg md:text-xl text-blue-100 mb-6">
+              Find the lowest electricity rates from 40+ trusted providers in under 2 minutes. Free, fast, and no obligations.
             </p>
 
             {/* Main CTA Form */}
@@ -64,17 +64,17 @@ export default function Landing() {
                     placeholder="Enter your ZIP code"
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                    className="pl-14 h-16 text-xl font-semibold border-2 border-gray-200 focus:border-[#0A5C8C]"
+                    className="pl-14 h-14 text-lg font-semibold border-2 border-gray-200 focus:border-[#0A5C8C]"
                     maxLength={5}
                   />
                 </div>
                 <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
                   <Button 
                     disabled={zipCode.length !== 5}
-                    className="h-16 px-12 text-xl font-bold bg-[#FF6B35] hover:bg-[#e55a2b] text-white rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                    className="h-14 px-10 text-base font-bold bg-[#FF6B35] hover:bg-[#e55a2b] text-white rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
                   >
                     Compare Rates
-                    <ArrowRight className="w-6 h-6 ml-2" />
+                    <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
               </div>
@@ -106,8 +106,8 @@ export default function Landing() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {stats.map((stat, index) => (
               <div key={index}>
-                <div className="text-4xl font-bold text-[#0A5C8C] mb-2">{stat.number}</div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-3xl font-bold text-[#0A5C8C] mb-1">{stat.number}</div>
+                <div className="text-sm text-gray-600">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -118,11 +118,11 @@ export default function Landing() {
       <section className="py-16 bg-gradient-to-b from-white to-blue-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Texans Choose Power Scouts
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              Why Choose Power Scouts
             </h2>
-            <p className="text-xl text-gray-600">
-              The fastest, easiest way to save on electricity
+            <p className="text-base text-gray-600">
+              The fastest, easiest way to compare electricity rates and save money
             </p>
           </div>
 
@@ -161,8 +161,8 @@ export default function Landing() {
                       <Icon className={`w-8 h-8 text-${benefit.color}-600`} />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                      <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{benefit.title}</h3>
+                      <p className="text-sm text-gray-600 leading-relaxed">{benefit.description}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -176,11 +176,11 @@ export default function Landing() {
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
               How It Works
             </h2>
-            <p className="text-xl text-gray-600">
-              Three simple steps to start saving
+            <p className="text-base text-gray-600">
+              Three simple steps to lower your electricity bill
             </p>
           </div>
 
@@ -206,11 +206,11 @@ export default function Landing() {
               }
             ].map((item, index) => (
               <div key={index} className="text-center relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#0A5C8C] to-[#084a6f] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-6 shadow-lg relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#0A5C8C] to-[#084a6f] text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg relative z-10">
                   {item.step}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-600">{item.description}</p>
               </div>
             ))}
           </div>
@@ -221,17 +221,17 @@ export default function Landing() {
       <section className="py-16 bg-gradient-to-b from-blue-50 to-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              What Our Customers Say
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              Real Savings from Real Customers
             </h2>
-            <div className="flex items-center justify-center gap-2 text-xl text-gray-600">
+            <div className="flex items-center justify-center gap-2 text-base text-gray-600">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
               <span className="font-semibold">4.8/5</span>
-              <span>from 1,200+ reviews</span>
+              <span className="text-sm">from 1,200+ reviews</span>
             </div>
           </div>
 
@@ -263,14 +263,14 @@ export default function Landing() {
                       <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
+                  <p className="text-sm text-gray-700 mb-4 italic leading-relaxed">"{testimonial.text}"</p>
                   <div className="flex items-center justify-between border-t pt-4">
                     <div>
-                      <p className="font-bold text-gray-900">{testimonial.name}</p>
-                      <p className="text-sm text-gray-600">{testimonial.location}</p>
+                      <p className="font-semibold text-gray-900 text-sm">{testimonial.name}</p>
+                      <p className="text-xs text-gray-600">{testimonial.location}</p>
                     </div>
-                    <div className="bg-green-100 px-3 py-1 rounded-full">
-                      <span className="text-green-700 font-bold text-sm">Saved {testimonial.savings}</span>
+                    <div className="bg-green-100 px-2.5 py-1 rounded-full">
+                      <span className="text-green-700 font-bold text-xs">Saved {testimonial.savings}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -288,18 +288,18 @@ export default function Landing() {
               <Sparkles className="w-5 h-5" />
               <span className="font-bold">LIMITED TIME OFFER</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Don't Wait - Start Saving Today!
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              Start Saving Money Today
             </h2>
-            <p className="text-xl text-gray-600 mb-6">
-              The average Texan who switches saves <span className="font-bold text-[#FF6B35]">$67 per month</span>. That's money you're losing every day you wait.
+            <p className="text-base text-gray-600 mb-4">
+              The average customer saves <span className="font-bold text-[#FF6B35]">$67 per month</span> by comparing rates. Don't leave money on the table.
             </p>
-            <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-6 mb-6">
-              <div className="text-5xl font-bold text-[#0A5C8C] mb-2">$2.23</div>
-              <div className="text-gray-700">Money you could save TODAY</div>
+            <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-5 mb-4">
+              <div className="text-4xl font-bold text-[#0A5C8C] mb-1">$2.23</div>
+              <div className="text-sm text-gray-700">You could be saving every day</div>
             </div>
-            <p className="text-gray-600 mb-8">
-              Every month you delay costs you money. Compare rates now - it's free and takes 60 seconds.
+            <p className="text-sm text-gray-600 mb-6">
+              Compare rates now - it's 100% free and takes less than 2 minutes.
             </p>
 
             {/* CTA Form */}
@@ -336,19 +336,19 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-4">
-                Ready to Save Money on Electricity?
+              <h2 className="text-2xl font-bold mb-3">
+                Ready to Lower Your Electricity Bill?
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {[
                   "Compare 40+ providers instantly",
                   "See lowest rates in your area",
                   "100% free, no obligations",
                   "Switch in 5 minutes online"
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <span className="text-lg">{item}</span>
+                  <div key={index} className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                    <span className="text-base">{item}</span>
                   </div>
                 ))}
               </div>
@@ -356,7 +356,7 @@ export default function Landing() {
 
             <div>
               <div className="bg-white rounded-xl shadow-2xl p-6">
-                <p className="text-gray-900 font-bold text-lg mb-4 text-center">
+                <p className="text-gray-900 font-semibold text-base mb-4 text-center">
                   Enter Your ZIP Code to Get Started
                 </p>
                 <div className="flex flex-col gap-3">
@@ -374,10 +374,10 @@ export default function Landing() {
                   <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
                     <Button 
                       disabled={zipCode.length !== 5}
-                      className="h-14 text-xl font-bold bg-[#FF6B35] hover:bg-[#e55a2b] text-white w-full disabled:opacity-50"
+                      className="h-14 text-base font-bold bg-[#FF6B35] hover:bg-[#e55a2b] text-white w-full disabled:opacity-50"
                     >
                       Compare Rates Free
-                      <ArrowRight className="w-6 h-6 ml-2" />
+                      <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                   </Link>
                 </div>
