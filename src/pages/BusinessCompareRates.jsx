@@ -41,7 +41,7 @@ export default function BusinessCompareRates() {
     
     if (zipFromUrl && zipFromUrl.length === 5) {
       const validation = validateZipCode(zipFromUrl);
-      if (validation.isValid) {
+      if (validation.valid) {
         setZipCode(zipFromUrl);
         setIsZipValid(true);
         const city = getCityFromZip(zipFromUrl);
@@ -52,7 +52,7 @@ export default function BusinessCompareRates() {
         setStep(2);
       } else {
         setZipCode(zipFromUrl);
-        setZipError(validation.message || "This ZIP code is not in a deregulated electricity market");
+        setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
         setStep(1);
       }
     }
@@ -65,8 +65,8 @@ export default function BusinessCompareRates() {
     }
 
     const validation = validateZipCode(zipCode);
-    if (!validation.isValid) {
-      setZipError(validation.message || "This ZIP code is not in a deregulated electricity market");
+    if (!validation.valid) {
+      setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
       return;
     }
 

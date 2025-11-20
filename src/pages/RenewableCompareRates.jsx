@@ -63,8 +63,8 @@ export default function RenewableCompareRates() {
     }
 
     const validation = validateZipCode(zipCode);
-    if (!validation.isValid) {
-      setZipError(validation.message || "This ZIP code is not in a deregulated electricity market");
+    if (!validation.valid) {
+      setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
       return;
     }
 
