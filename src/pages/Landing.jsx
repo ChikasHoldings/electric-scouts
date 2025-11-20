@@ -8,31 +8,9 @@ import {
   MapPin, CheckCircle, Zap, TrendingDown, Shield, 
   Clock, Star, Users, ArrowRight, Sparkles
 } from "lucide-react";
-import SEOHead, { getOrganizationSchema, getWebPageSchema, getSearchActionSchema, getAggregateRatingSchema, getHowToSchema } from "../components/SEOHead";
-import SchemaValidator from "../components/seo/SchemaValidator";
 
 export default function Landing() {
   const [zipCode, setZipCode] = useState("");
-
-  const schemas = [
-    getOrganizationSchema(),
-    getWebPageSchema(
-      "Compare Electricity Rates & Save Up to $800/Year | Power Scouts",
-      "Find the lowest electricity rates from 40+ providers in under 2 minutes. Save up to $800 annually with our free comparison tool.",
-      window.location.origin
-    ),
-    getSearchActionSchema(),
-    getAggregateRatingSchema("Power Scouts Electricity Comparison Service", 4.8, 1200),
-    getHowToSchema(
-      "How to Compare Electricity Rates and Save Money",
-      "Compare electricity rates from multiple providers to find the best deal and lower your monthly bills",
-      [
-        { name: "Enter Your ZIP Code", text: "Tell us where you live to see available plans in your area" },
-        { name: "Compare Plans", text: "View rates from 40+ providers sorted by lowest price" },
-        { name: "Start Saving", text: "Choose your plan and switch online in just 5 minutes" }
-      ]
-    )
-  ];
 
   const benefits = [
     { icon: DollarSign, text: "Save up to $800/year", color: "green" },
@@ -50,14 +28,6 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <SEOHead
-        title="Compare Electricity Rates & Save Up to $800/Year | Power Scouts"
-        description="Find the lowest electricity rates from 40+ providers in under 2 minutes. Save up to $800 annually with our free comparison tool. No credit card required."
-        keywords="compare electricity rates, electricity providers, power comparison, energy rates, electricity plans, save on electricity"
-        canonical="/landing"
-        structuredData={schemas}
-      />
-      <SchemaValidator schemas={schemas} pageName="Landing" />
       {/* Hero Section - Above the Fold */}
       <section className="relative overflow-hidden bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white">
         {/* Animated Background Elements */}
