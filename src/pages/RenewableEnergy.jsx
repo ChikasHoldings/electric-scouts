@@ -218,7 +218,7 @@ export default function RenewableEnergy() {
                       maxLength={5}
                     />
                   </div>
-                  <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}&renewable=true` : '?renewable=true')}>
+                  <Link to={createPageUrl("RenewableCompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
                     <Button className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-green-600 hover:bg-green-700 text-white h-full">
                       Compare Green Plans
                     </Button>
@@ -384,7 +384,7 @@ export default function RenewableEnergy() {
             </div>
 
             <div className="text-center mt-8">
-              <Link to={createPageUrl("CompareRates") + '?renewable=true'}>
+              <Link to={createPageUrl("RenewableCompareRates")}>
                 <Button variant="outline" className="border-2 border-green-600 text-green-600 hover:bg-green-50">
                   View All Renewable Plans
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -556,7 +556,7 @@ export default function RenewableEnergy() {
                       maxLength={5}
                     />
                   </div>
-                  <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}&renewable=true` : '?renewable=true')}>
+                  <Link to={createPageUrl("RenewableCompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
                     <Button className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full">
                       Compare Now
                     </Button>
