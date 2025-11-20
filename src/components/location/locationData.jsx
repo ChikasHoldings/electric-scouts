@@ -116,6 +116,14 @@ export const LOCATION_DATA = {
         insights: "Naperville's newer homes often have higher efficiency. Green energy plans are popular in this environmentally-conscious suburb.",
         utilityCompany: "ComEd",
         topZips: ["60540", "60563", "60564", "60565"]
+      },
+      Joliet: {
+        population: "150,000",
+        avgRate: "14.2¢/kWh",
+        avgUsage: "810 kWh/month",
+        insights: "Joliet residents in ComEd territory benefit from strong retail competition. Industrial background means diverse housing types with varying usage patterns.",
+        utilityCompany: "ComEd",
+        topZips: ["60431", "60432", "60433", "60435"]
       }
     }
   },
@@ -167,6 +175,14 @@ export const LOCATION_DATA = {
         insights: "Duke Energy territory offers good supplier competition. Many Cincinnati residents choose green energy plans from competitive suppliers.",
         utilityCompany: "Duke Energy Ohio",
         topZips: ["45202", "45203", "45206", "45219", "45220"]
+      },
+      Toledo: {
+        population: "270,000",
+        avgRate: "13.8¢/kWh",
+        avgUsage: "870 kWh/month",
+        insights: "Toledo's FirstEnergy territory sees strong retail competition. Lake Erie proximity influences heating/cooling patterns, making seasonal plans attractive.",
+        utilityCompany: "FirstEnergy (Toledo Edison)",
+        topZips: ["43604", "43606", "43607", "43608", "43612"]
       }
     }
   },
@@ -269,6 +285,14 @@ export const LOCATION_DATA = {
         insights: "RG&E customers can achieve meaningful savings through ESCOs. Green energy plans are growing in popularity.",
         utilityCompany: "Rochester Gas & Electric",
         topZips: ["14604", "14605", "14607", "14610", "14620"]
+      },
+      Syracuse: {
+        population: "148,000",
+        avgRate: "19.5¢/kWh",
+        avgUsage: "730 kWh/month",
+        insights: "National Grid territory with active ESCO market. Syracuse's harsh winters make budget billing and fixed-rate plans popular choices.",
+        utilityCompany: "National Grid",
+        topZips: ["13201", "13202", "13203", "13204", "13210"]
       }
     }
   },
@@ -363,6 +387,14 @@ export const LOCATION_DATA = {
         insights: "Potomac Edison territory customers can save through competitive suppliers. Growing city attracts green energy customers.",
         utilityCompany: "Potomac Edison",
         topZips: ["21701", "21702", "21703", "21704"]
+      },
+      Rockville: {
+        population: "68,000",
+        avgRate: "14.0¢/kWh",
+        avgUsage: "850 kWh/month",
+        insights: "Pepco territory with excellent supplier options. Affluent Montgomery County residents often choose 100% renewable plans at competitive rates.",
+        utilityCompany: "Pepco",
+        topZips: ["20850", "20851", "20852", "20853"]
       }
     }
   },
@@ -406,6 +438,218 @@ export const LOCATION_DATA = {
         insights: "National Grid customers benefit from competitive rates. Fixed-rate plans protect against seasonal price spikes.",
         utilityCompany: "National Grid",
         topZips: ["01604", "01605", "01606", "01607", "01608"]
+      },
+      Springfield: {
+        population: "155,000",
+        avgRate: "22.8¢/kWh",
+        avgUsage: "710 kWh/month",
+        insights: "Eversource territory with growing competitive options. Older housing stock drives higher usage; energy efficiency programs can reduce costs significantly.",
+        utilityCompany: "Eversource",
+        topZips: ["01103", "01104", "01105", "01107", "01109"]
+      }
+    }
+  },
+
+  // Connecticut
+  CT: {
+    state: "Connecticut",
+    marketInsights: {
+      description: "Connecticut restructured its electricity market in 2000, allowing customers to choose competitive suppliers while Eversource and United Illuminating maintain distribution.",
+      keyFacts: [
+        "Restructured in 2000",
+        "Average residential rate: 22.0¢/kWh (among highest in nation)",
+        "20+ licensed competitive suppliers",
+        "Two main utilities: Eversource, United Illuminating",
+        "Average savings: $200-$500 annually"
+      ],
+      marketType: "Restructured/Competitive",
+      averageSavings: "$350",
+      providerCount: "20+"
+    },
+    topProviders: [
+      { name: "Constellation", marketShare: "25%", avgRate: "21.5¢/kWh", specialty: "Market leader" },
+      { name: "Direct Energy", marketShare: "20%", avgRate: "21.8¢/kWh", specialty: "Fixed rates" },
+      { name: "Verde Energy", marketShare: "15%", avgRate: "22.2¢/kWh", specialty: "Green energy" },
+      { name: "Eligo Energy", marketShare: "12%", avgRate: "21.7¢/kWh", specialty: "Competitive rates" },
+      { name: "CleanChoice Energy", marketShare: "10%", avgRate: "22.0¢/kWh", specialty: "100% renewable" }
+    ],
+    cities: {
+      Hartford: {
+        population: "121,000",
+        avgRate: "22.3¢/kWh",
+        avgUsage: "680 kWh/month",
+        insights: "Eversource territory with active supplier competition. State capital residents can save 10-15% by choosing competitive suppliers over standard service.",
+        utilityCompany: "Eversource",
+        topZips: ["06103", "06105", "06106", "06114", "06120"]
+      },
+      "New Haven": {
+        population: "135,000",
+        avgRate: "22.1¢/kWh",
+        avgUsage: "690 kWh/month",
+        insights: "United Illuminating territory offers strong supplier options. University presence creates diverse housing types with varying energy needs.",
+        utilityCompany: "United Illuminating",
+        topZips: ["06510", "06511", "06513", "06515", "06519"]
+      },
+      Bridgeport: {
+        population: "148,000",
+        avgRate: "22.5¢/kWh",
+        avgUsage: "700 kWh/month",
+        insights: "United Illuminating customers benefit from retail competition. Coastal location and older housing stock make weatherization and fixed-rate plans valuable.",
+        utilityCompany: "United Illuminating",
+        topZips: ["06604", "06605", "06606", "06607", "06608"]
+      }
+    }
+  },
+
+  // Maine
+  ME: {
+    state: "Maine",
+    marketInsights: {
+      description: "Maine restructured its electricity market in 2000, creating competition through competitive electricity providers while Central Maine Power and Versant Power handle distribution.",
+      keyFacts: [
+        "Restructured in 2000",
+        "Average residential rate: 18.5¢/kWh",
+        "15+ licensed competitive providers",
+        "Two utilities: Central Maine Power, Versant Power",
+        "Average savings: $200-$400 annually"
+      ],
+      marketType: "Restructured/Competitive",
+      averageSavings: "$300",
+      providerCount: "15+"
+    },
+    topProviders: [
+      { name: "Constellation", marketShare: "30%", avgRate: "18.0¢/kWh", specialty: "Market leader" },
+      { name: "Direct Energy", marketShare: "22%", avgRate: "18.3¢/kWh", specialty: "Fixed rates" },
+      { name: "Eligo Energy", marketShare: "15%", avgRate: "18.2¢/kWh", specialty: "Competitive pricing" },
+      { name: "Verde Energy", marketShare: "12%", avgRate: "18.7¢/kWh", specialty: "Green energy" },
+      { name: "Residents Energy", marketShare: "10%", avgRate: "18.4¢/kWh", specialty: "New England focus" }
+    ],
+    cities: {
+      Portland: {
+        population: "68,000",
+        avgRate: "18.8¢/kWh",
+        avgUsage: "650 kWh/month",
+        insights: "Central Maine Power territory with robust supplier competition. Coastal climate creates moderate electricity usage, making 12-month fixed plans ideal.",
+        utilityCompany: "Central Maine Power",
+        topZips: ["04101", "04102", "04103", "04104"]
+      },
+      Lewiston: {
+        population: "37,000",
+        avgRate: "18.6¢/kWh",
+        avgUsage: "680 kWh/month",
+        insights: "CMP customers can save through competitive suppliers. Industrial heritage means diverse housing stock; weatherization programs enhance savings.",
+        utilityCompany: "Central Maine Power",
+        topZips: ["04240", "04241", "04243"]
+      },
+      Bangor: {
+        population: "32,000",
+        avgRate: "18.4¢/kWh",
+        avgUsage: "700 kWh/month",
+        insights: "Versant Power territory with growing supplier options. Northern location drives winter heating costs; fixed-rate plans provide budget stability.",
+        utilityCompany: "Versant Power",
+        topZips: ["04401", "04402"]
+      }
+    }
+  },
+
+  // New Hampshire
+  NH: {
+    state: "New Hampshire",
+    marketInsights: {
+      description: "New Hampshire restructured its electricity market in 1996, creating one of the nation's first competitive markets with numerous supplier options statewide.",
+      keyFacts: [
+        "Restructured in 1996 (earliest adopter)",
+        "Average residential rate: 20.3¢/kWh",
+        "18+ licensed competitive suppliers",
+        "Three utilities: Eversource, Unitil, Liberty Utilities",
+        "Average savings: $250-$500 per year"
+      ],
+      marketType: "Restructured/Competitive",
+      averageSavings: "$375",
+      providerCount: "18+"
+    },
+    topProviders: [
+      { name: "Constellation", marketShare: "28%", avgRate: "19.8¢/kWh", specialty: "Market leader" },
+      { name: "Direct Energy", marketShare: "22%", avgRate: "20.0¢/kWh", specialty: "Fixed rates" },
+      { name: "Verde Energy", marketShare: "15%", avgRate: "20.5¢/kWh", specialty: "Green options" },
+      { name: "Eligo Energy", marketShare: "12%", avgRate: "19.9¢/kWh", specialty: "Price protection" },
+      { name: "Residents Energy", marketShare: "10%", avgRate: "20.1¢/kWh", specialty: "NH specialist" }
+    ],
+    cities: {
+      Manchester: {
+        population: "115,000",
+        avgRate: "20.5¢/kWh",
+        avgUsage: "720 kWh/month",
+        insights: "Eversource territory with mature competitive market. State's largest city offers widest supplier choice; cold winters make long-term fixed rates attractive.",
+        utilityCompany: "Eversource",
+        topZips: ["03101", "03102", "03103", "03104"]
+      },
+      Nashua: {
+        population: "91,000",
+        avgRate: "20.3¢/kWh",
+        avgUsage: "710 kWh/month",
+        insights: "Eversource customers benefit from proximity to Massachusetts border and supplier competition. Tech sector presence drives interest in green energy plans.",
+        utilityCompany: "Eversource",
+        topZips: ["03060", "03062", "03063", "03064"]
+      },
+      Concord: {
+        population: "43,000",
+        avgRate: "20.1¢/kWh",
+        avgUsage: "690 kWh/month",
+        insights: "Eversource territory, state capital offers good supplier diversity. Government buildings and moderate population create stable, competitive pricing.",
+        utilityCompany: "Eversource",
+        topZips: ["03301", "03303"]
+      }
+    }
+  },
+
+  // Rhode Island
+  RI: {
+    state: "Rhode Island",
+    marketInsights: {
+      description: "Rhode Island restructured its electricity market in 1997, allowing customers to choose competitive suppliers while National Grid maintains the distribution system.",
+      keyFacts: [
+        "Restructured in 1997",
+        "Average residential rate: 23.5¢/kWh (highest in region)",
+        "15+ licensed competitive suppliers",
+        "Single utility: National Grid",
+        "Average savings: $200-$450 annually"
+      ],
+      marketType: "Restructured/Competitive",
+      averageSavings: "$325",
+      providerCount: "15+"
+    },
+    topProviders: [
+      { name: "Constellation", marketShare: "30%", avgRate: "22.8¢/kWh", specialty: "Market leader" },
+      { name: "Direct Energy", marketShare: "25%", avgRate: "23.0¢/kWh", specialty: "Fixed rates" },
+      { name: "Verde Energy", marketShare: "15%", avgRate: "23.5¢/kWh", specialty: "100% renewable" },
+      { name: "Eligo Energy", marketShare: "12%", avgRate: "22.9¢/kWh", specialty: "Competitive pricing" },
+      { name: "Residents Energy", marketShare: "10%", avgRate: "23.1¢/kWh", specialty: "Regional focus" }
+    ],
+    cities: {
+      Providence: {
+        population: "190,000",
+        avgRate: "23.8¢/kWh",
+        avgUsage: "660 kWh/month",
+        insights: "National Grid's standard service rates make competitive suppliers attractive. Urban density and mixed housing types create varied usage patterns.",
+        utilityCompany: "National Grid",
+        topZips: ["02903", "02904", "02905", "02906", "02907"]
+      },
+      Warwick: {
+        population: "83,000",
+        avgRate: "23.6¢/kWh",
+        avgUsage: "680 kWh/month",
+        insights: "Suburban National Grid customers save through supplier choice. Coastal location and single-family homes drive moderate summer AC usage.",
+        utilityCompany: "National Grid",
+        topZips: ["02886", "02888", "02889"]
+      },
+      Cranston: {
+        population: "82,000",
+        avgRate: "23.7¢/kWh",
+        avgUsage: "670 kWh/month",
+        insights: "National Grid territory adjacent to Providence offers same supplier options. Mix of residential types creates opportunities for tailored plans.",
+        utilityCompany: "National Grid",
+        topZips: ["02910", "02920", "02921"]
       }
     }
   }
