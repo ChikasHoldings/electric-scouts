@@ -49,8 +49,8 @@ export default function BusinessElectricity() {
 
   const handleBusinessQuoteSubmit = () => {
     if (zipCode && businessType && monthlyUsage) {
-      // Redirect to CompareRates with business parameters
-      window.location.href = createPageUrl("CompareRates") + `?zip=${zipCode}&type=business&businessType=${businessType}&usage=${monthlyUsage}`;
+      // Open custom quote modal for business customers
+      setShowCustomQuoteModal(true);
     }
   };
 
@@ -271,11 +271,11 @@ export default function BusinessElectricity() {
                       <div className="text-sm text-gray-600">{state.specialPrograms}</div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <Link to={createPageUrl("CompareRates") + `?state=${state.code}&type=business`}>
+                      <a href="#business-quote-form">
                         <Button size="sm" variant="outline" className="text-xs">
-                          View Plans
+                          Get Quote
                         </Button>
-                      </Link>
+                      </a>
                     </td>
                   </tr>
                 ))}
