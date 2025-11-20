@@ -10,6 +10,7 @@ import ValidatedZipInput from "../components/ValidatedZipInput";
 import { getCityFromZip, getProvidersForZipCode } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
 import PlanCard from "../components/compare/PlanCard";
+import BillUploadStep from "../components/compare/BillUploadStep";
 import SEOHead from "../components/SEOHead";
 
 export default function RenewableCompareRates() {
@@ -23,6 +24,7 @@ export default function RenewableCompareRates() {
   const [contractLength, setContractLength] = useState("");
   const [isZipValid, setIsZipValid] = useState(false);
   const [sortBy, setSortBy] = useState("rate");
+  const [billData, setBillData] = useState(null);
 
   const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ['plans'],
@@ -77,8 +79,20 @@ export default function RenewableCompareRates() {
 
   const handlePropertyTypeSubmit = () => {
     if (propertyType) {
-      setStep(3);
+      setStep(2.5);
     }
+  };
+
+  const handleBillAnalysis = (data) => {
+    setBillData(data);
+    if (data.monthly_usage_kwh) {
+      setMonthlyUsage(data.monthly_usage_kwh.toString());
+    }
+    setStep(3);
+  };
+
+  const handleSkipBillUpload = () => {
+    setStep(3);
   };
 
   const handlePreferencesSubmit = () => {
@@ -314,6 +328,16 @@ export default function RenewableCompareRates() {
               </CardContent>
             </Card>
           </div>
+        )}
+
+        {/* Step 2.5: Bill Upload (Optional) */}
+        {step === 2.5 && (
+          <BillUploadStep
+            onSkip={handleSkipBillUpload}
+            onAnalysisComplete={handleBillAnalysis}
+            onBack={() => setStep(2)}
+            accentColor="#16a34a"
+          />
         )}
 
         {/* Step 3: Preferences */}

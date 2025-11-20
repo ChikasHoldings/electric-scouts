@@ -11,6 +11,7 @@ import ValidatedZipInput from "../components/ValidatedZipInput";
 import { getCityFromZip, getProvidersForZipCode } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
 import PlanCard from "../components/compare/PlanCard";
+import BillUploadStep from "../components/compare/BillUploadStep";
 import SEOHead from "../components/SEOHead";
 
 export default function BusinessCompareRates() {
@@ -25,6 +26,7 @@ export default function BusinessCompareRates() {
   const [planType, setPlanType] = useState("");
   const [isZipValid, setIsZipValid] = useState(false);
   const [sortBy, setSortBy] = useState("rate");
+  const [billData, setBillData] = useState(null);
 
   const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ['plans'],
@@ -79,8 +81,20 @@ export default function BusinessCompareRates() {
 
   const handleBusinessTypeSubmit = () => {
     if (businessType) {
-      setStep(3);
+      setStep(2.5);
     }
+  };
+
+  const handleBillAnalysis = (data) => {
+    setBillData(data);
+    if (data.monthly_usage_kwh) {
+      setMonthlyUsage(data.monthly_usage_kwh.toString());
+    }
+    setStep(3);
+  };
+
+  const handleSkipBillUpload = () => {
+    setStep(3);
   };
 
   const handlePreferencesSubmit = () => {
@@ -298,6 +312,16 @@ export default function BusinessCompareRates() {
               </Button>
             </div>
           </div>
+        )}
+
+        {/* Step 2.5: Bill Upload (Optional) */}
+        {step === 2.5 && (
+          <BillUploadStep
+            onSkip={handleSkipBillUpload}
+            onAnalysisComplete={handleBillAnalysis}
+            onBack={() => setStep(2)}
+            accentColor="#0A5C8C"
+          />
         )}
 
         {/* Step 3: Preferences */}
