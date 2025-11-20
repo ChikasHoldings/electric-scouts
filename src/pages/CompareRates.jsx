@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X } from "lucide-react";
+import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X, FileText } from "lucide-react";
 import { validateZipCode } from "../components/compare/stateData";
 import { 
   getProvidersForZipCode, 
@@ -21,6 +21,7 @@ import {
   validateZipForComparison 
 } from "../components/compare/dataValidation";
 import { calculateMatchScore, calculateSavings, generatePlanSummary } from "../components/compare/matchScore";
+import BillUploadStep from "../components/compare/BillUploadStep";
 
 export default function CompareRates() {
   const [step, setStep] = useState(1);
@@ -45,6 +46,7 @@ export default function CompareRates() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [cityName, setCityName] = useState("");
   const [availableProviders, setAvailableProviders] = useState([]);
+  const [billData, setBillData] = useState(null);
 
 
 
@@ -114,6 +116,15 @@ export default function CompareRates() {
 
   const handlePropertyTypeSubmit = () => {
     if (!propertyType) return;
+    setStep(2.5);
+  };
+
+  const handleBillAnalysis = (data) => {
+    setBillData(data);
+    setStep(3);
+  };
+
+  const handleSkipBillUpload = () => {
     setStep(3);
   };
 
@@ -1059,6 +1070,22 @@ export default function CompareRates() {
               </Link>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2.5: Bill Upload (Optional)
+  if (step === 2.5) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-8 pb-12">
+        <div className="max-w-3xl mx-auto">
+          <BillUploadStep
+            onSkip={handleSkipBillUpload}
+            onAnalysisComplete={handleBillAnalysis}
+            onBack={() => setStep(2)}
+            accentColor="#0A5C8C"
+          />
         </div>
       </div>
     );
