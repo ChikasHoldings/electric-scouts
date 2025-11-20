@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ChevronDown, Phone, Mail, MessageCircle, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
+import { FAQPageSchema } from "../components/seo/StructuredData";
 
 const faqCategories = [
   {
@@ -166,8 +167,18 @@ export default function FAQ() {
     { name: "FAQs", url: "/faq" }
   ]);
 
+  // Prepare FAQ data for structured data
+  const allFAQs = faqCategories.flatMap(category => 
+    category.questions.map(q => ({
+      question: q.question,
+      answer: q.answer
+    }))
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <FAQPageSchema faqs={allFAQs} />
+      
       <SEOHead
         title="Electricity FAQ - 22+ Common Questions Answered | Power Scouts"
         description="Get answers to frequently asked questions about electricity deregulation, switching providers, plan types, rates, billing, contracts & saving money. Expert guidance for TX, PA, NY, OH, IL, NJ, MD, MA & more. Learn about fixed vs variable rates, kWh usage, early termination fees, renewable energy, deposits & more."

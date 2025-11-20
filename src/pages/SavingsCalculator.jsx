@@ -9,6 +9,7 @@ import { validateZipCode } from "../components/compare/stateData";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SEOHead from "../components/SEOHead";
+import { HowToSchema } from "../components/seo/StructuredData";
 
 export default function SavingsCalculator() {
   const [currentRate, setCurrentRate] = useState("");
@@ -124,8 +125,20 @@ export default function SavingsCalculator() {
     });
   };
 
+  const calculatorSteps = [
+    { name: "Enter Current Rate", description: "Input your current electricity rate from your bill" },
+    { name: "Add Monthly Usage", description: "Enter your average monthly kWh usage" },
+    { name: "View Savings", description: "See how much you could save by switching to a better rate" }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <HowToSchema 
+        title="How to Calculate Your Electricity Savings"
+        description="Calculate potential savings on your electricity bill in 3 simple steps"
+        steps={calculatorSteps}
+      />
+      
       <SEOHead
         title="Electricity Savings Calculator - Predict Your Annual Savings | Power Scouts"
         description="Calculate how much you can save on electricity bills. Input your current rate and usage to get personalized savings estimates and plan recommendations for your state."
