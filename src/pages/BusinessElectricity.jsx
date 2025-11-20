@@ -11,6 +11,7 @@ import { Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, Dollar
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import CustomQuoteModal from "../components/business/CustomQuoteModal";
 import ValidatedZipInput from "../components/ValidatedZipInput";
+import { ServiceSchema, FAQPageSchema } from "../components/seo/StructuredData";
 
 export default function BusinessElectricity() {
   const [zipCode, setZipCode] = useState("");
@@ -59,8 +60,35 @@ export default function BusinessElectricity() {
     { name: "Business Electricity", url: "/business-electricity" }
   ]);
 
+  const businessFAQs = [
+    {
+      question: "What's the difference between business and residential rates?",
+      answer: "Business rates include demand charges, have different rate structures based on usage levels, offer longer contract terms, and may include time-of-use pricing. Commercial customers also get access to load management programs and custom pricing for high usage."
+    },
+    {
+      question: "How are demand charges calculated?",
+      answer: "Demand charges are based on your peak power draw (measured in kW) during any 15-minute interval in the billing period. If you have a 100 kW peak and the demand charge is $10/kW, you'll pay $1,000 in demand charges that month, separate from energy usage charges."
+    },
+    {
+      question: "Can small businesses get competitive rates?",
+      answer: "Yes! Small businesses using as little as 2,000-5,000 kWh/month can access competitive rates. While you may not qualify for demand-based pricing, fixed-rate plans and group purchasing programs can deliver 15-30% savings vs. utility default rates."
+    },
+    {
+      question: "Should I choose a fixed or variable rate plan?",
+      answer: "Most businesses prefer fixed-rate plans for budget predictability. Variable rates can work if you have flexible operations and can adjust usage based on market prices, but they carry risk during price spikes. Industrial users sometimes blend both strategies."
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <ServiceSchema 
+        service={{
+          type: "Business Electricity Rate Comparison",
+          description: "Compare commercial and industrial electricity rates from 40+ providers. Get custom quotes for tiered pricing, demand charges, and load management."
+        }}
+      />
+      <FAQPageSchema faqs={businessFAQs} />
+      
       <SEOHead
         title="Business Electricity Rates - Commercial & Industrial Power Plans | Power Scouts"
         description="Compare business electricity rates for small businesses, large commercial facilities, and industrial operations across 12 states. Get custom quotes for tiered pricing, demand charges, and load management. Save up to $5,000+ annually on commercial energy costs with competitive business electricity plans."

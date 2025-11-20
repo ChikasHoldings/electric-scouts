@@ -8,6 +8,13 @@ import {
   MapPin, CheckCircle, Zap, TrendingDown, Shield, 
   Clock, Star, Users, ArrowRight, Sparkles
 } from "lucide-react";
+import { 
+  OrganizationSchema, 
+  WebSiteSchema, 
+  BreadcrumbSchema, 
+  FAQPageSchema,
+  HowToSchema 
+} from "../components/seo/StructuredData";
 
 export default function Landing() {
   const [zipCode, setZipCode] = useState("");
@@ -26,8 +33,41 @@ export default function Landing() {
     { number: "$800", label: "Avg. Savings" }
   ];
 
+  // Structured Data Schemas
+  const howToSteps = [
+    { name: "Enter Your ZIP", description: "Tell us where you live to see available plans in your area" },
+    { name: "Compare Plans", description: "View rates from 40+ providers sorted by lowest price" },
+    { name: "Start Saving", description: "Choose your plan and switch online in just 5 minutes" }
+  ];
+
+  const faqs = [
+    {
+      question: "How much can I save by switching electricity providers?",
+      answer: "The average customer saves $67 per month, or up to $800 per year by comparing rates and switching to a better plan."
+    },
+    {
+      question: "Is it really free to compare electricity rates?",
+      answer: "Yes, our service is 100% free with no credit card required and no hidden fees. We show you all available options."
+    },
+    {
+      question: "How long does it take to switch electricity providers?",
+      answer: "The comparison takes under 2 minutes, and switching can be completed online in just 5 minutes. Your power stays on the entire time."
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Structured Data for SEO */}
+      <OrganizationSchema />
+      <WebSiteSchema />
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }]} />
+      <HowToSchema 
+        title="How to Compare Electricity Rates and Save Money"
+        description="Learn how to compare electricity rates in 3 simple steps"
+        steps={howToSteps}
+      />
+      <FAQPageSchema faqs={faqs} />
+
       {/* Hero Section - Above the Fold */}
       <section className="relative overflow-hidden bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white">
         {/* Animated Background Elements */}

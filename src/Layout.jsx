@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf } from "lucide-react";
 import ValidatedZipInput from "./components/ValidatedZipInput";
+import SchemaDebugger from "./components/seo/SchemaDebugger";
 
 const topStates = [
   { name: "Texas", code: "TX", page: "TexasElectricity" },
@@ -652,6 +653,9 @@ export default function Layout({ children, currentPageName }) {
           <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
         </button>
       )}
-    </div>
-  );
-}
+
+      {/* Schema Debugger (Dev Only) */}
+      <SchemaDebugger />
+      </div>
+      );
+      }
