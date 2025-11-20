@@ -55,6 +55,18 @@ export default function Layout({ children, currentPageName }) {
     };
   }, []);
 
+  // Impact verification meta tag
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'impact-site-verification';
+    meta.content = 'a8ced188-cde6-4141-96b8-99c5e872795f';
+    document.head.appendChild(meta);
+
+    return () => {
+      document.head.removeChild(meta);
+    };
+  }, []);
+
   // Performance: Debounce scroll handler
   useEffect(() => {
     let ticking = false;
