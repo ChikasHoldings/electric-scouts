@@ -70,6 +70,9 @@ export default function SEOHead({
     updateMetaTag('meta[name="twitter:description"]', 'name', description);
     updateMetaTag('meta[name="twitter:image"]', 'name', defaultImage);
 
+    // Impact site verification
+    updateMetaTag('meta[name="impact-site-verification"]', 'name', 'b525f1ec-7df1-4e7d-9920-d9d12cfb21f5');
+
     // Update canonical link
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (!canonicalLink) {
