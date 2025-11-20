@@ -27,6 +27,7 @@ export default function BusinessCompareRates() {
   const [isZipValid, setIsZipValid] = useState(false);
   const [sortBy, setSortBy] = useState("rate");
   const [billData, setBillData] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ['plans'],
@@ -98,7 +99,12 @@ export default function BusinessCompareRates() {
   };
 
   const handlePreferencesSubmit = () => {
-    setStep(4);
+    setIsAnalyzing(true);
+    // Simulate partner analysis
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setStep(4);
+    }, 3000);
   };
 
   // Filter plans for business (higher usage tiers)
@@ -174,8 +180,41 @@ export default function BusinessCompareRates() {
       )}
 
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Analyzing State */}
+        {isAnalyzing && (
+          <div className="space-y-6">
+            <div className="text-center py-16">
+              <div className="relative w-24 h-24 mx-auto mb-8">
+                <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-[#0A5C8C] rounded-full border-t-transparent animate-spin"></div>
+                <Building className="absolute inset-0 m-auto w-10 h-10 text-[#0A5C8C]" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                Analyzing Your Business Profile
+              </h2>
+              <p className="text-gray-600 mb-8">
+                Checking with our network of verified energy partners...
+              </p>
+              <div className="max-w-md mx-auto space-y-3">
+                <div className="flex items-center gap-3 bg-blue-50 rounded-lg p-4 animate-pulse">
+                  <CheckCircle className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
+                  <p className="text-sm text-gray-700 text-left">Matching your usage profile</p>
+                </div>
+                <div className="flex items-center gap-3 bg-blue-50 rounded-lg p-4 animate-pulse" style={{ animationDelay: '0.2s' }}>
+                  <CheckCircle className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
+                  <p className="text-sm text-gray-700 text-left">Reviewing contract options</p>
+                </div>
+                <div className="flex items-center gap-3 bg-blue-50 rounded-lg p-4 animate-pulse" style={{ animationDelay: '0.4s' }}>
+                  <CheckCircle className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
+                  <p className="text-sm text-gray-700 text-left">Calculating savings opportunities</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Step 1: ZIP Code */}
-        {step === 1 && (
+        {!isAnalyzing && step === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full mb-4">
@@ -256,7 +295,7 @@ export default function BusinessCompareRates() {
         )}
 
         {/* Step 2: Business Type */}
-        {step === 2 && (
+        {!isAnalyzing && step === 2 && (
           <div className="space-y-6">
             <div className="text-center mb-6">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
@@ -315,7 +354,7 @@ export default function BusinessCompareRates() {
         )}
 
         {/* Step 2.5: Bill Upload (Optional) */}
-        {step === 2.5 && (
+        {!isAnalyzing && step === 2.5 && (
           <BillUploadStep
             onSkip={handleSkipBillUpload}
             onAnalysisComplete={handleBillAnalysis}
@@ -325,7 +364,7 @@ export default function BusinessCompareRates() {
         )}
 
         {/* Step 3: Preferences */}
-        {step === 3 && (
+        {!isAnalyzing && step === 3 && (
           <div className="space-y-6">
             <div className="text-center mb-6">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
@@ -425,57 +464,84 @@ export default function BusinessCompareRates() {
         )}
 
         {/* Step 4: Results */}
-        {step === 4 && (
+        {!isAnalyzing && step === 4 && (
           <div className="space-y-6">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full mb-3">
-                <Building className="w-4 h-4" />
-                <span className="text-sm font-semibold">Business Plans</span>
+            {/* Hero Section */}
+            <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] rounded-xl shadow-xl p-6 sm:p-8 text-white">
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex-1">
+                  <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full mb-3">
+                    <Award className="w-4 h-4" />
+                    <span className="text-xs font-semibold">Partner Verified Plans</span>
+                  </div>
+                  <h1 className="text-2xl lg:text-3xl font-bold mb-2">
+                    {sortedPlans.length} Business Plans for {cityName}
+                  </h1>
+                  <p className="text-blue-100 text-sm">
+                    {businessType === 'small' ? 'Small Business' : businessType === 'medium' ? 'Medium Business' : 'Large Business'} • {monthlyUsage} kWh/month
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold">{sortedPlans.length}</div>
+                  <div className="text-xs text-blue-100">Available Plans</div>
+                </div>
               </div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                Available Business Plans in {cityName}
-              </h1>
-              <p className="text-gray-600">
-                Found {sortedPlans.length} business {sortedPlans.length === 1 ? 'plan' : 'plans'} for your area
-              </p>
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                  <Shield className="w-5 h-5 mx-auto mb-1" />
+                  <div className="text-xs font-semibold">Price Lock</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                  <TrendingDown className="w-5 h-5 mx-auto mb-1" />
+                  <div className="text-xs font-semibold">Volume Rates</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
+                  <Award className="w-5 h-5 mx-auto mb-1" />
+                  <div className="text-xs font-semibold">Verified</div>
+                </div>
+              </div>
             </div>
 
             {/* Sort Controls */}
-            <div className="flex items-center justify-between bg-white rounded-lg border-2 border-blue-200 p-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Sort by:</span>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant={sortBy === "rate" ? "default" : "outline"}
-                    onClick={() => setSortBy("rate")}
-                    className={sortBy === "rate" ? "bg-[#0A5C8C] hover:bg-[#084a6f]" : ""}
-                  >
-                    Lowest Rate
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={sortBy === "contract" ? "default" : "outline"}
-                    onClick={() => setSortBy("contract")}
-                    className={sortBy === "contract" ? "bg-[#0A5C8C] hover:bg-[#084a6f]" : ""}
-                  >
-                    Contract Length
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={sortBy === "renewable" ? "default" : "outline"}
-                    onClick={() => setSortBy("renewable")}
-                    className={sortBy === "renewable" ? "bg-[#0A5C8C] hover:bg-[#084a6f]" : ""}
-                  >
-                    Green Energy
+            <Card className="border-2 border-blue-200 shadow-sm">
+              <CardContent className="p-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-semibold text-gray-700">Sort by:</span>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant={sortBy === "rate" ? "default" : "outline"}
+                        onClick={() => setSortBy("rate")}
+                        className={sortBy === "rate" ? "bg-[#0A5C8C] hover:bg-[#084a6f]" : ""}
+                      >
+                        Lowest Rate
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={sortBy === "contract" ? "default" : "outline"}
+                        onClick={() => setSortBy("contract")}
+                        className={sortBy === "contract" ? "bg-[#0A5C8C] hover:bg-[#084a6f]" : ""}
+                      >
+                        Contract
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={sortBy === "renewable" ? "default" : "outline"}
+                        onClick={() => setSortBy("renewable")}
+                        className={sortBy === "renewable" ? "bg-[#0A5C8C] hover:bg-[#084a6f]" : ""}
+                      >
+                        Green
+                      </Button>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setStep(3)}>
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Edit
                   </Button>
                 </div>
-              </div>
-              <Button variant="outline" size="sm" onClick={() => setStep(3)}>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Edit Preferences
-              </Button>
-            </div>
+              </CardContent>
+            </Card>
 
             {isLoading ? (
               <div className="text-center py-12">
