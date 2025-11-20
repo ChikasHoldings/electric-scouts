@@ -2,28 +2,41 @@ import { useEffect } from 'react';
 
 export default function Robots() {
   useEffect(() => {
-    const robotsContent = `User-agent: *
+    const robotsContent = `# Power Scouts - Electricity Rate Comparison Platform
+# Compare rates from 40+ providers across 12 deregulated states
+
+User-agent: *
 Allow: /
 
 # Sitemaps
 Sitemap: ${window.location.origin}/sitemap
+Sitemap: ${window.location.origin}/sitemap.xml
 
-# Crawl-delay
+# Crawl-delay for responsible crawling
 Crawl-delay: 1
 
-# Disallow admin or private areas (if any)
+# Disallow private areas and tracking parameters
 Disallow: /api/
 Disallow: /admin/
+Disallow: /*?*utm_*
+Disallow: /*?*session*
+Disallow: /*?*fbclid*
 
-# Allow all electricity comparison pages
+# High-value comparison pages
 Allow: /compare-rates
+Allow: /renewable-compare-rates
+Allow: /business-compare-rates
+Allow: /bill-analyzer
 Allow: /all-providers
 Allow: /all-states
 Allow: /all-cities
 Allow: /learning-center
 Allow: /faq
+Allow: /renewable-energy
+Allow: /business-electricity
+Allow: /home-concierge
 
-# Popular state pages
+# Major state pages
 Allow: /texas-electricity
 Allow: /illinois-electricity
 Allow: /ohio-electricity
@@ -35,7 +48,24 @@ Allow: /massachusetts-electricity
 Allow: /maine-electricity
 Allow: /new-hampshire-electricity
 Allow: /rhode-island-electricity
-Allow: /connecticut-electricity`;
+Allow: /connecticut-electricity
+
+# Specific crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block bad bots
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Crawl-delay: 10`;
 
     // Create a downloadable file
     const blob = new Blob([robotsContent], { type: 'text/plain' });
@@ -58,26 +88,43 @@ Allow: /connecticut-electricity`;
             This is the robots.txt file for search engine crawlers.
           </p>
           <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto">
-{`User-agent: *
+{`# Power Scouts - Electricity Rate Comparison Platform
+# Compare rates from 40+ providers across 12 deregulated states
+
+User-agent: *
 Allow: /
 
 # Sitemaps
 Sitemap: ${window.location.origin}/sitemap
+Sitemap: ${window.location.origin}/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1
 
-# Disallow admin or private areas
+# Disallow private areas
 Disallow: /api/
 Disallow: /admin/
+Disallow: /*?*utm_*
 
-# Allow all comparison pages
+# High-value pages
 Allow: /compare-rates
+Allow: /renewable-compare-rates
+Allow: /business-compare-rates
+Allow: /bill-analyzer
 Allow: /all-providers
 Allow: /all-states
 Allow: /all-cities
 Allow: /learning-center
-Allow: /faq`}
+Allow: /faq
+Allow: /renewable-energy
+
+# Major state pages
+Allow: /texas-electricity
+Allow: /illinois-electricity
+Allow: /ohio-electricity
+Allow: /pennsylvania-electricity
+Allow: /new-york-electricity
+Allow: /new-jersey-electricity`}
           </pre>
         </div>
       </div>
