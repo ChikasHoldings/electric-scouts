@@ -36,6 +36,7 @@ import RenewableCompareRates from './pages/RenewableCompareRates';
 import BusinessCompareRates from './pages/BusinessCompareRates';
 import SavingsCalculator from './pages/SavingsCalculator';
 import BusinessHub from './pages/BusinessHub';
+import SitemapXML from './pages/SitemapXML';
 import __Layout from './Layout.jsx';
 
 
@@ -78,6 +79,7 @@ export const PAGES = {
     "BusinessCompareRates": BusinessCompareRates,
     "SavingsCalculator": SavingsCalculator,
     "BusinessHub": BusinessHub,
+    "SitemapXML": SitemapXML,
 }
 
 export const pagesConfig = {
