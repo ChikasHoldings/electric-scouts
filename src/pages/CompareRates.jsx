@@ -227,8 +227,13 @@ export default function CompareRates() {
   };
 
   const getProviderLogo = (providerName) => {
-    const provider = getProviderDetails(providerName);
-    return provider ? provider.logo : null;
+    const provider = providers.find(p => {
+      const pName = p.name || p.data?.name;
+      return pName === providerName;
+    });
+    if (!provider) return null;
+    const pData = provider.data || provider;
+    return pData.logo_url || provider.logo_url || null;
   };
 
   const { data: providers = [] } = useQuery({
