@@ -10,7 +10,6 @@ import { ArrowRight, ArrowLeft, Zap, CheckCircle, Building, TrendingDown, Shield
 import ValidatedZipInput from "../components/ValidatedZipInput";
 import { getCityFromZip, getProvidersForZipCode } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
-import { providerServesZip } from "../components/compare/providerAvailability";
 import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import IneligibleZipMessage from "../components/compare/IneligibleZipMessage";
@@ -39,29 +38,33 @@ export default function BusinessCompareRates() {
 
   // Load ZIP code from URL on mount
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const zipFromUrl = urlParams.get('zip');
-    
-    if (zipFromUrl && zipFromUrl.length === 5) {
-      const validation = validateZipCode(zipFromUrl);
-      if (validation.valid) {
-        setZipCode(zipFromUrl);
-        setIsZipValid(true);
-        const city = getCityFromZip(zipFromUrl);
-        const providers = getProvidersForZipCode(zipFromUrl);
-        setCityName(city || validation.state?.name || "your area");
-        setAvailableProviders(providers);
-        localStorage.setItem('businessRatesZip', zipFromUrl);
-        setStep(2);
-      } else {
-        setZipCode(zipFromUrl);
-        setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
-        setStep(1);
+    const loadZipData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const zipFromUrl = urlParams.get('zip');
+      
+      if (zipFromUrl && zipFromUrl.length === 5) {
+        const validation = validateZipCode(zipFromUrl);
+        if (validation.valid) {
+          setZipCode(zipFromUrl);
+          setIsZipValid(true);
+          const city = getCityFromZip(zipFromUrl);
+          const providers = await getProvidersForZipCode(zipFromUrl);
+          setCityName(city || validation.state?.name || "your area");
+          setAvailableProviders(providers);
+          localStorage.setItem('businessRatesZip', zipFromUrl);
+          setStep(2);
+        } else {
+          setZipCode(zipFromUrl);
+          setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
+          setStep(1);
+        }
       }
-    }
+    };
+    
+    loadZipData();
   }, []);
 
-  const handleZipSubmit = () => {
+  const handleZipSubmit = async () => {
     if (!zipCode || zipCode.length !== 5) {
       setZipError("Please enter a valid 5-digit ZIP code");
       return;
@@ -74,7 +77,7 @@ export default function BusinessCompareRates() {
     }
 
     const city = getCityFromZip(zipCode);
-    const providers = getProvidersForZipCode(zipCode);
+    const providers = await getProvidersForZipCode(zipCode);
     setCityName(city || validation.state?.name || "your area");
     setAvailableProviders(providers);
     setZipError("");
@@ -117,10 +120,14 @@ export default function BusinessCompareRates() {
     const planContractLength = planData.contract_length || plan.contract_length;
     const planPlanType = planData.plan_type || plan.plan_type;
     
-    // Filter by ZIP code availability using providerServesZip
-    if (zipCode && !providerServesZip(providerName, zipCode)) {
-      return false;
+    // Filter by ZIP code availability
+    if (zipCode && availableProviders.length > 0) {
+      const provider = availableProviders.find(p => p.name === providerName);
+      if (!provider) {
+        return false;
+      }
     }
+    
     const matchesContract = !contractLength || planContractLength?.toString() === contractLength;
     const matchesPlanType = !planType || planPlanType === planType;
     return matchesContract && matchesPlanType;

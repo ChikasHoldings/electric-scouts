@@ -57,17 +57,44 @@ export const getProvidersForZipCode = async (zipCode) => {
 };
 
 // Function to check if a provider serves a specific ZIP code
-export const providerServesZip = (providerName, zipCode) => {
+export const providerServesZip = async (providerName, zipCode) => {
   const stateCode = getStateFromZip(zipCode);
   if (!stateCode) return false;
   
-  // For now, we'll use a simplified check
-  // In production, this would check the actual provider database
-  const providerStateMapping = {
-    'NextVolt Energy': ['TX', 'PA', 'OH', 'IL', 'DE']
-  };
+  // Fetch from database to check provider availability
+  const providers = await fetchProviders();
+  const provider = providers.find(p => 
+    (p.name || p.data?.name) === providerName
+  );
   
-  const supportedStates = providerStateMapping[providerName] || [];
+  if (!provider) return false;
+  
+  const supportedStates = provider.supported_states || provider.data?.supported_states || [];
+  return supportedStates.includes(stateCode);
+};
+
+// Synchronous version for immediate checks (uses cache)
+export const providerServesZipSync = (providerName, zipCode) => {
+  const stateCode = getStateFromZip(zipCode);
+  if (!stateCode) return false;
+  
+  // If cache is available, use it
+  if (!cachedProviders) {
+    // Fallback mapping if cache not loaded yet
+    const providerStateMapping = {
+      'NextVolt Energy': ['TX', 'PA', 'OH', 'IL', 'DE']
+    };
+    const supportedStates = providerStateMapping[providerName] || [];
+    return supportedStates.includes(stateCode);
+  }
+  
+  const provider = cachedProviders.find(p => 
+    (p.name || p.data?.name) === providerName
+  );
+  
+  if (!provider) return false;
+  
+  const supportedStates = provider.supported_states || provider.data?.supported_states || [];
   return supportedStates.includes(stateCode);
 };
 

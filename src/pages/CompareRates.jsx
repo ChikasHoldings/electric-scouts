@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X, FileText } from "lucide-react";
-import { validateZipCode } from "../components/compare/stateData";
+import { validateZipCode, getStateByZip } from "../components/compare/stateData";
 import { 
   getProvidersForZipCode, 
   getProviderDetails, 
   getCityFromZip,
-  providerServesZip 
+  getStateFromZip
 } from "../components/compare/providerAvailability";
 import { 
   filterPlansByZip, 
@@ -160,16 +160,23 @@ export default function CompareRates() {
     const renewablePercentage = planData.renewable_percentage || plan.renewable_percentage;
     const contractLength = planData.contract_length || plan.contract_length;
     
-    // When zipCode is set, filter by provider availability
-    if (zipCode) {
-      if (!providerServesZip(providerName, zipCode)) {
-        return false;
-      }
-    }
     // Filter out business plans from residential comparison
     if (planName && planName.toLowerCase().includes('business')) {
       return false;
     }
+    
+    // When zipCode is set, filter by provider availability
+    if (zipCode) {
+      const stateCode = zipCode ? getStateFromZip(zipCode) : null;
+      if (stateCode) {
+        // Check if provider serves this state
+        const provider = availableProviders.find(p => p.name === providerName);
+        if (!provider || !provider.states.includes(stateCode)) {
+          return false;
+        }
+      }
+    }
+    
     if (preferences.fixedRate && planType !== 'fixed') return false;
     if (preferences.variableRate && planType !== 'variable') return false;
     if (preferences.renewable && (!renewablePercentage || renewablePercentage < 50)) return false;
