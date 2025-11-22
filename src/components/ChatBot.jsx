@@ -17,6 +17,7 @@ export default function ChatBot() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [categorySelected, setCategorySelected] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -88,6 +89,11 @@ export default function ChatBot() {
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    
+    // Hide category buttons after first message
+    if (messageOverride) {
+      setCategorySelected(true);
+    }
 
     try {
       const conversationHistory = messages.map(msg => ({
@@ -501,26 +507,28 @@ export default function ChatBot() {
 
       {/* Input */}
       <div className="p-4 bg-white border-t border-gray-200">
-        <div className="flex gap-3 mb-3 justify-center flex-wrap px-2">
-          <button 
-            onClick={() => handleSend("Residential electricity rates")}
-            className="px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-[#0A5C8C] rounded-lg font-medium text-sm border border-blue-200 transition-all hover:shadow-md"
-          >
-            🏠 Home Energy
-          </button>
-          <button 
-            onClick={() => handleSend("Commercial electricity rates")}
-            className="px-4 py-2 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 text-purple-700 rounded-lg font-medium text-sm border border-purple-200 transition-all hover:shadow-md"
-          >
-            🏢 Business Rates
-          </button>
-          <button 
-            onClick={() => handleSend("Renewable energy options")}
-            className="px-4 py-2 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 text-green-700 rounded-lg font-medium text-sm border border-green-200 transition-all hover:shadow-md"
-          >
-            🌱 Green Energy
-          </button>
-        </div>
+        {!categorySelected && (
+          <div className="flex gap-3 mb-3 justify-center flex-wrap px-2">
+            <button 
+              onClick={() => handleSend("Residential electricity rates")}
+              className="px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-[#0A5C8C] rounded-lg font-medium text-sm border border-blue-200 transition-all hover:shadow-md"
+            >
+              🏠 Home Energy
+            </button>
+            <button 
+              onClick={() => handleSend("Commercial electricity rates")}
+              className="px-4 py-2 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 text-purple-700 rounded-lg font-medium text-sm border border-purple-200 transition-all hover:shadow-md"
+            >
+              🏢 Business Rates
+            </button>
+            <button 
+              onClick={() => handleSend("Renewable energy options")}
+              className="px-4 py-2 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 text-green-700 rounded-lg font-medium text-sm border border-green-200 transition-all hover:shadow-md"
+            >
+              🌱 Green Energy
+            </button>
+          </div>
+        )}
         <div className="flex gap-2">
           <input
             ref={fileInputRef}
