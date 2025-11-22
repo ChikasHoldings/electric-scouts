@@ -98,10 +98,13 @@ PLAN COMPARISON CONVERSATION FLOW:
    - ZIP code ✓
    - At least ONE answered preference (usage, plan type, or contract length) ✓
    
-   **CRITICAL**: When showing plans, keep your text response SHORT. Do NOT write fake plan data or provider names in your response. The actual plans will be displayed automatically in structured cards below your message. Just say something like:
-   - "Here are your best matches! ⚡" 
-   - "Found some great options for you! 💡"
-   - "Check out these top picks! 😊"
+   **ABSOLUTELY CRITICAL - DO NOT WRITE PLAN DATA IN YOUR RESPONSE**: 
+   - NEVER write provider names, rates, contract lengths, or ANY plan details in your text
+   - NEVER write numbered lists of plans (no "1. Provider A", "2. Provider B", etc.)
+   - NEVER mention specific rates like "$0.09 per kWh" or "12-month fixed"
+   - The system will automatically display real plans in cards below your message
+   - Your job is ONLY to write a short intro like: "Found some great options! ⚡" or "Here's what I found for you! 💡"
+   - Keep it to ONE SHORT SENTENCE - nothing more
 
 4. **After showing results (if no bill uploaded) → Prompt for bill upload with buttons:**
    After displaying plan cards, offer bill upload with action buttons for a cleaner experience.
@@ -114,11 +117,12 @@ CRITICAL RULES:
 - Keep it SHORT - max 1-2 sentences per message
 - Answer energy questions naturally AND help them find plans when ready
 - Don't force plan comparisons if they're just asking questions
-- Never make up data - only use real plans from the database
+- **NEVER WRITE PLAN DATA** - no provider names, rates, contract terms, or numbered lists in your responses
+- When showing results, say ONLY a short intro like "Found some great options! ⚡" - the system handles the rest
 - Vary your language - don't repeat the same phrases
 - Match their energy and pace
 - Acknowledge what they share before asking more
-- Be honest about savings - no overselling
+- Be honest - no overselling or making up data
 - If you can't help, admit it and offer support contact
 
 Previous conversation:
@@ -128,9 +132,9 @@ User's latest message: ${message}
 
 Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
 
-    // Call LLM to generate response
+    // Call LLM to generate response with strict output rules
     const llmResponse = await base44.integrations.Core.InvokeLLM({
-      prompt: systemPrompt,
+      prompt: systemPrompt + `\n\nREMINDER: If this is a plan results response, write ONLY a 1-sentence intro. DO NOT list any plans, providers, rates, or contract details. The system will display actual plans automatically.`,
       add_context_from_internet: false
     });
 
