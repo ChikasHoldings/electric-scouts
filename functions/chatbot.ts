@@ -159,10 +159,8 @@ Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
     );
     
     // Track if user has provided preferences (answered follow-up questions)
-    const hasProvidedPreferences = hasAskedFollowUp && conversationHistory.filter(msg => 
-      msg.role === 'user' && 
-      conversationHistory.some(m => m.role === 'assistant' && m.timestamp < msg.timestamp)
-    ).length > 1; // At least ZIP + one preference answer
+    const userMessages = conversationHistory.filter(msg => msg.role === 'user');
+    const hasProvidedPreferences = hasZipCode && hasAskedFollowUp && userMessages.length >= 2; // ZIP + at least one preference answer
     
     // Track if bill was uploaded
     const hasBillUploaded = billFileUrl || conversationHistory.some(msg => 
@@ -276,7 +274,7 @@ Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
               botResponse = `Found some solid options for you! 💡`;
             }
           } else {
-            botResponse = `Here are your best matches! ⚡`;
+            botResponse = `Found some great options! ⚡`;
           }
           
           // Offer bill upload after showing results if bill wasn't uploaded
