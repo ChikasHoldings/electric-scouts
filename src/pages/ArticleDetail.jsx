@@ -351,26 +351,10 @@ export default function ArticleDetail() {
           {/* Article Body */}
           <div className="p-6 sm:p-10 lg:p-12">
             {fullArticle ? (
-              <>
-                <div 
-                  className="prose prose-lg max-w-none article-content"
-                  dangerouslySetInnerHTML={{ 
-                    __html: fullArticle.content.replace(
-                      /<\/h2>/g, 
-                      `</h2><div class="article-inline-cta" style="background: linear-gradient(135deg, #e0f7fa 0%, #e1f5fe 100%); border: 2px solid #4dd0e1; border-radius: 1.5rem; padding: 2rem; margin: 2rem 0; text-align: center;"><h3 style="color: #0A5C8C; font-size: 1.5rem; font-weight: 700; margin: 0 0 0.75rem 0;">Compare Rates the Easy Way</h3><p style="color: #4a5568; font-size: 0.95rem; margin-bottom: 1.25rem;">Our free tool shows total costs at your exact usage, including all fees and TDU charges.</p><a href="/app/CompareRates" class="cta-button" style="display: inline-block; background: #FF6B35; color: white; padding: 0.875rem 2rem; border-radius: 0.5rem; font-weight: 600; font-size: 1rem; text-decoration: none; transition: all 0.3s ease;">Compare Rates Now</a></div>`
-                    ).replace(
-                      /<div class="article-inline-cta"/g,
-                      (match, offset, string) => {
-                        const ctaCount = (string.substring(0, offset).match(/<div class="article-inline-cta"/g) || []).length;
-                        return ctaCount === 0 ? match : '';
-                      }
-                    ).replace(/<\/h2><div class="article-inline-cta"[^>]*>.*?<\/div>/g, (match, offset, string) => {
-                      const h2Count = (string.substring(0, offset).match(/<\/h2>/g) || []).length;
-                      return h2Count === 1 ? match : match.replace(/<div class="article-inline-cta"[^>]*>.*?<\/div>/, '');
-                    })
-                  }}
-                />
-              </>
+              <div 
+                className="prose prose-lg max-w-none article-content"
+                dangerouslySetInnerHTML={{ __html: fullArticle.content }}
+              />
             ) : (
               <div className="prose prose-lg max-w-none">
                 <p className="text-xl text-gray-700 leading-relaxed mb-8 border-l-4 border-[#FF6B35] pl-6 py-2 bg-gray-50 rounded-r-lg">
