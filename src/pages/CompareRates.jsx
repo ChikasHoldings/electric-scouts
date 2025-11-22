@@ -224,46 +224,37 @@ export default function CompareRates() {
   }, [plans, zipCode, availableProviders, preferences]);
 
   // Sort plans by match score and rate
-  const plansWithScores = filteredPlans.map(plan => {
-    // Plan data is at root level
-    const normalizedPlan = {
-      id: plan.id,
-      provider_name: plan.provider_name,
-      plan_name: plan.plan_name,
-      rate_per_kwh: plan.rate_per_kwh,
-      contract_length: plan.contract_length,
-      plan_type: plan.plan_type,
-      renewable_percentage: plan.renewable_percentage || 0,
-      monthly_base_charge: plan.monthly_base_charge || 0,
-      early_termination_fee: plan.early_termination_fee || 0,
-      features: plan.features || []
-    };
-    
-    return {
-      ...normalizedPlan,
-      matchScore: calculateMatchScore(normalizedPlan, preferences, propertyType, {}),
-      summary: generatePlanSummary(normalizedPlan, preferences.monthlyUsage || 1000)
-    };
-  });
+  const plansWithScores = React.useMemo(() => {
+    return filteredPlans.map(plan => {
+      const normalizedPlan = {
+        id: plan.id,
+        provider_name: plan.provider_name,
+        plan_name: plan.plan_name,
+        rate_per_kwh: plan.rate_per_kwh,
+        contract_length: plan.contract_length,
+        plan_type: plan.plan_type,
+        renewable_percentage: plan.renewable_percentage || 0,
+        monthly_base_charge: plan.monthly_base_charge || 0,
+        early_termination_fee: plan.early_termination_fee || 0,
+        features: plan.features || []
+      };
+      
+      return {
+        ...normalizedPlan,
+        matchScore: calculateMatchScore(normalizedPlan, preferences, propertyType, {}),
+        summary: generatePlanSummary(normalizedPlan, preferences.monthlyUsage || 1000)
+      };
+    });
+  }, [filteredPlans, preferences, propertyType]);
 
-  const sortedPlans = [...plansWithScores].sort((a, b) => {
-    // First sort by match score, then by rate
-    if (b.matchScore.score !== a.matchScore.score) {
-      return b.matchScore.score - a.matchScore.score;
-    }
-    return a.rate_per_kwh - b.rate_per_kwh;
-  });
-
-  console.log("📊 FINAL RESULTS:");
-  console.log("Filtered Plans:", filteredPlans.length);
-  console.log("Plans with Scores:", plansWithScores.length);
-  console.log("Sorted Plans:", sortedPlans.length);
-  console.log("Top 3:", sortedPlans.slice(0, 3).map(p => ({
-    provider: p.provider_name,
-    plan: p.plan_name,
-    rate: p.rate_per_kwh,
-    score: p.matchScore.score
-  })));
+  const sortedPlans = React.useMemo(() => {
+    return [...plansWithScores].sort((a, b) => {
+      if (b.matchScore.score !== a.matchScore.score) {
+        return b.matchScore.score - a.matchScore.score;
+      }
+      return a.rate_per_kwh - b.rate_per_kwh;
+    });
+  }, [plansWithScores]);
 
   const topPlans = sortedPlans.slice(0, 3);
   const otherPlans = sortedPlans.slice(3);
