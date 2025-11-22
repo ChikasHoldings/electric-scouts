@@ -511,21 +511,15 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Top Providers</h3>
               <div className="space-y-2">
-                <Link to={createPageUrl("ProviderDetails") + "?provider=TXU Energy"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  TXU Energy
-                </Link>
-                <Link to={createPageUrl("ProviderDetails") + "?provider=Reliant Energy"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Reliant Energy
-                </Link>
-                <Link to={createPageUrl("ProviderDetails") + "?provider=Gexa Energy"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Gexa Energy
-                </Link>
-                <Link to={createPageUrl("ProviderDetails") + "?provider=Direct Energy"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Direct Energy
-                </Link>
-                <Link to={createPageUrl("ProviderDetails") + "?provider=Green Mountain Energy"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Green Mountain
-                </Link>
+                {affiliateProviders.map((provider) => (
+                  <Link 
+                    key={provider.id}
+                    to={createPageUrl("ProviderDetails") + `?provider=${encodeURIComponent(provider.name)}`} 
+                    className="block text-gray-400 hover:text-white text-sm transition-colors"
+                  >
+                    {provider.name}
+                  </Link>
+                ))}
                 <Link to={createPageUrl("AllProviders")} className="block text-[#FF6B35] hover:text-[#FF8C5A] text-sm transition-colors font-medium">
                   View All Providers →
                 </Link>
