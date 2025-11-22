@@ -71,14 +71,20 @@ export default function PlanCard({ plan, usage, estimatedMonthlyCost, isSaved, o
         <div className="text-center md:text-right">
           <div className="mb-2.5">
             <div className="text-xl font-bold text-gray-900">
-              ${estimatedCost}
+              ${cost}
             </div>
-            <div className="text-xs text-gray-500">est. @ {usage} kWh/mo</div>
+            <div className="text-xs text-gray-500">est. @ {usageValue} kWh/mo</div>
           </div>
-          <Button size="sm" className="w-full md:w-auto bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-xs px-4">
-            View Details
-            <ExternalLink className="w-3 h-3 ml-1.5" />
-          </Button>
+          <a 
+            href={plan.affiliate_url || plan.website_url || "#"} 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            <Button size="sm" className="w-full md:w-auto bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-xs px-4">
+              View Details
+              <ExternalLink className="w-3 h-3 ml-1.5" />
+            </Button>
+          </a>
         </div>
       </div>
 
