@@ -111,12 +111,18 @@ export default function BusinessCompareRates() {
 
   // Filter plans for business (higher usage tiers)
   const businessPlans = allPlans.filter(plan => {
+    // Extract data - handle both direct and nested data structures
+    const planData = plan.data || plan;
+    const providerName = planData.provider_name || plan.provider_name;
+    const planContractLength = planData.contract_length || plan.contract_length;
+    const planPlanType = planData.plan_type || plan.plan_type;
+    
     // Filter by ZIP code availability using providerServesZip
-    if (zipCode && !providerServesZip(plan.provider_name, zipCode)) {
+    if (zipCode && !providerServesZip(providerName, zipCode)) {
       return false;
     }
-    const matchesContract = !contractLength || plan.contract_length?.toString() === contractLength;
-    const matchesPlanType = !planType || plan.plan_type === planType;
+    const matchesContract = !contractLength || planContractLength?.toString() === contractLength;
+    const matchesPlanType = !planType || planPlanType === planType;
     return matchesContract && matchesPlanType;
   });
 

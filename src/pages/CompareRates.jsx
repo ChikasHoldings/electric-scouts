@@ -148,29 +148,53 @@ export default function CompareRates() {
   };
 
   const filteredPlans = plans.filter(plan => {
+    // Extract data - handle both direct and nested data structures
+    const planData = plan.data || plan;
+    const providerName = planData.provider_name || plan.provider_name;
+    const planName = planData.plan_name || plan.plan_name;
+    const planType = planData.plan_type || plan.plan_type;
+    const renewablePercentage = planData.renewable_percentage || plan.renewable_percentage;
+    const contractLength = planData.contract_length || plan.contract_length;
+    
     // When zipCode is set, filter by provider availability
     if (zipCode) {
-      if (!providerServesZip(plan.provider_name, zipCode)) {
+      if (!providerServesZip(providerName, zipCode)) {
         return false;
       }
     }
     // Filter out business plans from residential comparison
-    if (plan.plan_name && plan.plan_name.toLowerCase().includes('business')) {
+    if (planName && planName.toLowerCase().includes('business')) {
       return false;
     }
-    if (preferences.fixedRate && plan.plan_type !== 'fixed') return false;
-    if (preferences.variableRate && plan.plan_type !== 'variable') return false;
-    if (preferences.renewable && (!plan.renewable_percentage || plan.renewable_percentage < 50)) return false;
-    if (preferences.twelveMonth && plan.contract_length !== 12) return false;
+    if (preferences.fixedRate && planType !== 'fixed') return false;
+    if (preferences.variableRate && planType !== 'variable') return false;
+    if (preferences.renewable && (!renewablePercentage || renewablePercentage < 50)) return false;
+    if (preferences.twelveMonth && contractLength !== 12) return false;
     return true;
   });
 
   // Sort plans by match score and rate
-  const plansWithScores = filteredPlans.map(plan => ({
-    ...plan,
-    matchScore: calculateMatchScore(plan, preferences, propertyType, {}),
-    summary: generatePlanSummary(plan, 1000)
-  }));
+  const plansWithScores = filteredPlans.map(plan => {
+    // Normalize plan data structure
+    const planData = plan.data || plan;
+    const normalizedPlan = {
+      ...plan,
+      provider_name: planData.provider_name || plan.provider_name,
+      plan_name: planData.plan_name || plan.plan_name,
+      rate_per_kwh: planData.rate_per_kwh || plan.rate_per_kwh,
+      contract_length: planData.contract_length || plan.contract_length,
+      plan_type: planData.plan_type || plan.plan_type,
+      renewable_percentage: planData.renewable_percentage || plan.renewable_percentage,
+      monthly_base_charge: planData.monthly_base_charge || plan.monthly_base_charge,
+      early_termination_fee: planData.early_termination_fee || plan.early_termination_fee
+    };
+    
+    return {
+      ...normalizedPlan,
+      matchScore: calculateMatchScore(normalizedPlan, preferences, propertyType, {}),
+      summary: generatePlanSummary(normalizedPlan, 1000)
+    };
+  });
 
   const sortedPlans = [...plansWithScores].sort((a, b) => {
     // First sort by match score, then by rate
@@ -199,8 +223,13 @@ export default function CompareRates() {
   });
 
   const getProviderWebsite = (providerName) => {
-    const provider = providers.find(p => p.name === providerName);
-    return provider ? (provider.affiliate_url || provider.website_url) : "#";
+    const provider = providers.find(p => {
+      const pName = p.name || p.data?.name;
+      return pName === providerName;
+    });
+    if (!provider) return "#";
+    const pData = provider.data || provider;
+    return pData.affiliate_url || provider.affiliate_url || pData.website_url || provider.website_url || "#";
   };
 
   const getFilteredOtherPlans = () => {
@@ -258,7 +287,10 @@ export default function CompareRates() {
 
   const uniqueProviders = zipCode 
     ? availableProviders.map(p => p.name).sort()
-    : [...new Set(plans.map(p => p.provider_name))].sort();
+    : [...new Set(plans.map(p => {
+        const planData = p.data || p;
+        return planData.provider_name || p.provider_name;
+      }))].sort();
 
   // Loading Animation
   if (isLoading) {
