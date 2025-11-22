@@ -86,11 +86,14 @@ export default function ChatBot() {
     };
 
     resetActivity();
-    setMessages(prev => [...prev, userMessage]);
-    // Only clear input if it's a manual send (not programmatic)
-    if (!messageOverride) {
+    
+    // Clear input immediately before adding message (prevents blanking)
+    const shouldClearInput = !messageOverride;
+    if (shouldClearInput) {
       setInput("");
     }
+    
+    setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
     // Add natural typing delay
@@ -156,6 +159,8 @@ export default function ChatBot() {
   };
 
   const handleCategorySelect = async (category) => {
+    if (isLoading || uploadingFile) return;
+    
     resetActivity();
     // Add user's category selection
     setMessages(prev => [...prev, {
@@ -170,12 +175,14 @@ export default function ChatBot() {
     await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
 
     try {
+      const conversationHistory = messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
       const response = await base44.functions.invoke('chatbot', {
         message: category,
-        conversationHistory: messages.map(msg => ({
-          role: msg.role,
-          content: msg.content
-        }))
+        conversationHistory: conversationHistory
       });
 
       // If response has recommendations, show searching message first
@@ -395,19 +402,22 @@ export default function ChatBot() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     onClick={() => handleCategorySelect("Residential")}
-                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all"
+                    disabled={isLoading || uploadingFile}
+                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Compare or find rates
                   </button>
                   <button
                     onClick={() => handleCategorySelect("Commercial")}
-                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all"
+                    disabled={isLoading || uploadingFile}
+                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Business rate
                   </button>
                   <button
                     onClick={() => handleCategorySelect("Renewable")}
-                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all"
+                    disabled={isLoading || uploadingFile}
+                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Renewable energy
                   </button>
@@ -418,13 +428,15 @@ export default function ChatBot() {
                 <div className="mt-3 flex flex-col gap-2">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all"
+                    disabled={isLoading || uploadingFile}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     📄 Upload Bill
                   </button>
                   <button
                     onClick={() => handleSend("Skip for now")}
-                    className="bg-gray-100 text-gray-700 px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-gray-200 transition-all"
+                    disabled={isLoading || uploadingFile}
+                    className="bg-gray-100 text-gray-700 px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Skip for Now
                   </button>
