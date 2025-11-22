@@ -355,9 +355,25 @@ export default function ArticleDetail() {
               <>
                 <div 
                   className="prose prose-lg max-w-none article-content"
-                  dangerouslySetInnerHTML={{ __html: fullArticle.content }}
+                  dangerouslySetInnerHTML={{ __html: (() => {
+                    const content = fullArticle.content;
+                    const paragraphs = content.split('</p>');
+                    const midPoint = Math.floor(paragraphs.length / 2);
+                    const firstHalf = paragraphs.slice(0, midPoint).join('</p>') + '</p>';
+                    return firstHalf;
+                  })() }}
                 />
                 <InArticleCTA />
+                <div 
+                  className="prose prose-lg max-w-none article-content"
+                  dangerouslySetInnerHTML={{ __html: (() => {
+                    const content = fullArticle.content;
+                    const paragraphs = content.split('</p>');
+                    const midPoint = Math.floor(paragraphs.length / 2);
+                    const secondHalf = paragraphs.slice(midPoint).join('</p>');
+                    return secondHalf;
+                  })() }}
+                />
               </>
             ) : (
               <div className="prose prose-lg max-w-none">
