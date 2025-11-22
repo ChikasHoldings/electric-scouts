@@ -9,6 +9,15 @@ export default function PlanCard({ plan, usage, estimatedMonthlyCost, isSaved, o
   const usageValue = parseInt(usage || monthlyUsage || 1000);
   const cost = estimatedMonthlyCost || (plan.rate_per_kwh * usageValue / 100 + (plan.monthly_base_charge || 0)).toFixed(2);
 
+  const { data: providers = [] } = useQuery({
+    queryKey: ['providers'],
+    queryFn: () => base44.entities.ElectricityProvider.filter({ is_active: true }),
+    initialData: [],
+  });
+
+  const provider = providers.find(p => p.name === plan.provider_name);
+  const affiliateLink = provider?.affiliate_url || provider?.website_url || "#";
+
   return (
     <div className="bg-white rounded-lg p-5 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-[#0A5C8C] relative group">
       {/* Save Button */}
