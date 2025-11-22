@@ -18,6 +18,7 @@ export default function ChatBot() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [categorySelected, setCategorySelected] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Looking into it...");
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -85,9 +86,22 @@ export default function ChatBot() {
       timestamp: new Date()
     };
 
+    // Determine loading message based on context
+    let dynamicLoadingMsg = "Typing...";
+    if (/\b\d{5}\b/.test(messageToSend)) {
+      dynamicLoadingMsg = "Searching your area...";
+    } else if (messageToSend.toLowerCase().includes('usage') || /\d+\s*(kwh|kilowatt)/i.test(messageToSend)) {
+      dynamicLoadingMsg = "Analyzing your needs...";
+    } else if (messages.length > 2 && messages.some(m => m.recommendations)) {
+      dynamicLoadingMsg = "Finding more details...";
+    } else if (messageToSend.length > 50) {
+      dynamicLoadingMsg = "Processing that...";
+    }
+
     resetActivity();
     setMessages(prev => [...prev, userMessage]);
     setInput("");
+    setLoadingMessage(dynamicLoadingMsg);
     setIsLoading(true);
     setCategorySelected(true);
 
@@ -249,6 +263,7 @@ export default function ChatBot() {
     }
 
     setUploadingFile(true);
+    setLoadingMessage("Reading your bill...");
     setMessages(prev => [...prev, {
       role: "user",
       content: `📎 Uploaded bill: ${file.name}`,
@@ -490,7 +505,7 @@ export default function ChatBot() {
             <div className="bg-white border border-blue-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-md">
               <div className="flex items-center gap-2 text-[#0A5C8C]">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm font-medium">{uploadingFile ? 'Reading your bill...' : 'Looking into it...'}</span>
+                <span className="text-sm font-medium">{loadingMessage}</span>
               </div>
             </div>
           </div>
