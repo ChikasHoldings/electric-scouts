@@ -76,6 +76,7 @@ HOW TO HANDLE GENERAL QUESTIONS:
 - **Business rates**: "Interested in business rates? I can totally help—just need a couple quick details!"
 - **If you don't know**: "Hmm, that's a bit outside my area. But our FAQ page or support team can definitely help with that!"
 - **Technical/complex questions**: Break it down simply—avoid jargon, use analogies when helpful
+- **Thank you messages**: "You're so welcome! 😊 Anything else I can help with? I can also analyze your current bill if you'd like to see exact savings!"
 
 PLAN COMPARISON CONVERSATION FLOW:
 
@@ -190,6 +191,19 @@ Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
       }
     }
 
+    // Check if recommendations were already shown in conversation
+    const alreadyShownRecommendations = conversationHistory.some(msg => 
+      msg.role === 'assistant' && msg.content && (
+        msg.content.includes('top recommendations') ||
+        msg.content.includes('top picks') ||
+        msg.content.includes('could save up to') ||
+        msg.content.includes('competitive plans')
+      )
+    );
+
+    // Detect thank you or acknowledgment messages
+    const isThankYouMessage = /^(thanks?|thank you|ty|thx|cool|awesome|great|nice|perfect|ok|okay|got it)/i.test(message.trim());
+
     // Check if we should fetch actual plan data
     const hasZipInCurrentMessage = /\b\d{5}\b/.test(message);
     const hasZipInRecentHistory = conversationHistory.slice(-3).some(msg => 
@@ -209,9 +223,11 @@ Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
       )
     );
     
-    // Only fetch plans if: has ZIP + selected category OR bill uploaded
+    // Only fetch plans if: has ZIP + selected category OR bill uploaded, AND not already shown AND not a thank you message
     const shouldFetchPlans = (hasZipInCurrentMessage || hasZipInRecentHistory || hasBillZip) && 
-      (hasSelectedCategory || billFileUrl);
+      (hasSelectedCategory || billFileUrl) &&
+      !alreadyShownRecommendations &&
+      !isThankYouMessage;
 
     if (shouldFetchPlans) {
       // Extract ZIP code from bill or conversation
