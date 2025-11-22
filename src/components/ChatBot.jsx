@@ -87,8 +87,13 @@ export default function ChatBot() {
 
     resetActivity();
     setMessages(prev => [...prev, userMessage]);
-    setInput("");
+    if (!messageOverride) {
+      setInput("");
+    }
     setIsLoading(true);
+
+    // Add natural typing delay
+    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
 
     try {
       const conversationHistory = messages.map(msg => ({
@@ -159,6 +164,9 @@ export default function ChatBot() {
     }]);
 
     setIsLoading(true);
+
+    // Add natural typing delay
+    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
 
     try {
       const response = await base44.functions.invoke('chatbot', {
@@ -498,7 +506,7 @@ export default function ChatBot() {
             <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
               <div className="flex items-center gap-2 text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">{uploadingFile ? 'Analyzing bill...' : 'Thinking...'}</span>
+                <span className="text-sm">{uploadingFile ? 'Reading your bill...' : 'Nora is typing...'}</span>
               </div>
             </div>
           </div>
@@ -532,7 +540,7 @@ export default function ChatBot() {
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Type your message..."
             disabled={isLoading || uploadingFile}
             className="flex-1 rounded-full border-gray-300 focus:border-[#0A5C8C]"
