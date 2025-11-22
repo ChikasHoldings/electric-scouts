@@ -385,18 +385,6 @@ export default function ArticleDetail() {
                   {article.excerpt}
                 </p>
 
-                {/* CTA within article */}
-                <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 my-8 text-center border-2 border-blue-100">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Start Saving Today</h3>
-                  <p className="text-sm text-gray-600 mb-4">Compare electricity rates in your area now</p>
-                  <Link to={createPageUrl("CompareRates")}>
-                    <Button className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white rounded-xl">
-                      Compare Rates
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </Link>
-                </div>
-
                 <p className="text-base text-gray-600 leading-relaxed">
                   For more personalized guidance, explore our state-specific and city-specific guides or use our free comparison tool to find the best rates in your area.
                 </p>
