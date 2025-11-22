@@ -87,9 +87,7 @@ export default function ChatBot() {
 
     resetActivity();
     setMessages(prev => [...prev, userMessage]);
-    if (!messageOverride) {
-      setInput("");
-    }
+    setInput("");
     setIsLoading(true);
 
     // Add natural typing delay
