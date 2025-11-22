@@ -36,12 +36,13 @@ export default function ChatBot() {
     }
   }, [isOpen]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (messageOverride = null) => {
+    const messageToSend = messageOverride || input.trim();
+    if (!messageToSend || isLoading) return;
 
     const userMessage = {
       role: "user",
-      content: input.trim(),
+      content: messageToSend,
       timestamp: new Date()
     };
 
@@ -56,20 +57,42 @@ export default function ChatBot() {
       }));
 
       const response = await base44.functions.invoke('chatbot', {
-        message: input.trim(),
+        message: messageToSend,
         conversationHistory: conversationHistory
       });
 
-      const assistantMessage = {
-        role: "assistant",
-        content: response.data.response,
-        recommendations: response.data.recommendations,
-        billAnalysis: response.data.billAnalysis,
-        showBillUploadButtons: response.data.showBillUploadButtons,
-        timestamp: new Date()
-      };
+      // If response has recommendations, show searching message first
+      if (response.data.recommendations && response.data.recommendations.length > 0) {
+        const searchingMessage = {
+          role: "assistant",
+          content: "Perfect! Thanks for the details — give me a moment while I look for the best savings for you.",
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, searchingMessage]);
 
-      setMessages(prev => [...prev, assistantMessage]);
+        // Wait 2.5 seconds before showing results
+        await new Promise(resolve => setTimeout(resolve, 2500));
+
+        const resultsMessage = {
+          role: "assistant",
+          content: response.data.response,
+          recommendations: response.data.recommendations,
+          billAnalysis: response.data.billAnalysis,
+          showBillUploadButtons: response.data.showBillUploadButtons,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, resultsMessage]);
+      } else {
+        const assistantMessage = {
+          role: "assistant",
+          content: response.data.response,
+          recommendations: response.data.recommendations,
+          billAnalysis: response.data.billAnalysis,
+          showBillUploadButtons: response.data.showBillUploadButtons,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+      }
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, {
@@ -105,13 +128,34 @@ export default function ChatBot() {
         }))
       });
 
-      const assistantMessage = {
-        role: "assistant",
-        content: response.data.response,
-        timestamp: new Date()
-      };
+      // If response has recommendations, show searching message first
+      if (response.data.recommendations && response.data.recommendations.length > 0) {
+        const searchingMessage = {
+          role: "assistant",
+          content: "Perfect! Thanks for the details — give me a moment while I look for the best savings for you.",
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, searchingMessage]);
 
-      setMessages(prev => [...prev, assistantMessage]);
+        await new Promise(resolve => setTimeout(resolve, 2500));
+
+        const resultsMessage = {
+          role: "assistant",
+          content: response.data.response,
+          recommendations: response.data.recommendations,
+          billAnalysis: response.data.billAnalysis,
+          showBillUploadButtons: response.data.showBillUploadButtons,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, resultsMessage]);
+      } else {
+        const assistantMessage = {
+          role: "assistant",
+          content: response.data.response,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+      }
     } catch (error) {
       console.error('Chatbot error:', error);
       setMessages(prev => [...prev, {
@@ -173,16 +217,37 @@ export default function ChatBot() {
         billFileUrl: fileUrl
       });
 
-      const assistantMessage = {
-        role: "assistant",
-        content: response.data.response,
-        recommendations: response.data.recommendations,
-        billAnalysis: response.data.billAnalysis,
-        showBillUploadButtons: response.data.showBillUploadButtons,
-        timestamp: new Date()
-      };
+      // If response has recommendations, show searching message first
+      if (response.data.recommendations && response.data.recommendations.length > 0) {
+        const searchingMessage = {
+          role: "assistant",
+          content: "Perfect! Thanks for the details — give me a moment while I look for the best savings for you.",
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, searchingMessage]);
 
-      setMessages(prev => [...prev, assistantMessage]);
+        await new Promise(resolve => setTimeout(resolve, 2500));
+
+        const resultsMessage = {
+          role: "assistant",
+          content: response.data.response,
+          recommendations: response.data.recommendations,
+          billAnalysis: response.data.billAnalysis,
+          showBillUploadButtons: response.data.showBillUploadButtons,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, resultsMessage]);
+      } else {
+        const assistantMessage = {
+          role: "assistant",
+          content: response.data.response,
+          recommendations: response.data.recommendations,
+          billAnalysis: response.data.billAnalysis,
+          showBillUploadButtons: response.data.showBillUploadButtons,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+      }
     } catch (error) {
       console.error('Bill upload error:', error);
       setMessages(prev => [...prev, {

@@ -181,12 +181,12 @@ Respond naturally as Nora. Keep it short, warm, and guide them through the flow.
           if (billAnalysis && billAnalysis.currentCost) {
             const maxSavings = Math.max(...recommendations.slice(0, 4).map(r => r.savings || 0));
             if (maxSavings > 0) {
-              botResponse = `Perfect! Thanks for the details — give me a moment while I look for the best savings for you.\n\nGreat news! I found some excellent options that could save you up to $${maxSavings}/month. Check these out below! ⚡`;
+              botResponse = `Great news! I found some excellent options that could save you up to $${maxSavings}/month. Check these out below! ⚡`;
             } else {
-              botResponse = `Perfect! Thanks for the details — give me a moment while I look for the best savings for you.\n\nI found some solid competitive plans for you. Take a look below!`;
+              botResponse = `I found some solid competitive plans for you. Take a look below!`;
             }
           } else {
-            botResponse = `Perfect! Thanks for the details — give me a moment while I look for the best savings for you.\n\nHere are my top picks for your area! ⚡`;
+            botResponse = `Here are my top picks for your area! ⚡`;
           }
         }
       }
