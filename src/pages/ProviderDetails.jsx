@@ -165,6 +165,24 @@ export default function ProviderDetails() {
                 {providerPlans.length > 0 && ` With ${providerPlans.length} available plans ranging from ${lowestRate}¢/kWh to competitive variable rates, ${providerName} offers options for every household and business.`}
                 {renewablePlansCount > 0 && ` They also offer ${renewablePlansCount} renewable energy plans for environmentally conscious customers.`}
               </p>
+
+              {/* States Coverage */}
+              {providerInfo.states && providerInfo.states.length > 0 && (
+                <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MapPin className="w-5 h-5 text-blue-600" />
+                    <h3 className="text-sm font-bold text-gray-900">Available in {providerInfo.states.length} State{providerInfo.states.length > 1 ? 's' : ''}</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {providerInfo.states.map((state, i) => (
+                      <span key={i} className="bg-white text-gray-900 text-sm font-medium px-3 py-1.5 rounded-md border border-blue-200">
+                        {state}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-3">
                 {renewablePlansCount > 0 && (
                   <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full">
