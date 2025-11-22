@@ -321,6 +321,7 @@ export default function ChatBot() {
   };
 
   const formatMessage = (content) => {
+    if (!content || typeof content !== 'string') return content;
     return content.split('\n').map((line, i) => {
       // Bold text
       if (line.includes('**')) {
