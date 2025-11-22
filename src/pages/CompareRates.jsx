@@ -23,6 +23,7 @@ import {
 import { calculateMatchScore, calculateSavings, generatePlanSummary } from "../components/compare/matchScore";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import { useZipDetection } from "../components/hooks/useZipDetection";
+import { debugCompareRatesPipeline, validateDataStructures } from "../components/compare/debugPipeline";
 
 export default function CompareRates() {
   const [step, setStep] = useState(1);
@@ -59,6 +60,9 @@ export default function CompareRates() {
   // Load ZIP code from URL on mount
   useEffect(() => {
     const loadZipData = async () => {
+      // Run data structure validation on mount
+      await validateDataStructures();
+      
       const urlParams = new URLSearchParams(window.location.search);
       const zipFromUrl = urlParams.get('zip');
 
@@ -140,8 +144,19 @@ export default function CompareRates() {
     setStep(3);
   };
 
-  const handlePreferencesSubmit = () => {
+  const handlePreferencesSubmit = async () => {
     setIsLoading(true);
+    
+    // Run full diagnostic
+    console.log("🔍 RUNNING FULL DIAGNOSTIC PIPELINE");
+    const diagnostic = await debugCompareRatesPipeline(zipCode);
+    console.log("📊 DIAGNOSTIC RESULTS:", diagnostic);
+    
+    if (!diagnostic.passed) {
+      console.error("❌ DIAGNOSTIC FAILED:", diagnostic.errors);
+      console.warn("⚠️ WARNINGS:", diagnostic.warnings);
+    }
+    
     setTimeout(() => {
       setIsLoading(false);
       setShowResults(true);
