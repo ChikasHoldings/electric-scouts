@@ -310,11 +310,11 @@ export default function BusinessElectricity() {
                       <div className="text-sm text-gray-600">{state.specialPrograms}</div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <a href="#business-quote-form">
+                      <Link to={createPageUrl("BusinessCompareRates")}>
                         <Button size="sm" variant="outline" className="text-xs">
-                          Get Quote
+                          Compare
                         </Button>
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                 ))}
