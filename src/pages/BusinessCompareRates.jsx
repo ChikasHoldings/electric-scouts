@@ -120,10 +120,22 @@ export default function BusinessCompareRates() {
     const planContractLength = planData.contract_length || plan.contract_length;
     const planPlanType = planData.plan_type || plan.plan_type;
     
+    // Debug logging (internal only)
+    if (typeof console !== 'undefined' && providerName === 'NextVolt Energy') {
+      console.log('[BusinessCompareRates Filter Debug] NextVolt plan:', {
+        planName: planData.plan_name || plan.plan_name,
+        zipCode,
+        availableProvidersCount: availableProviders.length
+      });
+    }
+    
     // Filter by ZIP code availability
     if (zipCode && availableProviders.length > 0) {
       const provider = availableProviders.find(p => p.name === providerName);
       if (!provider) {
+        if (typeof console !== 'undefined' && providerName === 'NextVolt Energy') {
+          console.log('[BusinessCompareRates Filter Debug] NextVolt not in availableProviders');
+        }
         return false;
       }
     }

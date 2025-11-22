@@ -160,18 +160,35 @@ export default function CompareRates() {
     const renewablePercentage = planData.renewable_percentage || plan.renewable_percentage;
     const contractLength = planData.contract_length || plan.contract_length;
     
+    // Debug logging (internal only)
+    if (typeof console !== 'undefined' && providerName === 'NextVolt Energy') {
+      console.log('[CompareRates Filter Debug] NextVolt plan:', {
+        planName,
+        planType,
+        zipCode,
+        availableProvidersCount: availableProviders.length
+      });
+    }
+    
     // Filter out business plans from residential comparison
     if (planName && planName.toLowerCase().includes('business')) {
       return false;
     }
     
     // When zipCode is set, filter by provider availability
-    if (zipCode) {
-      const stateCode = zipCode ? getStateFromZip(zipCode) : null;
+    if (zipCode && availableProviders.length > 0) {
+      const stateCode = getStateFromZip(zipCode);
       if (stateCode) {
         // Check if provider serves this state
         const provider = availableProviders.find(p => p.name === providerName);
-        if (!provider || !provider.states.includes(stateCode)) {
+        if (!provider || !provider.states || !provider.states.includes(stateCode)) {
+          if (typeof console !== 'undefined' && providerName === 'NextVolt Energy') {
+            console.log('[CompareRates Filter Debug] NextVolt filtered out:', {
+              providerFound: !!provider,
+              providerStates: provider?.states,
+              targetState: stateCode
+            });
+          }
           return false;
         }
       }
