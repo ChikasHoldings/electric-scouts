@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -133,7 +133,7 @@ const colorClasses = {
 };
 
 export default function ArticleDetail() {
-  const location = window.location;
+  const location = useLocation();
   
   // Get article ID from URL
   const urlParams = new URLSearchParams(location.search);
