@@ -6,171 +6,47 @@ import { Input } from "@/components/ui/input";
 import { Search, Star, Zap, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
-
-const providers = [
-  {
-    name: "TXU Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/33e89f5a5_id7UEhjySO_1762886832466.png",
-    rating: 4.5,
-    reviews: 2340,
-    description: "Texas' largest electricity provider with a wide range of plan options and competitive rates.",
-    features: ["24/7 Customer Support", "Mobile App", "Renewable Options"],
-    minRate: "8.9¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Dallas", "Austin", "San Antonio"],
-    planCount: 15,
-    customerCount: "1.8M+"
-  },
-  {
-    name: "Gexa Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/81171c099_idcT-olPyu_1762886748078.png",
-    rating: 4.4,
-    reviews: 1560,
-    description: "100% renewable energy plans with transparent pricing and no hidden fees.",
-    features: ["100% Green Energy", "No Deposit Plans", "Flexible Terms"],
-    minRate: "8.7¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Dallas", "Austin"],
-    planCount: 10,
-    customerCount: "800K+"
-  },
-  {
-    name: "Frontier Utilities",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e38feed2c_Screenshot45.png",
-    rating: 4.1,
-    reviews: 850,
-    description: "Customer-focused provider with competitive rates for residential and business.",
-    features: ["Low Rates", "Flexible Contracts", "Quick Activation"],
-    minRate: "8.8¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Austin", "Fort Worth"],
-    planCount: 7,
-    customerCount: "310K+"
-  },
-  {
-    name: "Rhythm Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/46a5a0738_id6k09mhoA_1762886791027.png",
-    rating: 4.5,
-    reviews: 1240,
-    description: "Modern energy provider with innovative plans and smart home technology support.",
-    features: ["Smart Thermostat Programs", "Usage Tracking", "Green Energy Options"],
-    minRate: "9.1¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Dallas", "Austin"],
-    planCount: 6,
-    customerCount: "280K+"
-  },
-  {
-    name: "Express Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/5f35b8e44_idy542OFcd_logos.png",
-    rating: 4.2,
-    reviews: 920,
-    description: "Fast setup and competitive plans designed for today's busy lifestyle.",
-    features: ["Quick Enrollment", "No Credit Check Options", "Prepaid Plans"],
-    minRate: "9.6¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Dallas"],
-    planCount: 5,
-    customerCount: "220K+"
-  },
-  {
-    name: "Discount Power",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/cbf862895_Screenshot46.png",
-    rating: 4.3,
-    reviews: 1150,
-    description: "Simple and affordable electricity plans with no hidden fees or surprises.",
-    features: ["Low Rates", "No Deposit Required", "Easy Signup"],
-    minRate: "8.4¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "San Antonio"],
-    planCount: 8,
-    customerCount: "390K+"
-  },
-  {
-    name: "Ambit Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/eb7ecacc8_idT9p2RC1n_1762848661994.png",
-    rating: 4.2,
-    reviews: 980,
-    description: "Reliable energy provider with competitive rates and excellent customer rewards.",
-    features: ["Customer Rewards", "Fixed Rate Plans", "Online Management"],
-    minRate: "9.3¢/kWh",
-    states: ["TX"],
-    cities: ["Dallas", "Fort Worth"],
-    planCount: 9,
-    customerCount: "450K+"
-  },
-  {
-    name: "Constellation Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/de83cbefc_idvO6_xjIY_logos.png",
-    rating: 4.4,
-    reviews: 1680,
-    description: "National leader in clean energy with innovative plans for homes and businesses.",
-    features: ["Renewable Options", "Smart Energy Tools", "Flexible Plans"],
-    minRate: "9.2¢/kWh",
-    states: ["TX", "IL", "OH", "PA", "NY", "NJ", "MD", "MA", "CT"],
-    cities: ["Houston", "Chicago", "Columbus", "Philadelphia", "Baltimore"],
-    planCount: 22,
-    customerCount: "3.1M+"
-  },
-  {
-    name: "Chariot Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/1f7bec713_idEK1dDtu1_logos.png",
-    rating: 4.5,
-    reviews: 1320,
-    description: "100% renewable energy provider with transparent pricing and local solar options.",
-    features: ["100% Solar", "Smart Technology", "Local Support"],
-    minRate: "9.5¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Austin"],
-    planCount: 5,
-    customerCount: "180K+"
-  },
-  {
-    name: "Champion Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c489ac96d_idabZcuDLC_1762848446410.png",
-    rating: 4.3,
-    reviews: 1050,
-    description: "Texas-based provider offering straightforward plans with reliable service.",
-    features: ["Fixed & Variable Plans", "No Surprises", "Quick Setup"],
-    minRate: "8.9¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Dallas", "Austin", "El Paso"],
-    planCount: 11,
-    customerCount: "520K+"
-  },
-  {
-    name: "BKV Energy",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/208618693_idecUVsTjb_logos.png",
-    rating: 4.4,
-    reviews: 890,
-    description: "Innovative energy solutions with competitive rates and renewable options.",
-    features: ["Green Energy", "Competitive Rates", "Modern Platform"],
-    minRate: "9.0¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "Dallas"],
-    planCount: 6,
-    customerCount: "250K+"
-  },
-  {
-    name: "APG&E",
-    logo: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/ab225f2ac_idy5Qy7KTo_1762848313421.png",
-    rating: 4.2,
-    reviews: 760,
-    description: "Affordable and sustainable energy plans with excellent customer service.",
-    features: ["Low Rates", "Green Options", "24/7 Support"],
-    minRate: "8.6¢/kWh",
-    states: ["TX"],
-    cities: ["Houston", "San Antonio"],
-    planCount: 8,
-    customerCount: "290K+"
-  }
-];
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 export default function AllProviders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
 
-  const filteredProviders = providers.filter(provider =>
+  const { data: providers = [] } = useQuery({
+    queryKey: ['providers'],
+    queryFn: () => base44.entities.ElectricityProvider.filter({ is_active: true }),
+    initialData: [],
+  });
+
+  const { data: plans = [] } = useQuery({
+    queryKey: ['plans'],
+    queryFn: () => base44.entities.ElectricityPlan.list(),
+    initialData: [],
+  });
+
+  const providersWithStats = providers.map(provider => {
+    const providerPlans = plans.filter(p => p.provider_name === provider.name);
+    const minRate = providerPlans.length > 0 
+      ? Math.min(...providerPlans.map(p => p.rate_per_kwh))
+      : null;
+    
+    return {
+      name: provider.name,
+      logo: provider.logo_url,
+      rating: provider.rating || 4.8,
+      reviews: 0,
+      description: provider.description,
+      features: ["Competitive Rates", "Flexible Plans", "Easy Signup"],
+      minRate: minRate ? `${minRate}¢/kWh` : "Contact for rates",
+      states: provider.supported_states || [],
+      cities: [],
+      planCount: providerPlans.length,
+      customerCount: "New"
+    };
+  });
+
+  const filteredProviders = providersWithStats.filter(provider =>
     provider.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -196,7 +72,7 @@ export default function AllProviders() {
               Compare Top Electricity Providers
             </h1>
             <p className="text-base sm:text-lg text-blue-100 mb-6 sm:mb-8">
-              Explore plans from 40+ trusted electricity providers across 12 states. Find the best rates and switch in minutes.
+              Explore plans from trusted electricity providers across 12 states. Find the best rates and switch in minutes.
             </p>
             
             {/* Search Bar */}
@@ -219,11 +95,11 @@ export default function AllProviders() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-[#0A5C8C] mb-1">40+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-[#0A5C8C] mb-1">{providers.length}</div>
               <div className="text-xs sm:text-sm text-gray-600">Providers</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-[#0A5C8C] mb-1">15,000+</div>
+              <div className="text-2xl sm:text-3xl font-bold text-[#0A5C8C] mb-1">{plans.length}</div>
               <div className="text-xs sm:text-sm text-gray-600">Plans Available</div>
             </div>
             <div>
@@ -312,20 +188,7 @@ export default function AllProviders() {
                   </div>
                 </div>
 
-                {/* Top Cities */}
-                <div className="mb-4">
-                  <div className="text-xs font-semibold text-gray-700 mb-2">Top Cities:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {provider.cities.slice(0, 3).map((city, i) => (
-                      <span key={i} className="text-xs text-gray-600">
-                        {city}{i < Math.min(provider.cities.length - 1, 2) ? ',' : ''}
-                      </span>
-                    ))}
-                    {provider.cities.length > 3 && (
-                      <span className="text-xs text-gray-500">+{provider.cities.length - 3}</span>
-                    )}
-                  </div>
-                </div>
+
 
                 {/* Features */}
                 <div className="mb-4">
@@ -342,16 +205,16 @@ export default function AllProviders() {
 
                 {/* CTA Buttons */}
                 <div className="grid grid-cols-2 gap-2">
-                  <Link to={createPageUrl("ProviderDetails") + `?provider=${encodeURIComponent(provider.name)}`}>
+                  <a href={providers.find(p => p.name === provider.name)?.website_url || providers.find(p => p.name === provider.name)?.affiliate_url || '#'} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" className="w-full text-sm">
                       Learn More
                     </Button>
-                  </Link>
-                  <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                  </a>
+                  <a href={providers.find(p => p.name === provider.name)?.affiliate_url || providers.find(p => p.name === provider.name)?.website_url || '#'} target="_blank" rel="noopener noreferrer">
                     <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm">
                       View Plans
                     </Button>
-                  </Link>
+                  </a>
                 </div>
               </CardContent>
             </Card>
