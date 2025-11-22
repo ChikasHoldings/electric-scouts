@@ -167,20 +167,10 @@ export default function CompareRates() {
   const handlePreferencesSubmit = async () => {
     setIsLoading(true);
     
-    // Run full diagnostic
-    console.log("🔍 RUNNING FULL DIAGNOSTIC PIPELINE");
-    const diagnostic = await debugCompareRatesPipeline(zipCode);
-    console.log("📊 DIAGNOSTIC RESULTS:", diagnostic);
-    
-    if (!diagnostic.passed) {
-      console.error("❌ DIAGNOSTIC FAILED:", diagnostic.errors);
-      console.warn("⚠️ WARNINGS:", diagnostic.warnings);
-    }
-    
     setTimeout(() => {
       setIsLoading(false);
       setShowResults(true);
-    }, 2000);
+    }, 1500);
   };
 
 
