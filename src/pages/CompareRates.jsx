@@ -92,9 +92,13 @@ export default function CompareRates() {
     }
   }, [showResults]);
 
-  const { data: plans } = useQuery({
+  const { data: plans, isLoading: plansLoading, error: plansError } = useQuery({
     queryKey: ['plans'],
-    queryFn: () => base44.entities.ElectricityPlan.list(),
+    queryFn: async () => {
+      const result = await base44.entities.ElectricityPlan.list();
+      console.log('Fetched plans:', result?.length || 0, result);
+      return result || [];
+    },
     initialData: [],
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
@@ -116,6 +120,8 @@ export default function CompareRates() {
 
     const city = getCityFromZip(zipCode);
     const providers = await getProvidersForZipCode(zipCode);
+    
+    console.log('ZIP submitted:', { zipCode, city, providersFound: providers.length, providers });
     
     setCityName(city);
     setAvailableProviders(providers);
@@ -160,6 +166,8 @@ export default function CompareRates() {
     const renewablePercentage = planData.renewable_percentage || plan.renewable_percentage;
     const contractLength = planData.contract_length || plan.contract_length;
     
+    console.log('Filtering plan:', { providerName, planName, zipCode, availableProvidersCount: availableProviders.length });
+    
     // Filter out business plans from residential comparison
     if (planName && planName.toLowerCase().includes('business')) {
       return false;
@@ -171,12 +179,14 @@ export default function CompareRates() {
       
       // Check if provider is in available providers list
       const provider = availableProviders.find(p => p.name === providerName);
+      console.log('Provider check:', { providerName, found: !!provider, availableProviders: availableProviders.map(p => p.name) });
       if (!provider) {
         return false;
       }
       
       // Double check state support
-      if (stateCode && !provider.states.includes(stateCode)) {
+      if (stateCode && provider.states && !provider.states.includes(stateCode)) {
+        console.log('State check failed:', { providerName, stateCode, supportedStates: provider.states });
         return false;
       }
     }
@@ -219,6 +229,8 @@ export default function CompareRates() {
     return a.rate_per_kwh - b.rate_per_kwh;
   });
 
+  console.log('Sorted plans:', sortedPlans.length, sortedPlans.slice(0, 3).map(p => ({ provider: p.provider_name, rate: p.rate_per_kwh })));
+
   const topPlans = sortedPlans.slice(0, 3);
   const otherPlans = sortedPlans.slice(3);
 
@@ -236,9 +248,13 @@ export default function CompareRates() {
     return pData.logo_url || provider.logo_url || null;
   };
 
-  const { data: providers = [] } = useQuery({
+  const { data: providers = [], isLoading: providersLoading } = useQuery({
     queryKey: ['providers'],
-    queryFn: () => base44.entities.ElectricityProvider.filter({ is_active: true }),
+    queryFn: async () => {
+      const result = await base44.entities.ElectricityProvider.filter({ is_active: true });
+      console.log('Fetched providers:', result?.length || 0, result);
+      return result || [];
+    },
     initialData: [],
   });
 
