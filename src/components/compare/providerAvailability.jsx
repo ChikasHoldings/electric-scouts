@@ -28,17 +28,41 @@ export function clearProviderCache() {
 
 // Function to get providers available for a specific ZIP code
 export const getProvidersForZipCode = async (zipCode) => {
-  if (!zipCode || zipCode.length !== 5) return [];
+  console.log('[Provider Debug] getProvidersForZipCode called with ZIP:', zipCode);
+  
+  if (!zipCode || zipCode.length !== 5) {
+    console.log('[Provider Debug] Invalid ZIP code format');
+    return [];
+  }
   
   const stateCode = getStateFromZip(zipCode);
-  if (!stateCode) return [];
+  console.log('[Provider Debug] ZIP', zipCode, 'resolved to state:', stateCode);
+  
+  if (!stateCode) {
+    console.log('[Provider Debug] No state code found for ZIP');
+    return [];
+  }
   
   const providers = await fetchProviders();
+  console.log('[Provider Debug] Total active providers in database:', providers.length);
+  
+  if (providers.length > 0) {
+    console.log('[Provider Debug] Provider details:', providers.map(p => ({
+      name: p.name || p.data?.name,
+      supported_states: p.supported_states || p.data?.supported_states
+    })));
+  }
   
   // Filter providers by state
   const availableProviders = providers.filter(provider => {
+    const providerName = provider.name || provider.data?.name;
     const supportedStates = provider.supported_states || provider.data?.supported_states || [];
-    return supportedStates.includes(stateCode);
+    const isAvailable = supportedStates.includes(stateCode);
+    
+    console.log('[Provider Debug] Provider', providerName, 'supports states:', supportedStates, 
+                '| Available for', stateCode + ':', isAvailable);
+    
+    return isAvailable;
   }).map(provider => ({
     name: provider.name || provider.data?.name,
     logo: provider.logo_url || provider.data?.logo_url,
@@ -47,6 +71,11 @@ export const getProvidersForZipCode = async (zipCode) => {
     isRecommended: provider.is_recommended || provider.data?.is_recommended || false,
     isFeatured: provider.is_featured || provider.data?.is_featured || false
   }));
+  
+  console.log('[Provider Debug] Available providers for', stateCode + ':', availableProviders.length);
+  if (availableProviders.length > 0) {
+    console.log('[Provider Debug] Available provider names:', availableProviders.map(p => p.name));
+  }
   
   // Sort: recommended first
   return availableProviders.sort((a, b) => {

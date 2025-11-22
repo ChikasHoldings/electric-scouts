@@ -101,6 +101,7 @@ export default function CompareRates() {
   });
 
   const handleZipSubmit = async () => {
+    console.log('[ZIP Submit] Processing ZIP:', zipCode);
     setZipError("");
     
     if (zipCode.length !== 5) {
@@ -109,17 +110,23 @@ export default function CompareRates() {
     }
 
     const validation = validateZipCode(zipCode);
+    console.log('[ZIP Submit] Validation result:', validation);
+    
     if (!validation.valid) {
       setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
       return;
     }
 
     const city = getCityFromZip(zipCode);
+    console.log('[ZIP Submit] City resolved:', city);
+    
     const providers = await getProvidersForZipCode(zipCode);
+    console.log('[ZIP Submit] Providers fetched:', providers.length, providers.map(p => p.name));
     
     setCityName(city);
     setAvailableProviders(providers);
     saveZip(zipCode);
+    console.log('[ZIP Submit] Moving to step 2');
     setStep(2);
   };
 
@@ -138,10 +145,15 @@ export default function CompareRates() {
   };
 
   const handlePreferencesSubmit = () => {
+    console.log('[Preferences Submit] User preferences:', preferences);
+    console.log('[Preferences Submit] Available providers:', availableProviders.map(p => p.name));
+    console.log('[Preferences Submit] ZIP code:', zipCode);
+    
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
       setShowResults(true);
+      console.log('[Preferences Submit] Showing results');
     }, 2000);
   };
 
@@ -160,29 +172,67 @@ export default function CompareRates() {
     const renewablePercentage = planData.renewable_percentage || plan.renewable_percentage;
     const contractLength = planData.contract_length || plan.contract_length;
     
+    // Debug: Log plan details for first 3 plans
+    if (plans.indexOf(plan) < 3) {
+      console.log('[Plan Filter Debug] Plan:', planName, '| Provider:', providerName, '| Type:', planType);
+    }
+    
     // Filter out business plans from residential comparison
     if (planName && planName.toLowerCase().includes('business')) {
+      console.log('[Plan Filter Debug] Filtered out business plan:', planName);
       return false;
     }
     
     // When zipCode is set, filter by provider availability
-    if (zipCode) {
-      const stateCode = zipCode ? getStateFromZip(zipCode) : null;
-      if (stateCode) {
-        // Check if provider serves this state
-        const provider = availableProviders.find(p => p.name === providerName);
-        if (!provider || !provider.states.includes(stateCode)) {
-          return false;
-        }
+    if (zipCode && availableProviders.length > 0) {
+      const stateCode = getStateFromZip(zipCode);
+      console.log('[Plan Filter Debug] Checking plan:', planName, '| Provider:', providerName, '| State:', stateCode);
+      console.log('[Plan Filter Debug] Available providers:', availableProviders.map(p => p.name));
+      
+      // Check if provider is in available providers list
+      const provider = availableProviders.find(p => p.name === providerName);
+      if (!provider) {
+        console.log('[Plan Filter Debug] Provider', providerName, 'not in available providers list - FILTERED OUT');
+        return false;
       }
+      
+      // Double check state support
+      if (stateCode && !provider.states.includes(stateCode)) {
+        console.log('[Plan Filter Debug] Provider', providerName, 'does not support state', stateCode, '- FILTERED OUT');
+        return false;
+      }
+      
+      console.log('[Plan Filter Debug] Plan', planName, 'from', providerName, 'PASSED availability check');
     }
     
-    if (preferences.fixedRate && planType !== 'fixed') return false;
-    if (preferences.variableRate && planType !== 'variable') return false;
-    if (preferences.renewable && (!renewablePercentage || renewablePercentage < 50)) return false;
-    if (preferences.twelveMonth && contractLength !== 12) return false;
+    // Preference filters
+    if (preferences.fixedRate && planType !== 'fixed') {
+      console.log('[Plan Filter Debug] Plan', planName, 'filtered by fixedRate preference');
+      return false;
+    }
+    if (preferences.variableRate && planType !== 'variable') {
+      console.log('[Plan Filter Debug] Plan', planName, 'filtered by variableRate preference');
+      return false;
+    }
+    if (preferences.renewable && (!renewablePercentage || renewablePercentage < 50)) {
+      console.log('[Plan Filter Debug] Plan', planName, 'filtered by renewable preference');
+      return false;
+    }
+    if (preferences.twelveMonth && contractLength !== 12) {
+      console.log('[Plan Filter Debug] Plan', planName, 'filtered by twelveMonth preference');
+      return false;
+    }
+    
     return true;
   });
+  
+  console.log('[Plan Filter Debug] Total plans after filtering:', filteredPlans.length);
+  if (filteredPlans.length > 0) {
+    console.log('[Plan Filter Debug] Filtered plan providers:', [...new Set(filteredPlans.map(p => {
+      const planData = p.data || p;
+      return planData.provider_name || p.provider_name;
+    }))]);
+  }
 
   // Sort plans by match score and rate
   const plansWithScores = filteredPlans.map(plan => {
