@@ -97,20 +97,26 @@ export default function CompareRates() {
     }
   }, [showResults]);
 
-  const { data: plans, isLoading: plansLoading, error: plansError } = useQuery({
-    queryKey: ['plans'],
+  const { data: plans = [], isLoading: plansLoading, error: plansError } = useQuery({
+    queryKey: ['electricityPlans'],
     queryFn: async () => {
       console.log("🔍 Fetching plans from database...");
-      const result = await base44.entities.ElectricityPlan.list();
-      console.log("Plans fetched:", result?.length || 0);
-      if (result && result.length > 0) {
-        console.log("Sample plan:", result[0]);
+      try {
+        const result = await base44.entities.ElectricityPlan.list();
+        console.log("✅ Plans fetched successfully:", result?.length || 0);
+        if (result && result.length > 0) {
+          console.log("Sample plan structure:", result[0]);
+        }
+        return result || [];
+      } catch (error) {
+        console.error("❌ Error fetching plans:", error);
+        return [];
       }
-      return result || [];
     },
-    initialData: [],
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 1000,
+    cacheTime: 5 * 60 * 1000,
   });
 
   const handleZipSubmit = async () => {
