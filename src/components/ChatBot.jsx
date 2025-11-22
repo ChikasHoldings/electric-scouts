@@ -10,7 +10,7 @@ export default function ChatBot() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hi there! I'm Nora 😊\nWhat can I help you with today — Residential, Commercial, or Renewable Energy?",
+      content: "Hi there! I'm Nora 😊\nHow can I help you today?",
       timestamp: new Date(),
       showCategoryButtons: true
     }
@@ -390,24 +390,24 @@ export default function ChatBot() {
               </div>
               
               {msg.showCategoryButtons && (
-                <div className="mt-3 flex flex-col gap-2">
+                <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     onClick={() => handleCategorySelect("Residential")}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all"
+                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all"
                   >
-                    🏠 Residential
+                    Compare or find rates
                   </button>
                   <button
                     onClick={() => handleCategorySelect("Commercial")}
-                    className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all"
+                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all"
                   >
-                    🏢 Commercial
+                    Business rate
                   </button>
                   <button
                     onClick={() => handleCategorySelect("Renewable")}
-                    className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all"
+                    className="bg-white border-2 border-blue-200 text-gray-800 px-3 py-1.5 rounded-lg font-medium text-sm hover:border-blue-400 hover:bg-blue-50 transition-all"
                   >
-                    🌱 Renewable Energy
+                    Renewable energy
                   </button>
                 </div>
               )}
