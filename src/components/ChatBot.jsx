@@ -158,7 +158,7 @@ export default function ChatBot() {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "I apologize, but I encountered an error. Please try again or contact support if this persists.",
+        content: "Oops! Something went wrong on my end. Mind trying again? If it keeps happening, email Henry at chk@powerscouts.com.",
         timestamp: new Date()
       }]);
     } finally {
@@ -227,7 +227,7 @@ export default function ChatBot() {
       console.error('Chatbot error:', error);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "Oops! Something went wrong. Let's try that again.",
+        content: "Hmm, something glitched. Try that again for me?",
         timestamp: new Date()
       }]);
     } finally {
@@ -325,7 +325,7 @@ export default function ChatBot() {
       console.error('Bill upload error:', error);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "Oops! I had trouble reading that. Mind trying again or just tell me your ZIP code?",
+        content: "Had trouble reading that one. Wanna try again or just tell me your ZIP code?",
         timestamp: new Date()
       }]);
     } finally {
@@ -504,12 +504,12 @@ export default function ChatBot() {
           <div className="flex justify-start">
             <div className="bg-white border border-blue-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-md">
               <div className="flex items-center gap-2 text-[#0A5C8C]">
+                <span className="text-sm font-medium">{loadingMessage}</span>
                 <div className="flex gap-1">
                   <span className="w-2 h-2 bg-[#0A5C8C] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
                   <span className="w-2 h-2 bg-[#0A5C8C] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
                   <span className="w-2 h-2 bg-[#0A5C8C] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                 </div>
-                <span className="text-sm font-medium">{loadingMessage}</span>
               </div>
             </div>
           </div>
