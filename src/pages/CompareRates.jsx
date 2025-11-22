@@ -180,69 +180,47 @@ export default function CompareRates() {
   };
 
   const filteredPlans = React.useMemo(() => {
+    if (!plans || plans.length === 0) {
+      console.log("⚠️ No plans data available yet");
+      return [];
+    }
+
     console.log("🔍 FILTERING PLANS - Start");
     console.log("Total plans:", plans.length);
     console.log("ZIP Code:", zipCode);
     console.log("Available Providers:", availableProviders.length, availableProviders.map(p => p.name));
-    console.log("Preferences:", preferences);
 
-    return plans.filter(plan => {
-      // Plan data is at root level, not nested
+    const filtered = plans.filter(plan => {
       const providerName = plan.provider_name;
       const planName = plan.plan_name;
       const planType = plan.plan_type;
       const renewablePercentage = plan.renewable_percentage;
       const contractLength = plan.contract_length;
       
-      console.log(`\n--- Evaluating Plan: ${planName} ---`);
-      console.log("Provider:", providerName);
-      console.log("Type:", planType);
-      console.log("Contract:", contractLength);
-      
-      // Filter out business plans from residential comparison
+      // Filter out business plans
       if (planName && planName.toLowerCase().includes('business')) {
-        console.log("❌ FILTERED: Business plan");
         return false;
       }
       
-      // When zipCode is set, filter by provider availability
+      // Filter by provider availability for current ZIP
       if (zipCode && availableProviders.length > 0) {
         const provider = availableProviders.find(p => p.name === providerName);
-        console.log("Provider availability check:", {
-          providerName,
-          found: !!provider,
-          availableProviders: availableProviders.map(p => p.name)
-        });
         if (!provider) {
-          console.log("❌ FILTERED: Provider not available for ZIP");
           return false;
         }
-        console.log("✅ Provider available");
-      } else {
-        console.log("⚠️ No ZIP filter applied (availableProviders:", availableProviders.length, ")");
       }
       
-      // Preference filters
-      if (preferences.fixedRate && planType !== 'fixed') {
-        console.log("❌ FILTERED: Not fixed rate");
-        return false;
-      }
-      if (preferences.variableRate && planType !== 'variable') {
-        console.log("❌ FILTERED: Not variable rate");
-        return false;
-      }
-      if (preferences.renewable && (!renewablePercentage || renewablePercentage < 50)) {
-        console.log("❌ FILTERED: Not renewable enough");
-        return false;
-      }
-      if (preferences.twelveMonth && contractLength !== 12) {
-        console.log("❌ FILTERED: Not 12 month contract");
-        return false;
-      }
+      // Apply user preference filters
+      if (preferences.fixedRate && planType !== 'fixed') return false;
+      if (preferences.variableRate && planType !== 'variable') return false;
+      if (preferences.renewable && (!renewablePercentage || renewablePercentage < 50)) return false;
+      if (preferences.twelveMonth && contractLength !== 12) return false;
       
-      console.log("✅ PLAN PASSED ALL FILTERS");
       return true;
     });
+
+    console.log("✅ Filtered to", filtered.length, "plans");
+    return filtered;
   }, [plans, zipCode, availableProviders, preferences]);
 
   // Sort plans by match score and rate
