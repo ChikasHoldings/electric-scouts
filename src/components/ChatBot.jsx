@@ -497,7 +497,7 @@ export default function ChatBot() {
             <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
               <div className="flex items-center gap-2 text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">{uploadingFile ? 'Analyzing bill...' : 'Thinking...'}</span>
+                <span className="text-sm">{uploadingFile ? 'Reading your bill...' : 'Looking into it...'}</span>
               </div>
             </div>
           </div>
