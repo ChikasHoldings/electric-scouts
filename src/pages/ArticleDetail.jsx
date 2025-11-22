@@ -12,7 +12,6 @@ import {
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import { getFullArticle } from "../components/learning/fullArticles";
 import ArticleRecommendations from "../components/learning/ArticleRecommendations";
-import ArticleSuggestions from "../components/learning/ArticleSuggestions";
 import { trackDailyReading } from "../components/learning/ReadingAnalytics";
 import { fixArticleLinks } from "../components/learning/fixArticleLinks";
 import InArticleCTA from "../components/learning/InArticleCTA";
@@ -421,11 +420,6 @@ export default function ArticleDetail() {
           currentArticle={article}
           allArticles={articles}
         />
-
-        {/* AI-Powered Content Suggestions */}
-        <div className="mt-8">
-          <ArticleSuggestions currentArticleId={article.id} currentCategory={article.category} />
-        </div>
 
         {/* Bottom CTA */}
         <div className="mt-12">
