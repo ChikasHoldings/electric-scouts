@@ -24,6 +24,7 @@ import { calculateMatchScore, calculateSavings, generatePlanSummary } from "../c
 import BillUploadStep from "../components/compare/BillUploadStep";
 import { useZipDetection } from "../components/hooks/useZipDetection";
 import { debugCompareRatesPipeline, validateDataStructures } from "../components/compare/debugPipeline";
+import { runFullSystemTest } from "../components/compare/systemTest";
 
 export default function CompareRates() {
   const [step, setStep] = useState(1);
