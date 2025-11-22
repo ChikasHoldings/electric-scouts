@@ -15,6 +15,7 @@ import ArticleRecommendations from "../components/learning/ArticleRecommendation
 import ArticleSuggestions from "../components/learning/ArticleSuggestions";
 import { trackDailyReading } from "../components/learning/ReadingAnalytics";
 import { fixArticleLinks } from "../components/learning/fixArticleLinks";
+import InArticleCTA from "../components/learning/InArticleCTA";
 
 // Fallback articles
 const fallbackArticles = [
@@ -351,10 +352,13 @@ export default function ArticleDetail() {
           {/* Article Body */}
           <div className="p-6 sm:p-10 lg:p-12">
             {fullArticle ? (
-              <div 
-                className="prose prose-lg max-w-none article-content"
-                dangerouslySetInnerHTML={{ __html: fullArticle.content }}
-              />
+              <>
+                <div 
+                  className="prose prose-lg max-w-none article-content"
+                  dangerouslySetInnerHTML={{ __html: fullArticle.content }}
+                />
+                <InArticleCTA />
+              </>
             ) : (
               <div className="prose prose-lg max-w-none">
                 <p className="text-xl text-gray-700 leading-relaxed mb-8 border-l-4 border-[#FF6B35] pl-6 py-2 bg-gray-50 rounded-r-lg">
@@ -545,6 +549,59 @@ export default function ArticleDetail() {
         
         .article-content a:not(.cta-button):hover {
           color: #084a6f;
+        }
+        
+        /* In-Article CTA Styling - Matches Design Exactly */
+        .in-article-cta-wrapper {
+          margin: 3rem 0;
+        }
+        
+        .in-article-cta-box {
+          background: linear-gradient(135deg, #e0f7fa 0%, #e1f5fe 100%);
+          border: 2px solid #4dd0e1;
+          border-radius: 1rem;
+          padding: 2.5rem 2rem;
+          text-align: center;
+        }
+        
+        .in-article-cta-title {
+          color: #0A5C8C;
+          font-size: 1.75rem;
+          font-weight: 700;
+          margin: 0 0 1rem 0;
+        }
+        
+        .in-article-cta-text {
+          color: #4a5568;
+          font-size: 1rem;
+          line-height: 1.6;
+          margin-bottom: 1.5rem;
+          max-width: 42rem;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        
+        .in-article-cta-button {
+          background: #FF6B35;
+          color: white;
+          padding: 0.875rem 2rem;
+          border-radius: 0.5rem;
+          font-weight: 600;
+          font-size: 1.125rem;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        
+        .in-article-cta-button:hover {
+          background: #e55a2b;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+        
+        /* Auto-inject CTA after 50% of article content */
+        .article-content {
+          position: relative;
         }
       `}</style>
     </div>
