@@ -61,8 +61,8 @@ export default function CompareRates() {
   // Load ZIP code from URL on mount
   useEffect(() => {
     const loadZipData = async () => {
-      // Run data structure validation on mount
-      await validateDataStructures();
+      // Run full system test on mount
+      await runFullSystemTest("75244");
       
       const urlParams = new URLSearchParams(window.location.search);
       const zipFromUrl = urlParams.get('zip');
