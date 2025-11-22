@@ -10,9 +10,8 @@ export default function ChatBot() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hi there! I'm Nora 😊\nWhat can I help you with today — Residential, Commercial, or Renewable Energy?",
-      timestamp: new Date(),
-      showCategoryButtons: true
+      content: "Hey! I'm Nora, your energy savings guide 😊\n\nI help people find the best electricity rates and can answer any questions about energy plans. What would you like to know?",
+      timestamp: new Date()
     }
   ]);
   const [input, setInput] = useState("");
@@ -394,32 +393,9 @@ export default function ChatBot() {
             >
               <div className="text-sm leading-relaxed">
                 {formatMessage(msg.content)}
-              </div>
-              
-              {msg.showCategoryButtons && (
-                <div className="mt-3 flex flex-col gap-2">
-                  <button
-                    onClick={() => handleCategorySelect("Residential")}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all"
-                  >
-                    🏠 Residential
-                  </button>
-                  <button
-                    onClick={() => handleCategorySelect("Commercial")}
-                    className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all"
-                  >
-                    🏢 Commercial
-                  </button>
-                  <button
-                    onClick={() => handleCategorySelect("Renewable")}
-                    className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:shadow-md transition-all"
-                  >
-                    🌱 Renewable Energy
-                  </button>
                 </div>
-              )}
 
-              {msg.showBillUploadButtons && (
+                {msg.showBillUploadButtons && (
                 <div className="mt-3 flex flex-col gap-2">
                   <button
                     onClick={() => fileInputRef.current?.click()}
@@ -525,6 +501,28 @@ export default function ChatBot() {
 
       {/* Input */}
       <div className="p-4 bg-white border-t border-gray-200">
+        <div className="flex gap-2 mb-2 text-xs text-gray-500 justify-center">
+          <button 
+            onClick={() => handleSend("Residential electricity rates")}
+            className="hover:text-[#0A5C8C] transition-colors"
+          >
+            Residential
+          </button>
+          <span>•</span>
+          <button 
+            onClick={() => handleSend("Commercial electricity rates")}
+            className="hover:text-[#0A5C8C] transition-colors"
+          >
+            Commercial
+          </button>
+          <span>•</span>
+          <button 
+            onClick={() => handleSend("Renewable energy options")}
+            className="hover:text-[#0A5C8C] transition-colors"
+          >
+            Renewable
+          </button>
+        </div>
         <div className="flex gap-2">
           <input
             ref={fileInputRef}
