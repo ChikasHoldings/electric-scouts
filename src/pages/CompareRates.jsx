@@ -149,11 +149,14 @@ export default function CompareRates() {
 
   const filteredPlans = plans.filter(plan => {
     // When zipCode is set, filter by provider availability
-    // This now includes state-level fallback, so all valid ZIPs will show results
     if (zipCode) {
       if (!providerServesZip(plan.provider_name, zipCode)) {
         return false;
       }
+    }
+    // Filter out business plans from residential comparison
+    if (plan.plan_name && plan.plan_name.toLowerCase().includes('business')) {
+      return false;
     }
     if (preferences.fixedRate && plan.plan_type !== 'fixed') return false;
     if (preferences.variableRate && plan.plan_type !== 'variable') return false;

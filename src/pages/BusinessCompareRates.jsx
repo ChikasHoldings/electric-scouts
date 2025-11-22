@@ -10,6 +10,7 @@ import { ArrowRight, ArrowLeft, Zap, CheckCircle, Building, TrendingDown, Shield
 import ValidatedZipInput from "../components/ValidatedZipInput";
 import { getCityFromZip, getProvidersForZipCode } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
+import { providerServesZip } from "../components/compare/providerAvailability";
 import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import IneligibleZipMessage from "../components/compare/IneligibleZipMessage";
