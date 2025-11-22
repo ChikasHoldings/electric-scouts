@@ -37,16 +37,20 @@ export const getProvidersForZipCode = async (zipCode) => {
   
   // Filter providers by state
   const availableProviders = providers.filter(provider => {
-    const supportedStates = provider.supported_states || provider.data?.supported_states || [];
+    const pData = provider.data || provider;
+    const supportedStates = pData.supported_states || [];
     return supportedStates.includes(stateCode);
-  }).map(provider => ({
-    name: provider.name || provider.data?.name,
-    logo: provider.logo_url || provider.data?.logo_url,
-    website: provider.affiliate_url || provider.data?.affiliate_url || provider.website_url || provider.data?.website_url,
-    states: provider.supported_states || provider.data?.supported_states || [],
-    isRecommended: provider.is_recommended || provider.data?.is_recommended || false,
-    isFeatured: provider.is_featured || provider.data?.is_featured || false
-  }));
+  }).map(provider => {
+    const pData = provider.data || provider;
+    return {
+      name: pData.name,
+      logo: pData.logo_url,
+      website: pData.affiliate_url || pData.website_url,
+      states: pData.supported_states || [],
+      isRecommended: pData.is_recommended || false,
+      isFeatured: pData.is_featured || false
+    };
+  });
   
   // Sort: recommended first
   return availableProviders.sort((a, b) => {
@@ -63,13 +67,15 @@ export const providerServesZip = async (providerName, zipCode) => {
   
   // Fetch from database to check provider availability
   const providers = await fetchProviders();
-  const provider = providers.find(p => 
-    (p.name || p.data?.name) === providerName
-  );
+  const provider = providers.find(p => {
+    const pData = p.data || p;
+    return pData.name === providerName;
+  });
   
   if (!provider) return false;
   
-  const supportedStates = provider.supported_states || provider.data?.supported_states || [];
+  const pData = provider.data || provider;
+  const supportedStates = pData.supported_states || [];
   return supportedStates.includes(stateCode);
 };
 
@@ -88,31 +94,35 @@ export const providerServesZipSync = (providerName, zipCode) => {
     return supportedStates.includes(stateCode);
   }
   
-  const provider = cachedProviders.find(p => 
-    (p.name || p.data?.name) === providerName
-  );
+  const provider = cachedProviders.find(p => {
+    const pData = p.data || p;
+    return pData.name === providerName;
+  });
   
   if (!provider) return false;
   
-  const supportedStates = provider.supported_states || provider.data?.supported_states || [];
+  const pData = provider.data || provider;
+  const supportedStates = pData.supported_states || [];
   return supportedStates.includes(stateCode);
 };
 
 // Function to get provider details
 export const getProviderDetails = async (providerName) => {
   const providers = await fetchProviders();
-  const provider = providers.find(p => 
-    (p.name || p.data?.name) === providerName
-  );
+  const provider = providers.find(p => {
+    const pData = p.data || p;
+    return pData.name === providerName;
+  });
   
   if (!provider) return null;
   
+  const pData = provider.data || provider;
   return {
-    name: provider.name || provider.data?.name,
-    logo: provider.logo_url || provider.data?.logo_url,
-    website: provider.affiliate_url || provider.data?.affiliate_url || provider.website_url || provider.data?.website_url,
-    states: provider.supported_states || provider.data?.supported_states || [],
-    isRecommended: provider.is_recommended || provider.data?.is_recommended || false
+    name: pData.name,
+    logo: pData.logo_url,
+    website: pData.affiliate_url || pData.website_url,
+    states: pData.supported_states || [],
+    isRecommended: pData.is_recommended || false
   };
 };
 
@@ -275,11 +285,17 @@ export const getCityFromZip = (zipCode) => {
 // Get all unique provider names in the system
 export const getAllProviderNames = async () => {
   const providers = await fetchProviders();
-  return providers.map(p => p.name || p.data?.name);
+  return providers.map(p => {
+    const pData = p.data || p;
+    return pData.name;
+  });
 };
 
 // Validate if provider exists in our system
 export const isValidProvider = async (providerName) => {
   const providers = await fetchProviders();
-  return providers.some(p => (p.name || p.data?.name) === providerName);
+  return providers.some(p => {
+    const pData = p.data || p;
+    return pData.name === providerName;
+  });
 };
