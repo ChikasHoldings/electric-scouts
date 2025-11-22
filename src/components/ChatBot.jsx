@@ -77,7 +77,7 @@ export default function ChatBot() {
 
   const handleSend = async (messageOverride = null) => {
     const messageToSend = messageOverride || input.trim();
-    if (!messageToSend || isLoading) return;
+    if (!messageToSend || isLoading || uploadingFile) return;
 
     const userMessage = {
       role: "user",
@@ -87,7 +87,9 @@ export default function ChatBot() {
 
     resetActivity();
     setMessages(prev => [...prev, userMessage]);
-    setInput("");
+    if (!messageOverride) {
+      setInput("");
+    }
     setIsLoading(true);
 
     // Add natural typing delay
@@ -138,10 +140,9 @@ export default function ChatBot() {
       }
     } catch (error) {
       console.error('Chat error:', error);
-      const errorMessage = error.message || 'Unknown error';
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "Oops! Something went wrong on my end. Could you try sending that again? If this keeps happening, our support team can help! 😊",
+        content: "Oops! Something went wrong on my end. Could you try that again? 😊",
         timestamp: new Date()
       }]);
     } finally {
@@ -421,12 +422,7 @@ export default function ChatBot() {
                     📄 Upload Bill
                   </button>
                   <button
-                    onClick={() => {
-                      setMessages(prev => [...prev, 
-                        { role: "user", content: "Skip for now", timestamp: new Date() }
-                      ]);
-                      handleSend("Skip for now");
-                    }}
+                    onClick={() => handleSend("Skip for now")}
                     className="bg-gray-100 text-gray-700 px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-gray-200 transition-all"
                   >
                     Skip for Now
@@ -539,7 +535,12 @@ export default function ChatBot() {
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
             placeholder="Type your message..."
             disabled={isLoading || uploadingFile}
             className="flex-1 rounded-full border-gray-300 focus:border-[#0A5C8C]"

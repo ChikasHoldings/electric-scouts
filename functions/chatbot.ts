@@ -197,20 +197,21 @@ Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
     );
     const hasBillZip = billAnalysis && billAnalysis.zipCode;
     
-    // Check if conversation has progressed past greetings (user selected category or engaged)
-    const hasEngaged = conversationHistory.length >= 2 || 
-      conversationHistory.some(msg => 
-        msg.role === 'user' && (
-          msg.content.toLowerCase().includes('residential') ||
-          msg.content.toLowerCase().includes('commercial') ||
-          msg.content.toLowerCase().includes('renewable') ||
-          msg.content.toLowerCase().includes('business')
-        )
-      );
+    // Check if user has selected a category and engaged properly
+    const hasSelectedCategory = conversationHistory.some(msg => 
+      msg.role === 'user' && (
+        msg.content === 'Residential' ||
+        msg.content === 'Commercial' ||
+        msg.content === 'Renewable' ||
+        msg.content.toLowerCase().includes('compare') ||
+        msg.content.toLowerCase().includes('business rate') ||
+        msg.content.toLowerCase().includes('renewable energy')
+      )
+    );
     
-    // Fetch plans if ZIP provided AND user has engaged in conversation
+    // Only fetch plans if: has ZIP + selected category OR bill uploaded
     const shouldFetchPlans = (hasZipInCurrentMessage || hasZipInRecentHistory || hasBillZip) && 
-      (hasEngaged || billFileUrl);
+      (hasSelectedCategory || billFileUrl);
 
     if (shouldFetchPlans) {
       // Extract ZIP code from bill or conversation
