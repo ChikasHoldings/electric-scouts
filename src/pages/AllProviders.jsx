@@ -210,11 +210,11 @@ export default function AllProviders() {
                       Learn More
                     </Button>
                   </a>
-                  <a href={providers.find(p => p.name === provider.name)?.affiliate_url || providers.find(p => p.name === provider.name)?.website_url || '#'} target="_blank" rel="noopener noreferrer">
+                  <Link to={createPageUrl("ProviderDetails") + `?provider=${encodeURIComponent(provider.name)}`}>
                     <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm">
                       View Plans
                     </Button>
-                  </a>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
