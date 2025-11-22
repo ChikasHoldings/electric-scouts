@@ -127,12 +127,24 @@ Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
     let billAnalysis = null;
     let showBillUploadButtons = false;
 
-    // Detect if we should show bill upload buttons
-    const shouldOfferBillUpload = conversationHistory.length >= 4 && 
-      conversationHistory.some(msg => msg.content && /\b\d{5}\b/.test(msg.content)) &&
-      !conversationHistory.some(msg => msg.content && msg.content.toLowerCase().includes('upload'));
+    // Detect if we should show bill upload buttons - only after ZIP is provided and user seems ready
+    const hasZipInConversation = conversationHistory.some(msg => 
+      msg.content && /\b\d{5}\b/.test(msg.content)
+    );
+    const hasUsageQuestion = conversationHistory.some(msg => 
+      msg.content && msg.content.toLowerCase().includes('usage')
+    );
+    const alreadyOfferedUpload = conversationHistory.some(msg => 
+      msg.content && msg.content.toLowerCase().includes('upload')
+    );
 
-    if (shouldOfferBillUpload && !billFileUrl) {
+    const shouldOfferBillUpload = hasZipInConversation && 
+      hasUsageQuestion && 
+      !alreadyOfferedUpload && 
+      !billFileUrl &&
+      conversationHistory.length >= 4;
+
+    if (shouldOfferBillUpload) {
       showBillUploadButtons = true;
     }
 
@@ -178,10 +190,25 @@ Respond as Nora would in a real conversation. Be warm, natural, and helpful!`;
       }
     }
 
-    // Check if we should fetch actual plan data
-    const shouldFetchPlans = conversationHistory.some(msg => 
-      msg.content && /\b\d{5}\b/.test(msg.content)
-    ) || /\b\d{5}\b/.test(message) || (billAnalysis && billAnalysis.zipCode);
+    // Check if we should fetch actual plan data - only when explicitly ready to show plans
+    const hasZipCode = /\b\d{5}\b/.test(message) || 
+      conversationHistory.slice(-3).some(msg => msg.content && /\b\d{5}\b/.test(msg.content)) ||
+      (billAnalysis && billAnalysis.zipCode);
+    
+    const userWantsPlans = message.toLowerCase().includes('plan') ||
+      message.toLowerCase().includes('compare') ||
+      message.toLowerCase().includes('rate') ||
+      message.toLowerCase().includes('show') ||
+      conversationHistory.slice(-2).some(msg => 
+        msg.content && (
+          msg.content.toLowerCase().includes('what matters most') ||
+          msg.content.toLowerCase().includes('monthly usage') ||
+          msg.content.toLowerCase().includes('preference')
+        )
+      ) ||
+      billFileUrl; // Always show plans after bill upload
+
+    const shouldFetchPlans = hasZipCode && (userWantsPlans || billFileUrl);
 
     if (shouldFetchPlans) {
       // Extract ZIP code from bill or conversation
