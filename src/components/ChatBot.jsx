@@ -87,7 +87,10 @@ export default function ChatBot() {
 
     resetActivity();
     setMessages(prev => [...prev, userMessage]);
-    setInput("");
+    // Only clear input if it's a manual send (not programmatic)
+    if (!messageOverride) {
+      setInput("");
+    }
     setIsLoading(true);
 
     // Add natural typing delay
