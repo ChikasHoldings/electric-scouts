@@ -21,6 +21,8 @@ export default function ChatBot() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
+  const idleTimeoutRef = useRef(null);
+  const lastActivityRef = useRef(Date.now());
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -83,6 +85,7 @@ export default function ChatBot() {
       timestamp: new Date()
     };
 
+    resetActivity();
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
@@ -147,6 +150,7 @@ export default function ChatBot() {
   };
 
   const handleCategorySelect = async (category) => {
+    resetActivity();
     // Add user's category selection
     setMessages(prev => [...prev, {
       role: "user",
