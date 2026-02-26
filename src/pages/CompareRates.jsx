@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X, FileText } from "lucide-react";
+import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X, FileText, Mail, AlertCircle } from "lucide-react";
 import { validateZipCode, getStateByZip } from "../components/compare/stateData";
 import { 
   getProvidersForZipCode, 
@@ -33,6 +33,35 @@ export default function CompareRates() {
   useEffect(() => {
     document.title = "Compare Electricity Rates | Find the Best Plans | ElectricScouts";
   }, []);
+
+  // Lead capture state
+  const [leadEmail, setLeadEmail] = useState('');
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [leadError, setLeadError] = useState(null);
+
+  const handleLeadCapture = async (source) => {
+    if (!leadEmail || leadSubmitting) return;
+    setLeadSubmitting(true);
+    setLeadError(null);
+    try {
+      const resp = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: leadEmail, zip: zipCode || null, source }),
+      });
+      const data = await resp.json();
+      if (resp.ok && data.success) {
+        setLeadSubmitted(true);
+      } else {
+        setLeadError(data.error || 'Something went wrong');
+      }
+    } catch (e) {
+      setLeadError('Network error. Please try again.');
+    } finally {
+      setLeadSubmitting(false);
+    }
+  };
 
   const seoBlock = (
     <SEOHead
@@ -989,6 +1018,43 @@ export default function CompareRates() {
                     </p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Rate Alerts CTA */}
+            <Card className="border-2 border-[#0A5C8C] bg-gradient-to-r from-blue-50 to-white overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Mail className="w-5 h-5 text-[#0A5C8C]" />
+                  <h3 className="text-lg font-bold text-gray-900">Get Rate Drop Alerts</h3>
+                </div>
+                {leadSubmitted ? (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="w-5 h-5" />
+                    <p className="font-medium">You're subscribed! We'll notify you when rates drop.</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-600 mb-4">Be the first to know when better rates become available in your area. No spam, just savings.</p>
+                    <div className="flex gap-3">
+                      <input
+                        type="email"
+                        value={leadEmail}
+                        onChange={(e) => setLeadEmail(e.target.value)}
+                        placeholder="Enter your email address"
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent"
+                      />
+                      <Button
+                        onClick={() => handleLeadCapture('compare_rates')}
+                        disabled={leadSubmitting || !leadEmail}
+                        className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white px-6"
+                      >
+                        {leadSubmitting ? 'Subscribing...' : 'Subscribe'}
+                      </Button>
+                    </div>
+                    {leadError && <p className="text-sm text-red-500 mt-2">{leadError}</p>}
+                  </>
+                )}
               </CardContent>
             </Card>
 

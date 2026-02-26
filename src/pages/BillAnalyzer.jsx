@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   Upload, FileText, Zap, TrendingDown, Clock, Leaf, 
   CheckCircle, AlertCircle, DollarSign, ArrowRight, Edit3,
-  BarChart3, Percent
+  BarChart3, Percent, Mail
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -120,6 +120,39 @@ export default function BillAnalyzer() {
   });
 
   const fileInputRef = useRef(null);
+
+  // Lead capture state
+  const [leadEmail, setLeadEmail] = useState('');
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [leadError, setLeadError] = useState(null);
+
+  const handleLeadCapture = async (source) => {
+    if (!leadEmail || leadSubmitting) return;
+    setLeadSubmitting(true);
+    setLeadError(null);
+    try {
+      const resp = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: leadEmail,
+          zip: billData?.zip_code || manualForm.zip_code || null,
+          source,
+        }),
+      });
+      const data = await resp.json();
+      if (resp.ok && data.success) {
+        setLeadSubmitted(true);
+      } else {
+        setLeadError(data.error || 'Something went wrong');
+      }
+    } catch (e) {
+      setLeadError('Network error. Please try again.');
+    } finally {
+      setLeadSubmitting(false);
+    }
+  };
 
   const { data: plans } = useQuery({
     queryKey: ['plans'],
@@ -678,6 +711,43 @@ export default function BillAnalyzer() {
               </CardContent>
             </Card>
           )}
+
+          {/* Email My Savings Report CTA */}
+          <Card className="mt-8 border-2 border-[#0A5C8C] bg-gradient-to-r from-blue-50 to-white">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Mail className="w-5 h-5 text-[#0A5C8C]" />
+                <h3 className="text-lg font-bold text-gray-900">Email Me My Savings Report</h3>
+              </div>
+              {leadSubmitted ? (
+                <div className="flex items-center gap-2 text-green-600">
+                  <CheckCircle className="w-5 h-5" />
+                  <p className="font-medium">Check your inbox! We've sent your savings report.</p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-600 mb-4">Get a copy of your analysis results and personalized rate alerts delivered to your inbox.</p>
+                  <div className="flex gap-3">
+                    <input
+                      type="email"
+                      value={leadEmail}
+                      onChange={(e) => setLeadEmail(e.target.value)}
+                      placeholder="Enter your email address"
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent"
+                    />
+                    <Button
+                      onClick={() => handleLeadCapture('analyzer_results')}
+                      disabled={leadSubmitting || !leadEmail}
+                      className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white px-6"
+                    >
+                      {leadSubmitting ? 'Sending...' : 'Send Report'}
+                    </Button>
+                  </div>
+                  {leadError && <p className="text-sm text-red-500 mt-2">{leadError}</p>}
+                </>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Action Buttons */}
           <div className="mt-8 flex gap-4">
