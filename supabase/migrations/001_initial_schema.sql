@@ -202,7 +202,18 @@ CREATE TRIGGER set_updated_date_articles
   FOR EACH ROW EXECUTE FUNCTION public.update_article_updated_date();
 
 -- ============================================================
--- 8. ROW LEVEL SECURITY (RLS) POLICIES
+-- 8. SECURITY DEFINER FUNCTION (avoids RLS recursion)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+-- ============================================================
+-- 9. ROW LEVEL SECURITY (RLS) POLICIES
 -- ============================================================
 
 -- Enable RLS on all tables
@@ -227,12 +238,7 @@ CREATE POLICY "Users can update own profile"
 -- Admins can view all profiles
 CREATE POLICY "Admins can view all profiles"
   ON public.profiles FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 -- ---- ELECTRICITY PROVIDERS ----
 -- Anyone can read active providers (public data)
@@ -243,30 +249,15 @@ CREATE POLICY "Anyone can view active providers"
 -- Only admins can insert/update/delete providers
 CREATE POLICY "Admins can insert providers"
   ON public.electricity_providers FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  WITH CHECK (public.is_admin());
 
 CREATE POLICY "Admins can update providers"
   ON public.electricity_providers FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 CREATE POLICY "Admins can delete providers"
   ON public.electricity_providers FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 -- ---- ELECTRICITY PLANS ----
 -- Anyone can read plans (public data)
@@ -277,30 +268,15 @@ CREATE POLICY "Anyone can view plans"
 -- Only admins can manage plans
 CREATE POLICY "Admins can insert plans"
   ON public.electricity_plans FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  WITH CHECK (public.is_admin());
 
 CREATE POLICY "Admins can update plans"
   ON public.electricity_plans FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 CREATE POLICY "Admins can delete plans"
   ON public.electricity_plans FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 -- ---- ARTICLES ----
 -- Anyone can read published articles
@@ -311,40 +287,20 @@ CREATE POLICY "Anyone can view published articles"
 -- Admins can view all articles (including drafts)
 CREATE POLICY "Admins can view all articles"
   ON public.articles FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 -- Only admins can manage articles
 CREATE POLICY "Admins can insert articles"
   ON public.articles FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  WITH CHECK (public.is_admin());
 
 CREATE POLICY "Admins can update articles"
   ON public.articles FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 CREATE POLICY "Admins can delete articles"
   ON public.articles FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 -- ---- CUSTOM BUSINESS QUOTES ----
 -- Authenticated users can create quotes
@@ -357,21 +313,13 @@ CREATE POLICY "Users can view own quotes"
   ON public.custom_business_quotes FOR SELECT
   USING (
     email = (SELECT email FROM auth.users WHERE id = auth.uid())
-    OR EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
+    OR public.is_admin()
   );
 
 -- Admins can update quotes (change status, add notes)
 CREATE POLICY "Admins can update quotes"
   ON public.custom_business_quotes FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 -- ---- CHATBOT CONVERSATIONS ----
 -- Users can manage their own conversations
@@ -384,10 +332,7 @@ CREATE POLICY "Users can view own conversations"
   USING (
     user_id = auth.uid()
     OR user_id IS NULL
-    OR EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
+    OR public.is_admin()
   );
 
 CREATE POLICY "Users can update own conversations"
@@ -398,7 +343,7 @@ CREATE POLICY "Users can update own conversations"
   );
 
 -- ============================================================
--- 9. STORAGE BUCKETS
+-- 10. STORAGE BUCKETS
 -- ============================================================
 -- Note: Storage buckets are created via Supabase Dashboard or API.
 -- The following are the buckets needed:
