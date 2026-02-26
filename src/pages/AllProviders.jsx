@@ -212,10 +212,8 @@ export default function AllProviders() {
                       Learn More
                     </Button>
                   </Link>
-                  <a href={getAffiliateUrl({ providerId: providers.find(p => p.name === provider.name)?.id, fallbackUrl: providers.find(p => p.name === provider.name)?.affiliate_url || providers.find(p => p.name === provider.name)?.website_url || '#' })} target="_blank" rel="noopener noreferrer">
-                    <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm">
+                  <a href={getAffiliateUrl({ providerId: providers.find(p => p.name === provider.name)?.id, fallbackUrl: providers.find(p => p.name === provider.name)?.affiliate_url || providers.find(p => p.name === provider.name)?.website_url || '#' })} target="_blank" rel="noopener noreferrer" className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm inline-flex items-center justify-center rounded-md px-4 py-2 font-medium no-underline">
                       View Plans
-                    </Button>
                   </a>
                 </div>
               </CardContent>

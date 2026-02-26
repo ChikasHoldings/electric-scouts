@@ -552,11 +552,9 @@ export default function CompareRates() {
                     </div>
 
                     {/* CTA */}
-                    <a href={getProviderWebsite(plan.provider_name, plan.id)} target="_blank" rel="noopener noreferrer" className="block">
-                      <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm font-semibold py-2.5 rounded-lg transition-all">
+                    <a href={getProviderWebsite(plan.provider_name, plan.id)} target="_blank" rel="noopener noreferrer" className="block w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm font-semibold py-2.5 rounded-lg transition-all text-center inline-flex items-center justify-center gap-1.5 no-underline">
                         Get This Plan
-                        <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                      </Button>
+                        <ArrowRight className="w-3.5 h-3.5" />
                     </a>
                   </CardContent>
                 </Card>
@@ -800,10 +798,8 @@ export default function CompareRates() {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <a href={getProviderWebsite(plan.provider_name, plan.id)} target="_blank" rel="noopener noreferrer">
-                            <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-5 py-1.5 rounded-lg font-medium text-sm">
+                          <a href={getProviderWebsite(plan.provider_name, plan.id)} target="_blank" rel="noopener noreferrer" className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-5 py-1.5 rounded-lg font-medium text-sm inline-flex items-center justify-center no-underline">
                               View Plan
-                            </Button>
                           </a>
                         </td>
                       </tr>
@@ -883,10 +879,8 @@ export default function CompareRates() {
                         </div>
                       </div>
 
-                      <a href={getProviderWebsite(plan.provider_name, plan.id)} target="_blank" rel="noopener noreferrer" className="block">
-                        <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm font-medium py-2 rounded-lg">
+                      <a href={getProviderWebsite(plan.provider_name, plan.id)} target="_blank" rel="noopener noreferrer" className="block w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm font-medium py-2 rounded-lg text-center inline-flex items-center justify-center no-underline">
                           View Plan Details
-                        </Button>
                       </a>
                     </CardContent>
                   </Card>
