@@ -41,14 +41,7 @@ export const getProvidersForZipCode = async (zipCode) => {
   
   const providers = await fetchProviders();
   
-  // Log provider structure
-  if (providers.length > 0) {
-      id: providers[0].id,
-      hasData: !!providers[0].data,
-      dataKeys: providers[0].data ? Object.keys(providers[0].data) : [],
-      sample: providers[0]
-    });
-  }
+  // Provider data loaded
   
   // Filter providers by state
   const availableProviders = providers.filter(provider => {
