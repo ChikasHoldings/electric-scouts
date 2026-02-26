@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Upload, FileText, Zap, TrendingDown, Clock, Leaf, 
-  CheckCircle, AlertCircle, DollarSign, ArrowRight 
+  CheckCircle, AlertCircle, DollarSign, ArrowRight, Edit3
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -20,6 +20,19 @@ export default function BillAnalyzer() {
   const [billData, setBillData] = useState(null);
   const [error, setError] = useState(null);
   const [showResults, setShowResults] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [manualForm, setManualForm] = useState({
+    provider_name: '',
+    monthly_usage_kwh: '',
+    monthly_cost: '',
+    rate_per_kwh: '',
+    zip_code: '',
+    plan_name: '',
+    contract_term: '',
+  });
+
+  const fileInputRef = useRef(null);
 
   const { data: plans } = useQuery({
     queryKey: ['plans'],
@@ -33,27 +46,59 @@ export default function BillAnalyzer() {
     initialData: [],
   });
 
+  // ─── File validation helper ────────────────────────────────
+  const validateAndSetFile = (selectedFile) => {
+    if (!selectedFile) return;
+
+    const fileType = selectedFile.type;
+    const validTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+    
+    if (!validTypes.includes(fileType)) {
+      setError('Please upload a PDF or image file (PNG, JPG, JPEG)');
+      return;
+    }
+    
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setError('File size must be less than 10MB');
+      return;
+    }
+    
+    setFile(selectedFile);
+    setError(null);
+    setShowManualInput(false);
+  };
+
+  // ─── File select handler ───────────────────────────────────
   const handleFileSelect = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      const fileType = selectedFile.type;
-      const validTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
-      
-      if (!validTypes.includes(fileType)) {
-        setError('Please upload a PDF or image file (PNG, JPG, JPEG)');
-        return;
-      }
-      
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        setError('File size must be less than 10MB');
-        return;
-      }
-      
-      setFile(selectedFile);
-      setError(null);
+    validateAndSetFile(selectedFile);
+  };
+
+  // ─── Drag and drop handlers ────────────────────────────────
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const droppedFile = e.dataTransfer?.files?.[0];
+    if (droppedFile) {
+      validateAndSetFile(droppedFile);
     }
   };
 
+  // ─── Upload and analyze handler ────────────────────────────
   const handleUploadAndAnalyze = async () => {
     if (!file) return;
 
@@ -63,10 +108,30 @@ export default function BillAnalyzer() {
     try {
       // Upload the file
       const uploadResult = await UploadFile({ file });
-      const fileUrl = uploadResult.file_url;
+      let fileUrl = uploadResult.file_url;
 
       setIsUploading(false);
       setIsProcessing(true);
+
+      // If the file is a PDF, convert it to a processable format first
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      if (isPdf) {
+        try {
+          const convertResponse = await fetch('/api/convert-pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file_url: fileUrl }),
+          });
+          if (convertResponse.ok) {
+            const convertResult = await convertResponse.json();
+            if (convertResult.status === 'success' && convertResult.image_url) {
+              fileUrl = convertResult.image_url;
+            }
+          }
+        } catch (convertErr) {
+          console.warn('PDF conversion failed, attempting direct extraction:', convertErr);
+        }
+      }
 
       // Extract data from the uploaded bill
       const extractResult = await ExtractDataFromUploadedFile({
@@ -91,46 +156,84 @@ export default function BillAnalyzer() {
         setBillData(extractResult.output);
         setShowResults(true);
       } else {
-        setError('Unable to extract data from the bill. Please make sure the image is clear and try again.');
+        setShowManualInput(true);
+        setError('We couldn\'t automatically extract your bill data. Please enter the details manually below.');
       }
     } catch (err) {
       setIsUploading(false);
       setIsProcessing(false);
-      setError('Failed to process the bill. Please try again.');
+      setShowManualInput(true);
+      setError('Automatic extraction failed. Please enter your bill details manually below.');
       console.error(err);
     }
   };
 
-  // Calculate savings for each plan
+  // ─── Manual form handler ───────────────────────────────────
+  const handleManualFormChange = (field, value) => {
+    setManualForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleManualSubmit = (e) => {
+    e.preventDefault();
+
+    const usage = parseFloat(manualForm.monthly_usage_kwh);
+    const cost = parseFloat(manualForm.monthly_cost);
+    const zip = manualForm.zip_code?.trim();
+
+    if (!usage || usage <= 0) {
+      setError('Please enter a valid monthly usage in kWh.');
+      return;
+    }
+    if (!cost || cost <= 0) {
+      setError('Please enter a valid monthly cost.');
+      return;
+    }
+    if (!zip || zip.length !== 5) {
+      setError('Please enter a valid 5-digit ZIP code.');
+      return;
+    }
+
+    const data = {
+      provider_name: manualForm.provider_name || null,
+      monthly_usage_kwh: usage,
+      monthly_cost: cost,
+      rate_per_kwh: manualForm.rate_per_kwh ? parseFloat(manualForm.rate_per_kwh) : parseFloat(((cost / usage) * 100).toFixed(2)),
+      zip_code: zip,
+      plan_name: manualForm.plan_name || null,
+      contract_term: manualForm.contract_term ? parseInt(manualForm.contract_term) : null,
+    };
+
+    setError(null);
+    setBillData(data);
+    setShowResults(true);
+    setShowManualInput(false);
+  };
+
+  // ─── Calculate savings for each plan ───────────────────────
   const getRecommendations = async () => {
     if (!billData || !billData.monthly_usage_kwh) return [];
 
     const currentMonthlyCost = billData.monthly_cost || 0;
     const zipCode = billData.zip_code;
     
-    // Get available providers for the ZIP code
     let availableProviders = [];
     if (zipCode && zipCode.length === 5) {
       availableProviders = await getProvidersForZipCode(zipCode);
     }
     
-    // Filter plans to only show those from available providers with affiliate URLs
     const filteredPlans = plans.filter(plan => {
       const planData = plan.data || plan;
       const providerName = planData.provider_name || plan.provider_name;
       const planName = planData.plan_name || plan.plan_name;
       
-      // Filter out business plans
       if (planName && planName.toLowerCase().includes('business')) {
         return false;
       }
       
-      // Only show plans from available providers
       if (zipCode && availableProviders.length > 0) {
         const provider = availableProviders.find(p => p.name === providerName);
         if (!provider) return false;
         
-        // Only show providers with affiliate URLs
         const providerRecord = providers.find(p => {
           const pName = p.name || p.data?.name;
           return pName === providerName;
@@ -182,7 +285,7 @@ export default function BillAnalyzer() {
     { name: "Bill Analyzer", url: "/bill-analyzer" }
   ]);
 
-  // Loading States
+  // ─── Loading States ────────────────────────────────────────
   if (isUploading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center">
@@ -213,7 +316,7 @@ export default function BillAnalyzer() {
     );
   }
 
-  // Results Page
+  // ─── Results Page ──────────────────────────────────────────
   if (showResults && billData) {
     const totalPotentialSavings = recommendations.length > 0 ? recommendations[0].annualSavings : 0;
 
@@ -397,6 +500,7 @@ export default function BillAnalyzer() {
                 setShowResults(false);
                 setBillData(null);
                 setFile(null);
+                setShowManualInput(false);
               }}
               variant="outline"
               className="flex-1"
@@ -414,7 +518,7 @@ export default function BillAnalyzer() {
     );
   }
 
-  // Upload Page
+  // ─── Upload Page ───────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
@@ -446,39 +550,69 @@ export default function BillAnalyzer() {
                 <input
                   type="file"
                   id="bill-upload"
+                  ref={fileInputRef}
                   accept=".pdf,.png,.jpg,.jpeg"
                   onChange={handleFileSelect}
                   className="hidden"
                 />
-                <label
-                  htmlFor="bill-upload"
-                  className="cursor-pointer inline-block"
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`cursor-pointer border-2 border-dashed rounded-xl p-12 transition-all ${
+                    isDragOver
+                      ? 'border-[#FF6B35] bg-orange-50 scale-[1.02]'
+                      : file
+                        ? 'border-green-400 bg-green-50'
+                        : 'border-gray-300 hover:border-[#0A5C8C] hover:bg-blue-50'
+                  }`}
                 >
-                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 hover:border-[#0A5C8C] hover:bg-blue-50 transition-all">
-                    <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                      {file ? file.name : 'Upload Your Electricity Bill'}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Drag and drop or click to browse
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Supports PDF, PNG, JPG • Max 10MB
-                    </p>
-                  </div>
-                </label>
+                  {file ? (
+                    <>
+                      <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{file.name}</h3>
+                      <p className="text-sm text-gray-600 mb-2">
+                        {(file.size / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                      <p className="text-xs text-green-600 font-medium">
+                        Click or drop another file to replace
+                      </p>
+                    </>
+                  ) : isDragOver ? (
+                    <>
+                      <Upload className="w-12 h-12 text-[#FF6B35] mx-auto mb-4 animate-bounce" />
+                      <h3 className="text-lg font-bold text-[#FF6B35] mb-2">
+                        Drop Your Bill Here
+                      </h3>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        Upload Your Electricity Bill
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Drag and drop or click to browse
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Supports PDF, PNG, JPG &bull; Max 10MB
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
 
               {error && (
                 <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                   <div className="flex items-center gap-2 text-red-800">
-                    <AlertCircle className="w-4 h-4" />
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
                     <p className="text-sm font-medium">{error}</p>
                   </div>
                 </div>
               )}
 
-              {file && (
+              {file && !showManualInput && (
                 <Button
                   onClick={handleUploadAndAnalyze}
                   className="w-full md:w-auto bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-8 py-6 text-base font-semibold"
@@ -490,6 +624,140 @@ export default function BillAnalyzer() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Manual Input Fallback */}
+        {showManualInput && (
+          <Card className="mb-8 border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white">
+            <CardContent className="p-8">
+              <div className="flex items-center gap-2 mb-6">
+                <Edit3 className="w-5 h-5 text-amber-600" />
+                <h2 className="text-lg font-bold text-gray-900">Enter Your Bill Details Manually</h2>
+              </div>
+              <p className="text-sm text-gray-600 mb-6">
+                Don't worry — you can still get personalized savings recommendations by entering a few details from your bill.
+              </p>
+
+              <form onSubmit={handleManualSubmit}>
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Current Provider <span className="text-gray-400">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={manualForm.provider_name}
+                      onChange={(e) => handleManualFormChange('provider_name', e.target.value)}
+                      placeholder="e.g., TXU Energy"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Current Plan Name <span className="text-gray-400">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={manualForm.plan_name}
+                      onChange={(e) => handleManualFormChange('plan_name', e.target.value)}
+                      placeholder="e.g., Fixed Rate 12"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Monthly Usage (kWh) <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={manualForm.monthly_usage_kwh}
+                      onChange={(e) => handleManualFormChange('monthly_usage_kwh', e.target.value)}
+                      placeholder="e.g., 1200"
+                      required
+                      min="1"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Monthly Cost ($) <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={manualForm.monthly_cost}
+                      onChange={(e) => handleManualFormChange('monthly_cost', e.target.value)}
+                      placeholder="e.g., 150.00"
+                      required
+                      min="0.01"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Rate per kWh (cents) <span className="text-gray-400">(auto-calculated if blank)</span>
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={manualForm.rate_per_kwh}
+                      onChange={(e) => handleManualFormChange('rate_per_kwh', e.target.value)}
+                      placeholder="e.g., 12.5"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      ZIP Code <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={manualForm.zip_code}
+                      onChange={(e) => handleManualFormChange('zip_code', e.target.value)}
+                      placeholder="e.g., 75001"
+                      required
+                      maxLength={5}
+                      pattern="[0-9]{5}"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    type="submit"
+                    className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-8 py-3 text-sm font-semibold"
+                  >
+                    Find Savings
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowManualInput(false);
+                      setError(null);
+                    }}
+                    className="px-6 py-3 text-sm"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Skip to Manual Entry link (always visible) */}
+        {!showManualInput && (
+          <div className="text-center mb-8">
+            <button
+              onClick={() => setShowManualInput(true)}
+              className="text-sm text-[#0A5C8C] hover:text-[#084a6f] underline font-medium"
+            >
+              Don't have a bill? Enter details manually instead
+            </button>
+          </div>
+        )}
 
         {/* How It Works */}
         <div className="mb-8">
