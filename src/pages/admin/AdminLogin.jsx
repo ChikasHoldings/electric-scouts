@@ -153,8 +153,9 @@ export default function AdminLogin() {
     e.preventDefault();
     setResetError("");
 
-    if (newPassword.length < 8) {
-      setResetError("Password must be at least 8 characters long.");
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      setResetError("Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character.");
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -392,7 +393,7 @@ export default function AdminLogin() {
                   <Input
                     id="new-password"
                     type={showNewPassword ? "text" : "password"}
-                    placeholder="At least 8 characters"
+                    placeholder="Aa1! — 8+ chars, upper, lower, number, symbol"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
