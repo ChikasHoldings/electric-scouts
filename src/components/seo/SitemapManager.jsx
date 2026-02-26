@@ -49,7 +49,7 @@ export async function generateDynamicSitemap(articles = []) {
     const slug = articleData.slug || article.slug;
     const id = article.id;
     return {
-      url: `/app/ArticleDetail?id=${id}`,
+      url: `/article/${slug || id}`,
       priority: '0.8',
       changefreq: 'weekly',
       lastmod: article.updated_date || article.created_date

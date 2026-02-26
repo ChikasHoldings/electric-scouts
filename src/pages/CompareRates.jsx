@@ -26,8 +26,24 @@ import BillUploadStep from "../components/compare/BillUploadStep";
 import { useZipDetection } from "../components/hooks/useZipDetection";
 import { debugCompareRatesPipeline, validateDataStructures } from "../components/compare/debugPipeline";
 import { runFullSystemTest } from "../components/compare/systemTest";
+import SEOHead, { getOrganizationSchema, getServiceSchema } from "@/components/SEOHead";
 
 export default function CompareRates() {
+  // SEO meta tags
+  useEffect(() => {
+    document.title = "Compare Electricity Rates | Find the Best Plans | ElectricScouts";
+  }, []);
+
+  const seoBlock = (
+    <SEOHead
+      title="Compare Electricity Rates | Find the Best Plans | ElectricScouts"
+      description="Compare electricity rates from 40+ providers across deregulated states. Find the cheapest plans, renewable options, and save up to $800/year on your electric bill."
+      canonical="/compare-rates"
+      keywords="compare electricity rates, electricity plans, cheapest electricity, energy comparison, deregulated electricity"
+      structuredData={[getOrganizationSchema(), getServiceSchema()]}
+    />
+  );
+
   const [step, setStep] = useState(1);
   const [zipCode, setZipCode] = useState("");
   const [zipError, setZipError] = useState("");
@@ -364,7 +380,7 @@ export default function CompareRates() {
   // Loading Animation
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
+      <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="relative w-16 h-16 mx-auto mb-4">
             <div className="absolute inset-0 border-4 border-[#0A5C8C] rounded-full border-t-transparent animate-spin"></div>
@@ -373,14 +389,14 @@ export default function CompareRates() {
           <h2 className="text-xl font-semibold text-gray-900 mb-1">Finding Your Best Rates</h2>
           <p className="text-sm text-gray-600">Comparing plans from {availableProviders.length} verified providers...</p>
         </div>
-      </div>
+      </div></>
     );
   }
 
   // Results Page
   if (showResults) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <>{seoBlock}<div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         {/* Header */}
         <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-4 sm:py-5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -997,16 +1013,15 @@ export default function CompareRates() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+           </div>
         </div>
-      </div>
+      </div></>
     );
   }
-
   // Step 1: ZIP Code
   if (step === 1) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
+      <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-5">
             <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1.5">
@@ -1084,12 +1099,11 @@ export default function CompareRates() {
                 <p className="text-xs text-gray-600">Quick and easy - no credit card or commitment needed</p>
               </CardContent>
             </Card>
-          </div>
+           </div>
         </div>
-      </div>
+      </div></>
     );
   }
-
   // Step 2: Property Type
   if (step === 2) {
     const propertyTypes = [
@@ -1098,7 +1112,7 @@ export default function CompareRates() {
     ];
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-8 pb-12">
+      <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-8 pb-12">
         <div className="max-w-xl mx-auto">
           <div className="text-center mb-6">
             <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-1.5">
@@ -1183,14 +1197,13 @@ export default function CompareRates() {
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div></>
+     );
   }
-
   // Step 2.5: Bill Upload (Optional)
   if (step === 2.5) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-8 pb-12">
+      <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-8 pb-12">
         <div className="max-w-3xl mx-auto">
           <BillUploadStep
             onSkip={handleSkipBillUpload}
@@ -1198,11 +1211,10 @@ export default function CompareRates() {
             onBack={() => setStep(2)}
             accentColor="#0A5C8C"
           />
-        </div>
-      </div>
+         </div>
+      </div></>
     );
   }
-
   // Step 3: Plan Preferences
   if (step === 3) {
     const preferenceOptions = [
@@ -1213,7 +1225,7 @@ export default function CompareRates() {
     ];
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
+      <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-6 pb-12">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-5">
             <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1.5">
@@ -1373,13 +1385,10 @@ export default function CompareRates() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+            </div>
         </div>
-      </div>
+      </div></>
     );
   }
-
-
-
   return null;
 }

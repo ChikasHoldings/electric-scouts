@@ -16,6 +16,7 @@ import {
   HowToSchema 
 } from "../components/seo/StructuredData";
 import { generateAltText } from "../components/seo/SEOConfig";
+import SEOHead from "@/components/SEOHead";
 
 export default function Landing() {
   const [zipCode, setZipCode] = useState("");
@@ -57,6 +58,13 @@ export default function Landing() {
   ];
 
   return (
+    <>
+    <SEOHead
+      title="ElectricScouts | Compare Electricity Rates & Save Up to $800/Year"
+      description="Compare electricity rates from 40+ providers across deregulated states. Find the best energy plans, save up to $800/year. Free, fast, and unbiased."
+      canonical="/"
+      keywords="compare electricity rates, electricity providers, energy plans, save on electricity, deregulated electricity"
+    />
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Structured Data for SEO */}
       <OrganizationSchema />
@@ -451,10 +459,10 @@ export default function Landing() {
         </div>
       </section>
     </div>
+    </>
   );
 }
-
-// Helper component for missing import
+// Helper component for missing importt
 function DollarSign(props) {
   return (
     <svg {...props} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

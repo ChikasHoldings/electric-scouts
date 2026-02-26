@@ -5,10 +5,11 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { createPageUrl } from '@/utils';
 
 // Admin imports — lazy-loaded for code-splitting
 const AdminRoute = lazy(() => import('@/components/admin/AdminRoute'));
@@ -112,17 +113,41 @@ const AuthenticatedApp = () => {
           <MainPage />
         </LayoutWrapper>
       } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
-            </LayoutWrapper>
+      {Object.entries(Pages).map(([pageName, Page]) => {
+        const seoPath = createPageUrl(pageName);
+        return (
+          <Route
+            key={pageName}
+            path={seoPath}
+            element={
+              <LayoutWrapper currentPageName={pageName}>
+                <Page />
+              </LayoutWrapper>
+            }
+          />
+        );
+      })}
+
+      {/* Legacy PascalCase and lowercase redirects for backward compatibility */}
+      {Object.keys(Pages).map((pageName) => {
+        const seoPath = createPageUrl(pageName);
+        const legacyPascal = `/${pageName}`;
+        const legacyLower = `/${pageName.toLowerCase()}`;
+        const routes = [];
+        if (legacyPascal.toLowerCase() !== seoPath) {
+          routes.push(
+            <Route key={`legacy-pascal-${pageName}`} path={legacyPascal}
+              element={<Navigate to={seoPath} replace />} />
+          );
+          if (legacyLower !== seoPath && legacyLower !== legacyPascal.toLowerCase()) {
+            routes.push(
+              <Route key={`legacy-lower-${pageName}`} path={legacyLower}
+                element={<Navigate to={seoPath} replace />} />
+            );
           }
-        />
-      ))}
+        }
+        return routes;
+      })}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

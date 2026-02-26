@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Users, Zap, ArrowRight, CheckCircle, TrendingDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import SEOHead, { getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEOHead";
 
 const cities = [
   // Texas Cities
@@ -443,6 +444,14 @@ export default function AllCities() {
   );
 
   return (
+    <>
+    <SEOHead
+      title="Compare Electricity Rates by City | All Cities | ElectricScouts"
+      description="Browse electricity rates and providers in cities across deregulated states. Compare plans in Houston, Dallas, Chicago, New York, Philadelphia, and more."
+      canonical="/all-cities"
+      keywords="electricity rates by city, compare electricity city, cheap electricity Houston, Dallas electricity rates"
+      structuredData={[getOrganizationSchema(), getBreadcrumbSchema([{name:'Home',url:'/'},{name:'All Cities',url:'/all-cities'}])]}
+    />
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
@@ -632,5 +641,6 @@ export default function AllCities() {
         </div>
       </div>
     </div>
+    </>
   );
 }

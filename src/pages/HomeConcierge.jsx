@@ -8,6 +8,7 @@ import {
   Home, Zap, Wifi, Droplet, Phone, CheckCircle, 
   Clock, Shield, Users, Star, ChevronDown, Mail, ArrowRight
 } from "lucide-react";
+import SEOHead, { getOrganizationSchema } from "@/components/SEOHead";
 
 export default function HomeConcierge() {
   const [openFaq, setOpenFaq] = useState(null);
@@ -115,6 +116,14 @@ export default function HomeConcierge() {
   ];
 
   return (
+    <>
+    <SEOHead
+      title="Home Concierge | Set Up All Utilities in One Place | ElectricScouts"
+      description="Let ElectricScouts handle your electricity, internet, water, and phone setup. One-stop home concierge service for new movers and homeowners."
+      canonical="/home-concierge"
+      keywords="home concierge, utility setup, new home utilities, electricity setup service"
+      structuredData={getOrganizationSchema()}
+    />
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
@@ -364,5 +373,6 @@ export default function HomeConcierge() {
         </section>
       </div>
     </div>
+    </>
   );
 }

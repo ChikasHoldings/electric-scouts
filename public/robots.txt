@@ -1,0 +1,25 @@
+# ElectricScouts - Robots.txt
+# https://electricscouts.com
+
+User-agent: *
+Allow: /
+
+# Block admin and API areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /go/
+
+# Sitemap location
+Sitemap: https://electricscouts.com/sitemap.xml
+
+# Crawl-delay for politeness
+Crawl-delay: 1
+
+# Common search engine bots
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
