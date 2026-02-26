@@ -248,6 +248,81 @@ export default function BillAnalyzer() {
     }
   };
 
+  // ─── Client-side PDF to Image conversion ──────────────────
+  const loadPdfJs = () => {
+    return new Promise((resolve, reject) => {
+      if (window.pdfjsLib) return resolve(window.pdfjsLib);
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
+      script.type = 'module';
+      // Use a classic script approach instead for broader compatibility
+      const classicScript = document.createElement('script');
+      classicScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      classicScript.onload = () => {
+        const lib = window.pdfjsLib;
+        if (lib) {
+          lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          resolve(lib);
+        } else {
+          reject(new Error('pdf.js failed to load'));
+        }
+      };
+      classicScript.onerror = () => reject(new Error('Failed to load pdf.js from CDN'));
+      document.head.appendChild(classicScript);
+    });
+  };
+
+  const convertPdfToImage = async (pdfFile) => {
+    const pdfjsLib = await loadPdfJs();
+
+    const arrayBuffer = await pdfFile.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    
+    // Render first page (and optionally second page for multi-page bills)
+    const pagesToRender = Math.min(pdf.numPages, 2);
+    const images = [];
+    
+    for (let i = 1; i <= pagesToRender; i++) {
+      const page = await pdf.getPage(i);
+      const scale = 2.0; // High resolution for OCR accuracy
+      const viewport = page.getViewport({ scale });
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext('2d');
+      
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      images.push(canvas.toDataURL('image/png', 0.95));
+    }
+    
+    // If multiple pages, stitch them vertically into one image
+    if (images.length > 1) {
+      const stitchCanvas = document.createElement('canvas');
+      const tempImages = await Promise.all(images.map(src => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.src = src;
+        });
+      }));
+      
+      stitchCanvas.width = Math.max(...tempImages.map(img => img.width));
+      stitchCanvas.height = tempImages.reduce((sum, img) => sum + img.height, 0);
+      const stitchCtx = stitchCanvas.getContext('2d');
+      
+      let yOffset = 0;
+      for (const img of tempImages) {
+        stitchCtx.drawImage(img, 0, yOffset);
+        yOffset += img.height;
+      }
+      
+      return stitchCanvas.toDataURL('image/png', 0.92);
+    }
+    
+    return images[0];
+  };
+
   // ─── Upload and analyze handler ────────────────────────────
   const handleUploadAndAnalyze = async () => {
     if (!file) return;
@@ -258,10 +333,27 @@ export default function BillAnalyzer() {
     const MAX_RETRIES = 2;
 
     try {
-      // Step 1: Upload the file to Supabase storage
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      let fileToUpload = file;
+
+      // Step 1: If PDF, convert to PNG image on client side first
+      if (isPdf) {
+        try {
+          const imageDataUrl = await convertPdfToImage(file);
+          // Convert data URL to File object
+          const response = await fetch(imageDataUrl);
+          const blob = await response.blob();
+          fileToUpload = new File([blob], file.name.replace(/\.pdf$/i, '.png'), { type: 'image/png' });
+        } catch (convertErr) {
+          console.warn('Client-side PDF conversion failed:', convertErr);
+          // Fall through - will try to upload the original PDF
+        }
+      }
+
+      // Step 2: Upload the file to Supabase storage
       let uploadResult;
       try {
-        uploadResult = await UploadFile({ file });
+        uploadResult = await UploadFile({ file: fileToUpload });
       } catch (uploadErr) {
         console.error('File upload failed:', uploadErr);
         setIsUploading(false);
@@ -280,26 +372,6 @@ export default function BillAnalyzer() {
 
       setIsUploading(false);
       setIsProcessing(true);
-
-      // Step 2: If PDF, convert to processable format
-      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-      if (isPdf) {
-        try {
-          const convertResponse = await fetch('/api/convert-pdf', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ file_url: fileUrl }),
-          });
-          if (convertResponse.ok) {
-            const convertResult = await convertResponse.json();
-            if (convertResult.status === 'success' && convertResult.image_url) {
-              fileUrl = convertResult.image_url;
-            }
-          }
-        } catch (convertErr) {
-          console.warn('PDF conversion failed, attempting direct extraction:', convertErr);
-        }
-      }
 
       // Step 3: Extract data with retry logic
       let extractResult = null;
