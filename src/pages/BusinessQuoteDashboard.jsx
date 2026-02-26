@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { CustomBusinessQuote } from "@/api/supabaseEntities";
+import { useAuth } from "@/lib/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -9,26 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Clock, CheckCircle, FileText, TrendingDown, AlertCircle, Mail, Phone, MapPin, Calendar, Zap, DollarSign } from "lucide-react";
 
 export default function BusinessQuoteDashboard() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      } catch (error) {
-        console.error("Not authenticated");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadUser();
-  }, []);
+  const { user, isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();
+  const loading = isLoadingAuth;
 
   const { data: quotes = [], isLoading, refetch } = useQuery({
     queryKey: ['businessQuotes', user?.email],
-    queryFn: () => base44.entities.CustomBusinessQuote.filter({ email: user?.email }, '-created_date'),
+    queryFn: () => CustomBusinessQuote.filter({ email: user?.email }, '-created_date'),
     enabled: !!user?.email,
     initialData: [],
   });
@@ -85,7 +72,7 @@ export default function BusinessQuoteDashboard() {
               <h2 className="text-2xl font-bold text-gray-900 mb-3">Sign In Required</h2>
               <p className="text-gray-600 mb-6">Please sign in to view your custom quote requests</p>
               <Button 
-                onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+                onClick={() => navigateToLogin()}
                 className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white"
               >
                 Sign In

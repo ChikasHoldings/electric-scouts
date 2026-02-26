@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
+import { Article } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -141,7 +141,7 @@ export default function LearningCenter() {
     queryKey: ['articles'],
     queryFn: async () => {
       try {
-        const articles = await base44.entities.Article.filter({ published: true }, '-created_date', 1000);
+        const articles = await Article.filter({ published: true }, '-created_date', 1000);
         console.log('Fetched published articles:', articles.length, articles);
         return articles || [];
       } catch (err) {

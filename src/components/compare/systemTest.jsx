@@ -1,5 +1,5 @@
 // Full System Test for CompareRates Pipeline
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { getStateFromZip, getCityFromZip } from "./providerAvailability";
 
 export async function runFullSystemTest(zipCode = "75244") {
@@ -35,7 +35,7 @@ export async function runFullSystemTest(zipCode = "75244") {
     // STAGE 2: PROVIDER DATA
     console.log("\n🏢 STAGE 2: PROVIDER DATA");
     console.log("─────────────────────────────────────────────────────────────");
-    const allProviders = await base44.entities.ElectricityProvider.list();
+    const allProviders = await ElectricityProvider.list();
     console.log(`Total providers in DB: ${allProviders.length}`);
     
     if (allProviders.length === 0) {
@@ -84,7 +84,7 @@ export async function runFullSystemTest(zipCode = "75244") {
     // STAGE 3: PLAN DATA
     console.log("\n📋 STAGE 3: PLAN DATA");
     console.log("─────────────────────────────────────────────────────────────");
-    const allPlans = await base44.entities.ElectricityPlan.list();
+    const allPlans = await ElectricityPlan.list();
     console.log(`Total plans in DB: ${allPlans.length}`);
 
     if (allPlans.length === 0) {

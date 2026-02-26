@@ -1,7 +1,7 @@
 // Internal debugging pipeline - DO NOT IMPORT IN PRODUCTION UI
 // This file is for diagnostics only
 
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { getStateFromZip, getCityFromZip } from "./providerAvailability";
 
 export async function debugCompareRatesPipeline(zipCode) {
@@ -34,7 +34,7 @@ export async function debugCompareRatesPipeline(zipCode) {
 
     // STAGE B: Provider Validation
     console.log("=== STAGE B: PROVIDER VALIDATION ===");
-    const allProviders = await base44.entities.ElectricityProvider.list();
+    const allProviders = await ElectricityProvider.list();
     console.log("Total providers in DB:", allProviders.length);
     
     const activeProviders = allProviders.filter(p => {
@@ -73,7 +73,7 @@ export async function debugCompareRatesPipeline(zipCode) {
 
     // STAGE C: Plan Validation
     console.log("=== STAGE C: PLAN VALIDATION ===");
-    const allPlans = await base44.entities.ElectricityPlan.list();
+    const allPlans = await ElectricityPlan.list();
     console.log("Total plans in DB:", allPlans.length);
     
     const providerNames = providersForState.map(p => p.name);
@@ -170,7 +170,7 @@ export async function validateDataStructures() {
   console.log("=== DATA STRUCTURE VALIDATION ===");
   
   // Check provider structure
-  const providers = await base44.entities.ElectricityProvider.list();
+  const providers = await ElectricityProvider.list();
   if (providers.length > 0) {
     const sample = providers[0];
     console.log("Provider structure sample:", {
@@ -183,7 +183,7 @@ export async function validateDataStructures() {
   }
 
   // Check plan structure
-  const plans = await base44.entities.ElectricityPlan.list();
+  const plans = await ElectricityPlan.list();
   if (plans.length > 0) {
     const sample = plans[0];
     console.log("Plan structure sample:", {

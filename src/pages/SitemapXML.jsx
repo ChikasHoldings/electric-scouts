@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { Article } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { generateDynamicSitemap } from "../components/seo/SitemapManager";
 
@@ -9,7 +9,7 @@ export default function SitemapXML() {
   // Fetch articles for dynamic sitemap
   const { data: articles } = useQuery({
     queryKey: ['articles-sitemap'],
-    queryFn: () => base44.entities.Article.list(),
+    queryFn: () => Article.list(),
     initialData: [],
   });
 

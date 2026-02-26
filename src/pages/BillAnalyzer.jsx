@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
+import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,13 +23,13 @@ export default function BillAnalyzer() {
 
   const { data: plans } = useQuery({
     queryKey: ['plans'],
-    queryFn: () => base44.entities.ElectricityPlan.list(),
+    queryFn: () => ElectricityPlan.list(),
     initialData: [],
   });
 
   const { data: providers = [] } = useQuery({
     queryKey: ['providers'],
-    queryFn: () => base44.entities.ElectricityProvider.filter({ is_active: true }),
+    queryFn: () => ElectricityProvider.filter({ is_active: true }),
     initialData: [],
   });
 
@@ -61,14 +62,14 @@ export default function BillAnalyzer() {
 
     try {
       // Upload the file
-      const uploadResult = await base44.integrations.Core.UploadFile({ file });
+      const uploadResult = await UploadFile({ file });
       const fileUrl = uploadResult.file_url;
 
       setIsUploading(false);
       setIsProcessing(true);
 
       // Extract data from the uploaded bill
-      const extractResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
+      const extractResult = await ExtractDataFromUploadedFile({
         file_url: fileUrl,
         json_schema: {
           type: "object",

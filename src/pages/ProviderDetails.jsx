@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,13 +25,13 @@ export default function ProviderDetails() {
 
   const { data: allPlans } = useQuery({
     queryKey: ['plans'],
-    queryFn: () => base44.entities.ElectricityPlan.list(),
+    queryFn: () => ElectricityPlan.list(),
     initialData: [],
   });
 
   const { data: providers = [] } = useQuery({
     queryKey: ['providers'],
-    queryFn: () => base44.entities.ElectricityProvider.filter({ is_active: true }),
+    queryFn: () => ElectricityProvider.filter({ is_active: true }),
     initialData: [],
   });
 

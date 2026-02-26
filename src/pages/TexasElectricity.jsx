@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ export default function TexasElectricity() {
   // Fetch real plans from database
   const { data: allPlans, isLoading } = useQuery({
     queryKey: ['plans'],
-    queryFn: () => base44.entities.ElectricityPlan.list(),
+    queryFn: () => ElectricityPlan.list(),
     initialData: [],
   });
 
@@ -25,7 +25,7 @@ export default function TexasElectricity() {
   const { data: stateProviders = [] } = useQuery({
     queryKey: ['providers', 'TX'],
     queryFn: async () => {
-      const allProviders = await base44.entities.ElectricityProvider.filter({ is_active: true });
+      const allProviders = await ElectricityProvider.filter({ is_active: true });
       return allProviders.filter(p => 
         (p.supported_states || []).includes('TX')
       );

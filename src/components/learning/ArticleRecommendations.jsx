@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, TrendingUp, User, Sparkles } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { InvokeLLM } from "@/api/supabaseIntegrations";
 
 const colorClasses = {
   blue: { bg: "bg-blue-50", text: "text-blue-600" },
@@ -118,7 +118,7 @@ Consider:
 
 Return ONLY a JSON array of recommended article IDs in order of relevance, like: [14, 11, 2, 15]`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
+      const response = await InvokeLLM({
         prompt: prompt,
         response_json_schema: {
           type: "object",

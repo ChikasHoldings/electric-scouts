@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -99,7 +99,7 @@ export default function CompareRates() {
     queryFn: async () => {
       console.log("🔍 Fetching plans from database...");
       try {
-        const result = await base44.entities.ElectricityPlan.list();
+        const result = await ElectricityPlan.list();
         console.log("✅ Plans fetched successfully:", result?.length || 0);
         if (result && result.length > 0) {
           console.log("Sample plan structure:", result[0]);
@@ -284,7 +284,7 @@ export default function CompareRates() {
     queryKey: ['providers'],
     queryFn: async () => {
       console.log("🔍 Fetching providers from database...");
-      const result = await base44.entities.ElectricityProvider.filter({ is_active: true });
+      const result = await ElectricityProvider.filter({ is_active: true });
       console.log("Providers fetched:", result?.length || 0);
       if (result && result.length > 0) {
         console.log("Sample provider:", result[0]);

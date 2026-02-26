@@ -1,4 +1,4 @@
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider } from "@/api/supabaseEntities";
 
 // Database-driven provider system
 let cachedProviders = null;
@@ -8,7 +8,7 @@ async function fetchProviders() {
   if (cachedProviders) return cachedProviders;
   
   try {
-    const providers = await base44.entities.ElectricityProvider.filter(
+    const providers = await ElectricityProvider.filter(
       { is_active: true },
       '-created_date',
       100

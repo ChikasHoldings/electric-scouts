@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, FileText, AlertCircle, CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
@@ -38,13 +38,13 @@ export default function BillUploadStep({ onSkip, onAnalysisComplete, onBack, acc
     setError(null);
 
     try {
-      const uploadResult = await base44.integrations.Core.UploadFile({ file });
+      const uploadResult = await UploadFile({ file });
       const fileUrl = uploadResult.file_url;
 
       setIsUploading(false);
       setIsProcessing(true);
 
-      const extractResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
+      const extractResult = await ExtractDataFromUploadedFile({
         file_url: fileUrl,
         json_schema: {
           type: "object",

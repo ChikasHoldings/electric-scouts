@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Star, Zap, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 
 export default function AllProviders() {
@@ -15,13 +15,13 @@ export default function AllProviders() {
 
   const { data: providers = [] } = useQuery({
     queryKey: ['providers'],
-    queryFn: () => base44.entities.ElectricityProvider.filter({ is_active: true }),
+    queryFn: () => ElectricityProvider.filter({ is_active: true }),
     initialData: [],
   });
 
   const { data: plans = [] } = useQuery({
     queryKey: ['plans'],
-    queryFn: () => base44.entities.ElectricityPlan.list(),
+    queryFn: () => ElectricityPlan.list(),
     initialData: [],
   });
 

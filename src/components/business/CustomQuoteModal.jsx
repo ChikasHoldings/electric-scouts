@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { CustomBusinessQuote } from "@/api/supabaseEntities";
+import { UploadFile } from "@/api/supabaseIntegrations";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +35,7 @@ export default function CustomQuoteModal({ onClose, initialData = {} }) {
   const queryClient = useQueryClient();
 
   const createQuoteMutation = useMutation({
-    mutationFn: (data) => base44.entities.CustomBusinessQuote.create(data),
+    mutationFn: (data) => CustomBusinessQuote.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['businessQuotes']);
       setStep(3);
@@ -52,7 +53,7 @@ export default function CustomQuoteModal({ onClose, initialData = {} }) {
 
     setUploading(true);
     try {
-      const result = await base44.integrations.Core.UploadFile({ file });
+      const result = await UploadFile({ file });
       setFormData(prev => ({ ...prev, bill_file_url: result.file_url }));
     } catch (error) {
       alert("Failed to upload file. Please try again.");

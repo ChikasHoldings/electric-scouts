@@ -1,5 +1,5 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ export default function PlanCard({ plan, usage, estimatedMonthlyCost, isSaved, o
 
   const { data: providers = [] } = useQuery({
     queryKey: ['providers'],
-    queryFn: () => base44.entities.ElectricityProvider.filter({ is_active: true }),
+    queryFn: () => ElectricityProvider.filter({ is_active: true }),
     initialData: [],
   });
 

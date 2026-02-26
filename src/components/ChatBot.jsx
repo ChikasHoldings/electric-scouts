@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { UploadFile } from "@/api/supabaseIntegrations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -80,12 +80,11 @@ export default function ChatBot() {
         clearTimeout(siteIdleTimeoutRef.current);
       }
       
-      // Only show proactive prompt if chatbot hasn't been opened and not already shown
       if (!hasEverOpened && !hasShownProactiveRef.current && !isOpen) {
         siteIdleTimeoutRef.current = setTimeout(() => {
           setShowProactivePrompt(true);
           hasShownProactiveRef.current = true;
-        }, 120000); // 2 minutes
+        }, 120000);
       }
     };
 
@@ -98,13 +97,11 @@ export default function ChatBot() {
       }
     };
 
-    // Track user activity across the site
     const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart'];
     activityEvents.forEach(event => {
       window.addEventListener(event, resetSiteIdleTimer, { passive: true });
     });
 
-    // Start initial timer
     startSiteIdleTimer();
 
     return () => {
@@ -123,6 +120,51 @@ export default function ChatBot() {
     }
   }, [isOpen]);
 
+  // Helper to call the chatbot API
+  const callChatbot = async (payload) => {
+    const response = await fetch('/api/chatbot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error('Chatbot request failed');
+    }
+    return response.json();
+  };
+
+  // Helper to process chatbot response into messages
+  const processChatbotResponse = async (responseData) => {
+    if (responseData.recommendations && responseData.recommendations.length > 0) {
+      const searchingMessage = {
+        role: "assistant",
+        content: "Perfect! Thanks for the details — give me a moment while I look for the best savings for you.",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, searchingMessage]);
+
+      await new Promise(resolve => setTimeout(resolve, 2500));
+
+      const resultsMessage = {
+        role: "assistant",
+        content: responseData.response,
+        recommendations: responseData.recommendations,
+        billAnalysis: responseData.billAnalysis,
+        showBillUploadButtons: responseData.showBillUploadButtons,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, resultsMessage]);
+    } else {
+      const assistantMessage = {
+        role: "assistant",
+        content: responseData.response,
+        showBillUploadButtons: responseData.showBillUploadButtons,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    }
+  };
+
   const handleSend = async (messageOverride = null) => {
     const messageToSend = messageOverride || input.trim();
     if (!messageToSend || isLoading || uploadingFile) return;
@@ -135,7 +177,6 @@ export default function ChatBot() {
 
     resetActivity();
     
-    // Clear input immediately before adding message (prevents blanking)
     const shouldClearInput = !messageOverride;
     if (shouldClearInput) {
       setInput("");
@@ -144,7 +185,6 @@ export default function ChatBot() {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Add natural typing delay
     await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
 
     try {
@@ -153,48 +193,17 @@ export default function ChatBot() {
         content: msg.content
       }));
 
-      const response = await base44.functions.invoke('chatbot', {
+      const responseData = await callChatbot({
         message: messageToSend,
-        conversationHistory: conversationHistory
+        conversationHistory,
       });
 
-      // If response has recommendations, show searching message first
-      if (response.data.recommendations && response.data.recommendations.length > 0) {
-        const searchingMessage = {
-          role: "assistant",
-          content: "Perfect! Thanks for the details — give me a moment while I look for the best savings for you.",
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, searchingMessage]);
-
-        // Wait 2.5 seconds before showing results
-        await new Promise(resolve => setTimeout(resolve, 2500));
-
-        const resultsMessage = {
-          role: "assistant",
-          content: response.data.response,
-          recommendations: response.data.recommendations,
-          billAnalysis: response.data.billAnalysis,
-          showBillUploadButtons: response.data.showBillUploadButtons,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, resultsMessage]);
-      } else {
-        const assistantMessage = {
-          role: "assistant",
-          content: response.data.response,
-          recommendations: response.data.recommendations,
-          billAnalysis: response.data.billAnalysis,
-          showBillUploadButtons: response.data.showBillUploadButtons,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      }
+      await processChatbotResponse(responseData);
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error('Chatbot error:', error);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "Oops! Something went wrong on my end. Could you try that again? 😊",
+        content: "I'm sorry, I encountered an error. Please try again.",
         timestamp: new Date()
       }]);
     } finally {
@@ -202,24 +211,17 @@ export default function ChatBot() {
     }
   };
 
-  const handleQuickReply = (reply) => {
-    setInput(reply);
-  };
-
-  const handleCategorySelect = async (category) => {
-    if (isLoading || uploadingFile) return;
-    
+  const handleCategoryClick = async (category) => {
     resetActivity();
-    // Add user's category selection
-    setMessages(prev => [...prev, {
+    
+    const userMessage = {
       role: "user",
       content: category,
       timestamp: new Date()
-    }]);
-
+    };
+    setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Add natural typing delay
     await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
 
     try {
@@ -228,39 +230,12 @@ export default function ChatBot() {
         content: msg.content
       }));
       
-      const response = await base44.functions.invoke('chatbot', {
+      const responseData = await callChatbot({
         message: category,
-        conversationHistory: conversationHistory
+        conversationHistory,
       });
 
-      // If response has recommendations, show searching message first
-      if (response.data.recommendations && response.data.recommendations.length > 0) {
-        const searchingMessage = {
-          role: "assistant",
-          content: "Perfect! Thanks for the details — give me a moment while I look for the best savings for you.",
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, searchingMessage]);
-
-        await new Promise(resolve => setTimeout(resolve, 2500));
-
-        const resultsMessage = {
-          role: "assistant",
-          content: response.data.response,
-          recommendations: response.data.recommendations,
-          billAnalysis: response.data.billAnalysis,
-          showBillUploadButtons: response.data.showBillUploadButtons,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, resultsMessage]);
-      } else {
-        const assistantMessage = {
-          role: "assistant",
-          content: response.data.response,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      }
+      await processChatbotResponse(responseData);
     } catch (error) {
       console.error('Chatbot error:', error);
       setMessages(prev => [...prev, {
@@ -273,13 +248,16 @@ export default function ChatBot() {
     }
   };
 
+  const handleCategorySelect = (category) => {
+    handleCategoryClick(category);
+  };
+
   const handleFileUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
     
     resetActivity();
 
-    // Validate file type
     const validTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
     if (!validTypes.includes(file.type)) {
       setMessages(prev => [...prev, {
@@ -290,7 +268,6 @@ export default function ChatBot() {
       return;
     }
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       setMessages(prev => [...prev, {
         role: "assistant",
@@ -308,53 +285,21 @@ export default function ChatBot() {
     }]);
 
     try {
-      // Upload file
-      const uploadResponse = await base44.integrations.Core.UploadFile({ file });
+      const uploadResponse = await UploadFile({ file });
       const fileUrl = uploadResponse.file_url;
 
-      // Analyze bill with chatbot
       const conversationHistory = messages.map(msg => ({
         role: msg.role,
         content: msg.content
       }));
 
-      const response = await base44.functions.invoke('chatbot', {
+      const responseData = await callChatbot({
         message: `I've uploaded my electricity bill. Please analyze it.`,
-        conversationHistory: conversationHistory,
-        billFileUrl: fileUrl
+        conversationHistory,
+        billFileUrl: fileUrl,
       });
 
-      // If response has recommendations, show searching message first
-      if (response.data.recommendations && response.data.recommendations.length > 0) {
-        const searchingMessage = {
-          role: "assistant",
-          content: "Perfect! Thanks for the details — give me a moment while I look for the best savings for you.",
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, searchingMessage]);
-
-        await new Promise(resolve => setTimeout(resolve, 2500));
-
-        const resultsMessage = {
-          role: "assistant",
-          content: response.data.response,
-          recommendations: response.data.recommendations,
-          billAnalysis: response.data.billAnalysis,
-          showBillUploadButtons: response.data.showBillUploadButtons,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, resultsMessage]);
-      } else {
-        const assistantMessage = {
-          role: "assistant",
-          content: response.data.response,
-          recommendations: response.data.recommendations,
-          billAnalysis: response.data.billAnalysis,
-          showBillUploadButtons: response.data.showBillUploadButtons,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-      }
+      await processChatbotResponse(responseData);
     } catch (error) {
       console.error('Bill upload error:', error);
       setMessages(prev => [...prev, {
@@ -373,7 +318,6 @@ export default function ChatBot() {
   const formatMessage = (content) => {
     if (!content || typeof content !== 'string') return null;
     return content.split('\n').map((line, i) => {
-      // Bold text
       if (line.includes('**')) {
         const parts = line.split('**');
         return (
@@ -382,7 +326,6 @@ export default function ChatBot() {
           </p>
         );
       }
-      // Bullet points
       if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
         return <p key={i} className="ml-4 mb-1">{line}</p>;
       }
@@ -407,7 +350,6 @@ export default function ChatBot() {
           <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#FF6B35] rounded-full animate-pulse"></span>
         </button>
 
-        {/* Proactive Outreach Prompt */}
         {showProactivePrompt && (
           <div 
             className="fixed bottom-28 right-6 bg-white rounded-xl shadow-2xl border-2 border-[#0A5C8C] p-4 max-w-xs z-[998] animate-slideUp"
@@ -627,8 +569,6 @@ export default function ChatBot() {
         
         <div ref={messagesEndRef} />
       </div>
-
-
 
       {/* Input */}
       <div className="p-4 bg-white border-t border-gray-200">

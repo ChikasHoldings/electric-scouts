@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
+import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +45,7 @@ export default function Layout({ children, currentPageName }) {
   const { data: affiliateProviders = [] } = useQuery({
     queryKey: ['affiliateProviders'],
     queryFn: async () => {
-      const providers = await base44.entities.ElectricityProvider.filter({ is_active: true });
+      const providers = await ElectricityProvider.filter({ is_active: true });
       return providers.filter(p => p.affiliate_url).slice(0, 5);
     },
     initialData: [],

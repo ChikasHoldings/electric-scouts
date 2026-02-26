@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { InvokeLLM } from "@/api/supabaseIntegrations";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -26,7 +26,7 @@ export default function ArticleSuggestions({ searchTerm, currentArticleId, curre
         
         prompt += `Return a JSON array of 3 objects with: title (concise, SEO-friendly), excerpt (1 sentence description), category (one of: City Guides, State Guides, Getting Started, Saving Money, Plan Types, Renewable Energy, Business Energy, Consumer Protection, Switching Providers, Understanding Bills, Seasonal Tips), read_time (e.g., "5 min read").`;
 
-        const result = await base44.integrations.Core.InvokeLLM({
+        const result = await InvokeLLM({
           prompt: prompt,
           response_json_schema: {
             type: "object",
