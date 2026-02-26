@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
@@ -700,19 +700,28 @@ const cityData = {
   }
 };
 
-export default function CityRates() {
+class CityRatesErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  componentDidCatch(error, info) { console.error('CityRates crash:', error, info); }
+  render() {
+    if (this.state.hasError) return <div className="p-8 text-red-600"><h1>CityRates Error</h1><pre>{this.state.error?.toString()}</pre></div>;
+    return this.props.children;
+  }
+}
+
+function CityRatesInner() {
   const [zipCode, setZipCode] = useState("");
   const [usage, setUsage] = useState(1000);
   const [cityName, setCityName] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
   const [isZipValid, setIsZipValid] = useState(false);
+  const [searchParams] = useSearchParams();
+  const cityParam = searchParams.get('city');
+  const stateParam = searchParams.get('state');;
 
   // Get city and state from URL - update when URL changes
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const cityParam = urlParams.get('city');
-    const stateParam = urlParams.get('state');
-    
     if (cityParam && stateParam) {
       const cityKey = `${cityParam}-${stateParam}`;
       setCityName(cityKey);
@@ -723,7 +732,7 @@ export default function CityRates() {
       // Only default if no params at all
       setCityName('Houston-TX');
     }
-  }, [window.location.search]);
+  }, [cityParam, stateParam]);
 
   // Always prioritize the full city-state key, generate generic data if city doesn't exist
   const cityKey = cityName;
@@ -801,7 +810,18 @@ export default function CityRates() {
 
   // Get available providers for first ZIP in city
   const cityZipCode = city.zipCodes[0];
-  const availableProviders = getProvidersForZipCode(cityZipCode);
+  const [availableProviders, setAvailableProviders] = useState([]);
+  
+  useEffect(() => {
+    let cancelled = false;
+    getProvidersForZipCode(cityZipCode).then(providers => {
+      if (!cancelled) setAvailableProviders(providers || []);
+    }).catch(() => {
+      if (!cancelled) setAvailableProviders([]);
+    });
+    return () => { cancelled = true; };
+  }, [cityZipCode]);
+  
   const availableProviderNames = availableProviders.map(p => p.name);
   
   // Filter plans by providers available in this city
@@ -1265,4 +1285,8 @@ export default function CityRates() {
       </div>
     </div>
   );
+}
+
+export default function CityRates() {
+  return <CityRatesErrorBoundary><CityRatesInner /></CityRatesErrorBoundary>;
 }
