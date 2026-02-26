@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { generateProviderSlug, getProviderLogoUrl, getProviderPageUrl } from "@/utils/providerSlug";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Star, Zap, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
@@ -33,18 +34,30 @@ export default function AllProviders() {
       ? Math.min(...providerPlans.map(p => p.rate_per_kwh))
       : null;
     
+    // Use real features from DB, with fallback
+    const features = Array.isArray(provider.features) && provider.features.length > 0
+      ? provider.features
+      : ["Competitive Rates", "Flexible Plans", "Easy Signup"];
+
+    // Use real review count from DB
+    const reviewCount = provider.review_count || 0;
+
     return {
+      id: provider.id,
       name: provider.name,
-      logo: provider.logo_url,
+      logo: getProviderLogoUrl(provider),
       rating: provider.rating || 4.8,
-      reviews: 0,
+      reviews: reviewCount,
       description: provider.description,
-      features: ["Competitive Rates", "Flexible Plans", "Easy Signup"],
+      features: features,
       minRate: minRate ? `${minRate}¢/kWh` : "Contact for rates",
       states: provider.supported_states || [],
       cities: [],
       planCount: providerPlans.length,
-      customerCount: "New"
+      customerCount: reviewCount > 0 ? `${(reviewCount / 1000).toFixed(0)}K+` : "New",
+      slug: generateProviderSlug(provider.name),
+      affiliate_url: provider.affiliate_url,
+      website_url: provider.website_url,
     };
   });
 
@@ -129,24 +142,41 @@ export default function AllProviders() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
           {filteredProviders.map((provider, index) => (
-            <Card key={index} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-[#FF6B35] group">
+            <Card key={provider.id || index} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-[#FF6B35] group">
               <CardContent className="p-6">
                 {/* Provider Logo */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
-                    <img 
-                      src={provider.logo} 
-                      alt={`${provider.name} logo`}
-                      className="h-8 w-auto object-contain"
-                      loading="lazy"
-                    />
+                    {provider.logo ? (
+                      <img 
+                        src={provider.logo} 
+                        alt={`${provider.name} logo`}
+                        className="h-8 w-auto object-contain max-w-[120px]"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = `<span class="text-sm font-bold text-[#0A5C8C]">${provider.name.substring(0, 3).toUpperCase()}</span>`;
+                        }}
+                      />
+                    ) : (
+                      <span className="text-sm font-bold text-[#0A5C8C]">
+                        {provider.name.substring(0, 3).toUpperCase()}
+                      </span>
+                    )}
                   </div>
-                  {provider.features.some(f => f.includes("Green") || f.includes("Renewable")) && (
+                  {provider.features.some(f => 
+                    f.toLowerCase().includes("green") || 
+                    f.toLowerCase().includes("renewable") || 
+                    f.toLowerCase().includes("solar")
+                  ) && (
                     <div className="bg-green-100 p-2 rounded-full">
                       <Leaf className="w-4 h-4 text-green-600" />
                     </div>
                   )}
                 </div>
+
+                {/* Provider Name */}
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{provider.name}</h3>
 
                 {/* Rating */}
                 <div className="flex items-center gap-2 mb-3">
@@ -154,7 +184,9 @@ export default function AllProviders() {
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-semibold text-gray-900">{provider.rating}</span>
                   </div>
-                  <span className="text-sm text-gray-500">({provider.reviews} reviews)</span>
+                  <span className="text-sm text-gray-500">
+                    ({provider.reviews > 0 ? `${provider.reviews.toLocaleString()} reviews` : 'New provider'})
+                  </span>
                 </div>
 
                 {/* Description */}
@@ -190,8 +222,6 @@ export default function AllProviders() {
                   </div>
                 </div>
 
-
-
                 {/* Features */}
                 <div className="mb-4">
                   <div className="text-xs font-semibold text-gray-700 mb-2">Key Features:</div>
@@ -207,12 +237,12 @@ export default function AllProviders() {
 
                 {/* CTA Buttons */}
                 <div className="grid grid-cols-2 gap-2">
-                  <Link to={createPageUrl("ProviderDetails") + `?provider=${encodeURIComponent(provider.name)}`}>
+                  <Link to={getProviderPageUrl(provider.name)}>
                     <Button variant="outline" className="w-full text-sm">
                       Learn More
                     </Button>
                   </Link>
-                  <a href={getAffiliateUrl({ providerId: providers.find(p => p.name === provider.name)?.id, fallbackUrl: providers.find(p => p.name === provider.name)?.affiliate_url || providers.find(p => p.name === provider.name)?.website_url || '#' })} target="_blank" rel="noopener noreferrer" className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm inline-flex items-center justify-center rounded-md px-4 py-2 font-medium no-underline">
+                  <a href={getAffiliateUrl({ providerId: provider.id, fallbackUrl: provider.affiliate_url || provider.website_url || '#' })} target="_blank" rel="noopener noreferrer" className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm inline-flex items-center justify-center rounded-md px-4 py-2 font-medium no-underline">
                       View Plans
                   </a>
                 </div>

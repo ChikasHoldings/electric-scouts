@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Building, TrendingUp, Award, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getProviderPageUrl } from "@/utils/providerSlug";
 
 export default function TopProviders({ providers, locationName }) {
   if (!providers || providers.length === 0) return null;
@@ -61,7 +62,7 @@ export default function TopProviders({ providers, locationName }) {
                   </div>
                 </div>
 
-                <Link to={createPageUrl("ProviderDetails") + `?provider=${encodeURIComponent(provider.name)}`}>
+                <Link to={getProviderPageUrl(provider.name)}>
                   <Button size="sm" variant="outline" className="flex-shrink-0">
                     View Plans
                     <ArrowRight className="w-3 h-3 ml-1" />

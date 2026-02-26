@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -46,7 +47,10 @@ export default function Layout({ children, currentPageName }) {
     queryKey: ['affiliateProviders'],
     queryFn: async () => {
       const providers = await ElectricityProvider.filter({ is_active: true });
-      return providers.filter(p => p.affiliate_url).slice(0, 5);
+      // Return top 5 providers sorted by rating (highest first)
+      return providers
+        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+        .slice(0, 5);
     },
     initialData: [],
   });
@@ -517,7 +521,7 @@ export default function Layout({ children, currentPageName }) {
                 {affiliateProviders.map((provider) => (
                   <Link 
                     key={provider.id}
-                    to={createPageUrl("ProviderDetails") + `?provider=${encodeURIComponent(provider.name)}`} 
+                    to={getProviderPageUrl(provider.name)} 
                     className="block text-gray-400 hover:text-white text-sm transition-colors"
                   >
                     {provider.name}

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { generateProviderSlug, getProviderLogoUrl, getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, MapPin, Zap, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp, ThumbsUp } from "lucide-react";
-import { getProviderDetails } from "../components/compare/providerAvailability";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
@@ -16,13 +16,8 @@ export default function ProviderDetails() {
   const [zipCode, setZipCode] = useState("");
   const [providerName, setProviderName] = useState("");
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const provider = urlParams.get('provider');
-    if (provider) {
-      setProviderName(provider);
-    }
-  }, []);
+  // Support both slug-based routing (/providers/:slug) and legacy query param (?provider=Name)
+  const params = useParams();
 
   const { data: allPlans } = useQuery({
     queryKey: ['plans'],
@@ -38,16 +33,41 @@ export default function ProviderDetails() {
 
   const { getAffiliateUrl } = useAffiliateLinks();
 
+  // Resolve provider name from slug or query param
+  useEffect(() => {
+    if (params.slug) {
+      // Find provider by matching slug
+      const found = providers.find(p => generateProviderSlug(p.name) === params.slug);
+      if (found) {
+        setProviderName(found.name);
+      }
+    } else {
+      // Legacy: use query param
+      const urlParams = new URLSearchParams(window.location.search);
+      const provider = urlParams.get('provider');
+      if (provider) {
+        setProviderName(provider);
+      }
+    }
+  }, [params.slug, providers]);
+
   const providerFromDB = providers.find(p => p.name === providerName);
+  const providerLogo = providerFromDB ? getProviderLogoUrl(providerFromDB) : null;
+  
   const providerInfo = providerFromDB ? {
     name: providerFromDB.name,
-    logo: providerFromDB.logo_url,
+    logo: providerLogo,
     website: getAffiliateUrl({
       providerId: providerFromDB.id,
       fallbackUrl: providerFromDB.affiliate_url || providerFromDB.website_url || "#"
     }),
     states: providerFromDB.supported_states || [],
-    isRecommended: providerFromDB.is_recommended || false
+    isRecommended: providerFromDB.is_recommended || false,
+    features: Array.isArray(providerFromDB.features) && providerFromDB.features.length > 0
+      ? providerFromDB.features
+      : [],
+    reviewCount: providerFromDB.review_count || 0,
+    phone: providerFromDB.phone || null,
   } : null;
 
   const providerPlans = allPlans
@@ -107,13 +127,22 @@ export default function ProviderDetails() {
     }
   ];
 
+  const providerSlug = generateProviderSlug(providerName);
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Providers", url: "/all-providers" },
-    { name: providerName, url: `/provider-details?provider=${providerName}` }
+    { name: providerName, url: `/providers/${providerSlug}` }
   ]);
 
   if (!providerName || !providerInfo) {
+    // Show loading state while providers are being fetched
+    if (params.slug && providers.length === 0) {
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin"></div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -132,7 +161,7 @@ export default function ProviderDetails() {
         title={`${providerName} Electricity Rates & Reviews - Compare Plans | ElectricScouts`}
         description={`Compare ${providerName} electricity rates and plans. Read reviews, check availability, find best ${providerName} deals. Serving multiple states with fixed, variable & renewable energy options. Starting at ${lowestRate}¢/kWh. Switch and save today.`}
         keywords={`${providerName} electricity rates, ${providerName} reviews, ${providerName} plans, ${providerName} energy, best ${providerName} deals, ${providerName} renewable energy, compare ${providerName} rates`}
-        canonical={`/provider-details?provider=${providerName}`}
+        canonical={`/providers/${providerSlug}`}
         structuredData={breadcrumbData}
       />
 
@@ -155,7 +184,12 @@ export default function ProviderDetails() {
                     src={providerInfo.logo} 
                     alt={`${providerName} logo`}
                     className="h-16 w-32 object-contain"
-                  loading="lazy" />
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML = `<div class="h-16 w-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center"><span class="text-xl font-bold text-[#0A5C8C]">${providerName.substring(0, 3).toUpperCase()}</span></div>`;
+                    }}
+                  />
                 ) : (
                   <div className="h-16 w-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center">
                     <span className="text-xl font-bold text-[#0A5C8C]">
@@ -171,12 +205,23 @@ export default function ProviderDetails() {
                     <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold">{providerFromDB?.rating || 4.8}</span>
                   </div>
+                  {providerInfo.reviewCount > 0 && (
+                    <>
+                      <span className="text-blue-200">•</span>
+                      <span className="text-blue-100">{providerInfo.reviewCount.toLocaleString()} reviews</span>
+                    </>
+                  )}
                   <span className="text-blue-200">•</span>
                   <span className="text-blue-100">{providerPlans.length} Plans Available</span>
                 </div>
                 <p className="text-blue-100 text-base">
-                  Competitive electricity rates serving {providerInfo.states.join(", ")}
+                  {providerFromDB?.description || `Competitive electricity rates serving ${providerInfo.states.join(", ")}`}
                 </p>
+                {providerInfo.phone && (
+                  <p className="text-blue-200 text-sm mt-2">
+                    Phone: {providerInfo.phone}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -230,6 +275,21 @@ export default function ProviderDetails() {
                       <span key={i} className="bg-white text-gray-900 text-sm font-medium px-3 py-1.5 rounded-md border border-blue-200">
                         {state}
                       </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Features from DB */}
+              {providerInfo.features.length > 0 && (
+                <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-100">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Key Features</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {providerInfo.features.map((feature, i) => (
+                      <div key={i} className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-green-200">
+                        <CheckCircle className="w-3.5 h-3.5 text-green-600" />
+                        <span className="text-sm text-gray-700">{feature}</span>
+                      </div>
                     ))}
                   </div>
                 </div>

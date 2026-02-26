@@ -10,6 +10,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { createPageUrl } from '@/utils';
+import ProviderDetailsPage from '@/pages/ProviderDetails';
 
 // Admin imports — lazy-loaded for code-splitting
 const AdminRoute = lazy(() => import('@/components/admin/AdminRoute'));
@@ -114,6 +115,11 @@ const AuthenticatedApp = () => {
       } />
 
       {/* ── Public Routes ── */}
+      <Route path="/providers/:slug" element={
+        <LayoutWrapper currentPageName="ProviderDetails">
+          <ProviderDetailsPage />
+        </LayoutWrapper>
+      } />
       <Route path="/" element={
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />

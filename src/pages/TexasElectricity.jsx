@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -299,7 +300,7 @@ export default function TexasElectricity() {
                       </div>
                     )}
                     <div className="flex gap-2">
-                      <Link to={createPageUrl("ProviderDetails") + `?provider=${encodeURIComponent(provider.name)}`} className="flex-1">
+                      <Link to={getProviderPageUrl(provider.name)} className="flex-1">
                         <Button variant="outline" size="sm" className="w-full text-xs">
                           Learn More
                         </Button>
