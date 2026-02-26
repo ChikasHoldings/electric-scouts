@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Upload, FileText, Zap, TrendingDown, Clock, Leaf, 
-  CheckCircle, AlertCircle, DollarSign, ArrowRight, Edit3
+  CheckCircle, AlertCircle, DollarSign, ArrowRight, Edit3,
+  BarChart3, Percent
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -14,13 +15,97 @@ import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import { getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
+// ─── Session Storage Helpers ──────────────────────────────────
+const SESSION_KEY = "electricscouts_bill_analyzer";
+
+function saveToSession(data) {
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn("Failed to save to sessionStorage:", e);
+  }
+}
+
+function loadFromSession() {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function clearSession() {
+  try {
+    sessionStorage.removeItem(SESSION_KEY);
+  } catch (e) {
+    // ignore
+  }
+}
+
+// ─── Savings Score Gauge Component ────────────────────────────
+function SavingsScoreGauge({ score }) {
+  const radius = 54;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+
+  const getColor = (s) => {
+    if (s >= 75) return { stroke: "#16a34a", bg: "from-green-50 to-white", text: "text-green-600", label: "Great Rate" };
+    if (s >= 50) return { stroke: "#2563eb", bg: "from-blue-50 to-white", text: "text-blue-600", label: "Good Rate" };
+    if (s >= 25) return { stroke: "#f59e0b", bg: "from-amber-50 to-white", text: "text-amber-600", label: "Fair Rate" };
+    return { stroke: "#ef4444", bg: "from-red-50 to-white", text: "text-red-600", label: "Overpaying" };
+  };
+
+  const colors = getColor(score);
+
+  return (
+    <Card className={`border-2 border-gray-200 bg-gradient-to-br ${colors.bg}`}>
+      <CardContent className="p-6 flex flex-col items-center">
+        <div className="flex items-center gap-2 mb-4">
+          <BarChart3 className="w-5 h-5 text-[#0A5C8C]" />
+          <h2 className="text-lg font-bold text-gray-900">Savings Score</h2>
+        </div>
+        <div className="relative w-36 h-36 mb-3">
+          <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+            <circle
+              cx="60" cy="60" r={radius}
+              fill="none" stroke="#e5e7eb" strokeWidth="10"
+            />
+            <circle
+              cx="60" cy="60" r={radius}
+              fill="none"
+              stroke={colors.stroke}
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              style={{ transition: "stroke-dashoffset 1s ease-out" }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className={`text-3xl font-bold ${colors.text}`}>{score}</span>
+            <span className="text-xs text-gray-500">/100</span>
+          </div>
+        </div>
+        <p className={`text-sm font-semibold ${colors.text}`}>{colors.label}</p>
+        <p className="text-xs text-gray-500 mt-1 text-center">
+          How competitive your current rate is compared to available plans
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function BillAnalyzer() {
+  // Restore from session on mount
+  const sessionData = loadFromSession();
+
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [billData, setBillData] = useState(null);
+  const [billData, setBillData] = useState(sessionData?.billData || null);
   const [error, setError] = useState(null);
-  const [showResults, setShowResults] = useState(false);
+  const [showResults, setShowResults] = useState(sessionData?.showResults || false);
   const [showManualInput, setShowManualInput] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const { getAffiliateUrl } = useAffiliateLinks();
@@ -211,8 +296,46 @@ export default function BillAnalyzer() {
     setShowManualInput(false);
   };
 
-  // ─── Calculate savings for each plan ───────────────────────
-  const getRecommendations = async () => {
+  // ─── Calculate savings score and overpayment ───────────────
+  const calculateMetrics = useCallback((currentRate, allPlans) => {
+    if (!currentRate || allPlans.length === 0) {
+      return { savingsScore: 50, overpaymentPercent: 0 };
+    }
+
+    const rates = allPlans.map(p => {
+      const pd = p.data || p;
+      return pd.rate_per_kwh || p.rate_per_kwh || 0;
+    }).filter(r => r > 0);
+
+    if (rates.length === 0) {
+      return { savingsScore: 50, overpaymentPercent: 0 };
+    }
+
+    const minRate = Math.min(...rates);
+    const maxRate = Math.max(...rates);
+    const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+
+    // Savings score: 100 = best rate, 0 = worst rate
+    let savingsScore;
+    if (maxRate === minRate) {
+      savingsScore = currentRate <= minRate ? 100 : 0;
+    } else {
+      // Inverse: lower rate = higher score
+      savingsScore = Math.round(Math.max(0, Math.min(100,
+        ((maxRate - currentRate) / (maxRate - minRate)) * 100
+      )));
+    }
+
+    // Overpayment: how much more you pay vs the best available rate
+    const overpaymentPercent = minRate > 0
+      ? Math.max(0, parseFloat((((currentRate - minRate) / minRate) * 100).toFixed(1)))
+      : 0;
+
+    return { savingsScore, overpaymentPercent };
+  }, []);
+
+  // ─── Calculate recommendations ─────────────────────────────
+  const getRecommendations = useCallback(async () => {
     if (!billData || !billData.monthly_usage_kwh) return [];
 
     const currentMonthlyCost = billData.monthly_cost || 0;
@@ -228,25 +351,15 @@ export default function BillAnalyzer() {
       const providerName = planData.provider_name || plan.provider_name;
       const planName = planData.plan_name || plan.plan_name;
       
+      // Exclude business plans
       if (planName && planName.toLowerCase().includes('business')) {
         return false;
       }
       
+      // If we have ZIP-based availability, filter by it
       if (zipCode && availableProviders.length > 0) {
         const provider = availableProviders.find(p => p.name === providerName);
         if (!provider) return false;
-        
-        const providerRecord = providers.find(p => {
-          const pName = p.name || p.data?.name;
-          return pName === providerName;
-        });
-        
-        if (!providerRecord) return false;
-        
-        const pData = providerRecord.data || providerRecord;
-        const hasAffiliateUrl = pData.affiliate_url || providerRecord.affiliate_url;
-        
-        if (!hasAffiliateUrl) return false;
       }
       
       return true;
@@ -256,9 +369,9 @@ export default function BillAnalyzer() {
       .map(plan => {
         const planData = plan.data || plan;
         const ratePerKwh = planData.rate_per_kwh || plan.rate_per_kwh;
-        const baseCharge = planData.monthly_base_charge || plan.monthly_base_charge || 0;
+        const baseCharge = planData.monthly_base_charge || plan.monthly_base_charge || planData.base_charge || plan.base_charge || 0;
         
-        const estimatedCost = (ratePerKwh / 100) * billData.monthly_usage_kwh + baseCharge;
+        const estimatedCost = (ratePerKwh / 100) * billData.monthly_usage_kwh + parseFloat(baseCharge || 0);
         const monthlySavings = currentMonthlyCost - estimatedCost;
         const annualSavings = monthlySavings * 12;
         
@@ -272,20 +385,54 @@ export default function BillAnalyzer() {
       .filter(plan => plan.monthlySavings > 0)
       .sort((a, b) => b.annualSavings - a.annualSavings)
       .slice(0, 6);
-  };
+  }, [billData, plans]);
 
-  const [recommendations, setRecommendations] = React.useState([]);
+  const [recommendations, setRecommendations] = useState(sessionData?.recommendations || []);
+  const [savingsScore, setSavingsScore] = useState(sessionData?.savingsScore ?? null);
+  const [overpaymentPercent, setOverpaymentPercent] = useState(sessionData?.overpaymentPercent ?? null);
   
-  React.useEffect(() => {
-    if (showResults && billData) {
-      getRecommendations().then(setRecommendations);
+  useEffect(() => {
+    if (showResults && billData && plans.length > 0) {
+      getRecommendations().then(recs => {
+        setRecommendations(recs);
+
+        // Calculate metrics
+        const currentRate = billData.rate_per_kwh || 
+          (billData.monthly_cost && billData.monthly_usage_kwh 
+            ? parseFloat(((billData.monthly_cost / billData.monthly_usage_kwh) * 100).toFixed(2))
+            : 0);
+        const metrics = calculateMetrics(currentRate, plans);
+        setSavingsScore(metrics.savingsScore);
+        setOverpaymentPercent(metrics.overpaymentPercent);
+
+        // Persist to session
+        saveToSession({
+          billData,
+          showResults: true,
+          recommendations: recs,
+          savingsScore: metrics.savingsScore,
+          overpaymentPercent: metrics.overpaymentPercent,
+        });
+      });
     }
-  }, [showResults, billData]);
+  }, [showResults, billData, plans, getRecommendations, calculateMetrics]);
 
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Bill Analyzer", url: "/bill-analyzer" }
   ]);
+
+  // ─── Reset handler ─────────────────────────────────────────
+  const handleReset = () => {
+    setShowResults(false);
+    setBillData(null);
+    setFile(null);
+    setShowManualInput(false);
+    setRecommendations([]);
+    setSavingsScore(null);
+    setOverpaymentPercent(null);
+    clearSession();
+  };
 
   // ─── Loading States ────────────────────────────────────────
   if (isUploading) {
@@ -329,40 +476,73 @@ export default function BillAnalyzer() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold mb-2">Your Bill Analysis Results</h1>
             <p className="text-sm text-blue-100">
-              We found {recommendations.length} better plan{recommendations.length !== 1 ? 's' : ''} for you
+              {recommendations.length > 0
+                ? `We found ${recommendations.length} better plan${recommendations.length !== 1 ? 's' : ''} for you`
+                : "Your rate analysis is ready"}
             </p>
           </div>
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Current Bill Summary */}
-          <Card className="mb-8 border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="w-5 h-5 text-[#0A5C8C]" />
-                <h2 className="text-lg font-bold text-gray-900">Your Current Plan</h2>
-              </div>
-              
-              <div className="grid md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Provider</p>
-                  <p className="text-sm font-bold text-gray-900">{billData.provider_name || 'N/A'}</p>
+          {/* Score + Overpayment + Bill Summary Row */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {/* Savings Score Gauge */}
+            {savingsScore !== null && (
+              <SavingsScoreGauge score={savingsScore} />
+            )}
+
+            {/* Overpayment Card */}
+            <Card className="border-2 border-gray-200 bg-gradient-to-br from-orange-50 to-white">
+              <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+                <div className="flex items-center gap-2 mb-4">
+                  <Percent className="w-5 h-5 text-[#FF6B35]" />
+                  <h2 className="text-lg font-bold text-gray-900">Overpayment</h2>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Monthly Usage</p>
-                  <p className="text-sm font-bold text-gray-900">{billData.monthly_usage_kwh || 0} kWh</p>
+                <div className={`text-4xl font-bold mb-2 ${
+                  overpaymentPercent > 20 ? "text-red-600" : 
+                  overpaymentPercent > 10 ? "text-amber-600" : 
+                  overpaymentPercent > 0 ? "text-blue-600" : "text-green-600"
+                }`}>
+                  {overpaymentPercent !== null ? `${overpaymentPercent}%` : "—"}
                 </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Current Rate</p>
-                  <p className="text-sm font-bold text-gray-900">{billData.rate_per_kwh || 0}¢/kWh</p>
+                <p className="text-xs text-gray-500 text-center">
+                  {overpaymentPercent > 0
+                    ? "Above the best available rate in your area"
+                    : "You have a competitive rate"}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Current Bill Summary */}
+            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileText className="w-5 h-5 text-[#0A5C8C]" />
+                  <h2 className="text-lg font-bold text-gray-900">Your Current Plan</h2>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Monthly Cost</p>
-                  <p className="text-sm font-bold text-gray-900">${billData.monthly_cost?.toFixed(2) || '0.00'}</p>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs text-gray-600 mb-0.5">Provider</p>
+                    <p className="text-sm font-bold text-gray-900">{billData.provider_name || 'N/A'}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-600 mb-0.5">Monthly Usage</p>
+                      <p className="text-sm font-bold text-gray-900">{billData.monthly_usage_kwh || 0} kWh</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600 mb-0.5">Current Rate</p>
+                      <p className="text-sm font-bold text-gray-900">{billData.rate_per_kwh || 0}¢/kWh</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600 mb-0.5">Monthly Cost</p>
+                    <p className="text-sm font-bold text-gray-900">${billData.monthly_cost?.toFixed(2) || '0.00'}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Savings Potential */}
           {totalPotentialSavings > 0 && (
@@ -417,7 +597,7 @@ export default function BillAnalyzer() {
                       <div className="flex items-start gap-3 mb-4">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                           <span className="text-xs font-bold text-[#0A5C8C]">
-                            {plan.provider_name.substring(0, 3).toUpperCase()}
+                            {(plan.provider_name || "").substring(0, 3).toUpperCase()}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
@@ -460,7 +640,10 @@ export default function BillAnalyzer() {
                             const pName = p.name || p.data?.name;
                             return pName === providerName;
                           });
-                          if (!provider) return "#";
+                          if (!provider) {
+                            // Fallback: use plan_details_url or "#"
+                            return planData.plan_details_url || plan.plan_details_url || "#";
+                          }
                           const pData = provider.data || provider;
                           const fallback = pData.affiliate_url || provider.affiliate_url || pData.website_url || provider.website_url || "#";
                           return getAffiliateUrl({ providerId: provider.id, offerId: plan.id, fallbackUrl: fallback });
@@ -499,12 +682,7 @@ export default function BillAnalyzer() {
           {/* Action Buttons */}
           <div className="mt-8 flex gap-4">
             <Button 
-              onClick={() => {
-                setShowResults(false);
-                setBillData(null);
-                setFile(null);
-                setShowManualInput(false);
-              }}
+              onClick={handleReset}
               variant="outline"
               className="flex-1"
             >
