@@ -16,7 +16,7 @@ const cities = [
     avgRate: "8.9¢/kWh",
     providers: 45,
     savings: "$850/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/15b59cb95_b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
   {
     name: "Dallas",
@@ -26,7 +26,7 @@ const cities = [
     avgRate: "9.1¢/kWh",
     providers: 42,
     savings: "$820/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
   {
     name: "Austin",
@@ -46,7 +46,7 @@ const cities = [
     avgRate: "8.8¢/kWh",
     providers: 40,
     savings: "$830/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9afbd2a3e_136ff412-03e2-40c7-8934-8517d2404665.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/136ff412-03e2-40c7-8934-8517d2404665.jpg"
   },
   {
     name: "Fort Worth",
@@ -56,7 +56,7 @@ const cities = [
     avgRate: "9.0¢/kWh",
     providers: 41,
     savings: "$810/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/10a0998d3_87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
   // Illinois Cities
   {
@@ -87,7 +87,7 @@ const cities = [
     avgRate: "9.7¢/kWh",
     providers: 35,
     savings: "$740/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a29348055_403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
   },
   {
     name: "Joliet",
@@ -97,7 +97,7 @@ const cities = [
     avgRate: "9.8¢/kWh",
     providers: 33,
     savings: "$730/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/214455956_58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
   },
   // Ohio Cities
   {
@@ -108,7 +108,7 @@ const cities = [
     avgRate: "9.5¢/kWh",
     providers: 38,
     savings: "$780/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/3a9213c53_03fe81c8-162d-4692-be26-32e20095399c.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/03fe81c8-162d-4692-be26-32e20095399c.jpg"
   },
   {
     name: "Cleveland",
@@ -118,7 +118,7 @@ const cities = [
     avgRate: "9.6¢/kWh",
     providers: 37,
     savings: "$770/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a29bc65bc_0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
   },
   {
     name: "Cincinnati",
@@ -128,7 +128,7 @@ const cities = [
     avgRate: "9.7¢/kWh",
     providers: 36,
     savings: "$760/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/25159c55a_e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
   },
   {
     name: "Toledo",
@@ -138,7 +138,7 @@ const cities = [
     avgRate: "9.6¢/kWh",
     providers: 35,
     savings: "$750/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/1d0dc8814_c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
   },
   // Pennsylvania Cities
   {
@@ -149,7 +149,7 @@ const cities = [
     avgRate: "10.2¢/kWh",
     providers: 32,
     savings: "$680/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/857445e3d_01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
   },
   {
     name: "Pittsburgh",
@@ -159,7 +159,7 @@ const cities = [
     avgRate: "10.1¢/kWh",
     providers: 30,
     savings: "$690/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a1fa80de5_162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
   },
   {
     name: "Allentown",
@@ -169,7 +169,7 @@ const cities = [
     avgRate: "10.3¢/kWh",
     providers: 28,
     savings: "$670/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b41923a04_cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
   },
   // New York Cities
   {
@@ -180,7 +180,7 @@ const cities = [
     avgRate: "11.5¢/kWh",
     providers: 28,
     savings: "$620/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/ee1816945_b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
   },
   {
     name: "Buffalo",
@@ -190,7 +190,7 @@ const cities = [
     avgRate: "10.8¢/kWh",
     providers: 25,
     savings: "$650/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d747b6596_7c7a75cb-3931-4991-b608-275c44e5dd84.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/7c7a75cb-3931-4991-b608-275c44e5dd84.jpg"
   },
   {
     name: "Rochester",
@@ -200,7 +200,7 @@ const cities = [
     avgRate: "10.9¢/kWh",
     providers: 24,
     savings: "$640/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9c65443c8_dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
   },
   {
     name: "Syracuse",
@@ -210,7 +210,7 @@ const cities = [
     avgRate: "11.0¢/kWh",
     providers: 23,
     savings: "$630/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d40d4c2a0_8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
   },
   // New Jersey Cities
   {
@@ -221,7 +221,7 @@ const cities = [
     avgRate: "10.5¢/kWh",
     providers: 27,
     savings: "$660/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/419f775bc_1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
   },
   {
     name: "Jersey City",
@@ -231,7 +231,7 @@ const cities = [
     avgRate: "10.6¢/kWh",
     providers: 26,
     savings: "$650/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e04a9188b_29c455be-4263-4009-8e75-1475730b0b76.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/29c455be-4263-4009-8e75-1475730b0b76.jpg"
   },
   {
     name: "Paterson",
@@ -241,7 +241,7 @@ const cities = [
     avgRate: "10.7¢/kWh",
     providers: 25,
     savings: "$640/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/58fce9716_8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
   },
   // Maryland Cities
   {
@@ -252,7 +252,7 @@ const cities = [
     avgRate: "10.4¢/kWh",
     providers: 29,
     savings: "$670/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b957702cc_f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
   },
   {
     name: "Frederick",
@@ -262,7 +262,7 @@ const cities = [
     avgRate: "10.5¢/kWh",
     providers: 27,
     savings: "$660/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/157b9914f_98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
   },
   {
     name: "Rockville",
@@ -272,7 +272,7 @@ const cities = [
     avgRate: "10.3¢/kWh",
     providers: 28,
     savings: "$680/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/dcbb7d9d2_46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
   },
   // Massachusetts Cities
   {
@@ -283,7 +283,7 @@ const cities = [
     avgRate: "11.2¢/kWh",
     providers: 22,
     savings: "$600/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/44bb8debd_6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
   },
   {
     name: "Worcester",
@@ -293,7 +293,7 @@ const cities = [
     avgRate: "11.3¢/kWh",
     providers: 21,
     savings: "$590/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e90708aeb_d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
   },
   {
     name: "Springfield",
@@ -303,7 +303,7 @@ const cities = [
     avgRate: "11.4¢/kWh",
     providers: 20,
     savings: "$580/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/081e45489_45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
   },
   // Connecticut Cities
   {
@@ -314,7 +314,7 @@ const cities = [
     avgRate: "11.8¢/kWh",
     providers: 19,
     savings: "$550/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c2fba1722_ottawa-street.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ottawa-street.jpg"
   },
   {
     name: "New Haven",
@@ -324,7 +324,7 @@ const cities = [
     avgRate: "11.7¢/kWh",
     providers: 19,
     savings: "$560/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/7add50838_ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
   },
   {
     name: "Bridgeport",
@@ -334,7 +334,7 @@ const cities = [
     avgRate: "11.9¢/kWh",
     providers: 18,
     savings: "$540/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/4e2eca8a2_770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
   },
   // Maine Cities
   {
@@ -355,7 +355,7 @@ const cities = [
     avgRate: "11.6¢/kWh",
     providers: 16,
     savings: "$560/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e1656009b_35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
   },
   {
     name: "Bangor",
@@ -365,7 +365,7 @@ const cities = [
     avgRate: "11.7¢/kWh",
     providers: 16,
     savings: "$550/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a83f5b033_f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
   },
   // New Hampshire Cities
   {
@@ -376,7 +376,7 @@ const cities = [
     avgRate: "11.6¢/kWh",
     providers: 17,
     savings: "$560/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9dba14695_b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
   },
   {
     name: "Nashua",
@@ -386,7 +386,7 @@ const cities = [
     avgRate: "11.7¢/kWh",
     providers: 16,
     savings: "$550/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/0497c3089_89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
   },
   {
     name: "Concord",
@@ -396,7 +396,7 @@ const cities = [
     avgRate: "11.8¢/kWh",
     providers: 16,
     savings: "$540/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c2b6c002-b461-43af-873e-02caf45e467b.jpg"
   },
   // Rhode Island Cities
   {
@@ -407,7 +407,7 @@ const cities = [
     avgRate: "11.9¢/kWh",
     providers: 15,
     savings: "$530/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/3a56f40c4_3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
   },
   {
     name: "Warwick",
@@ -417,7 +417,7 @@ const cities = [
     avgRate: "12.0¢/kWh",
     providers: 15,
     savings: "$520/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d9b752924_a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
   },
   {
     name: "Cranston",
@@ -427,7 +427,7 @@ const cities = [
     avgRate: "12.0¢/kWh",
     providers: 14,
     savings: "$520/yr",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c4af296bf_ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
   }
 ];
 

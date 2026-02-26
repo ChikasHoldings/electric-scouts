@@ -37,16 +37,16 @@ export default function AllStates() {
   const stateImages = {
     'TX': 'https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=800&q=80', // Austin - Texas State Capitol
     'IL': 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80', // Springfield, IL State Capitol
-    'OH': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/8cb27999c_ChatGPTImageNov15202502_43_31PM.png', // Columbus, OH Statehouse
+    'OH': 'https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/states/chatgptimagenov15202502_43_31pm.png', // Columbus, OH Statehouse
     'PA': 'https://images.unsplash.com/photo-1575489272413-cb506258027e?w=800&q=80', // Harrisburg, PA State Capitol
-    'NY': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e9e695304_2df6101f-36ce-4e88-b0b4-5a7b280fbc8c.jpg', // Albany, NY Capitol Building
-    'NJ': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a88378e68_7c4d9304-68aa-406d-b5e7-0e3fe12aa17b.jpg', // Trenton, NJ State House
+    'NY': 'https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/2df6101f-36ce-4e88-b0b4-5a7b280fbc8c.jpg', // Albany, NY Capitol Building
+    'NJ': 'https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/7c4d9304-68aa-406d-b5e7-0e3fe12aa17b.jpg', // Trenton, NJ State House
     'MD': 'https://images.unsplash.com/photo-1600298881974-6be191ceeda1?w=800&q=80', // Annapolis, MD State House
     'MA': 'https://images.unsplash.com/photo-1571939228382-b2f2b585ce15?w=800&q=80', // Boston, MA State House
-    'ME': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/43e4fae9e_019a8321-348a-4c7e-a7e4-078744896b7a.jpg', // Augusta, ME State House
-    'NH': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/0ad3806b3_ChatGPTImageNov15202502_45_36PM.png', // Concord, NH State House
+    'ME': 'https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/019a8321-348a-4c7e-a7e4-078744896b7a.jpg', // Augusta, ME State House
+    'NH': 'https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/states/chatgptimagenov15202502_45_36pm.png', // Concord, NH State House
     'RI': 'https://images.unsplash.com/photo-1572295727871-7638149ea3d7?w=800&q=80', // Providence, RI State House
-    'CT': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9f22776d4_26acfe5d-4dd4-4897-94aa-f67876a75dc6.jpg'  // Hartford, CT State Capitol
+    'CT': 'https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/26acfe5d-4dd4-4897-94aa-f67876a75dc6.jpg'  // Hartford, CT State Capitol
   };
 
   const breadcrumbData = getBreadcrumbSchema([

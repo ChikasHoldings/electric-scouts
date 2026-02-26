@@ -42,13 +42,13 @@ export default function ProvidersSection() {
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-8 items-center opacity-70 hover:opacity-100 transition-opacity duration-300">
           {[
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/8818da2fa_id3-OId0b2_1762848198226.png", alt: "4Change Energy - Texas Electricity Provider with Competitive Fixed and Variable Rate Plans" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/b8f3a8167_idy5Qy7KTo_1762848313421.png", alt: "APG&E - Affordable Electricity Plans for Texas Residents" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/49ae44b66_idecUVsTjb_logos.png", alt: "BKV Energy - Natural Gas Backed Electricity Provider Serving Texas" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/c2f973518_idabZcuDLC_1762848446410.png", alt: "Champion Energy - Leading Texas Electricity Provider with Fixed and Renewable Plans" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/315800ea4_idEK1dDtu1_logos.png", alt: "Chariot Energy - 100% Renewable Electricity Provider for Texas Homes" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/f5dbabf5e_idvO6_xjIY_logos.png", alt: "Constellation Energy - Nationwide Electricity Supplier Serving Residential and Commercial Customers" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/df51b99dd_idT9p2RC1n_1762848661994.png", alt: "Ambit Energy - Multi-State Electricity Provider with Competitive Rates" }].
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/id3-oid0b2_1762848198226.png", alt: "4Change Energy - Texas Electricity Provider with Competitive Fixed and Variable Rate Plans" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idy5qy7kto_1762848313421.png", alt: "APG&E - Affordable Electricity Plans for Texas Residents" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idecuvstjb_logos.png", alt: "BKV Energy - Natural Gas Backed Electricity Provider Serving Texas" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idabzcudlc_1762848446410.png", alt: "Champion Energy - Leading Texas Electricity Provider with Fixed and Renewable Plans" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idek1ddtu1_logos.png", alt: "Chariot Energy - 100% Renewable Electricity Provider for Texas Homes" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idvo6_xjiy_logos.png", alt: "Constellation Energy - Nationwide Electricity Supplier Serving Residential and Commercial Customers" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idt9p2rc1n_1762848661994.png", alt: "Ambit Energy - Multi-State Electricity Provider with Competitive Rates" }].
           map((logo, index) =>
           <motion.div
             key={index}
@@ -71,11 +71,11 @@ export default function ProvidersSection() {
         {/* Row 2 - Centered */}
         <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mt-4 sm:mt-8 opacity-70 hover:opacity-100 transition-opacity duration-300">
           {[
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/05c459c06_idy542OFcd_logos.png", alt: "Express Energy - Texas Electricity Provider Offering Low Fixed Rate Plans" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/9cb91c2f7_Screenshot46.png", alt: "Discount Power - Affordable Electricity Plans for Texas Homes and Businesses" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/c916d021e_idcT-olPyu_1762886748078.png", alt: "Gexa Energy - Texas Retail Electricity Provider with Green Energy Options" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/ff1558170_id6k09mhoA_1762886791027.png", alt: "Rhythm Energy - Smart Electricity Plans with Renewable Energy for Texas" },
-          { src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6912db884ed8189895990617/2c7ef2a13_id7UEhjySO_1762886832466.png", alt: "TXU Energy - Texas Largest Electricity Provider with Fixed and Variable Rate Plans" }].
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idy542ofcd_logos.png", alt: "Express Energy - Texas Electricity Provider Offering Low Fixed Rate Plans" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/screenshot46.png", alt: "Discount Power - Affordable Electricity Plans for Texas Homes and Businesses" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/idct-olpyu_1762886748078.png", alt: "Gexa Energy - Texas Retail Electricity Provider with Green Energy Options" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/id6k09mhoa_1762886791027.png", alt: "Rhythm Energy - Smart Electricity Plans with Renewable Energy for Texas" },
+          { src: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/logos/providers/id7uehjyso_1762886832466.png", alt: "TXU Energy - Texas Largest Electricity Provider with Fixed and Variable Rate Plans" }].
           map((logo, index) =>
           <motion.div
             key={index}

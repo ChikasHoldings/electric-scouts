@@ -24,7 +24,7 @@ const cityData = {
     avgRate: "8.9¢/kWh", avgMonthlyBill: "$128", providers: 45,
     neighborhoods: ["Downtown Houston", "The Heights", "Montrose", "River Oaks", "Midtown", "Galleria", "Memorial"],
     description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to over 45 electricity providers in the deregulated market.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/15b59cb95_b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
   "Dallas-TX": {
     state: "Texas", stateCode: "TX", county: "Dallas County", population: "1,300,000+",
@@ -32,7 +32,7 @@ const cityData = {
     avgRate: "9.1¢/kWh", avgMonthlyBill: "$132", providers: 42,
     neighborhoods: ["Downtown Dallas", "Uptown", "Deep Ellum", "Highland Park", "Oak Lawn", "Lake Highlands", "North Dallas"],
     description: "Dallas residents benefit from competitive electricity rates with access to over 42 providers offering a wide range of fixed and variable rate plans.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
   "Austin-TX": {
     state: "Texas", stateCode: "TX", county: "Travis County", population: "978,000+",
@@ -48,7 +48,7 @@ const cityData = {
     avgRate: "8.8¢/kWh", avgMonthlyBill: "$127", providers: 40,
     neighborhoods: ["Downtown San Antonio", "Alamo Heights", "Stone Oak", "The Dominion", "Southtown", "King William", "Medical Center"],
     description: "San Antonio offers some of the most competitive electricity rates in Texas, with 40+ providers serving the area's residential and commercial customers.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9afbd2a3e_136ff412-03e2-40c7-8934-8517d2404665.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/136ff412-03e2-40c7-8934-8517d2404665.jpg"
   },
   "Fort Worth-TX": {
     state: "Texas", stateCode: "TX", county: "Tarrant County", population: "927,000+",
@@ -56,7 +56,7 @@ const cityData = {
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 41,
     neighborhoods: ["Downtown Fort Worth", "Cultural District", "Sundance Square", "West 7th", "Ridglea", "Tanglewood", "Alliance"],
     description: "Fort Worth residents enjoy access to competitive electricity rates from 41+ providers in the deregulated Texas energy market.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/10a0998d3_87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
 
   // ILLINOIS CITIES
@@ -82,7 +82,7 @@ const cityData = {
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 35,
     neighborhoods: ["Downtown Naperville", "White Eagle", "Ashbury", "Springbrook", "College Hill", "Fort Hill", "Cress Creek"],
     description: "Naperville residents enjoy competitive electricity rates from 35+ suppliers in the affluent DuPage County area.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a29348055_403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
   },
   "Joliet-IL": {
     state: "Illinois", stateCode: "IL", county: "Will County", population: "150,000+",
@@ -90,7 +90,7 @@ const cityData = {
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$141", providers: 33,
     neighborhoods: ["Cathedral Area", "Fairmont", "Pilcher Park", "Rockdale", "West Joliet", "Laraway", "Highland Park"],
     description: "Joliet residents have access to competitive electricity rates from 33+ suppliers in Will County.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/214455956_58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
   },
 
   // OHIO CITIES
@@ -100,7 +100,7 @@ const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$138", providers: 38,
     neighborhoods: ["Downtown Columbus", "German Village", "Short North", "Clintonville", "Victorian Village", "Arena District", "Brewery District"],
     description: "Columbus residents enjoy competitive electricity rates from 38+ suppliers in the AEP Ohio service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/3a9213c53_03fe81c8-162d-4692-be26-32e20095399c.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/03fe81c8-162d-4692-be26-32e20095399c.jpg"
   },
   "Cleveland-OH": {
     state: "Ohio", stateCode: "OH", county: "Cuyahoga County", population: "372,000+",
@@ -108,7 +108,7 @@ const cityData = {
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 37,
     neighborhoods: ["Downtown Cleveland", "Ohio City", "Tremont", "University Circle", "Detroit-Shoreway", "Edgewater", "Collinwood"],
     description: "Cleveland residents have access to competitive electricity rates from 37+ suppliers in the FirstEnergy service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a29bc65bc_0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
   },
   "Cincinnati-OH": {
     state: "Ohio", stateCode: "OH", county: "Hamilton County", population: "309,000+",
@@ -116,7 +116,7 @@ const cityData = {
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 36,
     neighborhoods: ["Downtown Cincinnati", "Over-the-Rhine", "Mount Adams", "Clifton", "Hyde Park", "Oakley", "Columbia-Tusculum"],
     description: "Cincinnati residents benefit from competitive electricity rates with 36+ suppliers in the Duke Energy Ohio territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/25159c55a_e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
   },
   "Toledo-OH": {
     state: "Ohio", stateCode: "OH", county: "Lucas County", population: "270,000+",
@@ -124,7 +124,7 @@ const cityData = {
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 35,
     neighborhoods: ["Downtown Toledo", "Old West End", "Ottawa Hills", "Sylvania", "Point Place", "Westgate", "South End"],
     description: "Toledo residents enjoy competitive electricity rates from 35+ suppliers in the FirstEnergy service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/1d0dc8814_c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
   },
 
   // PENNSYLVANIA CITIES
@@ -134,7 +134,7 @@ const cityData = {
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$147", providers: 32,
     neighborhoods: ["Center City", "Old City", "Society Hill", "Rittenhouse Square", "University City", "Northern Liberties", "Fishtown"],
     description: "Philadelphia residents benefit from competitive electricity rates with 32+ suppliers in the PECO service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/857445e3d_01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
   },
   "Pittsburgh-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Allegheny County", population: "303,000+",
@@ -142,7 +142,7 @@ const cityData = {
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 30,
     neighborhoods: ["Downtown Pittsburgh", "Shadyside", "Squirrel Hill", "Oakland", "Lawrenceville", "South Side", "Strip District"],
     description: "Pittsburgh residents enjoy competitive electricity rates from 30+ suppliers in the Duquesne Light service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a1fa80de5_162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
   },
   "Allentown-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Lehigh County", population: "125,000+",
@@ -150,7 +150,7 @@ const cityData = {
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Allentown", "West Park", "Hanover Acres", "South Side", "East Side", "West End", "Cedar Crest"],
     description: "Allentown residents benefit from competitive electricity rates with 28+ suppliers in the PPL Electric service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b41923a04_cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
   },
 
   // NEW YORK CITIES
@@ -160,7 +160,7 @@ const cityData = {
     avgRate: "11.5¢/kWh", avgMonthlyBill: "$165", providers: 28,
     neighborhoods: ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island", "Lower East Side", "Upper West Side"],
     description: "NYC residents have access to competitive electricity rates from 28+ ESCOs in the Con Edison service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/ee1816945_b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
   },
   "Buffalo-NY": {
     state: "New York", stateCode: "NY", county: "Erie County", population: "278,000+",
@@ -168,7 +168,7 @@ const cityData = {
     avgRate: "10.8¢/kWh", avgMonthlyBill: "$155", providers: 25,
     neighborhoods: ["Downtown Buffalo", "Allentown", "Elmwood Village", "North Buffalo", "South Buffalo", "West Side", "Riverside"],
     description: "Buffalo residents enjoy competitive electricity rates from 25+ ESCOs in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d747b6596_7c7a75cb-3931-4991-b608-275c44e5dd84.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/7c7a75cb-3931-4991-b608-275c44e5dd84.jpg"
   },
   "Rochester-NY": {
     state: "New York", stateCode: "NY", county: "Monroe County", population: "211,000+",
@@ -176,7 +176,7 @@ const cityData = {
     avgRate: "10.9¢/kWh", avgMonthlyBill: "$157", providers: 24,
     neighborhoods: ["Downtown Rochester", "Park Avenue", "East End", "South Wedge", "Corn Hill", "NOTA", "Charlotte"],
     description: "Rochester residents benefit from competitive electricity rates with 24+ ESCOs in the RG&E service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9c65443c8_dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
   },
   "Syracuse-NY": {
     state: "New York", stateCode: "NY", county: "Onondaga County", population: "148,000+",
@@ -184,7 +184,7 @@ const cityData = {
     avgRate: "11.0¢/kWh", avgMonthlyBill: "$158", providers: 23,
     neighborhoods: ["Downtown Syracuse", "University Hill", "Eastwood", "Westcott", "Tipperary Hill", "Strathmore", "Sedgwick"],
     description: "Syracuse residents enjoy competitive electricity rates from 23+ ESCOs in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d40d4c2a0_8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
   },
 
   // NEW JERSEY CITIES
@@ -194,7 +194,7 @@ const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Newark", "Ironbound", "Forest Hill", "North Ward", "Central Ward", "West Ward", "South Ward"],
     description: "Newark residents benefit from competitive electricity rates with 27+ suppliers in the PSE&G service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/419f775bc_1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
   },
   "Jersey City-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Hudson County", population: "292,000+",
@@ -202,7 +202,7 @@ const cityData = {
     avgRate: "10.6¢/kWh", avgMonthlyBill: "$152", providers: 26,
     neighborhoods: ["Downtown Jersey City", "Journal Square", "The Heights", "Bergen-Lafayette", "Greenville", "McGinley Square", "Paulus Hook"],
     description: "Jersey City residents enjoy competitive electricity rates from 26+ suppliers in the PSE&G service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e04a9188b_29c455be-4263-4009-8e75-1475730b0b76.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/29c455be-4263-4009-8e75-1475730b0b76.jpg"
   },
   "Paterson-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Passaic County", population: "159,000+",
@@ -210,7 +210,7 @@ const cityData = {
     avgRate: "10.7¢/kWh", avgMonthlyBill: "$153", providers: 25,
     neighborhoods: ["Downtown Paterson", "Eastside", "Riverside", "Peoples Park", "Hillcrest", "Northside", "Wrigley Park"],
     description: "Paterson residents benefit from competitive electricity rates with 25+ suppliers in the PSE&G service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/58fce9716_8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
   },
 
   // MARYLAND CITIES
@@ -220,7 +220,7 @@ const cityData = {
     avgRate: "10.4¢/kWh", avgMonthlyBill: "$150", providers: 29,
     neighborhoods: ["Downtown Baltimore", "Federal Hill", "Fells Point", "Canton", "Inner Harbor", "Mount Vernon", "Charles Village"],
     description: "Baltimore residents enjoy competitive electricity rates from 29+ suppliers in the BGE service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b957702cc_f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
   },
   "Frederick-MD": {
     state: "Maryland", stateCode: "MD", county: "Frederick County", population: "79,000+",
@@ -228,7 +228,7 @@ const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Frederick", "Ballenger Creek", "Hood College", "North Frederick", "South Frederick", "West Frederick", "East Frederick"],
     description: "Frederick residents benefit from competitive electricity rates with 27+ suppliers in the Potomac Edison service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/157b9914f_98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
   },
   "Rockville-MD": {
     state: "Maryland", stateCode: "MD", county: "Montgomery County", population: "68,000+",
@@ -236,7 +236,7 @@ const cityData = {
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Rockville", "Twinbrook", "West End", "King Farm", "Lincoln Park", "Woodley Gardens", "Fallsgrove"],
     description: "Rockville residents enjoy competitive electricity rates from 28+ suppliers in the Pepco service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/dcbb7d9d2_46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
   },
 
   // MASSACHUSETTS CITIES
@@ -246,7 +246,7 @@ const cityData = {
     avgRate: "11.2¢/kWh", avgMonthlyBill: "$161", providers: 22,
     neighborhoods: ["Downtown Boston", "Back Bay", "Beacon Hill", "North End", "South End", "Fenway", "Charlestown"],
     description: "Boston residents benefit from competitive electricity rates with 22+ suppliers across multiple utility territories.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/44bb8debd_6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
   },
   "Worcester-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Worcester County", population: "206,000+",
@@ -254,7 +254,7 @@ const cityData = {
     avgRate: "11.3¢/kWh", avgMonthlyBill: "$162", providers: 21,
     neighborhoods: ["Downtown Worcester", "Main South", "Tatnuck", "West Side", "East Side", "Shrewsbury Street", "Canal District"],
     description: "Worcester residents enjoy competitive electricity rates from 21+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e90708aeb_d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
   },
   "Springfield-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Hampden County", population: "155,000+",
@@ -262,7 +262,7 @@ const cityData = {
     avgRate: "11.4¢/kWh", avgMonthlyBill: "$163", providers: 20,
     neighborhoods: ["Downtown Springfield", "Forest Park", "Sixteen Acres", "East Springfield", "South End", "Six Corners", "Metro Center"],
     description: "Springfield residents benefit from competitive electricity rates with 20+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/081e45489_45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
   },
 
   // CONNECTICUT CITIES
@@ -272,7 +272,7 @@ const cityData = {
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 19,
     neighborhoods: ["Downtown Hartford", "South End", "Asylum Hill", "West End", "North End", "Parkville", "Frog Hollow"],
     description: "Hartford residents enjoy competitive electricity rates from 19+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c2fba1722_ottawa-street.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ottawa-street.jpg"
   },
   "New Haven-CT": {
     state: "Connecticut", stateCode: "CT", county: "New Haven County", population: "135,000+",
@@ -280,7 +280,7 @@ const cityData = {
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$168", providers: 19,
     neighborhoods: ["Downtown New Haven", "East Rock", "Wooster Square", "Fair Haven", "Westville", "Dixwell", "West River"],
     description: "New Haven residents benefit from competitive electricity rates with 19+ suppliers in the United Illuminating service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/7add50838_ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
   },
   "Bridgeport-CT": {
     state: "Connecticut", stateCode: "CT", county: "Fairfield County", population: "148,000+",
@@ -288,7 +288,7 @@ const cityData = {
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 18,
     neighborhoods: ["Downtown Bridgeport", "South End", "East End", "West End", "North End", "Black Rock", "Brooklawn"],
     description: "Bridgeport residents enjoy competitive electricity rates from 18+ suppliers in the United Illuminating service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/4e2eca8a2_770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
   },
 
   // MAINE CITIES
@@ -306,7 +306,7 @@ const cityData = {
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 16,
     neighborhoods: ["Downtown Lewiston", "College Street", "Bates College", "Tree Streets", "Webster Street", "East Avenue", "Sabattus Street"],
     description: "Lewiston residents enjoy competitive electricity rates from 16+ suppliers in the CMP service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e1656009b_35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
   },
   "Bangor-ME": {
     state: "Maine", stateCode: "ME", county: "Penobscot County", population: "32,000+",
@@ -314,7 +314,7 @@ const cityData = {
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Bangor", "Fairmount", "State Street", "Little City", "Broadway", "West Bangor", "East Side"],
     description: "Bangor residents benefit from competitive electricity rates with 16+ suppliers in the Emera Maine service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a83f5b033_f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
   },
 
   // NEW HAMPSHIRE CITIES
@@ -324,7 +324,7 @@ const cityData = {
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 17,
     neighborhoods: ["Downtown Manchester", "North End", "South End", "West Side", "East Side", "Pinardville", "Piscataquog Village"],
     description: "Manchester residents enjoy competitive electricity rates from 17+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9dba14695_b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
   },
   "Nashua-NH": {
     state: "New Hampshire", stateCode: "NH", county: "Hillsborough County", population: "91,000+",
@@ -332,7 +332,7 @@ const cityData = {
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Nashua", "North End", "South End", "West Hollis Street", "Broad Street Parkway", "Daniel Webster", "Crown Hill"],
     description: "Nashua residents benefit from competitive electricity rates with 16+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/0497c3089_89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
   },
   "Concord-NH": {
     state: "New Hampshire", stateCode: "NH", county: "Merrimack County", population: "43,000+",
@@ -340,7 +340,7 @@ const cityData = {
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 16,
     neighborhoods: ["Downtown Concord", "Penacook", "West Concord", "East Concord", "Heights", "South End", "North End"],
     description: "Concord residents enjoy competitive electricity rates from 16+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c2b6c002-b461-43af-873e-02caf45e467b.jpg"
   },
 
   // RHODE ISLAND CITIES
@@ -350,7 +350,7 @@ const cityData = {
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 15,
     neighborhoods: ["Downtown Providence", "Federal Hill", "Fox Point", "East Side", "West End", "Smith Hill", "Mount Pleasant"],
     description: "Providence residents benefit from competitive electricity rates with 15+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/3a56f40c4_3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
   },
   "Warwick-RI": {
     state: "Rhode Island", stateCode: "RI", county: "Kent County", population: "83,000+",
@@ -358,7 +358,7 @@ const cityData = {
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 15,
     neighborhoods: ["Warwick Neck", "Oakland Beach", "Apponaug", "Gaspee", "Hillsgrove", "Pawtuxet Village", "Conimicut"],
     description: "Warwick residents enjoy competitive electricity rates from 15+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d9b752924_a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
   },
   "Cranston-RI": {
     state: "Rhode Island", stateCode: "RI", county: "Providence County", population: "82,000+",
@@ -366,7 +366,7 @@ const cityData = {
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 14,
     neighborhoods: ["Edgewood", "Garden City", "Knightsville", "Meshanticut", "Park View", "Western Hills", "Pawtuxet"],
     description: "Cranston residents benefit from competitive electricity rates with 14+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c4af296bf_ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
   },
 
   // Handle variations without state codes for backwards compatibility
@@ -376,7 +376,7 @@ const cityData = {
     avgRate: "8.9¢/kWh", avgMonthlyBill: "$128", providers: 45,
     neighborhoods: ["Downtown Houston", "The Heights", "Montrose", "River Oaks", "Midtown", "Galleria", "Memorial"],
     description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to over 45 electricity providers in the deregulated market.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/15b59cb95_b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
   "Dallas": {
     state: "Texas", stateCode: "TX", county: "Dallas County", population: "1,300,000+",
@@ -384,7 +384,7 @@ const cityData = {
     avgRate: "9.1¢/kWh", avgMonthlyBill: "$132", providers: 42,
     neighborhoods: ["Downtown Dallas", "Uptown", "Deep Ellum", "Highland Park", "Oak Lawn", "Lake Highlands", "North Dallas"],
     description: "Dallas residents benefit from competitive electricity rates with access to over 42 providers offering a wide range of fixed and variable rate plans.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a6af53178_8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
   "Austin": {
     state: "Texas", stateCode: "TX", county: "Travis County", population: "978,000+",
@@ -400,7 +400,7 @@ const cityData = {
     avgRate: "8.8¢/kWh", avgMonthlyBill: "$127", providers: 40,
     neighborhoods: ["Downtown San Antonio", "Alamo Heights", "Stone Oak", "The Dominion", "Southtown", "King William", "Medical Center"],
     description: "San Antonio offers some of the most competitive electricity rates in Texas, with 40+ providers serving the area's residential and commercial customers.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9afbd2a3e_136ff412-03e2-40c7-8934-8517d2404665.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/136ff412-03e2-40c7-8934-8517d2404665.jpg"
   },
   "Fort Worth": {
     state: "Texas", stateCode: "TX", county: "Tarrant County", population: "927,000+",
@@ -408,7 +408,7 @@ const cityData = {
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 41,
     neighborhoods: ["Downtown Fort Worth", "Cultural District", "Sundance Square", "West 7th", "Ridglea", "Tanglewood", "Alliance"],
     description: "Fort Worth residents enjoy access to competitive electricity rates from 41+ providers in the deregulated Texas energy market.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/10a0998d3_87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
   "Chicago": {
     state: "Illinois", stateCode: "IL", county: "Cook County", population: "2,700,000+",
@@ -432,7 +432,7 @@ const cityData = {
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 35,
     neighborhoods: ["Downtown Naperville", "White Eagle", "Ashbury", "Springbrook", "College Hill", "Fort Hill", "Cress Creek"],
     description: "Naperville residents enjoy competitive electricity rates from 35+ suppliers in the affluent DuPage County area.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a29348055_403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
   },
   "Joliet": {
     state: "Illinois", stateCode: "IL", county: "Will County", population: "150,000+",
@@ -440,7 +440,7 @@ const cityData = {
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$141", providers: 33,
     neighborhoods: ["Cathedral Area", "Fairmont", "Pilcher Park", "Rockdale", "West Joliet", "Laraway", "Highland Park"],
     description: "Joliet residents have access to competitive electricity rates from 33+ suppliers in Will County.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/214455956_58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
   },
   "Columbus": {
     state: "Ohio", stateCode: "OH", county: "Franklin County", population: "905,000+",
@@ -448,7 +448,7 @@ const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$138", providers: 38,
     neighborhoods: ["Downtown Columbus", "German Village", "Short North", "Clintonville", "Victorian Village", "Arena District", "Brewery District"],
     description: "Columbus residents enjoy competitive electricity rates from 38+ suppliers in the AEP Ohio service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/3a9213c53_03fe81c8-162d-4692-be26-32e20095399c.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/03fe81c8-162d-4692-be26-32e20095399c.jpg"
   },
   "Cleveland": {
     state: "Ohio", stateCode: "OH", county: "Cuyahoga County", population: "372,000+",
@@ -456,7 +456,7 @@ const cityData = {
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 37,
     neighborhoods: ["Downtown Cleveland", "Ohio City", "Tremont", "University Circle", "Detroit-Shoreway", "Edgewater", "Collinwood"],
     description: "Cleveland residents have access to competitive electricity rates from 37+ suppliers in the FirstEnergy service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a29bc65bc_0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
   },
   "Cincinnati": {
     state: "Ohio", stateCode: "OH", county: "Hamilton County", population: "309,000+",
@@ -464,7 +464,7 @@ const cityData = {
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 36,
     neighborhoods: ["Downtown Cincinnati", "Over-the-Rhine", "Mount Adams", "Clifton", "Hyde Park", "Oakley", "Columbia-Tusculum"],
     description: "Cincinnati residents benefit from competitive electricity rates with 36+ suppliers in the Duke Energy Ohio territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/25159c55a_e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
   },
   "Toledo": {
     state: "Ohio", stateCode: "OH", county: "Lucas County", population: "270,000+",
@@ -472,7 +472,7 @@ const cityData = {
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 35,
     neighborhoods: ["Downtown Toledo", "Old West End", "Ottawa Hills", "Sylvania", "Point Place", "Westgate", "South End"],
     description: "Toledo residents enjoy competitive electricity rates from 35+ suppliers in the FirstEnergy service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/1d0dc8814_c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
   },
   "Philadelphia": {
     state: "Pennsylvania", stateCode: "PA", county: "Philadelphia County", population: "1,600,000+",
@@ -480,7 +480,7 @@ const cityData = {
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$147", providers: 32,
     neighborhoods: ["Center City", "Old City", "Society Hill", "Rittenhouse Square", "University City", "Northern Liberties", "Fishtown"],
     description: "Philadelphia residents benefit from competitive electricity rates with 32+ suppliers in the PECO service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/857445e3d_01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
   },
   "Pittsburgh": {
     state: "Pennsylvania", stateCode: "PA", county: "Allegheny County", population: "303,000+",
@@ -488,7 +488,7 @@ const cityData = {
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 30,
     neighborhoods: ["Downtown Pittsburgh", "Shadyside", "Squirrel Hill", "Oakland", "Lawrenceville", "South Side", "Strip District"],
     description: "Pittsburgh residents enjoy competitive electricity rates from 30+ suppliers in the Duquesne Light service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a1fa80de5_162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
   },
   "Allentown": {
     state: "Pennsylvania", stateCode: "PA", county: "Lehigh County", population: "125,000+",
@@ -496,7 +496,7 @@ const cityData = {
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Allentown", "West Park", "Hanover Acres", "South Side", "East Side", "West End", "Cedar Crest"],
     description: "Allentown residents benefit from competitive electricity rates with 28+ suppliers in the PPL Electric service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b41923a04_cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
   },
   "New York City": {
     state: "New York", stateCode: "NY", county: "New York County", population: "8,300,000+",
@@ -504,7 +504,7 @@ const cityData = {
     avgRate: "11.5¢/kWh", avgMonthlyBill: "$165", providers: 28,
     neighborhoods: ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island", "Lower East Side", "Upper West Side"],
     description: "NYC residents have access to competitive electricity rates from 28+ ESCOs in the Con Edison service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/ee1816945_b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
   },
   "Buffalo": {
     state: "New York", stateCode: "NY", county: "Erie County", population: "278,000+",
@@ -512,7 +512,7 @@ const cityData = {
     avgRate: "10.8¢/kWh", avgMonthlyBill: "$155", providers: 25,
     neighborhoods: ["Downtown Buffalo", "Allentown", "Elmwood Village", "North Buffalo", "South Buffalo", "West Side", "Riverside"],
     description: "Buffalo residents enjoy competitive electricity rates from 25+ ESCOs in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d747b6596_7c7a75cb-3931-4991-b608-275c44e5dd84.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/7c7a75cb-3931-4991-b608-275c44e5dd84.jpg"
   },
   "Rochester": {
     state: "New York", stateCode: "NY", county: "Monroe County", population: "211,000+",
@@ -520,7 +520,7 @@ const cityData = {
     avgRate: "10.9¢/kWh", avgMonthlyBill: "$157", providers: 24,
     neighborhoods: ["Downtown Rochester", "Park Avenue", "East End", "South Wedge", "Corn Hill", "NOTA", "Charlotte"],
     description: "Rochester residents benefit from competitive electricity rates with 24+ ESCOs in the RG&E service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9c65443c8_dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
   },
   "Syracuse": {
     state: "New York", stateCode: "NY", county: "Onondaga County", population: "148,000+",
@@ -528,7 +528,7 @@ const cityData = {
     avgRate: "11.0¢/kWh", avgMonthlyBill: "$158", providers: 23,
     neighborhoods: ["Downtown Syracuse", "University Hill", "Eastwood", "Westcott", "Tipperary Hill", "Strathmore", "Sedgwick"],
     description: "Syracuse residents enjoy competitive electricity rates from 23+ ESCOs in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d40d4c2a0_8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
   },
   "Newark": {
     state: "New Jersey", stateCode: "NJ", county: "Essex County", population: "311,000+",
@@ -536,7 +536,7 @@ const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Newark", "Ironbound", "Forest Hill", "North Ward", "Central Ward", "West Ward", "South Ward"],
     description: "Newark residents benefit from competitive electricity rates with 27+ suppliers in the PSE&G service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/419f775bc_1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
   },
   "Jersey City": {
     state: "New Jersey", stateCode: "NJ", county: "Hudson County", population: "292,000+",
@@ -544,7 +544,7 @@ const cityData = {
     avgRate: "10.6¢/kWh", avgMonthlyBill: "$152", providers: 26,
     neighborhoods: ["Downtown Jersey City", "Journal Square", "The Heights", "Bergen-Lafayette", "Greenville", "McGinley Square", "Paulus Hook"],
     description: "Jersey City residents enjoy competitive electricity rates from 26+ suppliers in the PSE&G service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e04a9188b_29c455be-4263-4009-8e75-1475730b0b76.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/29c455be-4263-4009-8e75-1475730b0b76.jpg"
   },
   "Paterson": {
     state: "New Jersey", stateCode: "NJ", county: "Passaic County", population: "159,000+",
@@ -552,7 +552,7 @@ const cityData = {
     avgRate: "10.7¢/kWh", avgMonthlyBill: "$153", providers: 25,
     neighborhoods: ["Downtown Paterson", "Eastside", "Riverside", "Peoples Park", "Hillcrest", "Northside", "Wrigley Park"],
     description: "Paterson residents benefit from competitive electricity rates with 25+ suppliers in the PSE&G service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/58fce9716_8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
   },
   "Baltimore": {
     state: "Maryland", stateCode: "MD", county: "Baltimore City", population: "576,000+",
@@ -560,7 +560,7 @@ const cityData = {
     avgRate: "10.4¢/kWh", avgMonthlyBill: "$150", providers: 29,
     neighborhoods: ["Downtown Baltimore", "Federal Hill", "Fells Point", "Canton", "Inner Harbor", "Mount Vernon", "Charles Village"],
     description: "Baltimore residents enjoy competitive electricity rates from 29+ suppliers in the BGE service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/b957702cc_f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
   },
   "Frederick": {
     state: "Maryland", stateCode: "MD", county: "Frederick County", population: "79,000+",
@@ -568,7 +568,7 @@ const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Frederick", "Ballenger Creek", "Hood College", "North Frederick", "South Frederick", "West Frederick", "East Frederick"],
     description: "Frederick residents benefit from competitive electricity rates with 27+ suppliers in the Potomac Edison service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/157b9914f_98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
   },
   "Rockville": {
     state: "Maryland", stateCode: "MD", county: "Montgomery County", population: "68,000+",
@@ -576,7 +576,7 @@ const cityData = {
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Rockville", "Twinbrook", "West End", "King Farm", "Lincoln Park", "Woodley Gardens", "Fallsgrove"],
     description: "Rockville residents enjoy competitive electricity rates from 28+ suppliers in the Pepco service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/dcbb7d9d2_46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
   },
   "Boston": {
     state: "Massachusetts", stateCode: "MA", county: "Suffolk County", population: "675,000+",
@@ -584,7 +584,7 @@ const cityData = {
     avgRate: "11.2¢/kWh", avgMonthlyBill: "$161", providers: 22,
     neighborhoods: ["Downtown Boston", "Back Bay", "Beacon Hill", "North End", "South End", "Fenway", "Charlestown"],
     description: "Boston residents benefit from competitive electricity rates with 22+ suppliers across multiple utility territories.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/44bb8debd_6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
   },
   "Worcester": {
     state: "Massachusetts", stateCode: "MA", county: "Worcester County", population: "206,000+",
@@ -592,7 +592,7 @@ const cityData = {
     avgRate: "11.3¢/kWh", avgMonthlyBill: "$162", providers: 21,
     neighborhoods: ["Downtown Worcester", "Main South", "Tatnuck", "West Side", "East Side", "Shrewsbury Street", "Canal District"],
     description: "Worcester residents enjoy competitive electricity rates from 21+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e90708aeb_d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
   },
   "Springfield": {
     state: "Massachusetts", stateCode: "MA", county: "Hampden County", population: "155,000+",
@@ -600,7 +600,7 @@ const cityData = {
     avgRate: "11.4¢/kWh", avgMonthlyBill: "$163", providers: 20,
     neighborhoods: ["Downtown Springfield", "Forest Park", "Sixteen Acres", "East Springfield", "South End", "Six Corners", "Metro Center"],
     description: "Springfield residents benefit from competitive electricity rates with 20+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/081e45489_45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
   },
   "Hartford": {
     state: "Connecticut", stateCode: "CT", county: "Hartford County", population: "121,000+",
@@ -608,7 +608,7 @@ const cityData = {
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 19,
     neighborhoods: ["Downtown Hartford", "South End", "Asylum Hill", "West End", "North End", "Parkville", "Frog Hollow"],
     description: "Hartford residents enjoy competitive electricity rates from 19+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c2fba1722_ottawa-street.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ottawa-street.jpg"
   },
   "New Haven": {
     state: "Connecticut", stateCode: "CT", county: "New Haven County", population: "135,000+",
@@ -616,7 +616,7 @@ const cityData = {
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$168", providers: 19,
     neighborhoods: ["Downtown New Haven", "East Rock", "Wooster Square", "Fair Haven", "Westville", "Dixwell", "West River"],
     description: "New Haven residents benefit from competitive electricity rates with 19+ suppliers in the United Illuminating service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/7add50838_ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
   },
   "Bridgeport": {
     state: "Connecticut", stateCode: "CT", county: "Fairfield County", population: "148,000+",
@@ -624,7 +624,7 @@ const cityData = {
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 18,
     neighborhoods: ["Downtown Bridgeport", "South End", "East End", "West End", "North End", "Black Rock", "Brooklawn"],
     description: "Bridgeport residents enjoy competitive electricity rates from 18+ suppliers in the United Illuminating service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/4e2eca8a2_770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
   },
   "Portland": {
     state: "Maine", stateCode: "ME", county: "Cumberland County", population: "68,000+",
@@ -640,7 +640,7 @@ const cityData = {
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 16,
     neighborhoods: ["Downtown Lewiston", "College Street", "Bates College", "Tree Streets", "Webster Street", "East Avenue", "Sabattus Street"],
     description: "Lewiston residents enjoy competitive electricity rates from 16+ suppliers in the CMP service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/e1656009b_35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
   },
   "Bangor": {
     state: "Maine", stateCode: "ME", county: "Penobscot County", population: "32,000+",
@@ -648,7 +648,7 @@ const cityData = {
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Bangor", "Fairmount", "State Street", "Little City", "Broadway", "West Bangor", "East Side"],
     description: "Bangor residents benefit from competitive electricity rates with 16+ suppliers in the Emera Maine service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/a83f5b033_f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
   },
   "Manchester": {
     state: "New Hampshire", stateCode: "NH", county: "Hillsborough County", population: "115,000+",
@@ -656,7 +656,7 @@ const cityData = {
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 17,
     neighborhoods: ["Downtown Manchester", "North End", "South End", "West Side", "East Side", "Pinardville", "Piscataquog Village"],
     description: "Manchester residents enjoy competitive electricity rates from 17+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/9dba14695_b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
   },
   "Nashua": {
     state: "New Hampshire", stateCode: "NH", county: "Hillsborough County", population: "91,000+",
@@ -664,7 +664,7 @@ const cityData = {
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Nashua", "North End", "South End", "West Hollis Street", "Broad Street Parkway", "Daniel Webster", "Crown Hill"],
     description: "Nashua residents benefit from competitive electricity rates with 16+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/0497c3089_89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
   },
   "Concord": {
     state: "New Hampshire", stateCode: "NH", county: "Merrimack County", population: "43,000+",
@@ -672,7 +672,7 @@ const cityData = {
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 16,
     neighborhoods: ["Downtown Concord", "Penacook", "West Concord", "East Concord", "Heights", "South End", "North End"],
     description: "Concord residents enjoy competitive electricity rates from 16+ suppliers in the Eversource service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/63646130e_c2b6c002-b461-43af-873e-02caf45e467b.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c2b6c002-b461-43af-873e-02caf45e467b.jpg"
   },
   "Providence": {
     state: "Rhode Island", stateCode: "RI", county: "Providence County", population: "190,000+",
@@ -680,7 +680,7 @@ const cityData = {
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 15,
     neighborhoods: ["Downtown Providence", "Federal Hill", "Fox Point", "East Side", "West End", "Smith Hill", "Mount Pleasant"],
     description: "Providence residents benefit from competitive electricity rates with 15+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/3a56f40c4_3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
   },
   "Warwick": {
     state: "Rhode Island", stateCode: "RI", county: "Kent County", population: "83,000+",
@@ -688,7 +688,7 @@ const cityData = {
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 15,
     neighborhoods: ["Warwick Neck", "Oakland Beach", "Apponaug", "Gaspee", "Hillsgrove", "Pawtuxet Village", "Conimicut"],
     description: "Warwick residents enjoy competitive electricity rates from 15+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/d9b752924_a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
   },
   "Cranston": {
     state: "Rhode Island", stateCode: "RI", county: "Providence County", population: "82,000+",
@@ -696,7 +696,7 @@ const cityData = {
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 14,
     neighborhoods: ["Edgewood", "Garden City", "Knightsville", "Meshanticut", "Park View", "Western Hills", "Pawtuxet"],
     description: "Cranston residents benefit from competitive electricity rates with 14+ suppliers in the National Grid service territory.",
-    image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69141a7199585b6c94026f23/c4af296bf_ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
+    image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
   }
 };
 
