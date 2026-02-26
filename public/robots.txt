@@ -4,22 +4,20 @@
 User-agent: *
 Allow: /
 
-# Block admin and API areas
+# Block admin, API, and internal areas
 Disallow: /admin/
 Disallow: /api/
 Disallow: /go/
+Disallow: /search?
+Disallow: /user-settings
 
 # Sitemap location
 Sitemap: https://electricscouts.com/sitemap.xml
 
-# Crawl-delay for politeness
-Crawl-delay: 1
-
-# Common search engine bots
+# Google-specific rules (no crawl-delay — let Google crawl freely)
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 1
 
+# Bing-specific rules
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
