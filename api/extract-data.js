@@ -49,15 +49,26 @@ IMPORTANT INSTRUCTIONS:
     } else {
       prompt = `You are analyzing an electricity bill document. Extract the following and return as a JSON object with these exact field names:
 {
+  "customer_name": (string, the customer/account holder name on the bill),
+  "service_address": (string, the full service address where electricity is delivered),
   "monthly_usage_kwh": (number, monthly electricity usage in kWh),
   "monthly_cost": (number, total monthly cost in dollars),
   "rate_per_kwh": (number, rate per kWh in cents),
   "contract_term": (number, contract term in months, or null if unknown),
-  "provider_name": (string, current electricity provider name),
-  "plan_name": (string, current plan name, or null if unknown),
-  "zip_code": (string, service ZIP code)
+  "provider_name": (string, current electricity provider/company name, usually at the top of the bill),
+  "plan_name": (string, current plan/product name, or null if unknown),
+  "zip_code": (string, service address ZIP code),
+  "account_number": (string, the account or customer number),
+  "billing_period": (string, the billing period dates, e.g. "Dec 5 - Jan 6, 2026")
 }
-If a field cannot be determined, use null for strings and 0 for numbers. Return JSON only.`;
+IMPORTANT:
+- For monthly_usage_kwh: Look for "kWh Used", "Total Usage", "Energy Used", or similar.
+- For monthly_cost: Look for "Total Amount Due", "Total Charges", "Amount Due", or the final bill total.
+- For rate_per_kwh: Look for "Price per kWh", "Energy Charge Rate", or calculate from total cost / usage. Express in CENTS (e.g., 12.5 for 12.5¢/kWh).
+- For customer_name: Look for "Name", "Customer", "Account Holder" on the bill.
+- For service_address: Look for "Service Address", "Delivery Address", or the address where electricity is delivered.
+- If a field cannot be determined, use null for strings and 0 for numbers.
+- Return JSON only, no explanation or markdown.`;
     }
 
     // Build the message content based on file type

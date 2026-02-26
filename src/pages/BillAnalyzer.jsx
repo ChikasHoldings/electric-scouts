@@ -132,20 +132,50 @@ export default function BillAnalyzer() {
     setLeadSubmitting(true);
     setLeadError(null);
     try {
-      const resp = await fetch('/api/leads', {
+      // Build recommendation data with affiliate URLs for the email
+      const recsWithLinks = (recommendations || []).map(plan => {
+        const planData = plan.data || plan;
+        const providerName = planData.provider_name || plan.provider_name;
+        const provider = providers.find(p => {
+          const pName = p.name || p.data?.name;
+          return pName === providerName;
+        });
+        let affiliateUrl = '#';
+        if (provider) {
+          const pData = provider.data || provider;
+          const fallback = pData.affiliate_url || provider.affiliate_url || pData.website_url || provider.website_url || '#';
+          affiliateUrl = getAffiliateUrl({ providerId: provider.id, offerId: plan.id, fallbackUrl: fallback });
+        }
+        return {
+          provider_name: providerName,
+          plan_name: planData.plan_name || plan.plan_name,
+          rate_per_kwh: planData.rate_per_kwh || plan.rate_per_kwh,
+          contract_length: planData.contract_length || plan.contract_length,
+          renewable_percentage: planData.renewable_percentage || plan.renewable_percentage || 0,
+          estimatedCost: plan.estimatedCost,
+          monthlySavings: plan.monthlySavings,
+          annualSavings: plan.annualSavings,
+          affiliateUrl,
+        };
+      });
+
+      // Send the full report email
+      const resp = await fetch('/api/send-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: leadEmail,
-          zip: billData?.zip_code || manualForm.zip_code || null,
-          source,
+          billData: billData,
+          recommendations: recsWithLinks,
+          savingsScore: savingsScore,
+          overpaymentPercent: overpaymentPercent,
         }),
       });
       const data = await resp.json();
       if (resp.ok && data.success) {
         setLeadSubmitted(true);
       } else {
-        setLeadError(data.error || 'Something went wrong');
+        setLeadError(data.error || 'Something went wrong sending the report');
       }
     } catch (e) {
       setLeadError('Network error. Please try again.');
@@ -282,13 +312,17 @@ export default function BillAnalyzer() {
             json_schema: {
               type: "object",
               properties: {
+                customer_name: { type: "string", description: "Customer/account holder name on the bill" },
+                service_address: { type: "string", description: "Full service address where electricity is delivered" },
                 monthly_usage_kwh: { type: "number", description: "Monthly electricity usage in kWh" },
                 monthly_cost: { type: "number", description: "Total monthly cost in dollars" },
                 rate_per_kwh: { type: "number", description: "Rate per kWh in cents" },
                 contract_term: { type: "number", description: "Contract term in months" },
-                provider_name: { type: "string", description: "Current electricity provider name" },
-                plan_name: { type: "string", description: "Current plan name" },
-                zip_code: { type: "string", description: "Service ZIP code" }
+                provider_name: { type: "string", description: "Current electricity provider/company name" },
+                plan_name: { type: "string", description: "Current plan/product name" },
+                zip_code: { type: "string", description: "Service address ZIP code" },
+                account_number: { type: "string", description: "Account or customer number" },
+                billing_period: { type: "string", description: "Billing period dates" }
               }
             }
           });
@@ -563,8 +597,11 @@ export default function BillAnalyzer() {
         {/* Header */}
         <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-8">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-bold mb-2">Your Bill Analysis Results</h1>
+            <h1 className="text-2xl font-bold mb-2">
+              {billData.customer_name ? `${billData.customer_name}'s Bill Analysis` : 'Your Bill Analysis Results'}
+            </h1>
             <p className="text-sm text-blue-100">
+              {billData.service_address && <span className="block mb-1">{billData.service_address}</span>}
               {recommendations.length > 0
                 ? `We found ${recommendations.length} better plan${recommendations.length !== 1 ? 's' : ''} for you`
                 : "Your rate analysis is ready"}
@@ -610,10 +647,22 @@ export default function BillAnalyzer() {
                   <h2 className="text-lg font-bold text-gray-900">Your Current Plan</h2>
                 </div>
                 <div className="space-y-3">
+                  {billData.customer_name && (
+                    <div>
+                      <p className="text-xs text-gray-600 mb-0.5">Account Holder</p>
+                      <p className="text-sm font-bold text-gray-900">{billData.customer_name}</p>
+                    </div>
+                  )}
                   <div>
                     <p className="text-xs text-gray-600 mb-0.5">Provider</p>
                     <p className="text-sm font-bold text-gray-900">{billData.provider_name || 'N/A'}</p>
                   </div>
+                  {billData.plan_name && (
+                    <div>
+                      <p className="text-xs text-gray-600 mb-0.5">Plan</p>
+                      <p className="text-sm font-bold text-gray-900">{billData.plan_name}</p>
+                    </div>
+                  )}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <p className="text-xs text-gray-600 mb-0.5">Monthly Usage</p>
@@ -624,9 +673,17 @@ export default function BillAnalyzer() {
                       <p className="text-sm font-bold text-gray-900">{billData.rate_per_kwh || 0}¢/kWh</p>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-600 mb-0.5">Monthly Cost</p>
-                    <p className="text-sm font-bold text-gray-900">${billData.monthly_cost?.toFixed(2) || '0.00'}</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-600 mb-0.5">Monthly Cost</p>
+                      <p className="text-sm font-bold text-gray-900">${billData.monthly_cost?.toFixed(2) || '0.00'}</p>
+                    </div>
+                    {billData.billing_period && (
+                      <div>
+                        <p className="text-xs text-gray-600 mb-0.5">Billing Period</p>
+                        <p className="text-sm font-bold text-gray-900">{billData.billing_period}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -778,7 +835,7 @@ export default function BillAnalyzer() {
               {leadSubmitted ? (
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-5 h-5" />
-                  <p className="font-medium">Check your inbox! We've sent your savings report.</p>
+                  <p className="font-medium">Check your inbox! We've sent your full savings report with personalized plan recommendations and direct sign-up links.</p>
                 </div>
               ) : (
                 <>
