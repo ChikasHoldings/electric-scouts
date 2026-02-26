@@ -23,6 +23,8 @@ const AdminQuotes = lazy(() => import('@/pages/admin/AdminQuotes'));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
 const AdminAffiliates = lazy(() => import('@/pages/admin/AdminAffiliates'));
 const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
+const AdminBusinessPlans = lazy(() => import('@/pages/admin/AdminBusinessPlans'));
+const AdminRenewablePlans = lazy(() => import('@/pages/admin/AdminRenewablePlans'));
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -86,6 +88,16 @@ const AuthenticatedApp = () => {
       <Route path="/admin/plans" element={
         <Suspense fallback={<AdminLoading />}>
           <AdminRoute><AdminPlans /></AdminRoute>
+        </Suspense>
+      } />
+      <Route path="/admin/business-plans" element={
+        <Suspense fallback={<AdminLoading />}>
+          <AdminRoute><AdminBusinessPlans /></AdminRoute>
+        </Suspense>
+      } />
+      <Route path="/admin/renewable-plans" element={
+        <Suspense fallback={<AdminLoading />}>
+          <AdminRoute><AdminRenewablePlans /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/articles" element={

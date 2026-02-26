@@ -34,29 +34,32 @@ export default function RenewableCompareRates() {
 
   // Load ZIP code from URL on mount
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const zipFromUrl = urlParams.get('zip');
-    
-    if (zipFromUrl && zipFromUrl.length === 5) {
-      const validation = validateZipCode(zipFromUrl);
-      if (validation.valid) {
-        setZipCode(zipFromUrl);
-        setIsZipValid(true);
-        const city = getCityFromZip(zipFromUrl);
-        const providers = getProvidersForZipCode(zipFromUrl);
-        setCityName(city || validation.state?.name || "your area");
-        setAvailableProviders(providers);
-        localStorage.setItem('compareRatesZip', zipFromUrl);
-        setStep(2);
-      } else {
-        setZipCode(zipFromUrl);
-        setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
-        setStep(1);
+    const loadZipData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const zipFromUrl = urlParams.get('zip');
+      
+      if (zipFromUrl && zipFromUrl.length === 5) {
+        const validation = validateZipCode(zipFromUrl);
+        if (validation.valid) {
+          setZipCode(zipFromUrl);
+          setIsZipValid(true);
+          const city = getCityFromZip(zipFromUrl);
+          const providers = await getProvidersForZipCode(zipFromUrl);
+          setCityName(city || validation.state?.name || "your area");
+          setAvailableProviders(providers);
+          localStorage.setItem('compareRatesZip', zipFromUrl);
+          setStep(2);
+        } else {
+          setZipCode(zipFromUrl);
+          setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
+          setStep(1);
+        }
       }
-    }
+    };
+    loadZipData();
   }, []);
 
-  const handleZipSubmit = () => {
+  const handleZipSubmit = async () => {
     if (!zipCode || zipCode.length !== 5) {
       setZipError("Please enter a valid 5-digit ZIP code");
       return;
@@ -69,7 +72,7 @@ export default function RenewableCompareRates() {
     }
 
     const city = getCityFromZip(zipCode);
-    const providers = getProvidersForZipCode(zipCode);
+    const providers = await getProvidersForZipCode(zipCode);
     setCityName(city || validation.state?.name || "your area");
     setAvailableProviders(providers);
     setZipError("");
@@ -105,7 +108,8 @@ export default function RenewableCompareRates() {
     const planName = (plan.plan_name || '').toLowerCase();
     
     // Exclude business plans
-    if (planName.includes('business') || planName.includes('commercial')) {
+    const customerType = (plan.customer_type || '').toLowerCase();
+    if (customerType === 'business' || planName.includes('business') || planName.includes('commercial')) {
       return false;
     }
     

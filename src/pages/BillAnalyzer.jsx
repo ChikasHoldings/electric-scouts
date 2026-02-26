@@ -225,15 +225,33 @@ export default function BillAnalyzer() {
     setIsUploading(true);
     setError(null);
 
+    const MAX_RETRIES = 2;
+
     try {
-      // Upload the file
-      const uploadResult = await UploadFile({ file });
+      // Step 1: Upload the file to Supabase storage
+      let uploadResult;
+      try {
+        uploadResult = await UploadFile({ file });
+      } catch (uploadErr) {
+        console.error('File upload failed:', uploadErr);
+        setIsUploading(false);
+        setShowManualInput(true);
+        setError('File upload failed. This may be a storage configuration issue. Please enter your bill details manually below.');
+        return;
+      }
+
       let fileUrl = uploadResult.file_url;
+      if (!fileUrl) {
+        setIsUploading(false);
+        setShowManualInput(true);
+        setError('File upload succeeded but no URL was returned. Please enter your bill details manually.');
+        return;
+      }
 
       setIsUploading(false);
       setIsProcessing(true);
 
-      // If the file is a PDF, convert it to a processable format first
+      // Step 2: If PDF, convert to processable format
       const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
       if (isPdf) {
         try {
@@ -253,38 +271,75 @@ export default function BillAnalyzer() {
         }
       }
 
-      // Extract data from the uploaded bill
-      const extractResult = await ExtractDataFromUploadedFile({
-        file_url: fileUrl,
-        json_schema: {
-          type: "object",
-          properties: {
-            monthly_usage_kwh: { type: "number", description: "Monthly electricity usage in kWh" },
-            monthly_cost: { type: "number", description: "Total monthly cost in dollars" },
-            rate_per_kwh: { type: "number", description: "Rate per kWh in cents" },
-            contract_term: { type: "number", description: "Contract term in months" },
-            provider_name: { type: "string", description: "Current electricity provider name" },
-            plan_name: { type: "string", description: "Current plan name" },
-            zip_code: { type: "string", description: "Service ZIP code" }
+      // Step 3: Extract data with retry logic
+      let extractResult = null;
+      let lastError = null;
+
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          extractResult = await ExtractDataFromUploadedFile({
+            file_url: fileUrl,
+            json_schema: {
+              type: "object",
+              properties: {
+                monthly_usage_kwh: { type: "number", description: "Monthly electricity usage in kWh" },
+                monthly_cost: { type: "number", description: "Total monthly cost in dollars" },
+                rate_per_kwh: { type: "number", description: "Rate per kWh in cents" },
+                contract_term: { type: "number", description: "Contract term in months" },
+                provider_name: { type: "string", description: "Current electricity provider name" },
+                plan_name: { type: "string", description: "Current plan name" },
+                zip_code: { type: "string", description: "Service ZIP code" }
+              }
+            }
+          });
+
+          // Validate the extracted data has meaningful values
+          if (extractResult?.status === 'success' && extractResult?.output) {
+            const output = extractResult.output;
+            const hasUsage = output.monthly_usage_kwh && output.monthly_usage_kwh > 0;
+            const hasCost = output.monthly_cost && output.monthly_cost > 0;
+            if (hasUsage || hasCost) {
+              break; // Valid result, exit retry loop
+            } else {
+              lastError = 'Extraction returned empty values';
+              extractResult = null; // Reset to trigger retry
+            }
+          } else {
+            lastError = 'Extraction returned unsuccessful status';
+            extractResult = null;
           }
+        } catch (err) {
+          lastError = err.message;
+          extractResult = null;
+          console.warn(`Extraction attempt ${attempt + 1} failed:`, err.message);
         }
-      });
+
+        // Wait before retry
+        if (attempt < MAX_RETRIES) {
+          await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+      }
 
       setIsProcessing(false);
 
-      if (extractResult.status === 'success' && extractResult.output) {
-        setBillData(extractResult.output);
+      if (extractResult?.status === 'success' && extractResult?.output) {
+        const output = extractResult.output;
+        // Auto-calculate rate if missing but we have cost and usage
+        if ((!output.rate_per_kwh || output.rate_per_kwh === 0) && output.monthly_cost > 0 && output.monthly_usage_kwh > 0) {
+          output.rate_per_kwh = parseFloat(((output.monthly_cost / output.monthly_usage_kwh) * 100).toFixed(2));
+        }
+        setBillData(output);
         setShowResults(true);
       } else {
         setShowManualInput(true);
-        setError('We couldn\'t automatically extract your bill data. Please enter the details manually below.');
+        setError(`We couldn't automatically extract your bill data${lastError ? ` (${lastError})` : ''}. Please enter the details manually below.`);
       }
     } catch (err) {
       setIsUploading(false);
       setIsProcessing(false);
       setShowManualInput(true);
-      setError('Automatic extraction failed. Please enter your bill details manually below.');
-      console.error(err);
+      setError(`Automatic extraction failed: ${err.message || 'Unknown error'}. Please enter your bill details manually below.`);
+      console.error('BillAnalyzer error:', err);
     }
   };
 
@@ -385,7 +440,8 @@ export default function BillAnalyzer() {
       const planName = planData.plan_name || plan.plan_name;
       
       // Exclude business plans
-      if (planName && planName.toLowerCase().includes('business')) {
+      const customerType = (planData.customer_type || plan.customer_type || '').toLowerCase();
+      if (customerType === 'business' || (planName && planName.toLowerCase().includes('business'))) {
         return false;
       }
       

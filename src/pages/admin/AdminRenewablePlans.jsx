@@ -1,44 +1,23 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ElectricityPlan, ElectricityProvider } from "@/api/supabaseEntities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Plus,
-  Pencil,
-  Trash2,
-  Search,
-  Loader2,
-  Zap,
-  Leaf,
-  DollarSign,
+  Plus, Pencil, Trash2, Search, Loader2, Leaf, DollarSign, Wind, Sun,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -51,7 +30,7 @@ const emptyPlan = {
   base_charge: "",
   contract_length: "",
   early_termination_fee: "",
-  renewable_percentage: 0,
+  renewable_percentage: 100,
   is_active: true,
   tdsp_charges: "",
   usage_credit: "",
@@ -63,7 +42,7 @@ const emptyPlan = {
   state: "TX",
 };
 
-export default function AdminPlans() {
+export default function AdminRenewablePlans() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -74,9 +53,14 @@ export default function AdminPlans() {
   const [form, setForm] = useState(emptyPlan);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  const { data: plans = [], isLoading } = useQuery({
+  const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ["admin-plans"],
     queryFn: () => ElectricityPlan.list(),
+  });
+
+  // Filter to only show renewable plans (>= 90% renewable)
+  const plans = allPlans.filter(p => {
+    return p.renewable_percentage && p.renewable_percentage >= 90;
   });
 
   const { data: providers = [] } = useQuery({
@@ -88,7 +72,7 @@ export default function AdminPlans() {
     mutationFn: (data) => ElectricityPlan.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(["admin-plans"]);
-      toast({ title: "Plan created successfully" });
+      toast({ title: "Renewable plan created successfully" });
       closeDialog();
     },
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
@@ -98,7 +82,7 @@ export default function AdminPlans() {
     mutationFn: ({ id, data }) => ElectricityPlan.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(["admin-plans"]);
-      toast({ title: "Plan updated successfully" });
+      toast({ title: "Renewable plan updated successfully" });
       closeDialog();
     },
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
@@ -108,7 +92,7 @@ export default function AdminPlans() {
     mutationFn: (id) => ElectricityPlan.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["admin-plans"]);
-      toast({ title: "Plan deleted" });
+      toast({ title: "Renewable plan deleted" });
       setDeleteConfirm(null);
     },
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
@@ -134,13 +118,18 @@ export default function AdminPlans() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const renewPct = parseInt(form.renewable_percentage) || 100;
+    if (renewPct < 90) {
+      toast({ title: "Error", description: "Renewable plans must have at least 90% renewable energy", variant: "destructive" });
+      return;
+    }
     const data = {
       ...form,
       rate_per_kwh: parseFloat(form.rate_per_kwh) || 0,
       base_charge: parseFloat(form.base_charge) || 0,
       contract_length: parseInt(form.contract_length) || 0,
       early_termination_fee: parseFloat(form.early_termination_fee) || 0,
-      renewable_percentage: parseInt(form.renewable_percentage) || 0,
+      renewable_percentage: renewPct,
       tdsp_charges: parseFloat(form.tdsp_charges) || 0,
       usage_credit: parseFloat(form.usage_credit) || 0,
       usage_credit_threshold: parseInt(form.usage_credit_threshold) || 0,
@@ -169,11 +158,21 @@ export default function AdminPlans() {
   return (
     <div className="space-y-6">
       {/* Header */}
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+          <Leaf className="w-5 h-5 text-green-700" />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">Renewable Plans</h1>
+          <p className="text-sm text-gray-500">Manage green energy and 100% renewable electricity plans</p>
+        </div>
+      </div>
+
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
-            placeholder="Search plans..."
+            placeholder="Search renewable plans..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -198,14 +197,38 @@ export default function AdminPlans() {
             <SelectItem value="all">All Types</SelectItem>
             <SelectItem value="fixed">Fixed</SelectItem>
             <SelectItem value="variable">Variable</SelectItem>
-            <SelectItem value="indexed">Indexed</SelectItem>
-            <SelectItem value="prepaid">Prepaid</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={openCreate} className="bg-[#0A5C8C] hover:bg-[#084a6f]">
+        <Button onClick={openCreate} className="bg-green-600 hover:bg-green-700">
           <Plus className="w-4 h-4 mr-2" />
-          Add Plan
+          Add Renewable Plan
         </Button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <Card className="bg-green-50 border-green-200">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-green-700">{plans.length}</p>
+            <p className="text-xs text-green-600">Total Renewable Plans</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-green-50 border-green-200">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-green-700">
+              {plans.filter(p => p.renewable_percentage === 100).length}
+            </p>
+            <p className="text-xs text-green-600">100% Green Plans</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-green-50 border-green-200">
+          <CardContent className="p-4 text-center">
+            <p className="text-2xl font-bold text-green-700">
+              {plans.filter(p => p.is_active).length}
+            </p>
+            <p className="text-xs text-green-600">Active Plans</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Table */}
@@ -217,8 +240,9 @@ export default function AdminPlans() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-20 text-gray-500">
-              <Zap className="w-10 h-10 mx-auto mb-3 text-gray-300" />
-              <p>{search || filterProvider !== "all" ? "No plans match your filters" : "No plans yet"}</p>
+              <Leaf className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+              <p className="font-medium">No renewable plans found</p>
+              <p className="text-sm mt-1">Add your first renewable plan to get started</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -231,7 +255,7 @@ export default function AdminPlans() {
                     <TableHead>Type</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Contract</TableHead>
-                    <TableHead>Renewable</TableHead>
+                    <TableHead>Renewable %</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -240,9 +264,11 @@ export default function AdminPlans() {
                   {filtered.map((plan) => (
                     <TableRow key={plan.id}>
                       <TableCell>
-                        <p className="font-medium text-gray-900 max-w-[200px] truncate">
-                          {plan.plan_name}
-                        </p>
+                        <div>
+                          <p className="font-medium text-gray-900 max-w-[200px] truncate">
+                            {plan.plan_name}
+                          </p>
+                        </div>
                       </TableCell>
                       <TableCell className="text-sm text-gray-600">
                         {plan.provider_name}
@@ -270,14 +296,12 @@ export default function AdminPlans() {
                         {plan.contract_length ? `${plan.contract_length} mo` : "MTM"}
                       </TableCell>
                       <TableCell>
-                        {plan.renewable_percentage > 0 ? (
-                          <div className="flex items-center gap-1">
-                            <Leaf className="w-3 h-3 text-green-500" />
-                            <span className="text-sm">{plan.renewable_percentage}%</span>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-gray-400">—</span>
-                        )}
+                        <div className="flex items-center gap-1">
+                          <Leaf className="w-3 h-3 text-green-500" />
+                          <span className="text-sm font-semibold text-green-700">
+                            {plan.renewable_percentage}%
+                          </span>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Badge variant={plan.is_active ? "default" : "secondary"}>
@@ -309,14 +333,14 @@ export default function AdminPlans() {
       </Card>
 
       <p className="text-sm text-gray-400 text-right">
-        Showing {filtered.length} of {plans.length} plans
+        Showing {filtered.length} of {plans.length} renewable plans
       </p>
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingPlan ? "Edit Plan" : "Add New Plan"}</DialogTitle>
+            <DialogTitle>{editingPlan ? "Edit Renewable Plan" : "Add New Renewable Plan"}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -326,7 +350,7 @@ export default function AdminPlans() {
                   value={form.plan_name}
                   onChange={(e) => setForm({ ...form, plan_name: e.target.value })}
                   required
-                  placeholder="e.g., Simple Rate 24"
+                  placeholder="e.g., 100% Wind Energy 12"
                 />
               </div>
               <div className="space-y-2">
@@ -335,10 +359,10 @@ export default function AdminPlans() {
                   value={form.provider_name}
                   onChange={(e) => setForm({ ...form, provider_name: e.target.value })}
                   required
-                  placeholder="e.g., TXU Energy"
-                  list="provider-names"
+                  placeholder="e.g., Green Mountain Energy"
+                  list="provider-names-renew"
                 />
-                <datalist id="provider-names">
+                <datalist id="provider-names-renew">
                   {providers.map((p) => (
                     <option key={p.id} value={p.name} />
                   ))}
@@ -356,7 +380,7 @@ export default function AdminPlans() {
                   value={form.rate_per_kwh}
                   onChange={(e) => setForm({ ...form, rate_per_kwh: e.target.value })}
                   required
-                  placeholder="12.5"
+                  placeholder="11.5"
                 />
               </div>
               <div className="space-y-2">
@@ -396,8 +420,6 @@ export default function AdminPlans() {
                   <SelectContent>
                     <SelectItem value="fixed">Fixed</SelectItem>
                     <SelectItem value="variable">Variable</SelectItem>
-                    <SelectItem value="indexed">Indexed</SelectItem>
-                    <SelectItem value="prepaid">Prepaid</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -426,6 +448,22 @@ export default function AdminPlans() {
                   placeholder="12"
                 />
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Renewable % *</Label>
+                <Input
+                  type="number"
+                  min="90"
+                  max="100"
+                  value={form.renewable_percentage}
+                  onChange={(e) => setForm({ ...form, renewable_percentage: e.target.value })}
+                  required
+                  placeholder="100"
+                />
+                <p className="text-xs text-gray-500">Must be 90% or higher</p>
+              </div>
               <div className="space-y-2">
                 <Label>ETF ($)</Label>
                 <Input
@@ -437,58 +475,12 @@ export default function AdminPlans() {
                   placeholder="150"
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Renewable %</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={form.renewable_percentage || ""}
-                  onChange={(e) => setForm({ ...form, renewable_percentage: e.target.value })}
-                  placeholder="100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Usage Credit ($)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={form.usage_credit || ""}
-                  onChange={(e) => setForm({ ...form, usage_credit: e.target.value })}
-                  placeholder="50"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Credit Threshold (kWh)</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  value={form.usage_credit_threshold || ""}
-                  onChange={(e) => setForm({ ...form, usage_credit_threshold: e.target.value })}
-                  placeholder="1000"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>State</Label>
                 <Input
                   value={form.state || ""}
                   onChange={(e) => setForm({ ...form, state: e.target.value })}
                   placeholder="TX"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Promo Code</Label>
-                <Input
-                  value={form.promo_code || ""}
-                  onChange={(e) => setForm({ ...form, promo_code: e.target.value })}
-                  placeholder="SAVE20"
                 />
               </div>
             </div>
@@ -498,7 +490,7 @@ export default function AdminPlans() {
               <Input
                 value={form.special_offer || ""}
                 onChange={(e) => setForm({ ...form, special_offer: e.target.value })}
-                placeholder="e.g., Free nights & weekends"
+                placeholder="e.g., Plant a tree with every signup"
               />
             </div>
 
@@ -536,10 +528,10 @@ export default function AdminPlans() {
               <Button
                 type="submit"
                 disabled={isSaving}
-                className="bg-[#0A5C8C] hover:bg-[#084a6f]"
+                className="bg-green-600 hover:bg-green-700"
               >
                 {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {editingPlan ? "Save Changes" : "Create Plan"}
+                {editingPlan ? "Save Changes" : "Create Renewable Plan"}
               </Button>
             </DialogFooter>
           </form>
@@ -550,7 +542,7 @@ export default function AdminPlans() {
       <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Plan</DialogTitle>
+            <DialogTitle>Delete Renewable Plan</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-gray-600">
             Are you sure you want to delete <strong>{deleteConfirm?.plan_name}</strong>?

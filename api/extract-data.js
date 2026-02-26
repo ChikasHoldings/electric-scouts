@@ -5,11 +5,20 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Validate API key is configured
+  if (!openaiApiKey) {
+    console.error('OPENAI_API_KEY is not configured');
+    return res.status(500).json({ 
+      error: 'AI extraction service is not configured. Please contact support.',
+      status: 'error'
+    });
+  }
+
   try {
     const { file_url, extraction_prompt, json_schema } = req.body;
 
     if (!file_url) {
-      return res.status(400).json({ error: 'file_url is required' });
+      return res.status(400).json({ error: 'file_url is required', status: 'error' });
     }
 
     // Build the extraction prompt from json_schema if provided,
@@ -22,12 +31,23 @@ export default async function handler(req, res) {
         .map(([key, val]) => `  "${key}": ${val.description || val.type}`)
         .join('\n');
 
-      prompt = `Extract the following fields from this electricity bill image. Return ONLY a valid JSON object with these exact field names and types:\n{\n${fields}\n}\n\nIf a field cannot be determined, use null for strings and 0 for numbers. Return JSON only, no explanation.`;
+      prompt = `You are analyzing an electricity bill document. Extract the following fields and return ONLY a valid JSON object with these exact field names and types:
+{
+${fields}
+}
+
+IMPORTANT INSTRUCTIONS:
+- For monthly_usage_kwh: Look for "kWh Used", "Total Usage", "Energy Used", or similar. This is the total kilowatt-hours consumed.
+- For monthly_cost: Look for "Total Amount Due", "Total Charges", "Amount Due", or the final bill total in dollars.
+- For rate_per_kwh: Look for "Price per kWh", "Energy Charge Rate", or calculate from total cost / usage. Express in CENTS (e.g., 12.5 for 12.5¢/kWh).
+- For provider_name: The electricity company name, usually at the top of the bill.
+- For zip_code: The service address ZIP code.
+- If a field cannot be determined, use null for strings and 0 for numbers.
+- Return JSON only, no explanation or markdown.`;
     } else if (extraction_prompt) {
       prompt = extraction_prompt;
     } else {
-      // Default prompt matching the frontend's expected field names
-      prompt = `Extract the following from this electricity bill and return as a JSON object with these exact field names:
+      prompt = `You are analyzing an electricity bill document. Extract the following and return as a JSON object with these exact field names:
 {
   "monthly_usage_kwh": (number, monthly electricity usage in kWh),
   "monthly_cost": (number, total monthly cost in dollars),
@@ -38,6 +58,24 @@ export default async function handler(req, res) {
   "zip_code": (string, service ZIP code)
 }
 If a field cannot be determined, use null for strings and 0 for numbers. Return JSON only.`;
+    }
+
+    // Build the message content based on file type
+    const isBase64Pdf = file_url.startsWith('data:application/pdf;base64,');
+    const isBase64Image = file_url.startsWith('data:image/');
+    
+    let messageContent;
+    if (isBase64Pdf || isBase64Image) {
+      messageContent = [
+        { type: 'text', text: prompt },
+        { type: 'image_url', image_url: { url: file_url } }
+      ];
+    } else {
+      // Regular URL (signed Supabase URL or public URL)
+      messageContent = [
+        { type: 'text', text: prompt },
+        { type: 'image_url', image_url: { url: file_url, detail: 'high' } }
+      ];
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -51,17 +89,14 @@ If a field cannot be determined, use null for strings and 0 for numbers. Return 
         messages: [
           { 
             role: 'system', 
-            content: 'You are a document extraction assistant. Extract structured data from the provided document/image and return it as clean JSON. Always use the exact field names requested. Never add extra fields or explanations.' 
+            content: 'You are an expert electricity bill analyzer. You accurately extract structured data from electricity bill documents and images. Always use the exact field names requested. Return only valid JSON with no extra text, markdown, or explanation.' 
           },
           { 
             role: 'user', 
-            content: [
-              { type: 'text', text: prompt },
-              { type: 'image_url', image_url: { url: file_url } }
-            ]
+            content: messageContent
           }
         ],
-        max_tokens: 500,
+        max_tokens: 800,
         temperature: 0,
         response_format: { type: 'json_object' },
       }),
@@ -70,7 +105,34 @@ If a field cannot be determined, use null for strings and 0 for numbers. Return 
     if (!response.ok) {
       const errBody = await response.text();
       console.error('OpenAI API error:', response.status, errBody);
-      return res.status(502).json({ error: 'AI extraction service error', details: errBody });
+      
+      // Provide specific error messages
+      if (response.status === 401) {
+        return res.status(502).json({ 
+          error: 'AI service authentication failed. The API key may be invalid.',
+          status: 'error'
+        });
+      }
+      if (response.status === 429) {
+        return res.status(502).json({ 
+          error: 'AI service rate limit exceeded. Please try again in a moment.',
+          status: 'error'
+        });
+      }
+      if (response.status === 400) {
+        // Could be image format issue
+        return res.status(502).json({ 
+          error: 'The uploaded file could not be processed by the AI. Please try a different file format (PNG or JPG recommended).',
+          status: 'error',
+          details: errBody
+        });
+      }
+      
+      return res.status(502).json({ 
+        error: 'AI extraction service error', 
+        status: 'error',
+        details: errBody 
+      });
     }
 
     const data = await response.json();
@@ -78,12 +140,43 @@ If a field cannot be determined, use null for strings and 0 for numbers. Return 
 
     try {
       const extracted = JSON.parse(content);
+      
+      // Validate that we got at least some meaningful data
+      const hasData = extracted.monthly_usage_kwh > 0 || 
+                      extracted.monthly_cost > 0 || 
+                      extracted.provider_name;
+      
+      if (!hasData) {
+        console.warn('Extraction returned no meaningful data:', extracted);
+        return res.json({ 
+          status: 'success', 
+          output: extracted,
+          warning: 'Limited data could be extracted from this document'
+        });
+      }
+      
       return res.json({ status: 'success', output: extracted });
-    } catch {
-      return res.json({ status: 'error', output: null, raw: content });
+    } catch (parseErr) {
+      console.error('Failed to parse AI response as JSON:', content);
+      
+      // Try to extract JSON from the response if it's wrapped in markdown
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          const extracted = JSON.parse(jsonMatch[0]);
+          return res.json({ status: 'success', output: extracted });
+        } catch {
+          // Fall through to error
+        }
+      }
+      
+      return res.json({ status: 'error', output: null, raw: content, error: 'Failed to parse extraction result' });
     }
   } catch (error) {
     console.error('Data extraction error:', error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ 
+      error: error.message || 'Internal server error during extraction',
+      status: 'error'
+    });
   }
 }

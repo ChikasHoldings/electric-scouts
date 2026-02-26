@@ -243,7 +243,8 @@ export default function CompareRates() {
       const contractLength = plan.contract_length;
       
       // Filter out business plans
-      if (planName && planName.toLowerCase().includes('business')) {
+      const customerType = (plan.customer_type || '').toLowerCase();
+      if (customerType === 'business' || (planName && planName.toLowerCase().includes('business'))) {
         return false;
       }
       
@@ -1158,6 +1159,23 @@ export default function CompareRates() {
     return (
       <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 pt-8 pb-12">
         <div className="max-w-xl mx-auto">
+          {/* ZIP Code Confirmation Banner */}
+          {zipCode && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#0A5C8C]" />
+                <span className="text-sm text-gray-700">
+                  Showing plans for <strong>{cityName || `ZIP ${zipCode}`}</strong>
+                </span>
+              </div>
+              <button
+                onClick={() => { setStep(1); setZipCode(''); setZipError(''); setCityName(''); setAvailableProviders([]); }}
+                className="text-xs text-[#0A5C8C] hover:underline font-medium"
+              >
+                Change ZIP
+              </button>
+            </div>
+          )}
           <div className="text-center mb-6">
             <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-1.5">
               Select Your Property Type

@@ -18,12 +18,16 @@ import {
   Settings,
   User,
   ChevronDown,
+  Building,
+  Leaf,
 } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
   { label: "Providers", path: "/admin/providers", icon: Building2 },
   { label: "Plans", path: "/admin/plans", icon: Zap },
+  { label: "Business Plans", path: "/admin/business-plans", icon: Building },
+  { label: "Renewable Plans", path: "/admin/renewable-plans", icon: Leaf },
   { label: "Articles", path: "/admin/articles", icon: FileText },
   { label: "Quotes", path: "/admin/quotes", icon: MessageSquare },
   { label: "Users", path: "/admin/users", icon: Users },
