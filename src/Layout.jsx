@@ -141,7 +141,7 @@ export default function Layout({ children, currentPageName }) {
               <img 
                 src="/images/logo-header.png"
                 alt="ElectricScouts Logo - Compare Electricity Rates and Save on Your Energy Bill in 12 Deregulated States"
-                className="h-12 sm:h-14 lg:h-16"
+                className="h-8 sm:h-9 lg:h-10"
               />
             </Link>
 
@@ -462,7 +462,7 @@ export default function Layout({ children, currentPageName }) {
               <img 
                 src="/images/logo-footer.png"
                 alt="ElectricScouts Footer Logo - Trusted Electricity Comparison Platform Serving TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT"
-                className="h-12 sm:h-14 mb-4"
+                className="h-9 sm:h-10 mb-4"
               />
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
                 Compare electricity rates from 40+ providers nationwide. Save up to $800/year.

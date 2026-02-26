@@ -23,14 +23,13 @@ export default function HeroSection({ zipCode, setZipCode }) {
             {/* Main Headline with Gradient */}
             <div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#084a6f] leading-tight mb-3 sm:mb-5 tracking-tight">
-                Find the Perfect{" "}
+                Stop Overpaying for{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A]">
-                  Electricity Plan
+                  Electricity
                 </span>
-                {" "}for Your Home
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
-                Compare electricity rates from 40+ providers across 12 deregulated states. Switch easily and save an average of $800 per year on your energy bills.
+                Your neighbors are already saving hundreds. Compare rates from 40+ trusted providers across 12 states in seconds — no signup, no spam, just real savings.
               </p>
             </div>
 
@@ -84,13 +83,13 @@ export default function HeroSection({ zipCode, setZipCode }) {
           {/* Right Illustration */}
           <div className="relative hidden lg:block">
             <img
-              src="https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/homepage/screenshot47.png"
-              alt="Interactive electricity rate comparison dashboard showing multiple provider plans with pricing and savings calculations"
-              className="w-full h-auto"
+              src="https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/homepage/hero-smart-home.png"
+              alt="Smart home with solar panels and energy analytics dashboard showing electricity rate comparisons and savings"
+              className="w-full h-auto max-w-lg mx-auto"
               loading="eager"
               decoding="async"
               width="800"
-              height="600" />
+              height="800" />
           </div>
         </div>
       </div>
