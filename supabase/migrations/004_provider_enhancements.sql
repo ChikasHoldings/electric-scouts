@@ -13,7 +13,8 @@ ALTER TABLE public.electricity_providers
   ADD COLUMN IF NOT EXISTS features TEXT[] DEFAULT '{}',
   ADD COLUMN IF NOT EXISTS offer_categories TEXT[] DEFAULT '{}',
   ADD COLUMN IF NOT EXISTS has_affiliate_program BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS affiliate_program_details TEXT;
+  ADD COLUMN IF NOT EXISTS affiliate_program_details TEXT,
+  ADD COLUMN IF NOT EXISTS is_recommended BOOLEAN DEFAULT false;
 
 CREATE INDEX IF NOT EXISTS idx_providers_slug ON public.electricity_providers(slug);
 
