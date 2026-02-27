@@ -122,12 +122,17 @@ export default function BillAnalyzer() {
   const fileInputRef = useRef(null);
 
   // Lead capture state
+  const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState('');
   const [leadSubmitting, setLeadSubmitting] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
   const [leadError, setLeadError] = useState(null);
 
   const handleLeadCapture = async (source) => {
+    if (!leadName.trim()) {
+      setLeadError('Please enter your first name');
+      return;
+    }
     if (!leadEmail || leadSubmitting) return;
     setLeadSubmitting(true);
     setLeadError(null);
@@ -165,6 +170,7 @@ export default function BillAnalyzer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: leadEmail,
+          name: leadName.trim(),
           billData: billData,
           recommendations: recsWithLinks,
           savingsScore: savingsScore,
@@ -938,18 +944,27 @@ export default function BillAnalyzer() {
               ) : (
                 <>
                   <p className="text-sm text-gray-600 mb-4">Get a copy of your analysis results and personalized rate alerts delivered to your inbox.</p>
-                  <div className="flex gap-3">
-                    <input
-                      type="email"
-                      value={leadEmail}
-                      onChange={(e) => setLeadEmail(e.target.value)}
-                      placeholder="Enter your email address"
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent"
-                    />
+                  <div className="space-y-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="text"
+                        value={leadName}
+                        onChange={(e) => { setLeadName(e.target.value); setLeadError(null); }}
+                        placeholder="Your first name"
+                        className="sm:w-2/5 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent"
+                      />
+                      <input
+                        type="email"
+                        value={leadEmail}
+                        onChange={(e) => { setLeadEmail(e.target.value); setLeadError(null); }}
+                        placeholder="Enter your email address"
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0A5C8C] focus:border-transparent"
+                      />
+                    </div>
                     <Button
                       onClick={() => handleLeadCapture('analyzer_results')}
-                      disabled={leadSubmitting || !leadEmail}
-                      className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white px-6"
+                      disabled={leadSubmitting || !leadEmail || !leadName.trim()}
+                      className="w-full sm:w-auto bg-[#0A5C8C] hover:bg-[#084a6f] text-white px-6"
                     >
                       {leadSubmitting ? 'Sending...' : 'Send Report'}
                     </Button>

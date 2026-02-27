@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, billData, recommendations, savingsScore, overpaymentPercent } = req.body;
+    const { email, name, billData, recommendations, savingsScore, overpaymentPercent } = req.body;
 
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
@@ -104,8 +104,8 @@ export default async function handler(req, res) {
     const scoreColor = getScoreColor(savingsScore || 50);
     const scoreLabel = getScoreLabel(savingsScore || 50);
     const topSavings = recommendations?.[0]?.annualSavings || 0;
-    const customerName = billData.customer_name || '';
-    const greeting = customerName ? `Hi ${customerName.split(' ')[0]},` : 'Hi there,';
+    const firstName = name ? name.split(' ')[0] : (billData.customer_name ? billData.customer_name.split(' ')[0] : '');
+    const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
     const year = new Date().getFullYear();
     const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
 
@@ -297,7 +297,7 @@ export default async function handler(req, res) {
       .upsert({
         email: email.toLowerCase().trim(),
         zip: billData.zip_code || null,
-        name: billData.customer_name || null,
+        name: firstName || billData.customer_name || null,
         source: 'bill_analyzer_report',
         status: 'new',
       }, { onConflict: 'email' })
@@ -309,7 +309,7 @@ export default async function handler(req, res) {
     // Send the report email
     const result = await sendEmail({
       to: email,
-      subject: `Your Electricity Savings Report${topSavings > 0 ? ` — Save up to $${Math.round(topSavings)}/yr` : ''}`,
+      subject: `${firstName ? firstName + ', your' : 'Your'} electricity bill analysis report`,
       html,
       idempotencyKey: `bill_report_${email}_${Date.now()}`,
       eventType: 'bill_analysis_report',

@@ -19,12 +19,18 @@ export default function EmailResults({
   accentColor = '#0A5C8C',
   getAffiliateUrl
 }) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
 
   const handleSendResults = async () => {
+    if (!name.trim()) {
+      setError("Please enter your first name");
+      return;
+    }
+
     if (!email) {
       setError("Please enter your email address");
       return;
@@ -55,6 +61,7 @@ export default function EmailResults({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
+          name: name.trim(),
           plans: plansWithLinks,
           zipCode,
           cityName,
@@ -131,30 +138,49 @@ export default function EmailResults({
           Save your top {typeLabels[comparisonType] || ''} plans with direct signup links.
         </p>
         
-        {/* Email input + button - stacks on mobile */}
-        <div className="space-y-3 sm:space-y-0 sm:flex sm:gap-3 sm:items-stretch">
-          <div className="flex-1 relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input
-              type="email"
-              placeholder="Enter your email address"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError("");
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendResults()}
-              className="h-12 pl-10 text-base border-2 focus:ring-2"
-              style={{ 
-                borderColor: error ? '#ef4444' : '#e5e7eb',
-                '--tw-ring-color': accentColor 
-              }}
-              disabled={sending}
-            />
+        {/* Name + Email inputs + button - stacks on mobile */}
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="sm:w-2/5 relative">
+              <Input
+                type="text"
+                placeholder="Your first name"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError("");
+                }}
+                className="h-12 px-4 text-base border-2 focus:ring-2"
+                style={{ 
+                  borderColor: error && !name.trim() ? '#ef4444' : '#e5e7eb',
+                  '--tw-ring-color': accentColor 
+                }}
+                disabled={sending}
+              />
+            </div>
+            <div className="flex-1 relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError("");
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendResults()}
+                className="h-12 pl-10 text-base border-2 focus:ring-2"
+                style={{ 
+                  borderColor: error && !email ? '#ef4444' : '#e5e7eb',
+                  '--tw-ring-color': accentColor 
+                }}
+                disabled={sending}
+              />
+            </div>
           </div>
           <Button
             onClick={handleSendResults}
-            disabled={sending || !email}
+            disabled={sending || !email || !name.trim()}
             className="w-full sm:w-auto h-12 px-6 text-white font-semibold text-base rounded-lg shadow-md hover:shadow-lg transition-all flex-shrink-0"
             style={{ backgroundColor: accentColor }}
           >

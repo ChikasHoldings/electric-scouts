@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, plans, zipCode, cityName, monthlyUsage, comparisonType } = req.body;
+    const { email, name, plans, zipCode, cityName, monthlyUsage, comparisonType } = req.body;
 
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
@@ -44,6 +44,7 @@ export default async function handler(req, res) {
 
     const usage = parseInt(monthlyUsage) || 1000;
     const type = comparisonType || 'residential';
+    const firstName = name ? name.split(' ')[0] : '';
     const year = new Date().getFullYear();
     const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
     
@@ -147,6 +148,7 @@ export default async function handler(req, res) {
             <!-- Body -->
             <tr><td style="background:#fff;padding:30px;">
               
+              <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 8px;">${firstName ? `Hi ${firstName},` : 'Hi there,'}</p>
               <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 20px;">
                 Here are your personalized ${config.label.toLowerCase()} electricity plan recommendations for <strong>${cityName || 'your area'}</strong> (${zipCode || 'N/A'}).
               </p>
@@ -277,6 +279,7 @@ export default async function handler(req, res) {
       .from("leads")
       .upsert({
         email: email.toLowerCase().trim(),
+        name: firstName || null,
         zip: zipCode || null,
         source: `${type}_comparison_results`,
         status: 'new',
@@ -289,7 +292,7 @@ export default async function handler(req, res) {
     // Send the email
     const result = await sendEmail({
       to: email,
-      subject: `${config.emoji} Your ${config.label} Electricity Plans — Starting at ${lowestRate.toFixed(1)}¢/kWh`,
+      subject: `${firstName ? firstName + ', here are your' : 'Your'} ${config.label.toLowerCase()} electricity plan options`,
       html,
       idempotencyKey: `comparison_${type}_${email}_${Date.now()}`,
       eventType: `${type}_comparison_results`,
