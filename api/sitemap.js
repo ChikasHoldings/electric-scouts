@@ -93,6 +93,23 @@ export default async function handler(req, res) {
     { url: '/business-compare-rates', priority: '0.8', changefreq: 'weekly' },
     { url: '/renewable-compare-rates', priority: '0.8', changefreq: 'weekly' },
 
+    // Learning Center Articles (SEO-optimized)
+    { url: '/article?id=6', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=7', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=8', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=9', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=10', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=11', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=12', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=13', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=14', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=15', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=1', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=2', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=3', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=4', priority: '0.8', changefreq: 'monthly' },
+    { url: '/article?id=5', priority: '0.8', changefreq: 'monthly' },
+
     // Legal
     { url: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
     { url: '/terms-of-service', priority: '0.3', changefreq: 'yearly' },

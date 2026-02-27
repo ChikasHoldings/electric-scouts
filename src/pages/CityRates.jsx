@@ -697,7 +697,383 @@ const cityData = {
     neighborhoods: ["Edgewood", "Garden City", "Knightsville", "Meshanticut", "Park View", "Western Hills", "Pawtuxet"],
     description: "Cranston residents benefit from competitive electricity rates with 14+ suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
-  }
+  },
+  "Akron-OH": {
+    state: "Ohio", stateCode: "OH", county: "Summit", population: "190,469+",
+    zipCodes: ["44301", "44302", "44303", "44305", "44306"],
+    avgRate: "9.5¢/kWh", avgMonthlyBill: "$110", providers: 30,
+    neighborhoods: ["Merriman Valley", "Chapel Hill", "Highland Square", "Goodyear Heights", "Firestone Park", "Ellet"],
+    description: "Akron has a deregulated electricity market, offering residents a choice of around 30 providers, leading to competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Annapolis-MD": {
+    state: "Maryland", stateCode: "MD", county: "Anne Arundel", population: "40,812+",
+    zipCodes: ["21401", "21403", "21409", "21402", "21404"],
+    avgRate: "12.5¢/kWh", avgMonthlyBill: "$135", providers: 25,
+    neighborhoods: ["Eastport", "West Annapolis", "Downtown Annapolis", "Admiral Heights", "Annapolis Roads", "Murray Hill"],
+    description: "Annapolis residents can take advantage of Maryland's deregulated electricity market, choosing from over 25 retail electric suppliers to find competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Arlington-TX": {
+    state: "Texas", stateCode: "TX", county: "Tarrant", population: "394,266+",
+    zipCodes: ["76010", "76011", "76012", "76013", "76017"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
+    neighborhoods: ["West Arlington", "North Arlington", "Southwest Arlington", "Southeast Arlington", "East Arlington", "Central Arlington"],
+    description: "As part of Texas's deregulated electricity market, Arlington residents can choose from over 40 competing providers, ensuring a wide range of competitive energy plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Auburn-ME": {
+    state: "Maine", stateCode: "ME", county: "Androscoggin", population: "24,000+",
+    zipCodes: ["04210", "04211", "04212"],
+    avgRate: "16.5¢/kWh", avgMonthlyBill: "$149", providers: 14,
+    neighborhoods: ["Auburn Southeast", "Auburn Plains", "East Auburn", "Haskell Corner", "Lewiston Junction", "Stevens Mill"],
+    description: "Electricity in Auburn is part of Maine's deregulated energy market, offering residents a choice among approximately 14 competitive electricity providers.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Augusta-ME": {
+    state: "Maine", stateCode: "ME", county: "Kennebec County", population: "19,000+",
+    zipCodes: ["04330", "04332", "04333", "04336", "04338"],
+    avgRate: "16.5¢/kWh", avgMonthlyBill: "$135", providers: 14,
+    neighborhoods: ["Pelton Hill", "Augusta East", "North Augusta", "Summerhaven", "City Center", "Augusta Northeast"],
+    description: "As the capital of Maine, Augusta benefits from a deregulated electricity market, offering residents a choice among 14 providers for competitive rates.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Bethlehem-PA": {
+    state: "Pennsylvania", stateCode: "PA", county: "Northampton and Lehigh", population: "80,000+",
+    zipCodes: ["18015", "18016", "18017", "18018", "18020"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 30,
+    neighborhoods: ["Historic Bethlehem", "South Bethlehem", "West Side", "East Side", "North Side", "Bethlehem Township"],
+    description: "As a city in a deregulated state, Bethlehem residents can choose from over 30 competing electricity providers, ensuring a variety of rate options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Cambridge-MA": {
+    state: "Massachusetts", stateCode: "MA", county: "Middlesex County", population: "118,403+",
+    zipCodes: ["02138", "02139", "02140", "02141", "02142"],
+    avgRate: "19.5¢/kWh", avgMonthlyBill: "$173", providers: 20,
+    neighborhoods: ["East Cambridge", "Cambridgeport", "Mid-Cambridge", "North Cambridge", "West Cambridge", "Riverside"],
+    description: "As a city in a deregulated state, Cambridge residents can choose from over 20 electricity providers, fostering a competitive market for electricity rates.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Camden-NJ": {
+    state: "New Jersey", stateCode: "NJ", county: "Camden", population: "71,791+",
+    zipCodes: ["08102", "08103", "08104", "08105", "08109"],
+    avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
+    neighborhoods: ["Cooper Grant", "Cramer Hill", "Fairview", "Gateway", "Lanning Square", "Parkside"],
+    description: "Camden has a deregulated electricity market with around 25 providers, offering residents a variety of choices for their energy needs.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Canton-OH": {
+    state: "Ohio", stateCode: "OH", county: "Stark County", population: "70,000+",
+    zipCodes: ["44702", "44703", "44704", "44705", "44706"],
+    avgRate: "9.5¢/kWh", avgMonthlyBill: "$85", providers: 30,
+    neighborhoods: ["Washington Square", "Avondale", "Martindale Park", "Historic Ridgewood", "Sippo Lake", "Meyers Lake"],
+    description: "Canton's deregulated electricity market offers residents a choice of over 30 providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Champaign-IL": {
+    state: "Illinois", stateCode: "IL", county: "Champaign", population: "88,302+",
+    zipCodes: ["61820", "61821", "61822", "61824", "61825"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$115", providers: 34,
+    neighborhoods: ["Robeson Meadows West-Prairie Ridge Place", "Pembroke Point", "Cherry Hills", "Ashland Park", "Boulder Ridge", "Clark Park"],
+    description: "Champaign has a deregulated electricity market with over 30 providers, offering residents a wide range of choices for their energy needs.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Columbia-MD": {
+    state: "Maryland", stateCode: "MD", county: "Howard County", population: "104,681+",
+    zipCodes: ["21044", "21045", "21046", "21042", "21043"],
+    avgRate: "12.5¢/kWh", avgMonthlyBill: "$113", providers: 25,
+    neighborhoods: ["Allview Estates", "Banneker Place", "Beech Creek", "Clarys Forest", "Cross Fox", "Bryant Gardens"],
+    description: "As part of Maryland's deregulated energy market, residents of Columbia can choose from over 25 competitive electricity providers, ensuring a variety of pricing and plan options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Corpus Christi-TX": {
+    state: "Texas", stateCode: "TX", county: "Nueces", population: "317,863+",
+    zipCodes: ["78401", "78402", "78404", "78405", "78408"],
+    avgRate: "9.5¢/kWh", avgMonthlyBill: "$98", providers: 40,
+    neighborhoods: ["Downtown", "Calallen", "South Side", "North Padre Island", "Flour Bluff", "Bay Area"],
+    description: "As a city in the deregulated Texas electricity market, Corpus Christi offers residents a choice of over 40 retail electricity providers, promoting competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Dayton-OH": {
+    state: "Ohio", stateCode: "OH", county: "Montgomery", population: "136,000+",
+    zipCodes: ["45402", "45403", "45404", "45405", "45406"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$83", providers: 30,
+    neighborhoods: ["Downtown Dayton", "Oregon District", "South Park", "Dayton View", "Huffman", "McPherson Town"],
+    description: "Dayton has a deregulated electricity market with around 30 providers, offering residents a wide range of choices for their energy needs.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Dover-NH": {
+    state: "New Hampshire", stateCode: "NH", county: "Strafford County", population: "32,741+",
+    zipCodes: ["03820", "03821", "03822"],
+    avgRate: "17.5¢/kWh", avgMonthlyBill: "$105", providers: 15,
+    neighborhoods: ["Downtown Dover", "Garrison Village", "Bellamy Woods", "Back River Road Area", "Dover Point", "City Center"],
+    description: "As a city in New Hampshire's deregulated electricity market, Dover residents can choose from over 15 competitive energy suppliers, fostering a variety of rate options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "East Providence-RI": {
+    state: "Rhode Island", stateCode: "RI", county: "Providence", population: "47,139+",
+    zipCodes: ["02914", "02915", "02916"],
+    avgRate: "19.5¢/kWh", avgMonthlyBill: "$175", providers: 15,
+    neighborhoods: ["Rumford", "Phillipsdale", "Boyden Heights", "Kent Heights", "Riverside", "Watchemoket"],
+    description: "East Providence's deregulated electricity market offers residents a choice of around 15 providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Edison-NJ": {
+    state: "New Jersey", stateCode: "NJ", county: "Middlesex", population: "107,588+",
+    zipCodes: ["08817", "08818", "08820", "08837", "08899"],
+    avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
+    neighborhoods: ["Clara Barton", "Oak Tree", "Menlo Park", "North Edison", "New Durham", "Stephenville"],
+    description: "Edison has a deregulated electricity market with over 20 providers, offering residents a wide range of choices for their energy supply.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "El Paso-TX": {
+    state: "Texas", stateCode: "TX", county: "El Paso County", population: "865,657+",
+    zipCodes: ["79936", "79938", "79928", "79912", "79924"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
+    neighborhoods: ["Album Park", "Castner Heights", "Cielo Vista", "Mesa Hills", "North Hills", "Mountain View"],
+    description: "El Paso has a deregulated electricity market with over 40 providers, giving residents the power to choose their energy supplier.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Elgin-IL": {
+    "state": "Illinois", "stateCode": "IL", "county": "Kane County", "population": "114,797+",
+    "zipCodes": ["60120", "60121", "60123", "60124", "60103"],
+    "avgRate": "10.5¢/kWh", "avgMonthlyBill": "$115", "providers": 34,
+    "neighborhoods": ["Bowes Creek", "Providence", "Randall Ridge", "Highland Woods", "Century Oaks", "Eagle Heights"],
+    "description": "Elgin's deregulated electricity market offers residents a choice from over 30 providers, fostering competitive rates and energy options.",
+    "image": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Erie-PA": {
+    state: "Pennsylvania", stateCode: "PA", county: "Erie", population: "94,000+",
+    zipCodes: ["16501", "16502", "16503", "16504", "16505"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 30,
+    neighborhoods: ["Downtown", "West Bayfront", "East Bayfront", "Glenwood", "Frontier", "Little Italy"],
+    description: "As a city in Pennsylvania, Erie benefits from a deregulated electricity market, offering residents a choice from around 30 competitive providers.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Frisco-TX": {
+    state: "Texas", stateCode: "TX", county: "Collin and Denton", population: "219,000+",
+    zipCodes: ["75033", "75034", "75035", "75036", "75072"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
+    neighborhoods: ["Starwood", "Phillips Creek Ranch", "Newman Village", "Trails of Frisco", "Panther Creek", "Chapel Creek"],
+    description: "As part of Texas's deregulated electricity market, Frisco residents can choose from over 40 providers, fostering competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Germantown-MD": {
+    state: "Maryland", stateCode: "MD", county: "Montgomery", population: "91,000+",
+    zipCodes: ["20874", "20876", "20875", "20841", "20879"],
+    avgRate: "12.5¢/kWh", avgMonthlyBill: "$115", providers: 25,
+    neighborhoods: ["Germantown Estates", "Germantown Park", "Greenfield Commons", "Gunners Lake Village", "Kingsview Village", "Neelsville"],
+    description: "As a city in a state with a deregulated electricity market, Germantown residents can choose from over 25 competing energy providers, fostering competitive rates.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Hoboken-NJ": {
+    state: "New Jersey", stateCode: "NJ", county: "Hudson", population: "59,000+",
+    zipCodes: ["07030"],
+    avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
+    neighborhoods: ["Castle Point", "Downtown Hoboken", "Southwest Hoboken", "The Waterfront", "Uptown Hoboken", "Midtown"],
+    description: "Hoboken's deregulated electricity market offers residents a choice of around 25 providers, fostering competition and potentially lower rates.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Irving-TX": {
+    state: "Texas", stateCode: "TX", county: "Dallas County", population: "256,684+",
+    zipCodes: ["75014", "75015", "75016", "75038", "75039"],
+    avgRate: "9.5¢/kWh", avgMonthlyBill: "$95", providers: 40,
+    neighborhoods: ["Las Colinas", "Valley Ranch", "Hackberry Creek", "Song", "Lamar Brown", "University Hills"],
+    description: "Irving is a city in the deregulated energy market of Texas, offering residents a choice of over 40 electricity providers.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Killeen-TX": {
+    state: "Texas", stateCode: "TX", county: "Bell", population: "153,095+",
+    zipCodes: ["76541", "76542", "76543", "76544", "76549"],
+    avgRate: "9.5¢/kWh", avgMonthlyBill: "$112", providers: 40,
+    neighborhoods: ["Yowell Ranch", "White Rock Estates", "Sunflower Estates", "Trimmier Estates", "The Highlands at Saegert", "Bellaire Heights"],
+    description: "As a city in the deregulated Texas electricity market, Killeen offers residents a choice of over 40 providers, fostering competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Lancaster-PA": {
+    state: "Pennsylvania", stateCode: "PA", county: "Lancaster", population: "58,039+",
+    zipCodes: ["17601", "17602", "17603", "17604", "17608"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$125", providers: 30,
+    neighborhoods: ["West End", "Chestnut Hill", "Stadium District", "Cabbage Hill", "Southeast Lancaster", "Downtown"],
+    description: "Lancaster has a deregulated electricity market, offering residents a choice among approximately 30 competitive suppliers for their energy needs.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Lowell-MA": {
+    state: "Massachusetts", stateCode: "MA", county: "Middlesex", population: "120,418+",
+    zipCodes: ["01850", "01851", "01852", "01854"],
+    avgRate: "19.5¢/kWh", avgMonthlyBill: "$117", providers: 20,
+    neighborhoods: ["Pawtucketville", "Centralville", "Highlands", "The Acre", "Downtown", "Belvidere"],
+    description: "As a city in a state with a deregulated electricity market, Lowell offers residents a choice of around 20 competing energy providers, fostering competitive rates.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Lubbock-TX": {
+    state: "Texas", stateCode: "TX", county: "Lubbock", population: "272,086+",
+    zipCodes: ["79401", "79403", "79404", "79406", "79407"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
+    neighborhoods: ["Tech Terrace", "Maxey Park", "Heart of Lubbock", "Wheelock and Monterey", "Maedgen Area", "Rush"],
+    description: "In Lubbock, the deregulated electricity market offers residents a wide array of choices, with around 40 providers competing to offer competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "McKinney-TX": {
+    state: "Texas", stateCode: "TX", county: "Collin County", population: "200,000+",
+    zipCodes: ["75069", "75070", "75071", "75072", "75454"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
+    neighborhoods: ["Adriatica Villa District", "Arbor Glen", "Arbor Hollow", "Aspendale", "Auburn Hills", "Avalon"],
+    description: "McKinney is a city in the deregulated energy market of Texas, offering residents a choice of over 40 electricity providers.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Midland-TX": {
+    state: "Texas", stateCode: "TX", county: "Midland County", population: "170,000+",
+    zipCodes: ["79701", "79703", "79705", "79706", "79707"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
+    neighborhoods: ["Green Tree", "Grassland Estates", "Saddle Club", "Briarwood", "Trinity", "Kimber-Lea"],
+    description: "Midland has a deregulated electricity market with around 40 providers, offering residents a wide range of competitive energy plans to choose from.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "New Bedford-MA": {
+    state: "Massachusetts", stateCode: "MA", county: "Bristol", population: "101,000+",
+    zipCodes: ["02740", "02744", "02745", "02746", "02742"],
+    avgRate: "20.5¢/kWh", avgMonthlyBill: "$185", providers: 22,
+    neighborhoods: ["Acushnet Heights", "Far North End", "South End", "West End", "Downtown", "Clark's Point"],
+    description: "Electricity in New Bedford is part of a deregulated market, offering residents a choice among approximately 22 competitive suppliers. This provides options for different rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Norwalk-CT": {
+    state: "Connecticut", stateCode: "CT", county: "Fairfield", population: "91,000+",
+    zipCodes: ["06850", "06851", "06853", "06854", "06855"],
+    avgRate: "22.8¢/kWh", avgMonthlyBill: "$161", providers: 18,
+    neighborhoods: ["Broad River", "South Norwalk", "East Norwalk", "West Norwalk", "Silvermine", "Cranbury"],
+    description: "Norwalk has a deregulated electricity market, offering residents a choice among 18 competitive providers for their energy needs.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Pawtucket-RI": {
+    state: "Rhode Island", stateCode: "RI", county: "Providence", population: "75,604+",
+    zipCodes: ["02860", "02861", "02862"],
+    avgRate: "19.5¢/kWh", avgMonthlyBill: "$135", providers: 15,
+    neighborhoods: ["Darlington", "Woodlawn", "Quality Hill", "Pleasant View", "Fairlawn", "Oak Hill"],
+    description: "Electricity in Pawtucket is part of Rhode Island's deregulated energy market, offering residents a choice among approximately 15 competitive electric suppliers.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Peoria-IL": {
+    state: "Illinois", stateCode: "IL", county: "Peoria", population: "113,150+",
+    zipCodes: ["61602", "61603", "61604", "61605", "61606"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$115", providers: 34,
+    neighborhoods: ["Downtown", "North Peoria", "West Peoria", "East Peoria", "Morton", "Washington"],
+    description: "As a resident of Peoria, you live in a deregulated electricity market, giving you the power to choose from over 34 different energy providers.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Plano-TX": {
+    state: "Texas", stateCode: "TX", county: "Collin", population: "285,494+",
+    zipCodes: ["75023", "75024", "75025", "75074", "75093"],
+    avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 38,
+    neighborhoods: ["Willow Bend", "Whiffletree", "Normandy Estates", "Lakeside on Preston", "Indian Creek", "Gleneagles"],
+    description: "Plano's deregulated electricity market offers residents a wide selection of energy plans from over 38 providers, ensuring competitive rates and options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Reading-PA": {
+    state: "Pennsylvania", stateCode: "PA", county: "Berks County", population: "95,112+",
+    zipCodes: ["19601", "19602", "19604", "19606", "19611"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 30,
+    neighborhoods: ["East Reading", "Glenside", "College Heights", "Northwest Reading", "Northeast Reading", "Centre Park"],
+    description: "Reading, located in Berks County, is a city with a deregulated electricity market, offering residents a choice from over 30 competitive energy providers.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Rochester-NH": {
+    state: "New Hampshire", stateCode: "NH", county: "Strafford", population: "32,000+",
+    zipCodes: ["03839", "03866", "03867", "03868"],
+    avgRate: "17.5¢/kWh", avgMonthlyBill: "$155", providers: 15,
+    neighborhoods: ["Gonic", "East Rochester", "North Rochester", "City Center", "Meaderboro Corner", "Rochester West"],
+    description: "Rochester residents can take advantage of New Hampshire's deregulated electricity market, choosing from around 15 competitive providers for the best rates.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Rockford-IL": {
+    state: "Illinois", stateCode: "IL", county: "Winnebago", population: "148,000+",
+    zipCodes: ["61101", "61102", "61103", "61104", "61107"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 34,
+    neighborhoods: ["Bello Reserve", "Beverly Park", "Central Park", "Chestnut", "Edgewater", "Fairgrounds"],
+    description: "Rockford's deregulated electricity market offers residents a choice from over 30 providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Schaumburg-IL": {
+    state: "Illinois", stateCode: "IL", county: "Cook", population: "78,000+",
+    zipCodes: ["60173", "60193", "60194", "60195", "60196"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$105", providers: 34,
+    neighborhoods: ["Weathersfield", "Timbercrest", "Stone Bridge Court", "Lions Gate", "Plumwood Estates", "Park St. Claire"],
+    description: "Schaumburg's deregulated electricity market offers residents a choice of over 30 providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Scranton-PA": {
+    state: "Pennsylvania", stateCode: "PA", county: "Lackawanna County", population: "76,000+",
+    zipCodes: ["18501", "18502", "18503", "18504", "18505"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$125", providers: 30,
+    neighborhoods: ["Downtown Scranton", "West Mountain", "East Mountain", "Greenridge", "Minooka", "Hill Section"],
+    description: "As the county seat of Lackawanna County, Scranton boasts a deregulated electricity market with around 30 providers, offering residents a wide range of competitive energy choices.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Silver Spring-MD": {
+    state: "Maryland", stateCode: "MD", county: "Montgomery", population: "81,015+",
+    zipCodes: ["20901", "20902", "20904", "20905", "20906"],
+    avgRate: "12.5¢/kWh", avgMonthlyBill: "$125", providers: 25,
+    neighborhoods: ["Woodmoor", "Indian Spring", "Downtown Silver Spring", "East Silver Spring", "Woodside", "Clifton Park Village"],
+    description: "In Silver Spring's deregulated electricity market, residents can choose from over 25 providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Springfield-IL": {
+    state: "Illinois", stateCode: "IL", county: "Sangamon", population: "114,394+",
+    zipCodes: ["62701", "62702", "62703", "62704", "62711"],
+    avgRate: "10.5¢/kWh", avgMonthlyBill: "$115", providers: 34,
+    neighborhoods: ["Washington Park", "Leland Grove", "Piper Glen", "Lake Pointe", "West Koke Mill", "Enos Park"],
+    description: "As the state capital, Springfield benefits from Illinois's deregulated electricity market, offering residents a choice of over 34 energy providers and fostering competitive rates.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Stamford-CT": {
+    state: "Connecticut", stateCode: "CT", county: "Fairfield", population: "139,000+",
+    zipCodes: ["06901", "06902", "06903", "06905", "06906"],
+    avgRate: "21.5¢/kWh", avgMonthlyBill: "$191", providers: 18,
+    neighborhoods: ["Downtown", "Shippan", "Glenbrook", "Westover", "North Stamford", "Cove"],
+    description: "Stamford's deregulated electricity market offers residents a choice of around 18 providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Trenton-NJ": {
+    state: "New Jersey", stateCode: "NJ", county: "Mercer", population: "83,000+",
+    zipCodes: ["08608", "08609", "08610", "08611", "08618"],
+    avgRate: "13.5¢/kWh", avgMonthlyBill: "$119", providers: 25,
+    neighborhoods: ["Downtown", "South Trenton", "Mill Hill", "Hiltonia", "East Trenton", "Wilbur"],
+    description: "As a city in a state with a deregulated electricity market, Trenton residents can choose from over 25 different providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Waterbury-CT": {
+    state: "Connecticut", stateCode: "CT", county: "New Haven", population: "114,403+",
+    zipCodes: ["06702", "06704", "06705", "06706", "06708"],
+    avgRate: "21.5¢/kWh", avgMonthlyBill: "$150", providers: 18,
+    neighborhoods: ["Bunker Hill", "Bucks Hill", "Town Plot", "Waterville", "Brooklyn", "East End"],
+    description: "As a city in a state with a deregulated electricity market, Waterbury offers residents a choice of over 18 energy providers, leading to competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Yonkers-NY": {
+    state: "New York", stateCode: "NY", county: "Westchester", population: "211,569+",
+    zipCodes: ["10701", "10705", "10704", "10710", "10703"],
+    avgRate: "16.5¢/kWh", avgMonthlyBill: "$149", providers: 24,
+    neighborhoods: ["Beech Hill", "Lawrence Park", "Cedar Knolls", "Crestwood", "Lincoln Park", "Colonial Heights"],
+    description: "As a city in a state with a deregulated electricity market, Yonkers residents can choose from over 24 energy providers, ensuring competitive rates and plans.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Youngstown-OH": {
+    state: "Ohio", stateCode: "OH", county: "Mahoning", population: "60,000+",
+    zipCodes: ["44502", "44503", "44504", "44505", "44509"],
+    avgRate: "9.5¢/kWh", avgMonthlyBill: "$105", providers: 30,
+    neighborhoods: ["Brier Hill", "Brownlee Woods", "Downtown", "Hazelton", "Kirkmere", "Idora"],
+    description: "Youngstown's deregulated electricity market offers residents a choice of around 30 providers, fostering competitive rates and energy options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
+  "Albany-NY": {
+    state: "New York", stateCode: "NY", county: "Albany County", population: "99,000+",
+    zipCodes: ["12201", "12202", "12203", "12204", "12205"],
+    avgRate: "15.5¢/kWh", avgMonthlyBill: "$145", providers: 22,
+    neighborhoods: ["Downtown Albany", "Center Square", "Pine Hills", "Buckingham Pond", "Delaware Avenue", "Lark Street"],
+    description: "Albany, the capital of New York, offers residents access to over 22 electricity suppliers in the deregulated ESCO market, providing competitive rates and plan options.",
+    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+  },
 };
 
 class CityRatesErrorBoundary extends React.Component {
