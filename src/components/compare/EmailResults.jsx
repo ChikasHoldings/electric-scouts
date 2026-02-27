@@ -95,11 +95,11 @@ export default function EmailResults({
           <p className="text-green-100 text-sm">
             Your {typeLabels[comparisonType] || 'comparison'} results have been sent to
           </p>
-          <p className="text-white font-semibold text-sm mt-1">{email}</p>
+          <p className="text-white font-semibold text-sm mt-1 break-all px-2">{email}</p>
         </div>
         <CardContent className="p-4 sm:p-5 bg-green-50">
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <Mail className="w-4 h-4 text-green-600 flex-shrink-0" />
+          <div className="flex items-start gap-3 text-sm text-gray-600">
+            <Mail className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
             <span>Check your inbox (and spam folder) for your personalized plan recommendations with direct signup links.</span>
           </div>
         </CardContent>
@@ -117,8 +117,8 @@ export default function EmailResults({
         <div className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
           <Mail className="w-5 h-5 text-white" />
         </div>
-        <div>
-          <h3 className="text-base sm:text-lg font-bold text-white">Email Me These Results</h3>
+        <div className="min-w-0">
+          <h3 className="text-base sm:text-lg font-bold text-white truncate">Email Me These Results</h3>
           <p className="text-white/80 text-xs sm:text-sm hidden sm:block">
             Save your top {typeLabels[comparisonType] || ''} plans with direct signup links
           </p>
@@ -131,8 +131,8 @@ export default function EmailResults({
           Save your top {typeLabels[comparisonType] || ''} plans with direct signup links.
         </p>
         
-        {/* Email input row */}
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+        {/* Email input + button - stacks on mobile */}
+        <div className="space-y-3 sm:space-y-0 sm:flex sm:gap-3 sm:items-stretch">
           <div className="flex-1 relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
@@ -155,18 +155,18 @@ export default function EmailResults({
           <Button
             onClick={handleSendResults}
             disabled={sending || !email}
-            className="h-12 px-6 sm:px-8 text-white font-semibold text-base whitespace-nowrap rounded-lg shadow-md hover:shadow-lg transition-all"
+            className="w-full sm:w-auto h-12 px-6 text-white font-semibold text-base rounded-lg shadow-md hover:shadow-lg transition-all flex-shrink-0"
             style={{ backgroundColor: accentColor }}
           >
             {sending ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Sending...
+                <span>Sending...</span>
               </>
             ) : (
               <>
                 <Send className="w-4 h-4 mr-2" />
-                Send Results
+                <span>Send Results</span>
               </>
             )}
           </Button>
@@ -181,17 +181,17 @@ export default function EmailResults({
         )}
 
         {/* Trust indicators */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mt-4 pt-3 border-t border-gray-100">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 pt-3 border-t border-gray-100">
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <Shield className="w-3.5 h-3.5 text-green-500" />
+            <Shield className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
             <span>No spam, ever</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+            <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
             <span>One-time email only</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <Mail className="w-3.5 h-3.5 text-green-500" />
+            <Mail className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
             <span>Includes direct signup links</span>
           </div>
         </div>

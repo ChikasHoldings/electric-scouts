@@ -2,6 +2,7 @@ import {
   supabase,
   sendEmail,
   APP_BASE_URL,
+  LOGO_HEADER_URL,
 } from "./_lib/email.js";
 
 /**
@@ -42,6 +43,8 @@ export default async function handler(req, res) {
 
     const usage = parseInt(monthlyUsage) || 1000;
     const type = comparisonType || 'residential';
+    const year = new Date().getFullYear();
+    const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
     
     // Type-specific styling
     const typeConfig = {
@@ -79,11 +82,11 @@ export default async function handler(req, res) {
       const estimatedCost = ((plan.rate_per_kwh * usage) / 100 + (plan.monthly_base_charge || 0)).toFixed(2);
       
       const bestBadge = index === 0 
-        ? `<div style="background:#FF6B35;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:8px;">⭐ TOP PICK</div><br/>`
+        ? `<div style="background:#FF6B35;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:4px;display:inline-block;margin-bottom:8px;">⭐ TOP PICK</div><br/>`
         : '';
       
       const renewableBadge = plan.renewable_percentage >= 50 
-        ? `<div style="color:#059669;font-size:12px;margin-top:6px;">🌿 ${plan.renewable_percentage}% Renewable</div>`
+        ? `<div style="color:#059669;font-size:13px;margin-top:6px;">🌿 ${plan.renewable_percentage}% Renewable</div>`
         : '';
 
       const contractText = plan.contract_length ? `${plan.contract_length} mo term` : 'Variable';
@@ -91,28 +94,28 @@ export default async function handler(req, res) {
       return `
         <tr><td style="padding:8px 0;">
           <table width="100%" cellpadding="0" cellspacing="0" style="background:#fff;border:${index === 0 ? '2px solid #FF6B35' : '1px solid #e5e7eb'};border-radius:10px;overflow:hidden;">
-            <tr><td style="padding:16px;">
+            <tr><td style="padding:18px;">
               ${bestBadge}
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="vertical-align:top;width:55%;">
-                    <div style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">${plan.provider_name || 'Provider'}</div>
-                    <div style="font-size:13px;color:#6b7280;margin-bottom:8px;">${plan.plan_name || 'Plan'}</div>
-                    ${plan.plan_type ? `<div style="background:#f3f4f6;color:#374151;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:4px;">${plan.plan_type}</div>` : ''}
+                    <div style="font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">${plan.provider_name || 'Provider'}</div>
+                    <div style="font-size:14px;color:#6b7280;margin-bottom:8px;">${plan.plan_name || 'Plan'}</div>
+                    ${plan.plan_type ? `<div style="background:#f3f4f6;color:#374151;font-size:12px;font-weight:600;padding:3px 10px;border-radius:10px;display:inline-block;margin-bottom:4px;">${plan.plan_type}</div>` : ''}
                     ${renewableBadge}
                   </td>
                   <td style="vertical-align:top;text-align:right;width:45%;">
                     <div style="font-size:13px;color:#6b7280;">Rate</div>
-                    <div style="font-size:22px;font-weight:700;color:${config.accentColor};">${plan.rate_per_kwh}¢<span style="font-size:13px;font-weight:400;">/kWh</span></div>
+                    <div style="font-size:22px;font-weight:700;color:${config.accentColor};">${plan.rate_per_kwh}¢<span style="font-size:14px;font-weight:400;">/kWh</span></div>
                     <div style="font-size:13px;color:#6b7280;margin-top:8px;">Est. Monthly</div>
-                    <div style="font-size:16px;font-weight:700;color:#1a1a1a;">$${estimatedCost}</div>
-                    <div style="font-size:12px;color:#6b7280;margin-top:4px;">${contractText}</div>
+                    <div style="font-size:17px;font-weight:700;color:#1a1a1a;">$${estimatedCost}</div>
+                    <div style="font-size:13px;color:#6b7280;margin-top:4px;">${contractText}</div>
                   </td>
                 </tr>
               </table>
-              <table cellpadding="0" cellspacing="0" style="margin-top:12px;" width="100%">
-                <tr><td style="background:#FF6B35;border-radius:6px;text-align:center;padding:10px 20px;">
-                  <a href="${affiliateUrl}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;display:block;">Get This Plan →</a>
+              <table cellpadding="0" cellspacing="0" style="margin-top:14px;" width="100%">
+                <tr><td style="background:#FF6B35;border-radius:6px;text-align:center;padding:12px 20px;">
+                  <a href="${affiliateUrl}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;display:block;">Get This Plan →</a>
                 </td></tr>
               </table>
             </td></tr>
@@ -136,14 +139,14 @@ export default async function handler(req, res) {
             
             <!-- Header -->
             <tr><td style="background:${config.headerBg};padding:24px 30px;border-radius:12px 12px 0 0;text-align:center;">
-              <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;">⚡ Electric Scouts</div>
-              <div style="font-size:14px;color:rgba(255,255,255,0.8);">${config.emoji} ${config.subtitle}</div>
+              <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="200" height="41" style="display:block;margin:0 auto;max-width:200px;height:auto;filter:brightness(0) invert(1);" />
+              <div style="font-size:14px;color:rgba(255,255,255,0.85);margin-top:8px;">${config.emoji} ${config.subtitle}</div>
             </td></tr>
 
             <!-- Body -->
-            <tr><td style="background:#fff;padding:30px;border-radius:0 0 12px 12px;">
+            <tr><td style="background:#fff;padding:30px;">
               
-              <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 20px;">
+              <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 20px;">
                 Here are your personalized ${config.label.toLowerCase()} electricity plan recommendations for <strong>${cityName || 'your area'}</strong> (${zipCode || 'N/A'}).
               </p>
 
@@ -152,30 +155,30 @@ export default async function handler(req, res) {
                 <tr>
                   <td width="33%" style="padding:0 6px 0 0;vertical-align:top;">
                     <div style="background:#f0f9ff;border-radius:10px;padding:16px;text-align:center;">
-                      <div style="font-size:12px;color:#6b7280;margin-bottom:6px;">Plans Found</div>
+                      <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">Plans Found</div>
                       <div style="font-size:28px;font-weight:700;color:${config.accentColor};">${planCount}</div>
-                      <div style="font-size:11px;color:#6b7280;">${config.label}</div>
+                      <div style="font-size:12px;color:#6b7280;">${config.label}</div>
                     </div>
                   </td>
                   <td width="33%" style="padding:0 3px;vertical-align:top;">
                     <div style="background:#f0fdf4;border-radius:10px;padding:16px;text-align:center;">
-                      <div style="font-size:12px;color:#6b7280;margin-bottom:6px;">Lowest Rate</div>
+                      <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">Lowest Rate</div>
                       <div style="font-size:28px;font-weight:700;color:#059669;">${lowestRate.toFixed(1)}¢</div>
-                      <div style="font-size:11px;color:#6b7280;">per kWh</div>
+                      <div style="font-size:12px;color:#6b7280;">per kWh</div>
                     </div>
                   </td>
                   <td width="33%" style="padding:0 0 0 6px;vertical-align:top;">
                     <div style="background:#fff7ed;border-radius:10px;padding:16px;text-align:center;">
-                      <div style="font-size:12px;color:#6b7280;margin-bottom:6px;">Est. Monthly</div>
+                      <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">Est. Monthly</div>
                       <div style="font-size:28px;font-weight:700;color:#FF6B35;">$${lowestCost}</div>
-                      <div style="font-size:11px;color:#6b7280;">@ ${usage} kWh</div>
+                      <div style="font-size:12px;color:#6b7280;">@ ${usage} kWh</div>
                     </div>
                   </td>
                 </tr>
               </table>
 
               <!-- Recommended Plans -->
-              <div style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:12px;">⚡ Top ${config.label} Plans For You</div>
+              <div style="font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:12px;">⚡ Top ${config.label} Plans For You</div>
               <table width="100%" cellpadding="0" cellspacing="0">
                 ${plansHtml}
               </table>
@@ -183,11 +186,11 @@ export default async function handler(req, res) {
               <!-- CTA -->
               <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:24px;">
                 <tr><td style="background:${config.accentColor};border-radius:8px;text-align:center;padding:14px 24px;">
-                  <a href="${config.compareUrl}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;display:block;">Compare All ${config.label} Plans →</a>
+                  <a href="${config.compareUrl}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;display:block;">Compare All ${config.label} Plans →</a>
                 </td></tr>
               </table>
 
-              <p style="color:#9ca3af;font-size:12px;margin-top:24px;text-align:center;">
+              <p style="color:#9ca3af;font-size:13px;margin-top:24px;text-align:center;line-height:1.6;">
                 Rates and savings are estimates based on current market rates and ${usage} kWh monthly usage. Actual rates may vary.
               </p>
             </td></tr>
@@ -195,36 +198,68 @@ export default async function handler(req, res) {
             <!-- Branded Footer -->
             <tr><td style="padding:0;">
               <table width="100%" cellpadding="0" cellspacing="0" style="border-top:2px solid #e5e7eb;">
-                <!-- Logo & Tagline -->
-                <tr><td style="padding:24px 30px 12px;text-align:center;">
-                  <a href="${APP_BASE_URL}" style="text-decoration:none;font-size:20px;font-weight:800;color:#0A5C8C;">⚡ Electric Scouts</a>
-                  <p style="margin:6px 0 0;font-size:12px;color:#6b7280;">Compare electricity rates from 40+ providers. Save up to $800/year.</p>
+                <!-- Logo -->
+                <tr><td style="padding:28px 30px 12px;text-align:center;">
+                  <a href="${APP_BASE_URL}" style="text-decoration:none;display:inline-block;">
+                    <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="200" height="41" style="display:block;margin:0 auto;max-width:200px;height:auto;" />
+                  </a>
+                  <p style="margin:12px 0 0;font-size:14px;color:#6b7280;line-height:1.6;">
+                    Compare electricity rates from 40+ providers.<br/>Save up to $800/year.
+                  </p>
                 </td></tr>
                 <!-- Social Icons -->
-                <tr><td style="padding:12px 30px;text-align:center;">
-                  <a href="https://facebook.com/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="28" height="28" style="border-radius:50%;" /></a>
-                  <a href="https://x.com/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968958.png" alt="X" width="28" height="28" style="border-radius:50%;" /></a>
-                  <a href="https://linkedin.com/company/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn" width="28" height="28" style="border-radius:50%;" /></a>
-                  <a href="https://instagram.com/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="28" height="28" style="border-radius:50%;" /></a>
+                <tr><td style="padding:20px 30px;text-align:center;">
+                  <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                    <tr>
+                      <td style="padding:0 10px;">
+                        <a href="https://facebook.com/electricscouts" style="text-decoration:none;display:inline-block;">
+                          <table cellpadding="0" cellspacing="0"><tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                            <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                          </td></tr></table>
+                        </a>
+                      </td>
+                      <td style="padding:0 10px;">
+                        <a href="https://x.com/electricscouts" style="text-decoration:none;display:inline-block;">
+                          <table cellpadding="0" cellspacing="0"><tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968958.png" alt="X" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                          </td></tr></table>
+                        </a>
+                      </td>
+                      <td style="padding:0 10px;">
+                        <a href="https://linkedin.com/company/electricscouts" style="text-decoration:none;display:inline-block;">
+                          <table cellpadding="0" cellspacing="0"><tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                          </td></tr></table>
+                        </a>
+                      </td>
+                      <td style="padding:0 10px;">
+                        <a href="https://instagram.com/electricscouts" style="text-decoration:none;display:inline-block;">
+                          <table cellpadding="0" cellspacing="0"><tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                          </td></tr></table>
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
                 </td></tr>
                 <!-- Quick Links -->
-                <tr><td style="padding:8px 30px;text-align:center;font-size:13px;">
+                <tr><td style="padding:12px 30px;text-align:center;font-size:14px;">
                   <a href="${APP_BASE_URL}/compare-rates" style="color:#0A5C8C;text-decoration:none;font-weight:600;">Compare Rates</a>
-                  <span style="color:#d1d5db;margin:0 8px;">|</span>
+                  <span style="color:#d1d5db;margin:0 10px;">|</span>
                   <a href="${APP_BASE_URL}/bill-analyzer" style="color:#0A5C8C;text-decoration:none;font-weight:600;">Bill Analyzer</a>
-                  <span style="color:#d1d5db;margin:0 8px;">|</span>
+                  <span style="color:#d1d5db;margin:0 10px;">|</span>
                   <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-weight:600;">www.electricscouts.com</a>
                 </td></tr>
                 <!-- Divider -->
-                <tr><td style="padding:12px 30px 0;"><div style="border-top:1px solid #e5e7eb;"></div></td></tr>
+                <tr><td style="padding:20px 30px 0;"><div style="border-top:1px solid #e5e7eb;"></div></td></tr>
                 <!-- Copyright & Opt-out -->
-                <tr><td style="padding:14px 30px 20px;text-align:center;">
-                  <p style="margin:0 0 6px;font-size:11px;color:#9ca3af;">© ${new Date().getFullYear()} Electric Scouts. All rights reserved.</p>
-                  <p style="margin:0 0 4px;font-size:11px;color:#9ca3af;">You're receiving this because you requested comparison results.</p>
-                  <p style="margin:0;font-size:11px;">
-                    <a href="${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a>
-                    <span style="color:#d1d5db;margin:0 6px;">|</span>
-                    <a href="${APP_BASE_URL}/privacy-policy" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a>
+                <tr><td style="padding:20px 30px 28px;text-align:center;">
+                  <p style="margin:0 0 8px;font-size:13px;color:#6b7280;line-height:1.6;">© ${year} Electric Scouts. All rights reserved.</p>
+                  <p style="margin:0 0 8px;font-size:13px;color:#6b7280;line-height:1.6;">You're receiving this because you requested comparison results.</p>
+                  <p style="margin:0;font-size:13px;line-height:1.6;">
+                    <a href="${unsubUrl}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a>
+                    <span style="color:#d1d5db;margin:0 8px;">|</span>
+                    <a href="${APP_BASE_URL}/privacy-policy" style="color:#6b7280;text-decoration:underline;">Privacy Policy</a>
                   </p>
                 </td></tr>
               </table>

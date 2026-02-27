@@ -6,6 +6,10 @@ const FROM_EMAIL = process.env.FROM_EMAIL || "Electric Scouts <noreply@electrics
 const APP_BASE_URL = process.env.APP_BASE_URL || "https://electricscouts.com";
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim()).filter(Boolean);
 
+// Logo URLs (hosted on the live site)
+const LOGO_HEADER_URL = `${APP_BASE_URL}/images/logo-header.png`;
+const FAVICON_URL = `${APP_BASE_URL}/android-chrome-512x512.png`;
+
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -21,58 +25,52 @@ function brandedFooter(recipientEmail) {
   <!-- Branded Footer -->
   <tr><td style="padding:0;">
     <table width="100%" cellpadding="0" cellspacing="0" style="border-top:2px solid #e5e7eb;margin-top:24px;">
-      <!-- Logo & Tagline -->
-      <tr><td style="padding:28px 32px 16px 32px;text-align:center;">
+      <!-- Logo -->
+      <tr><td style="padding:28px 32px 12px 32px;text-align:center;">
         <a href="${APP_BASE_URL}" style="text-decoration:none;display:inline-block;">
-          <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
-            <tr>
-              <td style="font-size:24px;font-weight:800;color:#0A5C8C;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-                ⚡ Electric Scouts
-              </td>
-            </tr>
-          </table>
+          <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="200" height="41" style="display:block;margin:0 auto;max-width:200px;height:auto;" />
         </a>
-        <p style="margin:8px 0 0;font-size:13px;color:#6b7280;line-height:1.5;">
-          Compare electricity rates from 40+ providers. Save up to $800/year.
+        <p style="margin:12px 0 0;font-size:14px;color:#6b7280;line-height:1.6;">
+          Compare electricity rates from 40+ providers.<br/>Save up to $800/year.
         </p>
       </td></tr>
       
       <!-- Social Icons -->
-      <tr><td style="padding:16px 32px;text-align:center;">
+      <tr><td style="padding:20px 32px;text-align:center;">
         <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
           <tr>
-            <td style="padding:0 8px;">
+            <td style="padding:0 10px;">
               <a href="https://facebook.com/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
                 <table cellpadding="0" cellspacing="0">
-                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
-                    <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
                   </td></tr>
                 </table>
               </a>
             </td>
-            <td style="padding:0 8px;">
+            <td style="padding:0 10px;">
               <a href="https://x.com/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
                 <table cellpadding="0" cellspacing="0">
-                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
-                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968958.png" alt="X (Twitter)" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968958.png" alt="X (Twitter)" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
                   </td></tr>
                 </table>
               </a>
             </td>
-            <td style="padding:0 8px;">
+            <td style="padding:0 10px;">
               <a href="https://linkedin.com/company/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
                 <table cellpadding="0" cellspacing="0">
-                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
                   </td></tr>
                 </table>
               </a>
             </td>
-            <td style="padding:0 8px;">
+            <td style="padding:0 10px;">
               <a href="https://instagram.com/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
                 <table cellpadding="0" cellspacing="0">
-                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:40px;height:40px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20" height="20" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
                   </td></tr>
                 </table>
               </a>
@@ -85,16 +83,16 @@ function brandedFooter(recipientEmail) {
       <tr><td style="padding:12px 32px;text-align:center;">
         <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
           <tr>
-            <td style="padding:0 12px;">
-              <a href="${APP_BASE_URL}/compare-rates" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">Compare Rates</a>
+            <td style="padding:0 14px;">
+              <a href="${APP_BASE_URL}/compare-rates" style="color:#0A5C8C;text-decoration:none;font-size:14px;font-weight:600;">Compare Rates</a>
             </td>
-            <td style="color:#d1d5db;font-size:13px;">|</td>
-            <td style="padding:0 12px;">
-              <a href="${APP_BASE_URL}/bill-analyzer" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">Bill Analyzer</a>
+            <td style="color:#d1d5db;font-size:14px;">|</td>
+            <td style="padding:0 14px;">
+              <a href="${APP_BASE_URL}/bill-analyzer" style="color:#0A5C8C;text-decoration:none;font-size:14px;font-weight:600;">Bill Analyzer</a>
             </td>
-            <td style="color:#d1d5db;font-size:13px;">|</td>
-            <td style="padding:0 12px;">
-              <a href="${APP_BASE_URL}/learning-center" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">Learning Center</a>
+            <td style="color:#d1d5db;font-size:14px;">|</td>
+            <td style="padding:0 14px;">
+              <a href="${APP_BASE_URL}/learning-center" style="color:#0A5C8C;text-decoration:none;font-size:14px;font-weight:600;">Learning Center</a>
             </td>
           </tr>
         </table>
@@ -102,28 +100,28 @@ function brandedFooter(recipientEmail) {
       
       <!-- Website Link -->
       <tr><td style="padding:8px 32px;text-align:center;">
-        <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">
+        <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-size:14px;font-weight:600;">
           www.electricscouts.com
         </a>
       </td></tr>
       
       <!-- Divider -->
-      <tr><td style="padding:16px 32px 0;">
+      <tr><td style="padding:20px 32px 0;">
         <div style="border-top:1px solid #e5e7eb;"></div>
       </td></tr>
       
       <!-- Copyright & Opt-out -->
-      <tr><td style="padding:16px 32px 24px;text-align:center;">
-        <p style="margin:0 0 8px;font-size:11px;color:#9ca3af;line-height:1.5;">
+      <tr><td style="padding:20px 32px 28px;text-align:center;">
+        <p style="margin:0 0 8px;font-size:13px;color:#6b7280;line-height:1.6;">
           &copy; ${year} Electric Scouts. All rights reserved.
         </p>
-        <p style="margin:0 0 4px;font-size:11px;color:#9ca3af;line-height:1.5;">
+        <p style="margin:0 0 8px;font-size:13px;color:#6b7280;line-height:1.6;">
           You're receiving this email because you signed up at Electric Scouts.
         </p>
-        <p style="margin:0;font-size:11px;">
-          <a href="${unsubUrl}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a>
-          <span style="color:#d1d5db;margin:0 6px;">|</span>
-          <a href="${APP_BASE_URL}/privacy-policy" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a>
+        <p style="margin:0;font-size:13px;line-height:1.6;">
+          <a href="${unsubUrl}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a>
+          <span style="color:#d1d5db;margin:0 8px;">|</span>
+          <a href="${APP_BASE_URL}/privacy-policy" style="color:#6b7280;text-decoration:underline;">Privacy Policy</a>
         </p>
       </td></tr>
     </table>
@@ -144,8 +142,8 @@ function baseLayout(content, recipientEmail) {
   <table cellpadding="0" cellspacing="0" width="100%">
     <tr>
       <td>
-        <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">⚡ Electric Scouts</h1>
-        <p style="margin:4px 0 0;color:#93c5fd;font-size:12px;">Smart Electricity Comparison</p>
+        <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="180" height="37" style="display:block;max-width:180px;height:auto;filter:brightness(0) invert(1);" />
+        <p style="margin:6px 0 0;color:#93c5fd;font-size:13px;">Smart Electricity Comparison</p>
       </td>
     </tr>
   </table>
@@ -166,9 +164,9 @@ export function leadWelcomeEmail(leadEmail, leadName) {
     subject: "Welcome to Electric Scouts — Your Savings Journey Starts Here",
     html: baseLayout(`
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Hey ${name}!</h2>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Thanks for joining Electric Scouts. We help you find the best electricity rates and save money on your energy bills.</p>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Here's what you can do next:</p>
-      <ul style="color:#374151;line-height:1.8;margin:0 0 24px;padding-left:20px;">
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">Thanks for joining Electric Scouts. We help you find the best electricity rates and save money on your energy bills.</p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">Here's what you can do next:</p>
+      <ul style="color:#374151;font-size:15px;line-height:2;margin:0 0 24px;padding-left:20px;">
         <li><strong>Compare rates</strong> from top providers in your area</li>
         <li><strong>Upload your bill</strong> for a personalized savings analysis</li>
         <li><strong>Get alerts</strong> when better rates become available</li>
@@ -188,8 +186,8 @@ export function leadFollowup1Email(leadEmail, leadName) {
     subject: "Did You Know? Most Texans Overpay for Electricity",
     html: baseLayout(`
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Hey ${name},</h2>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Studies show that the average household overpays on electricity by <strong>15–30%</strong>. That's hundreds of dollars a year going to waste.</p>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Our Bill Analyzer can tell you exactly how much you could be saving — in under 60 seconds.</p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">Studies show that the average household overpays on electricity by <strong>15–30%</strong>. That's hundreds of dollars a year going to waste.</p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">Our Bill Analyzer can tell you exactly how much you could be saving — in under 60 seconds.</p>
       <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
         <tr><td style="background:#0A5C8C;border-radius:6px;padding:12px 28px;">
           <a href="${APP_BASE_URL}/bill-analyzer" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">Analyze My Bill →</a>
@@ -205,8 +203,8 @@ export function leadFollowup2Email(leadEmail, leadName) {
     subject: "Your Personalized Rate Comparison Is Ready",
     html: baseLayout(`
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Hey ${name},</h2>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">We've been tracking the latest electricity rates in your area. Prices change frequently — and right now there are some great deals available.</p>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Don't miss out on potential savings. Compare plans from top-rated providers today.</p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">We've been tracking the latest electricity rates in your area. Prices change frequently — and right now there are some great deals available.</p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">Don't miss out on potential savings. Compare plans from top-rated providers today.</p>
       <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
         <tr><td style="background:#0A5C8C;border-radius:6px;padding:12px 28px;">
           <a href="${APP_BASE_URL}/compare-rates" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">View Latest Rates →</a>
@@ -223,8 +221,8 @@ export function adminNewLeadEmail(lead) {
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">New Lead Captured</h2>
       <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">
         <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;width:120px;">Email</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.email}</td></tr>
-        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">ZIP</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.zip || "N/A"}</td></tr>
-        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">Source</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.source}</td></tr>
+        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">ZIP</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.zip || 'N/A'}</td></tr>
+        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">Source</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.source || 'N/A'}</td></tr>
         <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">Time</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })}</td></tr>
       </table>
       <table cellpadding="0" cellspacing="0">
@@ -241,7 +239,7 @@ export function adminResetCodeEmail(code) {
     subject: `Your Electric Scouts Admin Code: ${code}`,
     html: baseLayout(`
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Password Reset Code</h2>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Use the following 6-digit code to reset your admin password. This code expires in 15 minutes.</p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">Use the following 6-digit code to reset your admin password. This code expires in 15 minutes.</p>
       <div style="background:#f0f9ff;border:2px solid #0A5C8C;border-radius:8px;padding:20px;text-align:center;margin:0 0 24px;">
         <span style="font-size:36px;font-weight:700;letter-spacing:8px;color:#0A5C8C;">${code}</span>
       </div>
@@ -253,29 +251,29 @@ export function adminResetCodeEmail(code) {
 export function weeklyReportEmail(data) {
   const { totalLeads, leadsBySource, billUploads, affiliateClicks, dateRange } = data;
   const sourceRows = Object.entries(leadsBySource || {}).map(([source, count]) =>
-    `<tr><td style="padding:6px 12px;border:1px solid #e5e7eb;color:#374151;">${source}</td><td style="padding:6px 12px;border:1px solid #e5e7eb;color:#374151;text-align:right;">${count}</td></tr>`
-  ).join("") || `<tr><td colspan="2" style="padding:6px 12px;border:1px solid #e5e7eb;color:#9ca3af;">No leads this week</td></tr>`;
+    `<tr><td style="padding:6px 12px;border:1px solid #e5e7eb;color:#374151;font-size:14px;">${source}</td><td style="padding:6px 12px;border:1px solid #e5e7eb;color:#374151;font-size:14px;text-align:right;">${count}</td></tr>`
+  ).join("") || `<tr><td colspan="2" style="padding:6px 12px;border:1px solid #e5e7eb;color:#9ca3af;font-size:14px;">No leads this week</td></tr>`;
 
   return {
     subject: `Weekly Report — ${dateRange}`,
     html: baseLayout(`
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Weekly Platform Report</h2>
-      <p style="color:#6b7280;margin:0 0 20px;font-size:14px;">${dateRange}</p>
+      <p style="color:#6b7280;margin:0 0 20px;font-size:15px;">${dateRange}</p>
       <table style="width:100%;border-collapse:collapse;margin:0 0 24px;">
         <tr><td style="padding:12px;background:#f0f9ff;border-radius:6px;text-align:center;width:33%;">
           <div style="font-size:28px;font-weight:700;color:#0A5C8C;">${totalLeads}</div>
-          <div style="font-size:12px;color:#6b7280;margin-top:4px;">New Leads</div>
+          <div style="font-size:13px;color:#6b7280;margin-top:4px;">New Leads</div>
         </td><td style="width:8px;"></td><td style="padding:12px;background:#f0fdf4;border-radius:6px;text-align:center;width:33%;">
           <div style="font-size:28px;font-weight:700;color:#059669;">${billUploads}</div>
-          <div style="font-size:12px;color:#6b7280;margin-top:4px;">Bill Uploads</div>
+          <div style="font-size:13px;color:#6b7280;margin-top:4px;">Bill Uploads</div>
         </td><td style="width:8px;"></td><td style="padding:12px;background:#fef3c7;border-radius:6px;text-align:center;width:33%;">
           <div style="font-size:28px;font-weight:700;color:#d97706;">${affiliateClicks}</div>
-          <div style="font-size:12px;color:#6b7280;margin-top:4px;">Affiliate Clicks</div>
+          <div style="font-size:13px;color:#6b7280;margin-top:4px;">Affiliate Clicks</div>
         </td></tr>
       </table>
       <h3 style="margin:0 0 8px;color:#1a1a1a;font-size:16px;">Leads by Source</h3>
       <table style="width:100%;border-collapse:collapse;margin:0 0 24px;">
-        <tr><th style="padding:6px 12px;border:1px solid #e5e7eb;background:#f9fafb;text-align:left;color:#374151;font-size:13px;">Source</th><th style="padding:6px 12px;border:1px solid #e5e7eb;background:#f9fafb;text-align:right;color:#374151;font-size:13px;">Count</th></tr>
+        <tr><th style="padding:6px 12px;border:1px solid #e5e7eb;background:#f9fafb;text-align:left;color:#374151;font-size:14px;">Source</th><th style="padding:6px 12px;border:1px solid #e5e7eb;background:#f9fafb;text-align:right;color:#374151;font-size:14px;">Count</th></tr>
         ${sourceRows}
       </table>
       <table cellpadding="0" cellspacing="0">
@@ -344,4 +342,4 @@ export async function sendEmail({ to, subject, html, idempotencyKey, eventType, 
 
 // ─── Exports ────────────────────────────────────────────────────────
 
-export { supabase, ADMIN_EMAILS, APP_BASE_URL, FROM_EMAIL };
+export { supabase, ADMIN_EMAILS, APP_BASE_URL, FROM_EMAIL, LOGO_HEADER_URL, FAVICON_URL };
