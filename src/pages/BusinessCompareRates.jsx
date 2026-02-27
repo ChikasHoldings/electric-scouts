@@ -13,7 +13,7 @@ import { validateZipCode } from "../components/compare/stateData";
 import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import IneligibleZipMessage from "../components/compare/IneligibleZipMessage";
-import SEOHead from "../components/SEOHead";
+import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import EmailResults from "../components/compare/EmailResults";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import { ElectricityProvider } from "@/api/supabaseEntities";
@@ -190,6 +190,19 @@ export default function BusinessCompareRates() {
         description="Find the best electricity rates for your business. Compare commercial energy plans from 40+ providers. Fixed rates, volume discounts, and dedicated business support."
         keywords="business electricity rates, commercial energy plans, business energy comparison, commercial electricity"
         canonical="/business-compare-rates"
+        structuredData={[
+          getFAQSchema([
+            { question: "How are business electricity rates different from residential?", answer: "Business rates are typically lower per kWh due to higher volume usage. Commercial plans often include demand charges, custom contract terms, and dedicated account management. Businesses can also negotiate rates directly with providers." },
+            { question: "Can small businesses switch electricity providers?", answer: "Yes, any business in a deregulated state can switch providers. Small businesses benefit from competitive rates without needing to negotiate large commercial contracts. The switching process is the same as residential — quick and seamless." },
+            { question: "What is a demand charge on business electricity?", answer: "A demand charge is based on your peak electricity usage during a billing period, measured in kilowatts (kW). It reflects the maximum power your business draws at any one time, separate from the per-kWh energy charge." },
+            { question: "How much can a business save by switching electricity providers?", answer: "Businesses typically save 10-30% on electricity costs by switching to a more competitive plan. For a business using 5,000 kWh/month, this could mean savings of $500-$2,000 per year." }
+          ]),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Business Electricity", url: "/business-electricity" },
+            { name: "Compare Business Rates", url: "/business-compare-rates" }
+          ])
+        ]}
       />
 
       {/* Progress Bar */}

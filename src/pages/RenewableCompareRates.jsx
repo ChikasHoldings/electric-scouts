@@ -11,7 +11,7 @@ import { getCityFromZip, getProvidersForZipCode } from "../components/compare/pr
 import { validateZipCode } from "../components/compare/stateData";
 import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
-import SEOHead from "../components/SEOHead";
+import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import EmailResults from "../components/compare/EmailResults";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import { ElectricityProvider } from "@/api/supabaseEntities";
@@ -169,6 +169,19 @@ export default function RenewableCompareRates() {
         description="Find the best renewable energy electricity plans in your area. Compare 100% green energy rates from wind and solar providers. Support clean energy while saving money."
         keywords="renewable energy plans, green electricity, 100% renewable, wind energy, solar power, clean energy rates"
         canonical="/renewable-compare-rates"
+        structuredData={[
+          getFAQSchema([
+            { question: "What is 100% renewable energy electricity?", answer: "100% renewable energy plans source all electricity from renewable sources like wind, solar, and hydropower. Your electricity is matched with Renewable Energy Certificates (RECs) guaranteeing the equivalent amount was generated from clean sources." },
+            { question: "Is renewable energy more expensive than regular electricity?", answer: "Not necessarily. Many renewable energy plans are competitively priced with conventional plans. In Texas and other deregulated states, some 100% renewable plans are actually cheaper than fossil fuel alternatives due to the growth of wind and solar capacity." },
+            { question: "Does switching to renewable energy require new equipment?", answer: "No. Switching to a renewable energy plan requires no equipment changes, installation, or home modifications. You simply choose a green energy plan and your provider sources renewable energy on your behalf through the existing power grid." },
+            { question: "What is the difference between wind and solar energy plans?", answer: "Wind energy plans source electricity from wind farms, while solar plans use solar panel installations. Some plans combine both. The main difference is generation timing — solar produces during daylight hours while wind can generate 24/7. Both are equally clean and renewable." }
+          ]),
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Renewable Energy", url: "/renewable-energy" },
+            { name: "Compare Green Energy Plans", url: "/renewable-compare-rates" }
+          ])
+        ]}
       />
 
       {/* Progress Bar */}

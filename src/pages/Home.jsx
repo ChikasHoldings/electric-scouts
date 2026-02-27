@@ -16,6 +16,7 @@ const AboutSection = React.lazy(() => import("../components/home/AboutSection"))
 const ProvidersSection = React.lazy(() => import("../components/home/ProvidersSection"));
 const HowItWorksSection = React.lazy(() => import("../components/home/HowItWorksSection"));
 const TestimonialsSection = React.lazy(() => import("../components/home/TestimonialsSection"));
+const SEOContentSection = React.lazy(() => import("../components/home/SEOContentSection"));
 
 export default function Home() {
   const [zipCode, setZipCode] = useState("");
@@ -130,6 +131,11 @@ export default function Home() {
           </Card>
         </div>
       </section>
+
+      {/* SEO Content Section with Internal Links */}
+      <React.Suspense fallback={<div className="py-16 bg-white"></div>}>
+        <SEOContentSection />
+      </React.Suspense>
     </div>);
 
 }

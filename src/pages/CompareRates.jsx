@@ -27,7 +27,7 @@ import EmailResults from "../components/compare/EmailResults";
 import { useZipDetection } from "../components/hooks/useZipDetection";
 import { debugCompareRatesPipeline, validateDataStructures } from "../components/compare/debugPipeline";
 import { runFullSystemTest } from "../components/compare/systemTest";
-import SEOHead, { getOrganizationSchema, getServiceSchema } from "@/components/SEOHead";
+import SEOHead, { getOrganizationSchema, getServiceSchema, getFAQSchema, getBreadcrumbSchema } from "@/components/SEOHead";
 
 export default function CompareRates() {
   // SEO meta tags
@@ -70,7 +70,22 @@ export default function CompareRates() {
       description="Compare electricity rates from 40+ providers across deregulated states. Find the cheapest plans, renewable options, and save up to $800/year on your electric bill."
       canonical="/compare-rates"
       keywords="compare electricity rates, electricity plans, cheapest electricity, energy comparison, deregulated electricity"
-      structuredData={[getOrganizationSchema(), getServiceSchema()]}
+      structuredData={[
+        getOrganizationSchema(),
+        getServiceSchema(),
+        getFAQSchema([
+          { question: "Will my power go out when I switch electricity providers?", answer: "No. Your local utility still delivers power through the same infrastructure. Only your billing company changes. The switch is seamless with no interruption to your service." },
+          { question: "How long does it take to switch electricity providers?", answer: "Enrollment takes 5-10 minutes online. Your new service activates within 1-2 billing cycles (14-45 days depending on your utility)." },
+          { question: "Can I switch electricity providers anytime?", answer: "Yes, but you may face early termination fees if you're under contract. Wait until your contract expiration for penalty-free switching. Month-to-month plans can be switched anytime." },
+          { question: "How much can I save by switching electricity providers?", answer: "The average household saves $200-$800 per year by switching to a more competitive electricity plan. Savings depend on your current rate, usage, and the plans available in your area." },
+          { question: "Is it free to compare electricity rates on ElectricScouts?", answer: "Yes, ElectricScouts is 100% free to use. We compare rates from 40+ providers across 12 deregulated states. There are no hidden fees or obligations." },
+          { question: "What is a deregulated electricity market?", answer: "In deregulated states, you can choose your electricity provider instead of being locked into your local utility. This competition drives prices down and gives you more plan options including fixed-rate, variable-rate, and renewable energy plans." }
+        ]),
+        getBreadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Compare Electricity Rates", url: "/compare-rates" }
+        ])
+      ]}
     />
   );
 
