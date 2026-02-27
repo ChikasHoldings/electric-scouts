@@ -2,7 +2,9 @@ import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.FROM_EMAIL || "Electric Scouts <noreply@electricscouts.com>";
+// Always use branded sender name — extract raw email from env var if set, then wrap with display name
+const RAW_EMAIL = (process.env.FROM_EMAIL || "noreply@electricscouts.com").replace(/.*<(.+)>.*/, '$1').trim();
+const FROM_EMAIL = `Electric Scouts <${RAW_EMAIL}>`;
 const APP_BASE_URL = process.env.APP_BASE_URL || "https://electricscouts.com";
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim()).filter(Boolean);
 
@@ -138,12 +140,12 @@ function baseLayout(content, recipientEmail) {
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fa;padding:32px 0;">
 <tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);max-width:100%;">
-<tr><td style="background:linear-gradient(135deg,#0A5C8C 0%,#084a6f 100%);padding:24px 32px;">
+<tr><td style="background-color:#0A5C8C;background:linear-gradient(135deg,#0A5C8C 0%,#084a6f 100%);padding:24px 32px;">
   <table cellpadding="0" cellspacing="0" width="100%">
     <tr>
       <td>
         <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="180" height="37" style="display:block;max-width:180px;height:auto;filter:brightness(0) invert(1);" />
-        <p style="margin:6px 0 0;color:#93c5fd;font-size:13px;">Smart Electricity Comparison</p>
+        <p style="margin:6px 0 0;color:#ffffff;font-size:13px;font-weight:600;">Smart Electricity Comparison</p>
       </td>
     </tr>
   </table>

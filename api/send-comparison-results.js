@@ -138,9 +138,9 @@ export default async function handler(req, res) {
           <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
             
             <!-- Header -->
-            <tr><td style="background:${config.headerBg};padding:24px 30px;border-radius:12px 12px 0 0;text-align:center;">
+            <tr><td style="background-color:${config.accentColor};background:${config.headerBg};padding:24px 30px;border-radius:12px 12px 0 0;text-align:center;">
               <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="200" height="41" style="display:block;margin:0 auto;max-width:200px;height:auto;filter:brightness(0) invert(1);" />
-              <div style="font-size:14px;color:rgba(255,255,255,0.85);margin-top:8px;">${config.emoji} ${config.subtitle}</div>
+              <div style="font-size:14px;color:#ffffff;margin-top:8px;font-weight:600;">${config.emoji} ${config.subtitle}</div>
             </td></tr>
 
             <!-- Body -->
