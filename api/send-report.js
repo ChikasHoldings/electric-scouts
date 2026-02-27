@@ -116,7 +116,7 @@ export default async function handler(req, res) {
             
             <!-- Header -->
             <tr><td style="background:linear-gradient(135deg,#0A5C8C,#084a6f);padding:24px 30px;border-radius:12px 12px 0 0;text-align:center;">
-              <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;">⚡ ElectricScouts</div>
+              <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;">⚡ Electric Scouts</div>
               <div style="font-size:14px;color:#93c5fd;">Your Bill Analysis Report</div>
             </td></tr>
 
@@ -211,13 +211,42 @@ export default async function handler(req, res) {
               </p>
             </td></tr>
 
-            <!-- Footer -->
-            <tr><td style="padding:20px;text-align:center;">
-              <p style="color:#9ca3af;font-size:12px;margin:0;">
-                © ${new Date().getFullYear()} ElectricScouts. All rights reserved.<br/>
-                <a href="${APP_BASE_URL}/privacy-policy" style="color:#6b7280;text-decoration:underline;">Privacy Policy</a> · 
-                <a href="${APP_BASE_URL}/terms-of-service" style="color:#6b7280;text-decoration:underline;">Terms of Service</a>
-              </p>
+            <!-- Branded Footer -->
+            <tr><td style="padding:0;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-top:2px solid #e5e7eb;">
+                <!-- Logo & Tagline -->
+                <tr><td style="padding:24px 30px 12px;text-align:center;">
+                  <a href="${APP_BASE_URL}" style="text-decoration:none;font-size:20px;font-weight:800;color:#0A5C8C;">⚡ Electric Scouts</a>
+                  <p style="margin:6px 0 0;font-size:12px;color:#6b7280;">Compare electricity rates from 40+ providers. Save up to $800/year.</p>
+                </td></tr>
+                <!-- Social Icons -->
+                <tr><td style="padding:12px 30px;text-align:center;">
+                  <a href="https://facebook.com/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="28" height="28" style="border-radius:50%;" /></a>
+                  <a href="https://x.com/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968958.png" alt="X" width="28" height="28" style="border-radius:50%;" /></a>
+                  <a href="https://linkedin.com/company/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn" width="28" height="28" style="border-radius:50%;" /></a>
+                  <a href="https://instagram.com/electricscouts" style="text-decoration:none;display:inline-block;margin:0 4px;"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="28" height="28" style="border-radius:50%;" /></a>
+                </td></tr>
+                <!-- Quick Links -->
+                <tr><td style="padding:8px 30px;text-align:center;font-size:13px;">
+                  <a href="${APP_BASE_URL}/compare-rates" style="color:#0A5C8C;text-decoration:none;font-weight:600;">Compare Rates</a>
+                  <span style="color:#d1d5db;margin:0 8px;">|</span>
+                  <a href="${APP_BASE_URL}/bill-analyzer" style="color:#0A5C8C;text-decoration:none;font-weight:600;">Bill Analyzer</a>
+                  <span style="color:#d1d5db;margin:0 8px;">|</span>
+                  <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-weight:600;">www.electricscouts.com</a>
+                </td></tr>
+                <!-- Divider -->
+                <tr><td style="padding:12px 30px 0;"><div style="border-top:1px solid #e5e7eb;"></div></td></tr>
+                <!-- Copyright & Opt-out -->
+                <tr><td style="padding:14px 30px 20px;text-align:center;">
+                  <p style="margin:0 0 6px;font-size:11px;color:#9ca3af;">© ${new Date().getFullYear()} Electric Scouts. All rights reserved.</p>
+                  <p style="margin:0 0 4px;font-size:11px;color:#9ca3af;">You're receiving this because you requested a bill analysis report.</p>
+                  <p style="margin:0;font-size:11px;">
+                    <a href="${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a>
+                    <span style="color:#d1d5db;margin:0 6px;">|</span>
+                    <a href="${APP_BASE_URL}/privacy-policy" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a>
+                  </p>
+                </td></tr>
+              </table>
             </td></tr>
 
           </table>

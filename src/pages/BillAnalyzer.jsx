@@ -513,20 +513,38 @@ export default function BillAnalyzer() {
       return { savingsScore: 50, overpaymentPercent: 0 };
     }
 
-    const minRate = Math.min(...rates);
-    const maxRate = Math.max(...rates);
+    const sortedRates = [...rates].sort((a, b) => a - b);
+    const minRate = sortedRates[0];
+    const maxRate = sortedRates[sortedRates.length - 1];
     const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+    const medianRate = sortedRates.length % 2 === 0
+      ? (sortedRates[sortedRates.length / 2 - 1] + sortedRates[sortedRates.length / 2]) / 2
+      : sortedRates[Math.floor(sortedRates.length / 2)];
 
-    // Savings score: 100 = best rate, 0 = worst rate
-    let savingsScore;
+    // Percentile: what % of plans have a rate >= currentRate (higher = better for user)
+    const betterOrEqualCount = sortedRates.filter(r => r >= currentRate).length;
+    const percentileScore = (betterOrEqualCount / sortedRates.length) * 100;
+
+    // Rate position score: where does current rate fall in the range
+    let rangeScore;
     if (maxRate === minRate) {
-      savingsScore = currentRate <= minRate ? 100 : 0;
+      rangeScore = currentRate <= minRate ? 100 : 0;
     } else {
-      // Inverse: lower rate = higher score
-      savingsScore = Math.round(Math.max(0, Math.min(100,
+      rangeScore = Math.max(0, Math.min(100,
         ((maxRate - currentRate) / (maxRate - minRate)) * 100
-      )));
+      ));
     }
+
+    // Average comparison bonus: reward being below average
+    const avgBonus = currentRate <= avgRate
+      ? Math.min(15, ((avgRate - currentRate) / avgRate) * 50)
+      : -Math.min(15, ((currentRate - avgRate) / avgRate) * 50);
+
+    // Weighted composite score: 50% percentile, 35% range position, 15% avg comparison
+    let savingsScore = Math.round(
+      (percentileScore * 0.50) + (rangeScore * 0.35) + (50 + avgBonus) * 0.15
+    );
+    savingsScore = Math.max(0, Math.min(100, savingsScore));
 
     // Overpayment: how much more you pay vs the best available rate
     const overpaymentPercent = minRate > 0

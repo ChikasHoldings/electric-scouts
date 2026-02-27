@@ -6,7 +6,7 @@ import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf } from "lucide-react";
+import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf, Search } from "lucide-react";
 import ValidatedZipInput from "./components/ValidatedZipInput";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ChatBot from "./components/ChatBot";
@@ -275,14 +275,23 @@ export default function Layout({ children, currentPageName }) {
               </Link>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2.5 rounded-lg hover:bg-gray-100 transition-colors"
-              aria-label="Toggle menu"
-            >
-              <Menu className="w-6 h-6 text-gray-700" />
-            </button>
+            {/* Mobile Search + Menu Buttons */}
+            <div className="flex items-center gap-1 lg:hidden">
+              <Link
+                to={createPageUrl("CompareRates")}
+                className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors"
+                aria-label="Search and compare rates"
+              >
+                <Search className="w-6 h-6 text-[#0A5C8C]" />
+              </Link>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-8 h-8 text-gray-700" />
+              </button>
+            </div>
           </div>
         </div>
       </header>

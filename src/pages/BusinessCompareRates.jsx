@@ -82,6 +82,13 @@ export default function BusinessCompareRates() {
     loadZipData();
   }, []);
 
+  // Scroll to top when results are shown
+  useEffect(() => {
+    if (step === 4) {
+      window.scrollTo(0, 0);
+    }
+  }, [step]);
+
   const handleZipSubmit = async () => {
     if (!zipCode || zipCode.length !== 5) {
       setZipError("Please enter a valid 5-digit ZIP code");
@@ -100,13 +107,8 @@ export default function BusinessCompareRates() {
     setAvailableProviders(providers);
     setZipError("");
     localStorage.setItem('businessRatesZip', zipCode);
+    // Skip business type step, go directly to bill upload
     setStep(2);
-  };
-
-  const handleBusinessTypeSubmit = () => {
-    if (businessType) {
-      setStep(2.5);
-    }
   };
 
   const handleBillAnalysis = (data) => {
@@ -119,6 +121,12 @@ export default function BusinessCompareRates() {
 
   const handleSkipBillUpload = () => {
     setStep(3);
+  };
+
+  const handleBusinessTypeSubmit = () => {
+    if (businessType) {
+      setStep(3);
+    }
   };
 
   const handlePreferencesSubmit = () => {
@@ -212,7 +220,7 @@ export default function BusinessCompareRates() {
             <div className="flex items-center justify-between">
               {[
                 { num: 1, label: "ZIP Code", icon: Zap },
-                { num: 2, label: "Business Type", icon: Building },
+                { num: 2, label: "Upload Bill", icon: Building },
                 { num: 3, label: "Preferences", icon: TrendingDown }
               ].map((s, idx) => (
                 <React.Fragment key={s.num}>
@@ -351,71 +359,12 @@ export default function BusinessCompareRates() {
           </div>
         )}
 
-        {/* Step 2: Business Type */}
+        {/* Step 2: Bill Upload (Optional) - skipped business type selection */}
         {!isAnalyzing && step === 2 && (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                Select Your Business Size
-              </h1>
-              <p className="text-gray-600">Comparing business plans in <span className="font-semibold text-[#0A5C8C]">{cityName}</span></p>
-            </div>
-
-            <div className="space-y-4">
-              {businessTypes.map((type) => {
-                const Icon = type.icon;
-                return (
-                  <Card
-                    key={type.value}
-                    onClick={() => setBusinessType(type.value)}
-                    className={`cursor-pointer transition-all border-2 ${
-                      businessType === type.value
-                        ? "border-[#0A5C8C] bg-blue-50 shadow-lg"
-                        : "border-gray-200 hover:border-blue-300"
-                    }`}
-                  >
-                    <CardContent className="p-6 flex items-center gap-4">
-                      <div className={`w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        businessType === type.value ? "bg-[#0A5C8C]" : "bg-gray-100"
-                      }`}>
-                        <Icon className={`w-8 h-8 ${businessType === type.value ? "text-white" : "text-gray-600"}`} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">{type.label}</h3>
-                        <p className="text-sm text-gray-600">{type.usage}</p>
-                      </div>
-                      {businessType === type.value && (
-                        <CheckCircle className="w-6 h-6 text-[#0A5C8C]" />
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-
-            <div className="flex justify-center gap-3">
-              <Button onClick={() => setStep(1)} variant="outline" className="h-11">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-              <Button 
-                onClick={handleBusinessTypeSubmit}
-                className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white h-11 px-8"
-                disabled={!businessType}
-              >
-                Continue to Preferences
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2.5: Bill Upload (Optional) */}
-        {!isAnalyzing && step === 2.5 && (
           <BillUploadStep
             onSkip={handleSkipBillUpload}
             onAnalysisComplete={handleBillAnalysis}
-            onBack={() => setStep(2)}
+            onBack={() => setStep(1)}
             accentColor="#0A5C8C"
           />
         )}
@@ -630,14 +579,45 @@ export default function BusinessCompareRates() {
                   <div className="space-y-4">
                     <h2 className="text-xl font-bold text-gray-900">Top Business Recommendations</h2>
                     {topRecommendations.map((plan, index) => (
-                      <PlanCard
-                        key={plan.id}
-                        plan={plan}
-                        estimatedMonthlyCost={calculateMonthlyCost(plan)}
-                        monthlyUsage={monthlyUsage}
-                        rank={index + 1}
-                        isTopPick={index === 0}
-                      />
+                      <Card key={plan.id} className={`border-2 hover:shadow-lg transition-all ${index === 0 ? 'border-[#FF6B35] bg-gradient-to-br from-orange-50 to-white' : 'border-gray-200'}`}>
+                        <CardContent className="p-5">
+                          {index === 0 && (
+                            <div className="mb-3">
+                              <span className="bg-[#FF6B35] text-white text-xs font-bold px-3 py-1 rounded-full">TOP PICK</span>
+                            </div>
+                          )}
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.provider_name}</h3>
+                              <p className="text-sm text-gray-600 mb-3">{plan.plan_name}</p>
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 capitalize">{plan.plan_type}</span>
+                                {plan.renewable_percentage >= 50 && (
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">{plan.renewable_percentage}% Green</span>
+                                )}
+                                {plan.contract_length && (
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">{plan.contract_length} mo</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Rate</p>
+                                <p className="text-xl font-bold text-[#0A5C8C]">{plan.rate_per_kwh}¢<span className="text-sm font-normal">/kWh</span></p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Est. Monthly</p>
+                                <p className="text-xl font-bold text-gray-900">${calculateMonthlyCost(plan)}</p>
+                              </div>
+                              <a href={getProviderAffiliateUrl(plan)} target="_blank" rel="noopener noreferrer">
+                                <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white whitespace-nowrap">
+                                  Get Plan <ArrowRight className="w-4 h-4 ml-1" />
+                                </Button>
+                              </a>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}
@@ -647,12 +627,40 @@ export default function BusinessCompareRates() {
                   <div className="space-y-4">
                     <h2 className="text-xl font-bold text-gray-900">Other Business Plans</h2>
                     {otherPlans.map((plan) => (
-                      <PlanCard
-                        key={plan.id}
-                        plan={plan}
-                        estimatedMonthlyCost={calculateMonthlyCost(plan)}
-                        monthlyUsage={monthlyUsage}
-                      />
+                      <Card key={plan.id} className="border-2 border-gray-200 hover:shadow-lg transition-all">
+                        <CardContent className="p-5">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.provider_name}</h3>
+                              <p className="text-sm text-gray-600 mb-3">{plan.plan_name}</p>
+                              <div className="flex flex-wrap gap-2">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 capitalize">{plan.plan_type}</span>
+                                {plan.renewable_percentage >= 50 && (
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">{plan.renewable_percentage}% Green</span>
+                                )}
+                                {plan.contract_length && (
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">{plan.contract_length} mo</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Rate</p>
+                                <p className="text-xl font-bold text-[#0A5C8C]">{plan.rate_per_kwh}¢<span className="text-sm font-normal">/kWh</span></p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Est. Monthly</p>
+                                <p className="text-xl font-bold text-gray-900">${calculateMonthlyCost(plan)}</p>
+                              </div>
+                              <a href={getProviderAffiliateUrl(plan)} target="_blank" rel="noopener noreferrer">
+                                <Button className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white whitespace-nowrap">
+                                  Get Plan <ArrowRight className="w-4 h-4 ml-1" />
+                                </Button>
+                              </a>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}

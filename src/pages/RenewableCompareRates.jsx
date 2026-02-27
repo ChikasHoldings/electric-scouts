@@ -77,6 +77,13 @@ export default function RenewableCompareRates() {
     loadZipData();
   }, []);
 
+  // Scroll to top when results are shown
+  useEffect(() => {
+    if (step === 4) {
+      window.scrollTo(0, 0);
+    }
+  }, [step]);
+
   const handleZipSubmit = async () => {
     if (!zipCode || zipCode.length !== 5) {
       setZipError("Please enter a valid 5-digit ZIP code");
@@ -95,13 +102,8 @@ export default function RenewableCompareRates() {
     setAvailableProviders(providers);
     setZipError("");
     localStorage.setItem('compareRatesZip', zipCode);
+    // Go directly to bill upload step
     setStep(2);
-  };
-
-  const handlePropertyTypeSubmit = () => {
-    if (propertyType) {
-      setStep(2.5);
-    }
   };
 
   const handleBillAnalysis = (data) => {
@@ -191,7 +193,7 @@ export default function RenewableCompareRates() {
             <div className="flex items-center justify-between">
               {[
                 { num: 1, label: "ZIP Code", icon: Zap },
-                { num: 2, label: "Property Type", icon: Home },
+                { num: 2, label: "Upload Bill", icon: Home },
                 { num: 3, label: "Preferences", icon: Leaf }
               ].map((s, idx) => (
                 <React.Fragment key={s.num}>
@@ -297,95 +299,12 @@ export default function RenewableCompareRates() {
           </div>
         )}
 
-        {/* Step 2: Property Type */}
+        {/* Step 2: Bill Upload (Optional) - skipped property type selection */}
         {step === 2 && (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                Select Your Property Type
-              </h1>
-              <p className="text-gray-600">Comparing renewable plans in <span className="font-semibold text-green-600">{cityName}</span></p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <Card
-                onClick={() => setPropertyType("residential")}
-                className={`cursor-pointer transition-all border-2 ${
-                  propertyType === "residential"
-                    ? "border-green-600 bg-green-50 shadow-lg"
-                    : "border-gray-200 hover:border-green-300"
-                }`}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
-                    propertyType === "residential" ? "bg-green-600" : "bg-gray-100"
-                  }`}>
-                    <Home className={`w-8 h-8 ${propertyType === "residential" ? "text-white" : "text-gray-600"}`} />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Residential</h3>
-                  <p className="text-sm text-gray-600">Houses, apartments, condos</p>
-                </CardContent>
-              </Card>
-
-              <Card
-                onClick={() => setPropertyType("apartment")}
-                className={`cursor-pointer transition-all border-2 ${
-                  propertyType === "apartment"
-                    ? "border-green-600 bg-green-50 shadow-lg"
-                    : "border-gray-200 hover:border-green-300"
-                }`}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
-                    propertyType === "apartment" ? "bg-green-600" : "bg-gray-100"
-                  }`}>
-                    <Building className={`w-8 h-8 ${propertyType === "apartment" ? "text-white" : "text-gray-600"}`} />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Apartment</h3>
-                  <p className="text-sm text-gray-600">Multi-unit dwelling</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="flex justify-center gap-3">
-              <Button onClick={() => setStep(1)} variant="outline" className="h-11">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-              <Button 
-                onClick={handlePropertyTypeSubmit}
-                className="bg-green-600 hover:bg-green-700 text-white h-11 px-8"
-                disabled={!propertyType}
-              >
-                Continue to Preferences
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-
-            <Card className="border bg-gradient-to-r from-green-50 to-emerald-50">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-2.5">
-                  <div className="bg-white rounded-full p-1.5">
-                    <Leaf className="w-4 h-4 text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-gray-900 mb-1 text-xs">Why Choose Renewable Energy?</h3>
-                    <p className="text-xs text-gray-600 leading-relaxed">
-                      Renewable energy plans help fight climate change, support clean energy development, and often cost the same or less than traditional electricity.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Step 2.5: Bill Upload (Optional) */}
-        {step === 2.5 && (
           <BillUploadStep
             onSkip={handleSkipBillUpload}
             onAnalysisComplete={handleBillAnalysis}
-            onBack={() => setStep(2)}
+            onBack={() => setStep(1)}
             accentColor="#16a34a"
           />
         )}
@@ -537,14 +456,45 @@ export default function RenewableCompareRates() {
                   <div className="space-y-4">
                     <h2 className="text-xl font-bold text-gray-900">Top Renewable Recommendations</h2>
                     {topRecommendations.map((plan, index) => (
-                      <PlanCard
-                        key={plan.id}
-                        plan={plan}
-                        estimatedMonthlyCost={calculateMonthlyCost(plan)}
-                        monthlyUsage={monthlyUsage}
-                        rank={index + 1}
-                        isTopPick={index === 0}
-                      />
+                      <Card key={plan.id} className={`border-2 hover:shadow-lg transition-all ${index === 0 ? 'border-green-500 bg-gradient-to-br from-green-50 to-white' : 'border-gray-200'}`}>
+                        <CardContent className="p-5">
+                          {index === 0 && (
+                            <div className="mb-3">
+                              <span className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">TOP GREEN PICK</span>
+                            </div>
+                          )}
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.provider_name}</h3>
+                              <p className="text-sm text-gray-600 mb-3">{plan.plan_name}</p>
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                  🌿 {plan.renewable_percentage}% Renewable
+                                </span>
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 capitalize">{plan.plan_type}</span>
+                                {plan.contract_length && (
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">{plan.contract_length} mo</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Rate</p>
+                                <p className="text-xl font-bold text-green-600">{plan.rate_per_kwh}¢<span className="text-sm font-normal">/kWh</span></p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Est. Monthly</p>
+                                <p className="text-xl font-bold text-gray-900">${calculateMonthlyCost(plan)}</p>
+                              </div>
+                              <a href={getProviderAffiliateUrl(plan)} target="_blank" rel="noopener noreferrer">
+                                <Button className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap">
+                                  Get Plan <ArrowRight className="w-4 h-4 ml-1" />
+                                </Button>
+                              </a>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}
@@ -554,12 +504,40 @@ export default function RenewableCompareRates() {
                   <div className="space-y-4">
                     <h2 className="text-xl font-bold text-gray-900">Other Renewable Plans</h2>
                     {otherPlans.map((plan) => (
-                      <PlanCard
-                        key={plan.id}
-                        plan={plan}
-                        estimatedMonthlyCost={calculateMonthlyCost(plan)}
-                        monthlyUsage={monthlyUsage}
-                      />
+                      <Card key={plan.id} className="border-2 border-gray-200 hover:shadow-lg transition-all">
+                        <CardContent className="p-5">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.provider_name}</h3>
+                              <p className="text-sm text-gray-600 mb-3">{plan.plan_name}</p>
+                              <div className="flex flex-wrap gap-2">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                  🌿 {plan.renewable_percentage}% Renewable
+                                </span>
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 capitalize">{plan.plan_type}</span>
+                                {plan.contract_length && (
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">{plan.contract_length} mo</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Rate</p>
+                                <p className="text-xl font-bold text-green-600">{plan.rate_per_kwh}¢<span className="text-sm font-normal">/kWh</span></p>
+                              </div>
+                              <div className="text-center">
+                                <p className="text-xs text-gray-500 mb-1">Est. Monthly</p>
+                                <p className="text-xl font-bold text-gray-900">${calculateMonthlyCost(plan)}</p>
+                              </div>
+                              <a href={getProviderAffiliateUrl(plan)} target="_blank" rel="noopener noreferrer">
+                                <Button className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap">
+                                  Get Plan <ArrowRight className="w-4 h-4 ml-1" />
+                                </Button>
+                              </a>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}

@@ -166,7 +166,7 @@ export default function ProviderDetails() {
       />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
+      <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-8 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <nav className="mb-4 text-sm">
@@ -177,44 +177,44 @@ export default function ProviderDetails() {
               <span className="text-white">{providerName}</span>
             </nav>
 
-            <div className="flex items-start gap-6 mb-6">
-              <div className="bg-white rounded-xl p-4 shadow-lg">
+            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6">
+              <div className="bg-white rounded-xl p-3 sm:p-4 shadow-lg flex-shrink-0">
                 {providerInfo.logo ? (
                   <img 
                     src={providerInfo.logo} 
                     alt={`${providerName} logo`}
-                    className="h-16 w-32 object-contain"
+                    className="h-12 w-24 sm:h-16 sm:w-32 object-contain"
                     loading="lazy"
                     onError={(e) => {
                       e.target.style.display = 'none';
-                      e.target.parentElement.innerHTML = `<div class="h-16 w-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center"><span class="text-xl font-bold text-[#0A5C8C]">${providerName.substring(0, 3).toUpperCase()}</span></div>`;
+                      e.target.parentElement.innerHTML = `<div class="h-12 w-24 sm:h-16 sm:w-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center"><span class="text-xl font-bold text-[#0A5C8C]">${providerName.substring(0, 3).toUpperCase()}</span></div>`;
                     }}
                   />
                 ) : (
-                  <div className="h-16 w-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center">
+                  <div className="h-12 w-24 sm:h-16 sm:w-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center">
                     <span className="text-xl font-bold text-[#0A5C8C]">
                       {providerName.substring(0, 3).toUpperCase()}
                     </span>
                   </div>
                 )}
               </div>
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold mb-2">{providerName}</h1>
-                <div className="flex items-center gap-4 mb-3">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">{providerName}</h1>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3">
                   <div className="flex items-center gap-1">
                     <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold">{providerFromDB?.rating || 4.8}</span>
                   </div>
                   {providerInfo.reviewCount > 0 && (
                     <>
-                      <span className="text-blue-200">•</span>
-                      <span className="text-blue-100">{providerInfo.reviewCount.toLocaleString()} reviews</span>
+                      <span className="text-blue-200 hidden sm:inline">•</span>
+                      <span className="text-blue-100 text-sm">{providerInfo.reviewCount.toLocaleString()} reviews</span>
                     </>
                   )}
-                  <span className="text-blue-200">•</span>
-                  <span className="text-blue-100">{providerPlans.length} Plans Available</span>
+                  <span className="text-blue-200 hidden sm:inline">•</span>
+                  <span className="text-blue-100 text-sm">{providerPlans.length} Plans Available</span>
                 </div>
-                <p className="text-blue-100 text-base">
+                <p className="text-blue-100 text-sm sm:text-base">
                   {providerFromDB?.description || `Competitive electricity rates serving ${providerInfo.states.join(", ")}`}
                 </p>
                 {providerInfo.phone && (
@@ -226,7 +226,7 @@ export default function ProviderDetails() {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{lowestRate}¢</div>
                 <div className="text-sm text-blue-100">Lowest Rate</div>
@@ -432,8 +432,8 @@ export default function ProviderDetails() {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-start gap-3 mb-3">
-                          <div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.plan_name}</h3>
+                          <div className="min-w-0">
+                            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 break-words">{plan.plan_name}</h3>
                             <div className="flex gap-2">
                               <span className="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-800 capitalize">
                                 {plan.plan_type}
@@ -447,7 +447,7 @@ export default function ProviderDetails() {
                             </div>
                           </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-4 text-sm">
                           <div>
                             <p className="text-gray-500 mb-1">Rate</p>
                             <p className="font-bold text-[#0A5C8C] text-lg">{plan.rate_per_kwh}¢/kWh</p>

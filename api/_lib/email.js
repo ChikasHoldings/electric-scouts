@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { createClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.FROM_EMAIL || "noreply@electricscouts.com";
+const FROM_EMAIL = process.env.FROM_EMAIL || "Electric Scouts <noreply@electricscouts.com>";
 const APP_BASE_URL = process.env.APP_BASE_URL || "https://electricscouts.com";
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim()).filter(Boolean);
 
@@ -11,25 +11,149 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// ─── Branded Footer ────────────────────────────────────────────────
+
+function brandedFooter(recipientEmail) {
+  const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(recipientEmail || '')}`;
+  const year = new Date().getFullYear();
+  
+  return `
+  <!-- Branded Footer -->
+  <tr><td style="padding:0;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-top:2px solid #e5e7eb;margin-top:24px;">
+      <!-- Logo & Tagline -->
+      <tr><td style="padding:28px 32px 16px 32px;text-align:center;">
+        <a href="${APP_BASE_URL}" style="text-decoration:none;display:inline-block;">
+          <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+            <tr>
+              <td style="font-size:24px;font-weight:800;color:#0A5C8C;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                ⚡ Electric Scouts
+              </td>
+            </tr>
+          </table>
+        </a>
+        <p style="margin:8px 0 0;font-size:13px;color:#6b7280;line-height:1.5;">
+          Compare electricity rates from 40+ providers. Save up to $800/year.
+        </p>
+      </td></tr>
+      
+      <!-- Social Icons -->
+      <tr><td style="padding:16px 32px;text-align:center;">
+        <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+          <tr>
+            <td style="padding:0 8px;">
+              <a href="https://facebook.com/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
+                <table cellpadding="0" cellspacing="0">
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  </td></tr>
+                </table>
+              </a>
+            </td>
+            <td style="padding:0 8px;">
+              <a href="https://x.com/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
+                <table cellpadding="0" cellspacing="0">
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968958.png" alt="X (Twitter)" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  </td></tr>
+                </table>
+              </a>
+            </td>
+            <td style="padding:0 8px;">
+              <a href="https://linkedin.com/company/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
+                <table cellpadding="0" cellspacing="0">
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  </td></tr>
+                </table>
+              </a>
+            </td>
+            <td style="padding:0 8px;">
+              <a href="https://instagram.com/electricscouts" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-block;">
+                <table cellpadding="0" cellspacing="0">
+                  <tr><td style="background:#0A5C8C;border-radius:50%;width:36px;height:36px;text-align:center;vertical-align:middle;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="18" height="18" style="display:block;margin:0 auto;filter:brightness(0) invert(1);" />
+                  </td></tr>
+                </table>
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      
+      <!-- Quick Links -->
+      <tr><td style="padding:12px 32px;text-align:center;">
+        <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+          <tr>
+            <td style="padding:0 12px;">
+              <a href="${APP_BASE_URL}/compare-rates" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">Compare Rates</a>
+            </td>
+            <td style="color:#d1d5db;font-size:13px;">|</td>
+            <td style="padding:0 12px;">
+              <a href="${APP_BASE_URL}/bill-analyzer" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">Bill Analyzer</a>
+            </td>
+            <td style="color:#d1d5db;font-size:13px;">|</td>
+            <td style="padding:0 12px;">
+              <a href="${APP_BASE_URL}/learning-center" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">Learning Center</a>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      
+      <!-- Website Link -->
+      <tr><td style="padding:8px 32px;text-align:center;">
+        <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-size:13px;font-weight:600;">
+          www.electricscouts.com
+        </a>
+      </td></tr>
+      
+      <!-- Divider -->
+      <tr><td style="padding:16px 32px 0;">
+        <div style="border-top:1px solid #e5e7eb;"></div>
+      </td></tr>
+      
+      <!-- Copyright & Opt-out -->
+      <tr><td style="padding:16px 32px 24px;text-align:center;">
+        <p style="margin:0 0 8px;font-size:11px;color:#9ca3af;line-height:1.5;">
+          &copy; ${year} Electric Scouts. All rights reserved.
+        </p>
+        <p style="margin:0 0 4px;font-size:11px;color:#9ca3af;line-height:1.5;">
+          You're receiving this email because you signed up at Electric Scouts.
+        </p>
+        <p style="margin:0;font-size:11px;">
+          <a href="${unsubUrl}" style="color:#9ca3af;text-decoration:underline;">Unsubscribe</a>
+          <span style="color:#d1d5db;margin:0 6px;">|</span>
+          <a href="${APP_BASE_URL}/privacy-policy" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a>
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>`;
+}
+
 // ─── Email Templates ────────────────────────────────────────────────
 
-function baseLayout(content) {
+function baseLayout(content, recipientEmail) {
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#f4f7fa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fa;padding:32px 0;">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-<tr><td style="background:#0A5C8C;padding:24px 32px;">
-  <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">⚡ ElectricScouts</h1>
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);max-width:100%;">
+<tr><td style="background:linear-gradient(135deg,#0A5C8C 0%,#084a6f 100%);padding:24px 32px;">
+  <table cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td>
+        <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">⚡ Electric Scouts</h1>
+        <p style="margin:4px 0 0;color:#93c5fd;font-size:12px;">Smart Electricity Comparison</p>
+      </td>
+    </tr>
+  </table>
 </td></tr>
 <tr><td style="padding:32px;">
   ${content}
 </td></tr>
-<tr><td style="background:#f8f9fa;padding:16px 32px;text-align:center;font-size:12px;color:#6b7280;">
-  <p style="margin:0;">© ${new Date().getFullYear()} ElectricScouts. All rights reserved.</p>
-</td></tr>
+${brandedFooter(recipientEmail)}
 </table>
 </td></tr>
 </table>
@@ -38,12 +162,11 @@ function baseLayout(content) {
 
 export function leadWelcomeEmail(leadEmail, leadName) {
   const name = leadName || "there";
-  const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(leadEmail)}`;
   return {
-    subject: "Welcome to ElectricScouts — Your Savings Journey Starts Here",
+    subject: "Welcome to Electric Scouts — Your Savings Journey Starts Here",
     html: baseLayout(`
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Hey ${name}!</h2>
-      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Thanks for joining ElectricScouts. We help you find the best electricity rates and save money on your energy bills.</p>
+      <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Thanks for joining Electric Scouts. We help you find the best electricity rates and save money on your energy bills.</p>
       <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Here's what you can do next:</p>
       <ul style="color:#374151;line-height:1.8;margin:0 0 24px;padding-left:20px;">
         <li><strong>Compare rates</strong> from top providers in your area</li>
@@ -55,16 +178,12 @@ export function leadWelcomeEmail(leadEmail, leadName) {
           <a href="${APP_BASE_URL}/compare-rates" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">Compare Rates Now →</a>
         </td></tr>
       </table>
-      <p style="color:#9ca3af;font-size:12px;margin:0;">
-        <a href="${unsubUrl}" style="color:#9ca3af;">Unsubscribe</a>
-      </p>
-    `)
+    `, leadEmail)
   };
 }
 
 export function leadFollowup1Email(leadEmail, leadName) {
   const name = leadName || "there";
-  const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(leadEmail)}`;
   return {
     subject: "Did You Know? Most Texans Overpay for Electricity",
     html: baseLayout(`
@@ -76,16 +195,12 @@ export function leadFollowup1Email(leadEmail, leadName) {
           <a href="${APP_BASE_URL}/bill-analyzer" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">Analyze My Bill →</a>
         </td></tr>
       </table>
-      <p style="color:#9ca3af;font-size:12px;margin:0;">
-        <a href="${unsubUrl}" style="color:#9ca3af;">Unsubscribe</a>
-      </p>
-    `)
+    `, leadEmail)
   };
 }
 
 export function leadFollowup2Email(leadEmail, leadName) {
   const name = leadName || "there";
-  const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(leadEmail)}`;
   return {
     subject: "Your Personalized Rate Comparison Is Ready",
     html: baseLayout(`
@@ -97,10 +212,7 @@ export function leadFollowup2Email(leadEmail, leadName) {
           <a href="${APP_BASE_URL}/compare-rates" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">View Latest Rates →</a>
         </td></tr>
       </table>
-      <p style="color:#9ca3af;font-size:12px;margin:0;">
-        <a href="${unsubUrl}" style="color:#9ca3af;">Unsubscribe</a>
-      </p>
-    `)
+    `, leadEmail)
   };
 }
 
@@ -126,7 +238,7 @@ export function adminNewLeadEmail(lead) {
 
 export function adminResetCodeEmail(code) {
   return {
-    subject: `Your ElectricScouts Admin Code: ${code}`,
+    subject: `Your Electric Scouts Admin Code: ${code}`,
     html: baseLayout(`
       <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Password Reset Code</h2>
       <p style="color:#374151;line-height:1.6;margin:0 0 16px;">Use the following 6-digit code to reset your admin password. This code expires in 15 minutes.</p>
