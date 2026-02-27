@@ -14,9 +14,13 @@ export default function BillUploadStep({ onSkip, onAnalysisComplete, onBack, acc
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       const fileType = selectedFile.type;
+      const fileName = selectedFile.name.toLowerCase();
       const validTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+      const validExtensions = ['.pdf', '.png', '.jpg', '.jpeg'];
       
-      if (!validTypes.includes(fileType)) {
+      const isValidType = validTypes.includes(fileType) || validExtensions.some(ext => fileName.endsWith(ext));
+      
+      if (!isValidType) {
         setError('Please upload a PDF or image file (PNG, JPG, JPEG)');
         return;
       }
@@ -31,25 +35,142 @@ export default function BillUploadStep({ onSkip, onAnalysisComplete, onBack, acc
     }
   };
 
+  // ─── Client-side PDF to Image conversion (same as standalone BillAnalyzer) ──────
+  const loadPdfJs = () => {
+    return new Promise((resolve, reject) => {
+      if (window.pdfjsLib) return resolve(window.pdfjsLib);
+      const classicScript = document.createElement('script');
+      classicScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      classicScript.onload = () => {
+        const lib = window.pdfjsLib;
+        if (lib) {
+          lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          resolve(lib);
+        } else {
+          reject(new Error('pdf.js failed to load'));
+        }
+      };
+      classicScript.onerror = () => reject(new Error('Failed to load pdf.js from CDN'));
+      document.head.appendChild(classicScript);
+    });
+  };
+
+  const convertPdfToImage = async (pdfFile) => {
+    const pdfjsLib = await loadPdfJs();
+
+    const arrayBuffer = await pdfFile.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    
+    // Render first page (and optionally second page for multi-page bills)
+    const pagesToRender = Math.min(pdf.numPages, 2);
+    const images = [];
+    
+    for (let i = 1; i <= pagesToRender; i++) {
+      const page = await pdf.getPage(i);
+      const scale = 2.0; // High resolution for OCR accuracy
+      const viewport = page.getViewport({ scale });
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext('2d');
+      
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      images.push(canvas.toDataURL('image/png', 0.95));
+    }
+    
+    // If multiple pages, stitch them vertically into one image
+    if (images.length > 1) {
+      const stitchCanvas = document.createElement('canvas');
+      const tempImages = await Promise.all(images.map(src => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.src = src;
+        });
+      }));
+      
+      stitchCanvas.width = Math.max(...tempImages.map(img => img.width));
+      stitchCanvas.height = tempImages.reduce((sum, img) => sum + img.height, 0);
+      const stitchCtx = stitchCanvas.getContext('2d');
+      
+      let yOffset = 0;
+      for (const img of tempImages) {
+        stitchCtx.drawImage(img, 0, yOffset);
+        yOffset += img.height;
+      }
+      
+      return stitchCanvas.toDataURL('image/png', 0.92);
+    }
+    
+    return images[0];
+  };
+
+  // Helper: wrap a promise with a timeout
+  const withTimeout = (promise, ms, label = 'Operation') => {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`${label} timed out after ${ms / 1000}s. Please try again.`)), ms))
+    ]);
+  };
+
   const handleUploadAndAnalyze = async () => {
     if (!file) return;
 
     setIsUploading(true);
     setError(null);
 
+    const MAX_RETRIES = 2;
+
     try {
-      // Upload the file
-      const uploadResult = await UploadFile({ file });
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      let fileToUpload = file;
+
+      // Step 1: If PDF, convert to PNG image on client side first
+      // (OpenAI Vision API cannot process PDF URLs directly)
+      if (isPdf) {
+        try {
+          const imageDataUrl = await convertPdfToImage(file);
+          // Convert data URL to File object
+          const response = await fetch(imageDataUrl);
+          const blob = await response.blob();
+          fileToUpload = new File([blob], file.name.replace(/\.pdf$/i, '.png'), { type: 'image/png' });
+        } catch (convertErr) {
+          console.warn('Client-side PDF conversion failed:', convertErr);
+          // Fall through - will try to upload the original PDF
+        }
+      }
+
+      // Step 2: Upload the file to Supabase storage
+      let uploadResult;
+      try {
+        uploadResult = await withTimeout(UploadFile({ file: fileToUpload }), 30000, 'File upload');
+      } catch (uploadErr) {
+        console.error('File upload failed:', uploadErr);
+        setIsUploading(false);
+        setError('File upload failed. Please try again or skip this step.');
+        return;
+      }
+
       const fileUrl = uploadResult.file_url;
+      if (!fileUrl) {
+        setIsUploading(false);
+        setError('File upload succeeded but no URL was returned. Please try again or skip this step.');
+        return;
+      }
 
       setIsUploading(false);
       setIsProcessing(true);
 
-      // Use the full extraction prompt (same as standalone BillAnalyzer)
-      // instead of the simplified json_schema approach
-      const extractResult = await ExtractDataFromUploadedFile({
-        file_url: fileUrl,
-        extraction_prompt: `You are analyzing an electricity bill document. Extract the following and return as a JSON object with these exact field names:
+      // Step 3: Extract data with retry logic
+      let extractResult = null;
+      let lastError = null;
+
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          extractResult = await withTimeout(ExtractDataFromUploadedFile({
+            file_url: fileUrl,
+            extraction_prompt: `You are analyzing an electricity bill document. Extract the following and return as a JSON object with these exact field names:
 {
   "customer_name": (string, the customer/account holder name on the bill),
   "service_address": (string, the full service address where electricity is delivered),
@@ -71,37 +192,53 @@ IMPORTANT:
 - For service_address: Look for "Service Address", "Delivery Address", or the address where electricity is delivered.
 - If a field cannot be determined, use null for strings and 0 for numbers.
 - Return JSON only, no explanation or markdown.`
-      });
+          }), 45000, 'Bill analysis');
+
+          // Validate the extracted data has meaningful values
+          if (extractResult?.status === 'success' && extractResult?.output) {
+            const output = extractResult.output;
+            const hasUsage = output.monthly_usage_kwh && output.monthly_usage_kwh > 0;
+            const hasCost = output.monthly_cost && output.monthly_cost > 0;
+            const hasProvider = output.provider_name;
+            if (hasUsage || hasCost || hasProvider) {
+              break; // Valid result, exit retry loop
+            } else {
+              lastError = 'Could not extract enough data from the bill';
+              extractResult = null;
+            }
+          } else {
+            lastError = 'Extraction returned unsuccessful status';
+            extractResult = null;
+          }
+        } catch (err) {
+          lastError = err.message;
+          extractResult = null;
+          console.warn(`Extraction attempt ${attempt + 1} failed:`, err.message);
+        }
+
+        // Wait before retry
+        if (attempt < MAX_RETRIES) {
+          await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+      }
 
       setIsProcessing(false);
 
-      if (extractResult && extractResult.status === 'success' && extractResult.output) {
+      if (extractResult?.status === 'success' && extractResult?.output) {
         const output = extractResult.output;
-        // Validate we got at least some meaningful data
-        if (output.monthly_usage_kwh > 0 || output.monthly_cost > 0 || output.provider_name) {
-          onAnalysisComplete(output);
-        } else {
-          setError('We could not extract enough data from this bill. Please ensure the image is clear and try again, or skip this step.');
+        // Auto-calculate rate if missing but we have cost and usage
+        if ((!output.rate_per_kwh || output.rate_per_kwh === 0) && output.monthly_cost > 0 && output.monthly_usage_kwh > 0) {
+          output.rate_per_kwh = parseFloat(((output.monthly_cost / output.monthly_usage_kwh) * 100).toFixed(2));
         }
+        onAnalysisComplete(output);
       } else {
-        setError('Unable to extract data from the bill. Please make sure the image is clear and try again, or skip this step.');
+        setError(`We couldn't extract data from this bill${lastError ? ` (${lastError})` : ''}. Please try a clearer image or skip this step.`);
       }
     } catch (err) {
       setIsUploading(false);
       setIsProcessing(false);
       console.error('Bill upload/analysis error:', err);
-      
-      // Provide more specific error messages
-      const errMsg = err?.message || '';
-      if (errMsg.includes('authentication') || errMsg.includes('API key')) {
-        setError('Our analysis service is temporarily unavailable. Please skip this step and continue.');
-      } else if (errMsg.includes('rate limit')) {
-        setError('Too many requests. Please wait a moment and try again.');
-      } else if (errMsg.includes('file') || errMsg.includes('format')) {
-        setError('This file format could not be processed. Please try a PNG or JPG image of your bill.');
-      } else {
-        setError('Failed to process the bill. Please try again or skip this step.');
-      }
+      setError(`Failed to process the bill: ${err.message || 'Unknown error'}. Please try again or skip this step.`);
     }
   };
 
