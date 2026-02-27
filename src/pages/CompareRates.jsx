@@ -25,8 +25,6 @@ import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import EmailResults from "../components/compare/EmailResults";
 import { useZipDetection } from "../components/hooks/useZipDetection";
-import { debugCompareRatesPipeline, validateDataStructures } from "../components/compare/debugPipeline";
-import { runFullSystemTest } from "../components/compare/systemTest";
 import SEOHead, { getOrganizationSchema, getServiceSchema, getFAQSchema, getBreadcrumbSchema } from "@/components/SEOHead";
 
 export default function CompareRates() {

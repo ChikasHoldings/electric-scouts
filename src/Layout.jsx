@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf } from "lucide-react";
 import ValidatedZipInput from "./components/ValidatedZipInput";
-import SchemaDebugger from "./components/seo/SchemaDebugger";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ChatBot from "./components/ChatBot";
 
@@ -672,7 +671,6 @@ export default function Layout({ children, currentPageName }) {
       )}
 
       {/* Schema Debugger (Dev Only) */}
-      <SchemaDebugger />
 
       {/* AI Chatbot - Hidden */}
       {/* <ChatBot /> */}
