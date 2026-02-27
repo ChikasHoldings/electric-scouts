@@ -3,6 +3,7 @@ import {
   sendEmail,
   APP_BASE_URL,
   LOGO_HEADER_URL,
+  LOGO_EMAIL_HEADER_URL,
 } from "./_lib/email.js";
 
 /**
@@ -119,7 +120,7 @@ export default async function handler(req, res) {
             
             <!-- Header -->
             <tr><td style="background-color:#0A5C8C;background:linear-gradient(135deg,#0A5C8C,#084a6f);padding:24px 30px;border-radius:12px 12px 0 0;text-align:center;">
-              <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="200" height="41" style="display:block;margin:0 auto;max-width:200px;height:auto;filter:brightness(0) invert(1);" />
+              <img src="${LOGO_EMAIL_HEADER_URL}" alt="Electric Scouts" width="200" height="42" style="display:block;margin:0 auto;max-width:200px;height:auto;" />
               <div style="font-size:14px;color:#ffffff;margin-top:8px;font-weight:600;">Your Bill Analysis Report</div>
             </td></tr>
 

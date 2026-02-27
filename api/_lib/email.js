@@ -10,6 +10,7 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim
 
 // Logo URLs (hosted on the live site)
 const LOGO_HEADER_URL = `${APP_BASE_URL}/images/logo-header.png`;
+const LOGO_EMAIL_HEADER_URL = `${APP_BASE_URL}/images/logo-email-header.png`;
 const FAVICON_URL = `${APP_BASE_URL}/android-chrome-512x512.png`;
 
 const supabase = createClient(
@@ -144,7 +145,7 @@ function baseLayout(content, recipientEmail) {
   <table cellpadding="0" cellspacing="0" width="100%">
     <tr>
       <td>
-        <img src="${LOGO_HEADER_URL}" alt="Electric Scouts" width="180" height="37" style="display:block;max-width:180px;height:auto;filter:brightness(0) invert(1);" />
+        <img src="${LOGO_EMAIL_HEADER_URL}" alt="Electric Scouts" width="200" height="42" style="display:block;max-width:200px;height:auto;" />
         <p style="margin:6px 0 0;color:#ffffff;font-size:13px;font-weight:600;">Smart Electricity Comparison</p>
       </td>
     </tr>
@@ -344,4 +345,4 @@ export async function sendEmail({ to, subject, html, idempotencyKey, eventType, 
 
 // ─── Exports ────────────────────────────────────────────────────────
 
-export { supabase, ADMIN_EMAILS, APP_BASE_URL, FROM_EMAIL, LOGO_HEADER_URL, FAVICON_URL };
+export { supabase, ADMIN_EMAILS, APP_BASE_URL, FROM_EMAIL, LOGO_HEADER_URL, LOGO_EMAIL_HEADER_URL, FAVICON_URL };
