@@ -6,14 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
 import {
   User,
   Shield,
   Bell,
   Save,
   Loader2,
-  CheckCircle,
-  AlertCircle,
   Eye,
   EyeOff,
   Mail,
@@ -31,9 +30,9 @@ const TABS = [
 
 export default function AdminSettings() {
   const { user, profile } = useAuth();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("profile");
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState(null);
 
   // Profile state
   const [fullName, setFullName] = useState(profile?.full_name || "");
@@ -68,11 +67,6 @@ export default function AdminSettings() {
     }
   }, [profile]);
 
-  const showMessage = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage(null), 5000);
-  };
-
   const handleProfileSave = async () => {
     setSaving(true);
     try {
@@ -86,9 +80,9 @@ export default function AdminSettings() {
         .eq("id", user.id);
 
       if (error) throw error;
-      showMessage("success", "Profile updated successfully.");
+      toast({ title: "Profile updated", description: "Your profile has been saved successfully." });
     } catch (err) {
-      showMessage("error", err.message || "Failed to update profile.");
+      toast({ title: "Error", description: err.message || "Failed to update profile.", variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -108,24 +102,23 @@ export default function AdminSettings() {
 
   const handlePasswordChange = async () => {
     if (!currentPassword) {
-      showMessage("error", "Please enter your current password.");
+      toast({ title: "Error", description: "Please enter your current password.", variant: "destructive" });
       return;
     }
     if (!newPassword || !confirmPassword) {
-      showMessage("error", "Please fill in all password fields.");
+      toast({ title: "Error", description: "Please fill in all password fields.", variant: "destructive" });
       return;
     }
     if (!allPasswordChecksPass) {
-      showMessage("error", "Please ensure all password requirements are met.");
+      toast({ title: "Error", description: "Please ensure all password requirements are met.", variant: "destructive" });
       return;
     }
 
     setPasswordChanging(true);
     try {
-      // Get the current session token
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        showMessage("error", "Session expired. Please log in again.");
+        toast({ title: "Session expired", description: "Please log in again.", variant: "destructive" });
         return;
       }
 
@@ -148,12 +141,12 @@ export default function AdminSettings() {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        showMessage("success", "Password updated successfully.");
+        toast({ title: "Password updated", description: "Your password has been changed successfully." });
       } else {
-        showMessage("error", data.error || "Failed to update password.");
+        toast({ title: "Error", description: data.error || "Failed to update password.", variant: "destructive" });
       }
     } catch (err) {
-      showMessage("error", "Network error. Please try again.");
+      toast({ title: "Network error", description: "Please try again.", variant: "destructive" });
     } finally {
       setPasswordChanging(false);
     }
@@ -176,9 +169,9 @@ export default function AdminSettings() {
         .eq("id", user.id);
 
       if (error) throw error;
-      showMessage("success", "Notification preferences saved.");
+      toast({ title: "Preferences saved", description: "Notification preferences updated successfully." });
     } catch (err) {
-      showMessage("error", err.message || "Failed to save preferences.");
+      toast({ title: "Error", description: err.message || "Failed to save preferences.", variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -209,16 +202,6 @@ export default function AdminSettings() {
         <h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
         <p className="text-sm text-gray-500 mt-1">Manage your profile, security, and notification preferences.</p>
       </div>
-
-      {/* Status message */}
-      {message && (
-        <div className={`mb-4 flex items-center gap-2 px-4 py-3 rounded-lg text-sm ${
-          message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"
-        }`}>
-          {message.type === "success" ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-          {message.text}
-        </div>
-      )}
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1">

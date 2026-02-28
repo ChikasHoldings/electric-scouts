@@ -218,7 +218,7 @@ export default function AdminLayout({ children }) {
       {/* Main content */}
       <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
         {/* Top bar with avatar dropdown */}
-        <div className="hidden lg:flex items-center justify-between bg-white border-b border-gray-200 px-8 py-4">
+        <div className="hidden lg:flex items-center justify-between bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-30">
           <div>
             <h1 className="text-xl font-bold text-gray-900">{currentPage.label}</h1>
             <p className="text-sm text-gray-500">
