@@ -129,13 +129,14 @@ export default function AdminSettings() {
         return;
       }
 
-      const resp = await fetch("/api/admin/change-password", {
+      const resp = await fetch("/api/admin/manage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
+          action: "change-password",
           current_password: currentPassword,
           new_password: newPassword,
         }),

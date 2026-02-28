@@ -179,13 +179,14 @@ export default function AdminUsers() {
         return;
       }
 
-      const resp = await fetch("/api/admin/create-user", {
+      const resp = await fetch("/api/admin/manage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
+          action: "create-user",
           email: createForm.email.trim(),
           full_name: createForm.full_name.trim(),
           password: createForm.password,
