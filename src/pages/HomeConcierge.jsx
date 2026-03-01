@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ConciergeRequest } from "@/api/supabaseEntities";
+import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -60,31 +60,38 @@ export default function HomeConcierge() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await ConciergeRequest.create({
-        full_name: formData.full_name,
-        email: formData.email,
-        phone: formData.phone || null,
-        new_address: formData.new_address,
-        city: formData.city || null,
-        state: formData.state || null,
-        zip_code: formData.zip_code,
-        move_in_date: formData.move_in_date || null,
-        property_type: formData.property_type,
-        services_requested: formData.services_requested,
-        electricity_preference: formData.electricity_preference,
-        internet_speed: formData.internet_speed,
-        monthly_budget: formData.monthly_budget || null,
-        wants_home_security: formData.wants_home_security,
-        wants_home_insurance: formData.wants_home_insurance,
-        wants_moving_service: formData.wants_moving_service,
-        wants_home_warranty: formData.wants_home_warranty,
-        special_instructions: formData.special_instructions || null,
-        status: "new",
-        source: "website",
-      });
+      // Use supabase client directly with just .insert() — no .select().single()
+      // The entity .create() method chains .select().single() after insert, which
+      // triggers a SELECT query that can fail for anonymous users due to RLS policies.
+      const { error } = await supabase
+        .from('concierge_requests')
+        .insert({
+          full_name: formData.full_name,
+          email: formData.email,
+          phone: formData.phone || null,
+          new_address: formData.new_address,
+          city: formData.city || null,
+          state: formData.state || null,
+          zip_code: formData.zip_code,
+          move_in_date: formData.move_in_date || null,
+          property_type: formData.property_type,
+          services_requested: formData.services_requested,
+          electricity_preference: formData.electricity_preference,
+          internet_speed: formData.internet_speed,
+          monthly_budget: formData.monthly_budget || null,
+          wants_home_security: formData.wants_home_security,
+          wants_home_insurance: formData.wants_home_insurance,
+          wants_moving_service: formData.wants_moving_service,
+          wants_home_warranty: formData.wants_home_warranty,
+          special_instructions: formData.special_instructions || null,
+          status: 'new',
+          source: 'website',
+        });
+      if (error) throw error;
       setStep(5);
       toast({ title: "Request submitted!", description: "We'll be in touch within 24 hours." });
     } catch (err) {
+      console.error('Concierge submit error:', err);
       toast({ title: "Error", description: "Something went wrong. Please try again.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);

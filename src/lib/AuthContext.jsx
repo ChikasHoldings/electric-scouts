@@ -16,15 +16,15 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let isMounted = true;
 
-    // Safety timeout — if auth hasn't resolved in 10 seconds, force loading to false
-    // This prevents the entire site from being stuck on a loading spinner
+    // Safety timeout — if auth hasn't resolved in 3 seconds, force loading to false
+    // This prevents admin pages from being stuck on a loading spinner
     const safetyTimer = setTimeout(() => {
       if (isMounted && !authResolved.current) {
         console.warn('Auth loading safety timeout reached — forcing resolution');
         authResolved.current = true;
         setIsLoadingAuth(false);
       }
-    }, 10000);
+    }, 3000);
 
     // Listen for auth state changes (login, logout, token refresh, initial session)
     // In Supabase v2, onAuthStateChange fires INITIAL_SESSION immediately with the

@@ -7,8 +7,7 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { AuthProvider } from '@/lib/AuthContext';
 import { createPageUrl } from '@/utils';
 import ProviderDetailsPage from '@/pages/ProviderDetails';
 
@@ -44,33 +43,12 @@ const AdminLoading = () => (
   </div>
 );
 
-const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
-
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
-  }
-
-  // Render the main app with both public and admin routes
+// The main app component — public pages render immediately without waiting for auth.
+// Only admin routes (wrapped in AdminRoute) wait for auth to resolve.
+const AppRoutes = () => {
   return (
     <Routes>
-      {/* ── Admin Routes (lazy-loaded) ── */}
+      {/* ── Admin Routes (lazy-loaded, auth-gated by AdminRoute) ── */}
       <Route path="/admin/login" element={
         <Suspense fallback={<AdminLoading />}>
           <AdminLogin />
@@ -132,7 +110,7 @@ const AuthenticatedApp = () => {
         </Suspense>
       } />
 
-      {/* ── Public Routes ── */}
+      {/* ── Public Routes (render immediately, no auth gate) ── */}
       <Route path="/providers/:slug" element={
         <LayoutWrapper currentPageName="ProviderDetails">
           <ProviderDetailsPage />
@@ -191,7 +169,7 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <NavigationTracker />
-          <AuthenticatedApp />
+          <AppRoutes />
         </Router>
         <Toaster />
       </QueryClientProvider>
