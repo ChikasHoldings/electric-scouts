@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 const AuthContext = createContext();
@@ -8,60 +8,15 @@ export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [appPublicSettings, setAppPublicSettings] = useState({});
   const authResolved = useRef(false);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    // Safety timeout — if auth hasn't resolved in 3 seconds, force loading to false
-    // This prevents admin pages from being stuck on a loading spinner
-    const safetyTimer = setTimeout(() => {
-      if (isMounted && !authResolved.current) {
-        console.warn('Auth loading safety timeout reached — forcing resolution');
-        authResolved.current = true;
-        setIsLoadingAuth(false);
-      }
-    }, 3000);
-
-    // Listen for auth state changes (login, logout, token refresh, initial session)
-    // In Supabase v2, onAuthStateChange fires INITIAL_SESSION immediately with the
-    // restored session. We rely on this instead of a separate checkSession() call
-    // to avoid race conditions between the two.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!isMounted) return;
-
-        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
-          setUser(session.user);
-          setIsAuthenticated(true);
-          await fetchProfile(session.user.id);
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setProfile(null);
-          setIsAuthenticated(false);
-        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          setUser(session.user);
-        }
-
-        if (isMounted) {
-          authResolved.current = true;
-          setIsLoadingAuth(false);
-        }
-      }
-    );
-
-    return () => {
-      isMounted = false;
-      clearTimeout(safetyTimer);
-      subscription?.unsubscribe();
-    };
-  }, []);
-
-  const fetchProfile = async (userId) => {
+  const fetchProfile = useCallback(async (userId) => {
     try {
+      setIsLoadingProfile(true);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -77,8 +32,65 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Profile fetch error:', err);
+    } finally {
+      setIsLoadingProfile(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    // Safety timeout — if auth hasn't resolved in 8 seconds, force loading to false
+    // Increased from 3s to 8s to prevent race condition with profile fetch
+    const safetyTimer = setTimeout(() => {
+      if (isMounted && !authResolved.current) {
+        console.warn('Auth loading safety timeout reached — forcing resolution');
+        authResolved.current = true;
+        setIsLoadingAuth(false);
+        setIsLoadingProfile(false);
+      }
+    }, 8000);
+
+    // Listen for auth state changes (login, logout, token refresh, initial session)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!isMounted) return;
+
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
+          setUser(session.user);
+          setIsAuthenticated(true);
+          
+          // Mark auth as resolved BEFORE fetching profile
+          // This prevents the safety timer from interfering
+          authResolved.current = true;
+          setIsLoadingAuth(false);
+          
+          // Fetch profile separately — isLoadingProfile tracks this
+          await fetchProfile(session.user.id);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setProfile(null);
+          setIsAuthenticated(false);
+          authResolved.current = true;
+          setIsLoadingAuth(false);
+          setIsLoadingProfile(false);
+        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+          setUser(session.user);
+        } else if (event === 'INITIAL_SESSION' && !session) {
+          // No existing session
+          authResolved.current = true;
+          setIsLoadingAuth(false);
+          setIsLoadingProfile(false);
+        }
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      clearTimeout(safetyTimer);
+      subscription?.unsubscribe();
+    };
+  }, [fetchProfile]);
 
   const login = async (email, password) => {
     try {
@@ -88,6 +100,15 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       if (error) throw error;
+      
+      // After successful login, manually fetch profile immediately
+      // This ensures profile is available for redirect logic in AdminLogin
+      if (data?.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        await fetchProfile(data.user.id);
+      }
+      
       return data;
     } catch (error) {
       setAuthError({ type: 'login_failed', message: error.message });
@@ -197,6 +218,7 @@ export const AuthProvider = ({ children }) => {
       profile,
       isAuthenticated,
       isLoadingAuth,
+      isLoadingProfile,
       isLoadingPublicSettings,
       authError,
       appPublicSettings,

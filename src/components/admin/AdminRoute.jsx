@@ -19,7 +19,7 @@ const routePermissions = {
 };
 
 export default function AdminRoute({ children }) {
-  const { user, profile, isAuthenticated, isLoadingAuth } = useAuth();
+  const { user, profile, isAuthenticated, isLoadingAuth, isLoadingProfile } = useAuth();
   const location = useLocation();
 
   // Show loading while checking auth
@@ -37,6 +37,19 @@ export default function AdminRoute({ children }) {
   // Not logged in → redirect to admin login
   if (!isAuthenticated || !user) {
     return <Navigate to="/admin/login" replace />;
+  }
+
+  // Show loading while profile is being fetched
+  // This prevents the "Access Denied" flash when profile hasn't loaded yet
+  if (isLoadingProfile || (!profile && isAuthenticated)) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-gray-500">Loading profile...</p>
+        </div>
+      </div>
+    );
   }
 
   const userRole = profile?.role || "user";

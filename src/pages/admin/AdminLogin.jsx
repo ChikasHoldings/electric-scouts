@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Shield, Loader2, AlertCircle, Eye, EyeOff, ArrowLeft, CheckCircle, Mail, KeyRound } from "lucide-react";
 
 export default function AdminLogin() {
-  const { login, isAuthenticated, profile, isLoadingAuth } = useAuth();
+  const { login, isAuthenticated, profile, isLoadingAuth, isLoadingProfile } = useAuth();
   const navigate = useNavigate();
 
   // Login state
@@ -34,10 +34,10 @@ export default function AdminLogin() {
 
   // If already logged in as admin, redirect
   useEffect(() => {
-    if (!isLoadingAuth && isAuthenticated && ["admin", "editor", "viewer"].includes(profile?.role)) {
+    if (!isLoadingAuth && !isLoadingProfile && isAuthenticated && ["admin", "editor", "viewer"].includes(profile?.role)) {
       navigate("/admin", { replace: true });
     }
-  }, [isAuthenticated, profile, isLoadingAuth, navigate]);
+  }, [isAuthenticated, profile, isLoadingAuth, isLoadingProfile, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,9 +46,10 @@ export default function AdminLogin() {
 
     try {
       await login(email, password);
+      // login() now fetches profile before returning
+      // The useEffect above will handle the redirect once profile is set
     } catch (err) {
       setError(err.message || "Invalid email or password. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };
