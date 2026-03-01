@@ -1,10 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/send-follow-up",
-      "schedule": "0 14 * * *"
-    }
-  ],
   "rewrites": [
     { "source": "/go/:slug", "destination": "/api/go?slug=:slug" },
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
