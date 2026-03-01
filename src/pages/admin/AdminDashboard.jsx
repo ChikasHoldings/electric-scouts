@@ -6,7 +6,6 @@ import {
   ElectricityProvider,
   ElectricityPlan,
   Article,
-  CustomBusinessQuote,
   Profile,
 } from "@/api/supabaseEntities";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +14,6 @@ import {
   Building2,
   Zap,
   FileText,
-  MessageSquare,
   Users,
   TrendingUp,
   ArrowRight,
@@ -25,7 +23,6 @@ import {
   Loader2,
   Link2,
   MousePointerClick,
-  Upload,
   UserPlus,
   BarChart3,
 } from "lucide-react";
@@ -78,9 +75,17 @@ export default function AdminDashboard() {
     queryFn: () => Article.list(),
   });
 
-  const { data: quotes = [], isLoading: loadingQuotes } = useQuery({
-    queryKey: ["admin-quotes"],
-    queryFn: () => CustomBusinessQuote.list(),
+  // Leads query
+  const { data: leads = [], isLoading: loadingLeads } = useQuery({
+    queryKey: ["admin-dashboard-leads"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("leads")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      return data || [];
+    },
   });
 
   const { data: users = [], isLoading: loadingUsers } = useQuery({
@@ -137,16 +142,13 @@ export default function AdminDashboard() {
   });
 
   const isLoading =
-    loadingProviders || loadingPlans || loadingArticles || loadingQuotes || loadingUsers || loadingAffiliates;
+    loadingProviders || loadingPlans || loadingArticles || loadingLeads || loadingUsers || loadingAffiliates;
 
   const activeProviders = providers.filter((p) => p.is_active);
   const publishedArticles = articles.filter((a) => a.published);
-  const pendingQuotes = quotes.filter((q) => q.status === "pending" || q.status === "new");
-  const billUploads = quotes.filter((q) => q.bill_file_url);
-  const leadsCount = quotes.length;
-  const recentQuotes = quotes
-    .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
-    .slice(0, 5);
+  const newLeads = leads.filter((l) => l.status === "new");
+  const convertedLeads = leads.filter((l) => l.status === "converted");
+  const recentLeads = leads.slice(0, 5);
 
   if (isLoading) {
     return (
@@ -185,12 +187,12 @@ export default function AdminDashboard() {
           link="/admin/articles"
         />
         <StatCard
-          title="Quotes"
-          value={quotes.length}
-          subtitle={`${pendingQuotes.length} pending`}
-          icon={MessageSquare}
+          title="Leads"
+          value={leads.length}
+          subtitle={`${newLeads.length} new`}
+          icon={UserPlus}
           color="bg-purple-500"
-          link="/admin/quotes"
+          link="/admin/leads"
         />
         <StatCard
           title="Users"
@@ -226,33 +228,33 @@ export default function AdminDashboard() {
             link="/admin/affiliates"
           />
           <StatCard
-            title="Bill Uploads"
-            value={billUploads.length}
-            subtitle="Bills submitted for analysis"
-            icon={Upload}
+            title="Converted Leads"
+            value={convertedLeads.length}
+            subtitle={`${leads.length} total leads`}
+            icon={CheckCircle2}
             color="bg-indigo-500"
-            link="/admin/quotes"
+            link="/admin/leads"
           />
           <StatCard
-            title="Leads Captured"
-            value={leadsCount}
-            subtitle={`${pendingQuotes.length} awaiting response`}
-            icon={UserPlus}
+            title="New Leads"
+            value={newLeads.length}
+            subtitle="Awaiting follow-up"
+            icon={AlertCircle}
             color="bg-rose-500"
-            link="/admin/quotes"
+            link="/admin/leads"
           />
         </div>
       </div>
 
       {/* Three-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Business Quotes */}
+        {/* Recent Leads */}
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Recent Business Quotes</CardTitle>
+              <CardTitle className="text-lg">Recent Leads</CardTitle>
               <Link
-                to="/admin/quotes"
+                to="/admin/leads"
                 className="text-sm text-[#0A5C8C] hover:underline"
               >
                 View all
@@ -260,45 +262,45 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            {recentQuotes.length === 0 ? (
+            {recentLeads.length === 0 ? (
               <p className="text-sm text-gray-500 py-4 text-center">
-                No business quotes yet
+                No leads captured yet
               </p>
             ) : (
               <div className="space-y-3">
-                {recentQuotes.map((quote) => (
+                {recentLeads.map((lead) => (
                   <div
-                    key={quote.id}
+                    key={lead.id}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900 truncate">
-                        {quote.business_name || quote.contact_name || "Unknown"}
+                        {lead.name || lead.email || "Unknown"}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {quote.email} &middot; ZIP: {quote.zip_code}
+                        {lead.email}{lead.state ? ` · ${lead.state}` : ''}
                       </p>
                     </div>
                     <Badge
                       variant={
-                        quote.status === "completed"
+                        lead.status === "converted"
                           ? "default"
-                          : quote.status === "in_progress"
+                          : lead.status === "contacted"
                           ? "secondary"
                           : "outline"
                       }
                       className="ml-3 flex-shrink-0"
                     >
-                      {quote.status === "completed" && (
+                      {lead.status === "converted" && (
                         <CheckCircle2 className="w-3 h-3 mr-1" />
                       )}
-                      {quote.status === "in_progress" && (
+                      {lead.status === "contacted" && (
                         <Clock className="w-3 h-3 mr-1" />
                       )}
-                      {(quote.status === "pending" || quote.status === "new") && (
+                      {lead.status === "new" && (
                         <AlertCircle className="w-3 h-3 mr-1" />
                       )}
-                      {quote.status || "new"}
+                      {lead.status || "new"}
                     </Badge>
                   </div>
                 ))}
@@ -396,13 +398,13 @@ export default function AdminDashboard() {
 
               <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <MessageSquare className="w-5 h-5 text-purple-600" />
+                  <UserPlus className="w-5 h-5 text-purple-600" />
                   <span className="text-sm font-medium text-purple-900">
-                    Pending Quotes
+                    New Leads
                   </span>
                 </div>
                 <span className="text-lg font-bold text-purple-700">
-                  {pendingQuotes.length}
+                  {newLeads.length}
                 </span>
               </div>
 

@@ -1,6 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Star, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Dynamic time-ago calculation based on a base date offset from today
+function getTimeAgo(daysAgo) {
+  if (daysAgo <= 0) return "Today";
+  if (daysAgo === 1) return "Yesterday";
+  if (daysAgo < 7) return `${daysAgo} days ago`;
+  if (daysAgo < 14) return "1 week ago";
+  if (daysAgo < 30) return `${Math.floor(daysAgo / 7)} weeks ago`;
+  if (daysAgo < 60) return "1 month ago";
+  if (daysAgo < 365) return `${Math.floor(daysAgo / 30)} months ago`;
+  return `${Math.floor(daysAgo / 365)} year${Math.floor(daysAgo / 365) > 1 ? 's' : ''} ago`;
+}
 
 // Review Card Component
 function ReviewCard({ review }) {
@@ -11,7 +23,7 @@ function ReviewCard({ review }) {
       
       {/* Timestamp in top right */}
       <div className="absolute top-4 right-4">
-        <span className="text-xs text-gray-400 font-medium">{review.date}</span>
+        <span className="text-xs text-gray-400 font-medium">{review.displayDate}</span>
       </div>
 
       {/* Header with Profile */}
@@ -39,6 +51,9 @@ function ReviewCard({ review }) {
     </div>
   );
 }
+
+// Base date: Feb 25, 2026 — reviews are offset from this anchor
+const REVIEW_ANCHOR = new Date('2026-02-25T00:00:00');
 
 const allTestimonials = [
   // Texas
@@ -108,10 +123,21 @@ const allTestimonials = [
   { name: "Leo T.", location: "Elizabeth, NJ", rating: 5, text: "Saved me hours of calling different companies. Everything's in one spot. Picked a plan, done, paying less.", date: "5 days ago", timestamp: 5 },
 ];
 
-// Sort testimonials by timestamp (most recent first)
-const testimonials = [...allTestimonials].sort((a, b) => a.timestamp - b.timestamp);
+// Compute dynamic dates relative to today
+function computeTestimonials() {
+  const now = new Date();
+  const daysSinceAnchor = Math.floor((now - REVIEW_ANCHOR) / (1000 * 60 * 60 * 24));
+  return [...allTestimonials]
+    .map(t => ({
+      ...t,
+      displayDate: getTimeAgo(t.timestamp + daysSinceAnchor),
+      sortKey: t.timestamp + daysSinceAnchor,
+    }))
+    .sort((a, b) => a.sortKey - b.sortKey);
+}
 
 export default function TestimonialsSection() {
+  const testimonials = useMemo(() => computeTestimonials(), []);
   const [visibleCount, setVisibleCount] = useState(8);
   const visibleTestimonials = testimonials.slice(0, visibleCount);
   const hasMore = visibleCount < testimonials.length;

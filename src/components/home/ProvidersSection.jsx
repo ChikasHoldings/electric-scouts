@@ -23,7 +23,7 @@ export default function ProvidersSection() {
           Trusted by 50,000+ households — powered by top providers
         </motion.p>
         
-        <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10 lg:gap-14">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-8 sm:gap-6 lg:gap-10 items-center justify-items-center">
           {topProviders.map((logo, index) => (
             <motion.div
               key={index}
@@ -31,12 +31,12 @@ export default function ProvidersSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center w-full"
             >
               <img
                 src={logo.src}
                 alt={logo.alt}
-                className="h-8 sm:h-10 lg:h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                className="h-8 sm:h-10 lg:h-12 w-auto max-w-[120px] object-contain grayscale hover:grayscale-0 transition-all duration-300"
                 loading="lazy"
               />
             </motion.div>
