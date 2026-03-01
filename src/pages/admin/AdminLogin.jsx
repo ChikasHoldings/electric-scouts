@@ -46,8 +46,12 @@ export default function AdminLogin() {
 
     try {
       await login(email, password);
-      // login() now fetches profile before returning
-      // The useEffect above will handle the redirect once profile is set
+      // login() returns after signInWithPassword succeeds.
+      // onAuthStateChange will fire SIGNED_IN, fetch profile, and set it.
+      // The useEffect above will detect profile change and navigate to /admin.
+      // We keep isLoading=true so the button stays disabled during profile fetch.
+      // Safety: reset after 10s in case something goes wrong.
+      setTimeout(() => setIsLoading(false), 10000);
     } catch (err) {
       setError(err.message || "Invalid email or password. Please try again.");
       setIsLoading(false);

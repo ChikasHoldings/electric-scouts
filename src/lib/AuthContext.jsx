@@ -13,8 +13,13 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
   const [appPublicSettings, setAppPublicSettings] = useState({});
   const authResolved = useRef(false);
+  const profileFetchInProgress = useRef(false);
 
   const fetchProfile = useCallback(async (userId) => {
+    // Prevent duplicate concurrent fetches
+    if (profileFetchInProgress.current) return;
+    profileFetchInProgress.current = true;
+    
     try {
       setIsLoadingProfile(true);
       const { data, error } = await supabase
@@ -34,22 +39,23 @@ export const AuthProvider = ({ children }) => {
       console.error('Profile fetch error:', err);
     } finally {
       setIsLoadingProfile(false);
+      profileFetchInProgress.current = false;
     }
   }, []);
 
   useEffect(() => {
     let isMounted = true;
 
-    // Safety timeout — if auth hasn't resolved in 8 seconds, force loading to false
-    // Increased from 3s to 8s to prevent race condition with profile fetch
+    // Safety timeout — if auth hasn't resolved in 10 seconds, force loading to false
     const safetyTimer = setTimeout(() => {
       if (isMounted && !authResolved.current) {
         console.warn('Auth loading safety timeout reached — forcing resolution');
         authResolved.current = true;
         setIsLoadingAuth(false);
         setIsLoadingProfile(false);
+        profileFetchInProgress.current = false;
       }
-    }, 8000);
+    }, 10000);
 
     // Listen for auth state changes (login, logout, token refresh, initial session)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -61,7 +67,6 @@ export const AuthProvider = ({ children }) => {
           setIsAuthenticated(true);
           
           // Mark auth as resolved BEFORE fetching profile
-          // This prevents the safety timer from interfering
           authResolved.current = true;
           setIsLoadingAuth(false);
           
@@ -100,15 +105,7 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       if (error) throw error;
-      
-      // After successful login, manually fetch profile immediately
-      // This ensures profile is available for redirect logic in AdminLogin
-      if (data?.user) {
-        setUser(data.user);
-        setIsAuthenticated(true);
-        await fetchProfile(data.user.id);
-      }
-      
+      // onAuthStateChange will fire SIGNED_IN and handle profile fetch
       return data;
     } catch (error) {
       setAuthError({ type: 'login_failed', message: error.message });
