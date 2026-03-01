@@ -10,7 +10,6 @@ import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, File
 import ValidatedZipInput from "./components/ValidatedZipInput";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ChatBot from "./components/ChatBot";
-import EmailCapture from "./components/EmailCapture";
 
 const topStates = [
   { name: "Texas", code: "TX", page: "TexasElectricity" },
@@ -460,28 +459,7 @@ export default function Layout({ children, currentPageName }) {
         {children}
       </main>
 
-      {/* Email Capture - Inline before footer (only on non-admin, non-compare pages) */}
-      {!location.pathname.startsWith('/admin') && 
-       !location.pathname.includes('compare-rates') && 
-       !location.pathname.includes('business-compare') && 
-       !location.pathname.includes('renewable-compare') && (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <EmailCapture 
-            variant="inline" 
-            source="newsletter_footer" 
-            sourcePage={currentPageName || 'homepage'}
-          />
-        </div>
-      )}
 
-      {/* Slide-up Email Capture (only on content pages) */}
-      {!location.pathname.startsWith('/admin') && (
-        <EmailCapture 
-          variant="slide-up" 
-          source="newsletter_slideup" 
-          sourcePage={currentPageName || 'homepage'}
-        />
-      )}
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white relative overflow-hidden">
