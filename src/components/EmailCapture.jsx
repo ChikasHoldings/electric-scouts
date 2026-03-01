@@ -134,17 +134,17 @@ export default function EmailCapture({
   // ── Inline Variant ──
   if (variant === 'inline') {
     return (
-      <div className="bg-gradient-to-br from-[#f0f7fc] to-[#e8f4f8] border border-[#0A5C8C]/10 rounded-2xl p-6 sm:p-8">
+      <div className="bg-gradient-to-br from-[#f0f7fc] to-[#e8f4f8] border border-[#0A5C8C]/10 rounded-xl p-4 sm:p-6">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-[#0A5C8C]/10 text-[#0A5C8C] text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+          <div className="inline-flex items-center gap-1.5 bg-[#0A5C8C]/10 text-[#0A5C8C] text-[10px] font-semibold px-2.5 py-1 rounded-full mb-2.5">
             <Zap className="w-3.5 h-3.5" />
             <span>Save Up to $800/Year</span>
           </div>
           
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5">
             Get Personalized Savings Tips
           </h3>
-          <p className="text-sm sm:text-base text-gray-600 mb-6 max-w-lg mx-auto">
+          <p className="text-xs sm:text-sm text-gray-600 mb-4 max-w-lg mx-auto">
             Join thousands of homeowners saving on electricity. We'll send you the best rates for your area — no spam, just savings.
           </p>
 
@@ -155,7 +155,7 @@ export default function EmailCapture({
                 placeholder="First name"
                 value={name}
                 onChange={(e) => { setName(e.target.value); setError(''); }}
-                className="flex-1 h-12 px-4 text-base border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#0A5C8C] focus:ring-2 focus:ring-[#0A5C8C]/20 transition-colors"
+                className="flex-1 h-10 px-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#0A5C8C] focus:ring-2 focus:ring-[#0A5C8C]/20 transition-colors"
                 disabled={submitting}
               />
               <div className="flex-[2] relative">
@@ -165,7 +165,7 @@ export default function EmailCapture({
                   placeholder="Your email address"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                  className="w-full h-12 pl-10 pr-4 text-base border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#0A5C8C] focus:ring-2 focus:ring-[#0A5C8C]/20 transition-colors"
+                  className="w-full h-10 pl-9 pr-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#0A5C8C] focus:ring-2 focus:ring-[#0A5C8C]/20 transition-colors"
                   required
                   disabled={submitting}
                 />
@@ -173,7 +173,7 @@ export default function EmailCapture({
               <button
                 type="submit"
                 disabled={submitting || !email}
-                className="h-12 px-6 bg-[#0A5C8C] hover:bg-[#084a6f] text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                className="h-10 px-5 bg-[#0A5C8C] hover:bg-[#084a6f] text-white font-semibold text-sm rounded-lg transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 {submitting ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

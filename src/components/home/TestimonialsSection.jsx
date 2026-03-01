@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 // Review Card Component
 function ReviewCard({ review }) {
   return (
-    <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 group hover:-translate-y-1 relative overflow-hidden touch-manipulation">
+    <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 group hover:-translate-y-0.5 relative overflow-hidden touch-manipulation">
       {/* Decorative gradient bar */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
       
@@ -15,8 +15,8 @@ function ReviewCard({ review }) {
       </div>
 
       {/* Header with Profile */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-md">
+      <div className="flex items-center gap-2.5 mb-2.5">
+        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
           {review.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0 pr-16">
@@ -26,14 +26,14 @@ function ReviewCard({ review }) {
       </div>
 
       {/* Star Rating */}
-      <div className="flex gap-1 mb-4">
+      <div className="flex gap-0.5 mb-2.5">
         {[...Array(5)].map((_, i) =>
-        <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+        <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
         )}
       </div>
 
       {/* Review Text */}
-      <p className="text-sm text-gray-700 leading-relaxed line-clamp-4">
+      <p className="text-xs text-gray-700 leading-relaxed line-clamp-4">
         "{review.text}"
       </p>
     </div>);
@@ -168,28 +168,28 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="bg-slate-50 py-12 sm:py-16 lg:py-20">
+    <section className="bg-slate-50 py-8 sm:py-10 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-10">
+        <div className="text-center mb-5 sm:mb-6">
           <div className="inline-flex items-center gap-2 bg-white rounded-full px-3 sm:px-4 py-2 shadow-md border border-gray-200 mb-4">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
               ))}
             </div>
-            <span className="text-sm font-bold text-gray-900">4.8</span>
+            <span className="text-xs font-bold text-gray-900">4.8</span>
             <span className="text-gray-400">•</span>
             <span className="text-xs text-gray-600 font-medium">2,500+ Reviews</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#084a6f] mb-2 px-4">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#084a6f] mb-1.5 px-4">
             Real People. Real Bills. Real Savings.
           </h2>
-          <p className="text-sm text-gray-600 px-4">Every review is from a verified customer who used Electric Scouts to lower their electricity bill.</p>
+          <p className="text-xs text-gray-600 px-4">Every review is from a verified customer who used Electric Scouts to lower their electricity bill.</p>
         </div>
 
         {/* Reviews Grid - Mobile optimized */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5 sm:mb-6">
           {visibleTestimonials.map((review, index) => (
             <ReviewCard key={index} review={review} />
           ))}
