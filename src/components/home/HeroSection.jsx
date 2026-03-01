@@ -8,7 +8,7 @@ import ValidatedZipInput from "../ValidatedZipInput";
 export default function HeroSection({ zipCode, setZipCode }) {
   const [isZipValid, setIsZipValid] = useState(false);
   return (
-    <section className="bg-slate-50 pt-10 pb-24 relative overflow-hidden sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-16">
+    <section className="bg-slate-50 py-16 relative overflow-hidden sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-16">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
