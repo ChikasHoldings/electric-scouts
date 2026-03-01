@@ -83,9 +83,9 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
               {/* Right: Form */}
               <div className="lg:w-7/12">
                 <form onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {/* First Name */}
-                    <div className="relative col-span-1">
+                  {/* Row 1: First Name + ZIP Code */}
+                  <div className="grid grid-cols-2 gap-2.5 mb-2.5">
+                    <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
@@ -95,9 +95,7 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
                         className="w-full pl-9 pr-3 py-3 bg-white/95 border border-white/20 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all"
                       />
                     </div>
-
-                    {/* ZIP Code */}
-                    <div className="relative col-span-1">
+                    <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
@@ -112,9 +110,11 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
                         className="w-full pl-9 pr-3 py-3 bg-white/95 border border-white/20 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all"
                       />
                     </div>
+                  </div>
 
-                    {/* Email - full width on mobile */}
-                    <div className="relative col-span-2 sm:col-span-1">
+                  {/* Row 2: Email + Get Alerts Button */}
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="email"
@@ -124,12 +124,10 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
                         className="w-full pl-9 pr-3 py-3 bg-white/95 border border-white/20 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all"
                       />
                     </div>
-
-                    {/* Submit Button */}
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 px-5 rounded-lg text-sm whitespace-nowrap transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 px-5 rounded-lg text-sm whitespace-nowrap transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
