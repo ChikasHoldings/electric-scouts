@@ -129,6 +129,9 @@ export default function RenewableCompareRates() {
   // Get current state from ZIP code
   const currentStateCode = zipCode ? getStateFromZip(zipCode) : null;
 
+  // Debug logging
+  console.log('[RENEWABLE DEBUG] allPlans count:', allPlans.length, 'currentStateCode:', currentStateCode, 'availableProviders:', availableProviders.length, availableProviders.map(p => p.name));
+
   // Filter plans for renewable energy only (>= 90% renewable) with state filtering
   const renewablePlans = allPlans.filter(plan => {
     const providerName = plan.provider_name;
