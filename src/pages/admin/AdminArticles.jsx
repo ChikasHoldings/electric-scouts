@@ -64,12 +64,11 @@ const emptyArticle = {
   excerpt: "",
   content: "",
   featured_image: "",
-  author: "Electric Scouts Team",
+  author_name: "ElectricScouts Team",
   published: false,
   tags: [],
-  meta_title: "",
   meta_description: "",
-  reading_time_minutes: 5,
+  read_time: "5 min",
 };
 
 function generateSlug(title) {
@@ -161,7 +160,7 @@ export default function AdminArticles() {
     const data = {
       ...form,
       tags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
-      reading_time_minutes: parseInt(form.reading_time_minutes) || 5,
+      read_time: (parseInt(form.read_time) || 5) + " min",
       slug: form.slug || generateSlug(form.title),
     };
 
@@ -169,6 +168,7 @@ export default function AdminArticles() {
     delete data.id;
     delete data.created_date;
     delete data.updated_date;
+    delete data.meta_title;
 
     if (editingArticle) {
       updateMutation.mutate({ id: editingArticle.id, data });
@@ -298,7 +298,7 @@ export default function AdminArticles() {
                         <Badge variant="outline">{article.category || "General"}</Badge>
                       </TableCell>
                       <TableCell className="text-sm text-gray-600">
-                        {article.author || "—"}
+                        {article.author_name || "—"}
                       </TableCell>
                       <TableCell>
                         <button
@@ -429,8 +429,8 @@ export default function AdminArticles() {
               <div className="space-y-2">
                 <Label>Author</Label>
                 <Input
-                  value={form.author || ""}
-                  onChange={(e) => setForm({ ...form, author: e.target.value })}
+                  value={form.author_name || ""}
+                  onChange={(e) => setForm({ ...form, author_name: e.target.value })}
                   placeholder="Electric Scouts Team"
                 />
               </div>
@@ -442,8 +442,8 @@ export default function AdminArticles() {
                 <Input
                   type="number"
                   min="1"
-                  value={form.reading_time_minutes || ""}
-                  onChange={(e) => setForm({ ...form, reading_time_minutes: e.target.value })}
+                  value={form.read_time || ""}
+                  onChange={(e) => setForm({ ...form, read_time: e.target.value })}
                   placeholder="5"
                 />
               </div>
@@ -455,15 +455,6 @@ export default function AdminArticles() {
                   placeholder="solar, savings, texas"
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Meta Title (SEO)</Label>
-              <Input
-                value={form.meta_title || ""}
-                onChange={(e) => setForm({ ...form, meta_title: e.target.value })}
-                placeholder="Custom title for search engines..."
-              />
             </div>
 
             <div className="space-y-2">
