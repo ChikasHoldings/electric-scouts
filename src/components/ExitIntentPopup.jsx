@@ -142,11 +142,11 @@ export default function ExitIntentPopup() {
                   </div>
 
                   {/* Illustration */}
-                  <div className="flex-1 flex items-center justify-center py-4">
+                  <div className="flex-1 flex items-center justify-center py-2">
                     <img
                       src={popupImage}
                       alt="Save on electricity"
-                      className="w-full max-w-[220px] h-auto object-contain drop-shadow-lg"
+                      className="w-full max-w-[280px] h-auto object-contain drop-shadow-lg"
                     />
                   </div>
 
