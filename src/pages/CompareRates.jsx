@@ -248,6 +248,8 @@ export default function CompareRates() {
       return [];
     }
 
+    // Determine the state code from the current ZIP
+    const currentStateCode = zipCode ? getStateFromZip(zipCode) : null;
 
     const filtered = plans.filter(plan => {
       const providerName = plan.provider_name;
@@ -260,6 +262,13 @@ export default function CompareRates() {
       const customerType = (plan.customer_type || '').toLowerCase();
       if (customerType === 'business' || (planName && planName.toLowerCase().includes('business'))) {
         return false;
+      }
+      
+      // Filter by state - only show plans for the user's state
+      if (currentStateCode && plan.state) {
+        if (plan.state !== currentStateCode) {
+          return false;
+        }
       }
       
       // Filter by provider availability for current ZIP
