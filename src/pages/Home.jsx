@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import ValidatedZipInput from "../components/ValidatedZipInput";
 import SEOHead, { getOrganizationSchema, getServiceSchema } from "../components/SEOHead";
@@ -55,9 +55,9 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Find Your Best Electricity Rate | Electric Scouts - Smart Energy Comparison"
-        description="Your smart guide to lower electricity bills. Electric Scouts searches 40+ energy providers across TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT to find the plan that fits your home or business. Fixed, variable, and green plans — all in one place. Free, fast, unbiased."
-        keywords="compare electricity rates, best electricity rates, electricity providers, energy comparison, electricity plans, power companies, cheap electricity, fixed rate electricity, variable rate plans, renewable energy plans, electricity rates by zip code, switch electricity provider, deregulated electricity markets"
+        title="Electric Scouts | Stop Overpaying for Electricity — We'll Prove It"
+        description="Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from 40+ providers across 12 states. Free Bill Analyzer included."
+        keywords="compare electricity rates, bill analyzer, electricity providers, energy comparison, electricity plans, power companies, cheap electricity, fixed rate electricity, variable rate plans, renewable energy plans, electricity rates by zip code, switch electricity provider, deregulated electricity markets, electricity bill analysis"
         canonical="/"
         structuredData={structuredData}
       />
@@ -77,37 +77,41 @@ export default function Home() {
               <div className="grid md:grid-cols-2">
                 <div className="bg-gradient-to-br from-[#0A5C8C] to-[#084a6f] p-6 sm:p-8 lg:p-10 text-white flex flex-col justify-center">
                   <h2 className="text-xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
-                    Ready to Cut Your Electricity Bill?
+                    Your Next Bill Could Be $67 Lower
                   </h2>
-                  <p className="text-sm sm:text-lg opacity-90 mb-4 sm:mb-6">
-                    See real plans from real providers in under 60 seconds
+                  <p className="text-sm sm:text-base opacity-90 mb-4 sm:mb-6">
+                    That's the average monthly savings our customers see after switching. The only question is — how much are you leaving on the table?
                   </p>
                   <ul className="space-y-2.5 sm:space-y-3">
                     <li className="flex items-center gap-2.5 sm:gap-3">
                       <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Instant comparison results</span>
+                      <span className="text-sm sm:text-base">Personalized top 10 plan matches</span>
                     </li>
                     <li className="flex items-center gap-2.5 sm:gap-3">
                       <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Save up to $800/year</span>
+                      <span className="text-sm sm:text-base">Free Bill Analyzer finds hidden fees</span>
                     </li>
                     <li className="flex items-center gap-2.5 sm:gap-3">
                       <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">100% free, no spam</span>
+                      <span className="text-sm sm:text-base">Switch in 5 minutes, power stays on</span>
+                    </li>
+                    <li className="flex items-center gap-2.5 sm:gap-3">
+                      <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                      <span className="text-sm sm:text-base">100% free — we never charge you</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-white p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
                   <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">
-                    Enter Your ZIP Code
+                    See What You Could Save
                   </h3>
                   <div className="space-y-5">
                     <div className="h-16 px-4 py-4 border-2 rounded-xl bg-white">
                       <ValidatedZipInput
                         value={zipCode}
                         onChange={handleZipChange}
-                        placeholder="Enter ZIP code"
+                        placeholder="Enter your ZIP code"
                         className="text-xl [&_input]:text-xl [&_input]:h-8 [&_input]:placeholder:text-gray-400"
                         onValidationChange={setIsZipValid}
                       />
@@ -117,12 +121,20 @@ export default function Home() {
                       <Button
                         className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-14 text-base font-bold touch-manipulation rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300"
                         disabled={!isZipValid}>
-                        Compare Rates Now
+                        Show Me My Rates
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
                     </Link>
+
+                    <div className="text-center">
+                      <Link to={createPageUrl("BillAnalyzer")} className="inline-flex items-center gap-2 text-[#0A5C8C] hover:text-[#FF6B35] text-sm font-semibold transition-colors">
+                        <FileText className="w-4 h-4" />
+                        Or upload your bill for a free analysis
+                      </Link>
+                    </div>
+
                     <p className="text-xs text-gray-500 text-center">
-                      Free comparison • No credit card required
+                      No credit card required &bull; No spam &bull; Takes 60 seconds
                     </p>
                   </div>
                 </div>

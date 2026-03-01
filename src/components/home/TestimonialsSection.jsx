@@ -183,9 +183,9 @@ export default function TestimonialsSection() {
             <span className="text-xs text-gray-600 font-medium">2,500+ Reviews</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#084a6f] mb-2 px-4">
-            What Our Customers Say
+            Real People. Real Bills. Real Savings.
           </h2>
-          <p className="text-sm text-gray-600 px-4">Real reviews from real people across 12 states</p>
+          <p className="text-sm text-gray-600 px-4">Every review is from a verified customer who used Electric Scouts to lower their electricity bill.</p>
         </div>
 
         {/* Reviews Grid - Mobile optimized */}

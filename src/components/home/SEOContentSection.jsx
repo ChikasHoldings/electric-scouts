@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { MapPin, Zap, Building, Leaf, TrendingDown, Shield, BookOpen } from "lucide-react";
+import { MapPin, Zap, Building, Leaf, TrendingDown, Shield, BookOpen, FileText } from "lucide-react";
 
 export default function SEOContentSection() {
   const states = [
@@ -28,11 +28,11 @@ export default function SEOContentSection() {
             Compare Electricity Rates Across 12 Deregulated States
           </h2>
           <p className="text-gray-600 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
-            Electric Scouts helps you find the best electricity plans from over 40 trusted providers. 
-            Whether you need a <Link to={createPageUrl("CompareRates") + "?planType=fixed"} className="text-[#0A5C8C] hover:underline font-medium">fixed-rate plan</Link> for price stability, 
-            a <Link to={createPageUrl("CompareRates") + "?planType=variable"} className="text-[#0A5C8C] hover:underline font-medium">variable-rate plan</Link> for flexibility, 
-            or a <Link to={createPageUrl("RenewableEnergy")} className="text-[#0A5C8C] hover:underline font-medium">100% renewable energy plan</Link>, 
-            we make it easy to compare and switch.
+            Electric Scouts gives you access to every available electricity plan in your area — from{" "}
+            <Link to={createPageUrl("CompareRates") + "?planType=fixed"} className="text-[#0A5C8C] hover:underline font-medium">fixed-rate plans</Link> that lock in your price, to{" "}
+            <Link to={createPageUrl("CompareRates") + "?planType=variable"} className="text-[#0A5C8C] hover:underline font-medium">variable-rate plans</Link> with no commitment, to{" "}
+            <Link to={createPageUrl("RenewableEnergy")} className="text-[#0A5C8C] hover:underline font-medium">100% renewable energy plans</Link> powered by wind and solar. Plus, our{" "}
+            <Link to={createPageUrl("BillAnalyzer")} className="text-[#FF6B35] hover:underline font-bold">Bill Analyzer</Link> shows you exactly where your money is going before you switch.
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export default function SEOContentSection() {
           </div>
           <div className="text-center mt-4">
             <Link to={createPageUrl("AllStates")} className="text-[#0A5C8C] hover:underline font-medium text-sm">
-              View All States &amp; Cities →
+              View All States &amp; Cities &rarr;
             </Link>
           </div>
         </div>
@@ -98,13 +98,14 @@ export default function SEOContentSection() {
               <p className="text-xs text-gray-500">100% renewable wind &amp; solar</p>
             </div>
           </Link>
-          <Link to={createPageUrl("BillAnalyzer")} className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-[#0A5C8C] hover:shadow-sm transition-all group">
+          <Link to={createPageUrl("BillAnalyzer")} className="flex items-center gap-3 p-4 border-2 border-[#FF6B35] rounded-lg hover:bg-orange-50 hover:shadow-md transition-all group relative">
+            <div className="absolute -top-2 -right-2 bg-[#FF6B35] text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Exclusive</div>
             <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-orange-200 transition-colors">
-              <TrendingDown className="w-5 h-5 text-[#FF6B35]" />
+              <FileText className="w-5 h-5 text-[#FF6B35]" />
             </div>
             <div>
               <p className="font-semibold text-gray-900 text-sm">Bill Analyzer</p>
-              <p className="text-xs text-gray-500">Upload your bill, find savings</p>
+              <p className="text-xs text-gray-500">Upload your bill, find hidden savings</p>
             </div>
           </Link>
         </div>
@@ -116,15 +117,21 @@ export default function SEOContentSection() {
             How to Compare Electricity Rates and Save Money
           </h3>
           <p className="leading-relaxed">
-            Comparing electricity rates is the most effective way to lower your energy bill. In deregulated electricity markets across Texas, Illinois, Ohio, Pennsylvania, New York, New Jersey, Maryland, Massachusetts, Maine, New Hampshire, Rhode Island, and Connecticut, consumers have the power to choose their electricity provider. This competition among providers means you can find rates significantly lower than your current plan.
+            In deregulated electricity markets across Texas, Illinois, Ohio, Pennsylvania, New York, New Jersey, Maryland, Massachusetts, Maine, New Hampshire, Rhode Island, and Connecticut, you have the legal right to choose your electricity provider. That means providers compete for your business — and the savings can be significant. The average Electric Scouts customer saves over $600 per year simply by switching to a better-matched plan.
           </p>
           <p className="leading-relaxed">
-            The average American household uses about 10,500 kWh of electricity per year. Even a small difference of 1-2 cents per kWh can translate to savings of $100-$200 annually. By using Electric Scouts to compare plans from providers like TXU Energy, Reliant Energy, Constellation, Direct Energy, and dozens more, you can find the best rate for your usage pattern and preferences.
+            What makes Electric Scouts different is our <strong>Bill Analyzer</strong> — a tool no other comparison site offers. Instead of guessing which plan might save you money, you can upload your current electricity bill and we'll break down every line item: your energy charge, delivery fees, taxes, and any hidden surcharges. Then we match you with plans that specifically address where you're overpaying. It's the difference between browsing a list and getting a personalized diagnosis.
           </p>
           <p className="leading-relaxed">
-            When comparing electricity plans, consider these key factors: the <strong>rate per kWh</strong> (the primary cost driver), <strong>contract length</strong> (longer contracts often offer lower rates), <strong>early termination fees</strong> (important if you may need to switch before the contract ends), <strong>renewable energy percentage</strong> (for environmentally conscious consumers), and <strong>monthly base charges</strong> (fixed fees added to every bill regardless of usage).
+            The average American household uses about 10,500 kWh of electricity per year. Even a difference of 1-2 cents per kWh translates to $100-$200 in annual savings. When you factor in eliminating unnecessary fees and finding the right contract structure for your situation, the total savings can reach $800 or more. Our platform compares plans from providers like TXU Energy, Constellation, Direct Energy, Rhythm Energy, and dozens more — ranking them by actual value to you, not by advertising spend.
+          </p>
+          <p className="leading-relaxed">
+            When evaluating electricity plans, the key factors to consider are: the <strong>rate per kWh</strong> (the primary cost driver), <strong>contract length</strong> (longer terms often mean lower rates), <strong>early termination fees</strong> (important if your plans might change), <strong>renewable energy content</strong> (for environmentally conscious households), and <strong>base charges</strong> (fixed monthly fees that appear regardless of usage). Electric Scouts displays all of this transparently so you can make an informed decision in minutes.
           </p>
           <div className="flex flex-wrap gap-3 mt-4">
+            <Link to={createPageUrl("BillAnalyzer")} className="inline-flex items-center gap-1 text-[#FF6B35] hover:underline font-medium text-sm">
+              <FileText className="w-4 h-4" /> Bill Analyzer
+            </Link>
             <Link to={createPageUrl("LearningCenter")} className="inline-flex items-center gap-1 text-[#0A5C8C] hover:underline font-medium text-sm">
               <BookOpen className="w-4 h-4" /> Learning Center
             </Link>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Star, Sparkles, CheckCircle, Shield, Users } from "lucide-react";
+import { Star, Sparkles, CheckCircle, Shield, Users, FileText, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ValidatedZipInput from "../ValidatedZipInput";
@@ -23,14 +23,14 @@ export default function HeroSection({ zipCode, setZipCode }) {
             {/* Main Headline with Gradient */}
             <div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#084a6f] leading-tight mb-3 sm:mb-5 tracking-tight">
-                Your Shortcut to{" "}
+                Stop Overpaying for{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A]">
-                  Lower Electricity Bills
+                  Electricity.
                 </span>
-                {" "}Starts Here
+                {" "}We'll Prove It.
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
-                Electric Scouts does the legwork — searching 40+ providers in 12 states so you get the rate you deserve. Enter your ZIP to start.
+                Upload your bill. We'll analyze it, show you exactly where you're losing money, and match you with a better plan in under 60 seconds. Exposed rates from 40+ providers across 12 states.
               </p>
             </div>
 
@@ -41,7 +41,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                   <ValidatedZipInput
                     value={zipCode}
                     onChange={setZipCode}
-                    placeholder="Enter ZIP code"
+                    placeholder="Enter your ZIP code"
                     className="text-xl sm:text-2xl [&_input]:text-xl [&_input]:sm:text-2xl [&_input]:h-8 [&_input]:sm:h-10 [&_input]:placeholder:text-gray-400"
                     onValidationChange={setIsZipValid}
                   />
@@ -51,10 +51,25 @@ export default function HeroSection({ zipCode, setZipCode }) {
                   className={`w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 text-lg sm:text-xl font-bold rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A] hover:from-[#e55a2b] hover:to-[#e6703f] text-white shadow-lg hover:shadow-xl transition-all duration-300 touch-manipulation active:scale-95 ${!isZipValid ? 'opacity-50 pointer-events-none' : ''}`}
                   onClick={(e) => { if (!isZipValid) e.preventDefault(); }}
                 >
-                  Compare Now
+                  See My Rates
                 </Link>
               </div>
             </div>
+
+            {/* Bill Analyzer Callout */}
+            <Link 
+              to={createPageUrl("BillAnalyzer")}
+              className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl px-4 py-3 hover:shadow-md transition-all duration-300 group"
+            >
+              <div className="w-10 h-10 bg-[#FF6B35] rounded-lg flex items-center justify-center flex-shrink-0">
+                <FileText className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-gray-900">Have a bill? Upload it for a free analysis.</p>
+                <p className="text-xs text-gray-600">Our Bill Analyzer finds hidden charges other tools miss.</p>
+              </div>
+              <ArrowRight className="w-5 h-5 text-[#FF6B35] group-hover:translate-x-1 transition-transform" />
+            </Link>
 
             {/* Social Proof */}
             <div className="flex items-center gap-3 sm:gap-4">
@@ -72,7 +87,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                   ))}
                   <span className="text-gray-500 font-medium ml-1 text-xs sm:text-sm">4.8/5</span>
                 </div>
-                <p className="text-gray-600 text-xs sm:text-sm font-medium leading-tight">Trusted by <span className="text-[#084a6f] font-bold">50,000+</span> households saving an avg of <span className="text-[#FF6B35] font-bold">$600/yr</span></p>
+                <p className="text-gray-600 text-xs sm:text-sm font-medium leading-tight">Joined by <span className="text-[#084a6f] font-bold">50,000+</span> households saving an avg of <span className="text-[#FF6B35] font-bold">$600/yr</span></p>
               </div>
             </div>
 
@@ -84,14 +99,14 @@ export default function HeroSection({ zipCode, setZipCode }) {
                 </div>
                 <span className="font-semibold text-xs sm:text-sm leading-tight">Instant<br className="sm:hidden" /> Results</span>
               </div>
-              <span className="text-gray-300 hidden lg:inline">•</span>
+              <span className="text-gray-300 hidden lg:inline">&bull;</span>
               <div className="flex flex-col sm:flex-row items-center sm:gap-2 text-center sm:text-left">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mb-1.5 sm:mb-0">
                   <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                 </div>
                 <span className="font-semibold text-xs sm:text-sm leading-tight">100%<br className="sm:hidden" /> Free</span>
               </div>
-              <span className="text-gray-300 hidden lg:inline">•</span>
+              <span className="text-gray-300 hidden lg:inline">&bull;</span>
               <div className="flex flex-col sm:flex-row items-center sm:gap-2 text-center sm:text-left">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mb-1.5 sm:mb-0">
                   <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
