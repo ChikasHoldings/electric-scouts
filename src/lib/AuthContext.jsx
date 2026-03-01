@@ -14,6 +14,8 @@ export const AuthProvider = ({ children }) => {
   const [appPublicSettings, setAppPublicSettings] = useState({});
   const authResolved = useRef(false);
   const profileFetchInProgress = useRef(false);
+  // Store the userId that needs a profile fetch — triggered by a separate useEffect
+  const [pendingProfileUserId, setPendingProfileUserId] = useState(null);
 
   const fetchProfile = useCallback(async (userId) => {
     // Prevent duplicate concurrent fetches
@@ -43,6 +45,14 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Separate useEffect to handle profile fetching — avoids deadlock with onAuthStateChange
+  useEffect(() => {
+    if (pendingProfileUserId) {
+      fetchProfile(pendingProfileUserId);
+      setPendingProfileUserId(null);
+    }
+  }, [pendingProfileUserId, fetchProfile]);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -59,19 +69,21 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for auth state changes (login, logout, token refresh, initial session)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!isMounted) return;
 
         if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
           setUser(session.user);
           setIsAuthenticated(true);
+          setIsLoadingProfile(true); // Set loading immediately so UI shows loading state
           
-          // Mark auth as resolved BEFORE fetching profile
+          // Mark auth as resolved
           authResolved.current = true;
           setIsLoadingAuth(false);
           
-          // Fetch profile separately — isLoadingProfile tracks this
-          await fetchProfile(session.user.id);
+          // Trigger profile fetch via state change — NOT inside this callback
+          // This avoids a deadlock where supabase.from() waits for onAuthStateChange to return
+          setPendingProfileUserId(session.user.id);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setProfile(null);
