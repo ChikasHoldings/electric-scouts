@@ -11,7 +11,6 @@ const routePermissions = {
   "/admin/business-plans": ["admin", "editor"],
   "/admin/renewable-plans": ["admin", "editor"],
   "/admin/articles": ["admin", "editor"],
-  "/admin/quotes": ["admin", "editor"],
   "/admin/users": ["admin"],
   "/admin/affiliates": ["admin"],
   "/admin/concierge": ["admin", "editor"],

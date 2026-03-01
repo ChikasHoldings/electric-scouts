@@ -18,7 +18,6 @@ const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
 const AdminProviders = lazy(() => import('@/pages/admin/AdminProviders'));
 const AdminPlans = lazy(() => import('@/pages/admin/AdminPlans'));
 const AdminArticles = lazy(() => import('@/pages/admin/AdminArticles'));
-const AdminQuotes = lazy(() => import('@/pages/admin/AdminQuotes'));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
 const AdminAffiliates = lazy(() => import('@/pages/admin/AdminAffiliates'));
 const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
@@ -83,11 +82,6 @@ const AppRoutes = () => {
       <Route path="/admin/articles" element={
         <Suspense fallback={<AdminLoading />}>
           <AdminRoute><AdminArticles /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/quotes" element={
-        <Suspense fallback={<AdminLoading />}>
-          <AdminRoute><AdminQuotes /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/users" element={

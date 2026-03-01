@@ -6,7 +6,6 @@ import {
   Building2,
   FileText,
   Zap,
-  MessageSquare,
   Users,
   LogOut,
   Menu,
@@ -21,22 +20,22 @@ import {
   Building,
   Leaf,
   Home,
+  UserCheck,
 } from "lucide-react";
 
-// Each nav item has a `roles` array defining which roles can see it.
+// Sidebar nav items ordered by business importance.
 // "admin" = full access, "editor" = content management, "viewer" = read-only dashboard
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard, roles: ["admin", "editor", "viewer"] },
+  { label: "Leads", path: "/admin/leads", icon: UserCheck, roles: ["admin", "editor"] },
+  { label: "Affiliates", path: "/admin/affiliates", icon: Link2, roles: ["admin"] },
   { label: "Providers", path: "/admin/providers", icon: Building2, roles: ["admin", "editor"] },
   { label: "Plans", path: "/admin/plans", icon: Zap, roles: ["admin", "editor"] },
   { label: "Business Plans", path: "/admin/business-plans", icon: Building, roles: ["admin", "editor"] },
   { label: "Renewable Plans", path: "/admin/renewable-plans", icon: Leaf, roles: ["admin", "editor"] },
-  { label: "Articles", path: "/admin/articles", icon: FileText, roles: ["admin", "editor"] },
-  { label: "Quotes", path: "/admin/quotes", icon: MessageSquare, roles: ["admin", "editor"] },
-  { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },
-  { label: "Affiliates", path: "/admin/affiliates", icon: Link2, roles: ["admin"] },
-  { label: "Leads", path: "/admin/leads", icon: Users, roles: ["admin", "editor"] },
   { label: "Concierge", path: "/admin/concierge", icon: Home, roles: ["admin", "editor"] },
+  { label: "Articles", path: "/admin/articles", icon: FileText, roles: ["admin", "editor"] },
+  { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },
   { label: "Settings", path: "/admin/settings", icon: Settings, roles: ["admin", "editor", "viewer"] },
 ];
 
@@ -50,30 +49,15 @@ export default function AdminLayout({ children }) {
 
   const handleLogout = async () => {
     setAvatarDropdownOpen(false);
-    // Use logout(true) which does window.location.href = '/' for a full page reload
-    // This ensures all auth state is completely cleared
     await logout(true);
   };
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        desktopDropdownRef.current && !desktopDropdownRef.current.contains(e.target) &&
-        mobileDropdownRef.current && !mobileDropdownRef.current.contains(e.target)
-      ) {
-        setAvatarDropdownOpen(false);
-      }
-      if (
-        desktopDropdownRef.current && !desktopDropdownRef.current.contains(e.target) &&
-        !mobileDropdownRef.current
-      ) {
-        setAvatarDropdownOpen(false);
-      }
-      if (
-        !desktopDropdownRef.current &&
-        mobileDropdownRef.current && !mobileDropdownRef.current.contains(e.target)
-      ) {
+      const isOutsideDesktop = !desktopDropdownRef.current || !desktopDropdownRef.current.contains(e.target);
+      const isOutsideMobile = !mobileDropdownRef.current || !mobileDropdownRef.current.contains(e.target);
+      if (isOutsideDesktop && isOutsideMobile) {
         setAvatarDropdownOpen(false);
       }
     };
@@ -81,7 +65,7 @@ export default function AdminLayout({ children }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close dropdown on route change
+  // Close dropdown and sidebar on route change
   useEffect(() => {
     setAvatarDropdownOpen(false);
     setSidebarOpen(false);
@@ -164,12 +148,12 @@ export default function AdminLayout({ children }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-[#0A2540] text-white transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-[#0A2540] text-white flex flex-col transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Logo area */}
-        <div className="p-6 border-b border-white/10">
+        <div className="px-5 py-5 border-b border-white/10 flex-shrink-0">
           <Link to="/" className="flex items-center gap-3 group">
             <img
               src="/images/logo-footer.png"
@@ -177,16 +161,16 @@ export default function AdminLayout({ children }) {
               className="h-8 w-auto"
             />
           </Link>
-          <div className="mt-3 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-orange-400" />
-            <span className="text-xs font-semibold text-orange-400 uppercase tracking-wider">
+          <div className="mt-2 flex items-center gap-2">
+            <Shield className="w-3.5 h-3.5 text-orange-400" />
+            <span className="text-[11px] font-semibold text-orange-400 uppercase tracking-wider">
               Admin Panel
             </span>
           </div>
         </div>
 
         {/* Navigation — filtered by role */}
-        <nav className="p-4 space-y-1 flex-1 overflow-y-auto" style={{ maxHeight: "calc(100vh - 200px)" }}>
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
           {filteredNavItems.map((item) => {
             const isActive =
               location.pathname === item.path ||
@@ -198,31 +182,31 @@ export default function AdminLayout({ children }) {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                   isActive
                     ? "bg-white/15 text-white"
                     : "text-gray-300 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
-                <span>{item.label}</span>
-                {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                <span className="truncate">{item.label}</span>
+                {isActive && <ChevronRight className="w-4 h-4 ml-auto flex-shrink-0" />}
               </Link>
             );
           })}
         </nav>
 
-        {/* User info & logout */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+        {/* User info & logout — pinned to bottom */}
+        <div className="flex-shrink-0 p-3 border-t border-white/10">
           <Link
             to="/"
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/10 transition-all mb-2"
           >
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-4 h-4 flex-shrink-0" />
             <span>View Site</span>
           </Link>
           <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
@@ -233,7 +217,7 @@ export default function AdminLayout({ children }) {
             </div>
             <button
               onClick={handleLogout}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex-shrink-0"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
