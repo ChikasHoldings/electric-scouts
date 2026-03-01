@@ -230,7 +230,7 @@ IMPORTANT:
         if ((!output.rate_per_kwh || output.rate_per_kwh === 0) && output.monthly_cost > 0 && output.monthly_usage_kwh > 0) {
           output.rate_per_kwh = parseFloat(((output.monthly_cost / output.monthly_usage_kwh) * 100).toFixed(2));
         }
-        onAnalysisComplete(output);
+        await onAnalysisComplete(output);
       } else {
         setError(`We couldn't extract data from this bill${lastError ? ` (${lastError})` : ''}. Please try a clearer image or skip this step.`);
       }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -89,6 +89,7 @@ export default function CompareRates() {
   );
 
   const [step, setStep] = useState(1);
+  const hasInitializedRef = useRef(false);
   const [zipCode, setZipCode] = useState("");
   const [zipError, setZipError] = useState("");
   const [propertyType, setPropertyType] = useState("");
@@ -119,8 +120,9 @@ export default function CompareRates() {
 
 
 
-  // Load ZIP code from URL on mount and when URL changes
+  // Load ZIP code from URL on mount (runs only once on initial load)
   useEffect(() => {
+    if (hasInitializedRef.current) return;
     const loadZipData = async () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -136,6 +138,7 @@ export default function CompareRates() {
             setCityName(city || validation.stateName + " area");
             setAvailableProviders(providers || []);
             setStep(2);
+            hasInitializedRef.current = true;
           } else {
             setZipCode(zipFromUrl);
             setZipError(validation.error || "This ZIP code is not in a deregulated electricity market");
@@ -143,6 +146,7 @@ export default function CompareRates() {
           }
         } else if (detectedZip && !zipCode) {
           setZipCode(detectedZip);
+          hasInitializedRef.current = true;
         }
       } catch (error) {
         console.error("Error loading ZIP data from URL:", error);
@@ -234,6 +238,7 @@ export default function CompareRates() {
 
   const handleBillAnalysis = async (data) => {
     setBillData(data);
+    hasInitializedRef.current = true; // Prevent useEffect from resetting step
     if (data.zip_code && data.zip_code !== zipCode) {
       setZipCode(data.zip_code);
       saveZip(data.zip_code);
@@ -241,6 +246,9 @@ export default function CompareRates() {
       const providers = await getProvidersForZipCode(data.zip_code);
       setCityName(city);
       setAvailableProviders(providers);
+      // Update URL to reflect new ZIP from bill
+      const newUrl = `${window.location.pathname}?zip=${data.zip_code}`;
+      window.history.replaceState({}, '', newUrl);
     }
     if (data.monthly_usage_kwh) {
       setPreferences(prev => ({ ...prev, monthlyUsage: data.monthly_usage_kwh }));

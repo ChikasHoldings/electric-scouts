@@ -108,8 +108,19 @@ export default function RenewableCompareRates() {
     setStep(2);
   };
 
-  const handleBillAnalysis = (data) => {
+  const handleBillAnalysis = async (data) => {
     setBillData(data);
+    if (data.zip_code && data.zip_code !== zipCode) {
+      setZipCode(data.zip_code);
+      setIsZipValid(true);
+      const city = getCityFromZip(data.zip_code);
+      const provs = await getProvidersForZipCode(data.zip_code);
+      setCityName(city || 'your area');
+      setAvailableProviders(provs);
+      localStorage.setItem('compareRatesZip', data.zip_code);
+      const newUrl = `${window.location.pathname}?zip=${data.zip_code}`;
+      window.history.replaceState({}, '', newUrl);
+    }
     if (data.monthly_usage_kwh) {
       setMonthlyUsage(data.monthly_usage_kwh.toString());
     }
