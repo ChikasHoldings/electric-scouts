@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ArrowLeft, Zap, CheckCircle, Building, TrendingDown, Shield, Award } from "lucide-react";
 import ValidatedZipInput from "../components/ValidatedZipInput";
-import { getCityFromZip, getProvidersForZipCode } from "../components/compare/providerAvailability";
+import { getCityFromZip, getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
 import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
@@ -155,8 +155,19 @@ export default function BusinessCompareRates() {
       return false;
     }
     
+    // CRITICAL: Filter by state - only show plans for the user's state
+    const currentStateCode = zipCode ? getStateFromZip(zipCode) : null;
+    if (currentStateCode) {
+      if (plan.state && plan.state !== currentStateCode) {
+        return false;
+      }
+      if (!plan.state) {
+        return false;
+      }
+    }
+    
     // Filter by ZIP code availability
-    if (zipCode && availableProviders.length > 0) {
+    if (zipCode && currentStateCode && availableProviders.length > 0) {
       const provider = availableProviders.find(p => p.name === providerName);
       if (!provider) {
         return false;

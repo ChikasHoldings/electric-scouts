@@ -287,19 +287,29 @@ export default function CompareRates() {
         return false;
       }
       
-      // Filter by state - only show plans for the user's state
-      if (currentStateCode && plan.state) {
-        if (plan.state !== currentStateCode) {
+      // CRITICAL: Filter by state - only show plans matching the user's state
+      // This is the primary filter — always enforced when we know the user's state
+      if (currentStateCode) {
+        // If plan has a state field, it must match
+        if (plan.state && plan.state !== currentStateCode) {
+          return false;
+        }
+        // If plan has NO state field, exclude it (safety net)
+        if (!plan.state) {
           return false;
         }
       }
       
-      // Filter by provider availability for current ZIP
-      if (zipCode && availableProviders.length > 0) {
-        const provider = availableProviders.find(p => p.name === providerName);
-        if (!provider) {
-          return false;
+      // Secondary filter: provider must serve the user's state
+      // Always apply when we have a ZIP code, even if availableProviders is empty
+      if (zipCode && currentStateCode) {
+        if (availableProviders.length > 0) {
+          const provider = availableProviders.find(p => p.name === providerName);
+          if (!provider) {
+            return false;
+          }
         }
+        // If availableProviders is empty, the state filter above already handles it
       }
       
       // Apply user preference filters
