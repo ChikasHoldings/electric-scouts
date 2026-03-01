@@ -572,6 +572,9 @@ export default function BillAnalyzer() {
       availableProviders = await getProvidersForZipCode(zipCode);
     }
     
+    // Get state code for state-level plan filtering
+    const currentStateCode = zipCode ? getStateFromZip(zipCode) : null;
+    
     const filteredPlans = plans.filter(plan => {
       const planData = plan.data || plan;
       const providerName = planData.provider_name || plan.provider_name;
@@ -581,6 +584,17 @@ export default function BillAnalyzer() {
       const customerType = (planData.customer_type || plan.customer_type || '').toLowerCase();
       if (customerType === 'business' || (planName && planName.toLowerCase().includes('business'))) {
         return false;
+      }
+      
+      // CRITICAL: Filter by state - only show plans for the user's state
+      if (currentStateCode) {
+        const planState = planData.state || plan.state;
+        if (planState && planState !== currentStateCode) {
+          return false;
+        }
+        if (!planState) {
+          return false;
+        }
       }
       
       // If we have ZIP-based availability, filter by it

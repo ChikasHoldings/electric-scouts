@@ -26,6 +26,52 @@ export function clearProviderCache() {
   cachedProviders = null;
 }
 
+/**
+ * Checks if a provider serves a specific ZIP code using service_areas JSONB data.
+ * Handles two service_areas formats:
+ *   1. Simple (TX-only): { excluded_zip_prefixes: [...], utility_territories: [...] }
+ *   2. Multi-state: { state_config: { TX: { excluded_zip_prefixes: [...] }, OH: {...} } }
+ * Returns false if the ZIP prefix is in the provider's excluded list.
+ */
+const isProviderAvailableForZip = (provider, zipCode, stateCode) => {
+  const serviceAreas = provider.service_areas;
+  const zipPrefix = zipCode.substring(0, 3);
+
+  // If no service_areas data, fall back to supported_states check only
+  if (!serviceAreas) {
+    const supportedStates = provider.supported_states || [];
+    return supportedStates.includes(stateCode);
+  }
+
+  // Multi-state config format: { state_config: { TX: {...}, OH: {...} } }
+  if (serviceAreas.state_config) {
+    const stateConfig = serviceAreas.state_config[stateCode];
+    // Provider doesn't serve this state at all
+    if (!stateConfig) return false;
+    // Check excluded ZIP prefixes for this state
+    const excludedPrefixes = stateConfig.excluded_zip_prefixes || [];
+    if (excludedPrefixes.length > 0 && excludedPrefixes.includes(zipPrefix)) {
+      return false;
+    }
+    return true;
+  }
+
+  // Simple format (TX-only providers): { excluded_zip_prefixes: [...] }
+  if (serviceAreas.excluded_zip_prefixes) {
+    const supportedStates = provider.supported_states || [];
+    if (!supportedStates.includes(stateCode)) return false;
+    const excludedPrefixes = serviceAreas.excluded_zip_prefixes || [];
+    if (excludedPrefixes.length > 0 && excludedPrefixes.includes(zipPrefix)) {
+      return false;
+    }
+    return true;
+  }
+
+  // Fallback: just check supported_states
+  const supportedStates = provider.supported_states || [];
+  return supportedStates.includes(stateCode);
+};
+
 // Function to get providers available for a specific ZIP code
 export const getProvidersForZipCode = async (zipCode) => {
   
@@ -41,16 +87,11 @@ export const getProvidersForZipCode = async (zipCode) => {
   
   const providers = await fetchProviders();
   
-  // Provider data loaded
-  
-  // Filter providers by state
+  // Filter providers by state AND ZIP-code-level service area
   const availableProviders = providers.filter(provider => {
-    // Provider schema has name and supported_states at root level
-    const name = provider.name;
-    const supportedStates = provider.supported_states || [];
     const isActive = provider.data?.is_active ?? provider.is_active ?? true;
-    const matches = supportedStates.includes(stateCode);
-    return matches && isActive;
+    if (!isActive) return false;
+    return isProviderAvailableForZip(provider, zipCode, stateCode);
   }).map(provider => {
     return {
       name: provider.name,
@@ -61,7 +102,6 @@ export const getProvidersForZipCode = async (zipCode) => {
       isFeatured: provider.data?.is_featured || provider.is_featured || false
     };
   });
-  
   
   // Sort: recommended first
   return availableProviders.sort((a, b) => {
@@ -82,8 +122,7 @@ export const providerServesZip = async (providerName, zipCode) => {
   
   if (!provider) return false;
   
-  const supportedStates = provider.supported_states || [];
-  return supportedStates.includes(stateCode);
+  return isProviderAvailableForZip(provider, zipCode, stateCode);
 };
 
 // Synchronous version for immediate checks (uses cache)
@@ -91,7 +130,7 @@ export const providerServesZipSync = (providerName, zipCode) => {
   const stateCode = getStateFromZip(zipCode);
   if (!stateCode) return false;
   
-  // If cache is available, use it
+  // If cache is available, use it with full ZIP-level filtering
   if (!cachedProviders) {
     // Fallback mapping if cache not loaded yet
     const providerStateMapping = {
@@ -105,8 +144,7 @@ export const providerServesZipSync = (providerName, zipCode) => {
   
   if (!provider) return false;
   
-  const supportedStates = provider.supported_states || [];
-  return supportedStates.includes(stateCode);
+  return isProviderAvailableForZip(provider, zipCode, stateCode);
 };
 
 // Function to get provider details
