@@ -183,6 +183,37 @@ export function leadWelcomeEmail(leadEmail, leadName) {
   };
 }
 
+export function rateAlertsConfirmationEmail(leadEmail, leadName, leadZip) {
+  const name = leadName || "there";
+  const zipDisplay = leadZip ? ` for ZIP code ${leadZip}` : "";
+  return {
+    subject: `Rate Alerts Activated${zipDisplay} — Electric Scouts`,
+    html: baseLayout(`
+      <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Hey ${name}, you're all set! ⚡</h2>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">We've activated rate alerts for your area${zipDisplay}. Here's what that means for you:</p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+        <tr>
+          <td style="padding:16px 20px;background:#f0f9ff;border-radius:8px;border-left:4px solid #0A5C8C;">
+            <p style="margin:0 0 8px;font-weight:600;color:#0A5C8C;font-size:15px;">🔔 What you'll receive:</p>
+            <ul style="color:#374151;font-size:14px;line-height:2;margin:0;padding-left:20px;">
+              <li>Notifications when electricity rates drop in your area</li>
+              <li>Alerts when new plans become available from top providers</li>
+              <li>Seasonal rate change updates so you never overpay</li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">In the meantime, you can compare current rates right now to see if there's already a better deal waiting for you:</p>
+      <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+        <tr><td style="background:#0A5C8C;border-radius:6px;padding:12px 28px;">
+          <a href="${APP_BASE_URL}/compare-rates${leadZip ? `?zip=${leadZip}` : ""}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">Compare Rates Now →</a>
+        </td></tr>
+      </table>
+      <p style="color:#6b7280;font-size:13px;line-height:1.6;margin:0;">You can unsubscribe from these alerts at any time. We respect your inbox — no spam, ever.</p>
+    `, leadEmail)
+  };
+}
+
 export function leadFollowup1Email(leadEmail, leadName) {
   const name = leadName || "there";
   return {

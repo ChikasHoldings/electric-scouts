@@ -10,6 +10,7 @@ import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, File
 import ValidatedZipInput from "./components/ValidatedZipInput";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ChatBot from "./components/ChatBot";
+import RateAlertsCapture from "./components/RateAlertsCapture";
 
 const topStates = [
   { name: "Texas", code: "TX", page: "TexasElectricity" },
@@ -460,6 +461,11 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
 
+
+      {/* Rate Alerts Capture — non-intrusive, above footer on all main pages */}
+      {!location.pathname.includes('/admin') && (
+        <RateAlertsCapture sourcePage={location.pathname.replace(/^\//,'').replace(/\//g,'_') || 'homepage'} />
+      )}
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white relative overflow-hidden">

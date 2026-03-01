@@ -2,6 +2,7 @@ import {
   supabase,
   sendEmail,
   leadWelcomeEmail,
+  rateAlertsConfirmationEmail,
   adminNewLeadEmail,
   APP_BASE_URL,
   LOGO_EMAIL_HEADER_URL,
@@ -307,13 +308,17 @@ async function handleCreateLead(req, res) {
       return res.status(500).json({ error: "Failed to save lead" });
     }
 
-    const welcomeTemplate = leadWelcomeEmail(lead.email, lead.name);
+    // Send rate alerts confirmation or generic welcome based on source
+    const isRateAlerts = source === 'rate_alerts';
+    const welcomeTemplate = isRateAlerts
+      ? rateAlertsConfirmationEmail(lead.email, lead.name, lead.zip)
+      : leadWelcomeEmail(lead.email, lead.name);
     await sendEmail({
       to: lead.email,
       subject: welcomeTemplate.subject,
       html: welcomeTemplate.html,
-      idempotencyKey: `lead_welcome_${lead.id}`,
-      eventType: "lead_welcome",
+      idempotencyKey: isRateAlerts ? `rate_alerts_confirm_${lead.id}` : `lead_welcome_${lead.id}`,
+      eventType: isRateAlerts ? "rate_alerts_confirmation" : "lead_welcome",
       leadId: lead.id,
     });
 
