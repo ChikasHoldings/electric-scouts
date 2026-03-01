@@ -78,7 +78,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
             </div>
 
             {/* Trust Indicators — icon on top on mobile, inline row on desktop */}
-            <div className="flex gap-6 sm:gap-6 text-sm text-gray-600 justify-start">
+            <div className="flex text-sm text-gray-600 justify-between sm:justify-start sm:gap-6 max-w-xs sm:max-w-none">
               <div className="flex flex-col items-center gap-1.5 sm:flex-row">
                 <CheckCircle className="w-5 h-5 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
                 <span className="font-medium text-xs sm:text-sm">Instant Results</span>

@@ -145,7 +145,7 @@ export default function Layout({ children, currentPageName }) {
               <img 
                 src="/images/logo-header.png"
                 alt="Electric Scouts Logo - Compare Electricity Rates and Save on Your Energy Bill in 12 Deregulated States"
-                className="h-8 sm:h-9 lg:h-10"
+                className="h-9 sm:h-9 lg:h-10"
                 loading="eager"
               />
             </Link>
