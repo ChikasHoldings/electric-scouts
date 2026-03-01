@@ -24,6 +24,7 @@ import { calculateMatchScore, calculateSavings, generatePlanSummary } from "../c
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import EmailResults from "../components/compare/EmailResults";
+import PlanSearchLoader from "../components/compare/PlanSearchLoader";
 import { useZipDetection } from "../components/hooks/useZipDetection";
 import SEOHead, { getOrganizationSchema, getServiceSchema, getFAQSchema, getBreadcrumbSchema } from "@/components/SEOHead";
 
@@ -253,11 +254,6 @@ export default function CompareRates() {
 
   const handlePreferencesSubmit = async () => {
     setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowResults(true);
-    }, 1500);
   };
 
 
@@ -467,15 +463,15 @@ export default function CompareRates() {
   // Loading Animation
   if (isLoading) {
     return (
-      <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="relative w-16 h-16 mx-auto mb-4">
-            <div className="absolute inset-0 border-4 border-[#0A5C8C] rounded-full border-t-transparent animate-spin"></div>
-            <Zap className="absolute inset-0 m-auto w-7 h-7 text-[#FF6B35]" />
-          </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-1">Searching Available Plans</h2>
-          <p className="text-sm text-gray-600">Comparing plans from {availableProviders.length} verified providers...</p>
-        </div>
+      <>{seoBlock}<div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+        <PlanSearchLoader
+          type="residential"
+          providerCount={availableProviders.length}
+          onComplete={() => {
+            setIsLoading(false);
+            setShowResults(true);
+          }}
+        />
       </div></>
     );
   }

@@ -23,9 +23,9 @@ export default function HeroSection({ zipCode, setZipCode }) {
             {/* Main Headline */}
             <div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#084a6f] leading-tight mb-3 sm:mb-4 tracking-tight">
-                Compare Rates.{" "}
+                Smarter Electricity{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A]">
-                  Save Hundreds.
+                  Starts With Better Rates.
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">

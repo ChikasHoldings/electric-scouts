@@ -1,93 +1,53 @@
 /**
- * pages.config.js - Page routing configuration
+ * pages.config.js
  * 
- * This file is AUTO-GENERATED. Do not add imports or modify PAGES manually.
- * Pages are auto-registered when you create files in the ./pages/ folder.
- * 
- * THE ONLY EDITABLE VALUE: mainPage
- * This controls which page is the landing page (shown when users visit the app).
- * 
- * Example file structure:
- * 
- *   import HomePage from './pages/HomePage';
- *   import Dashboard from './pages/Dashboard';
- *   import Settings from './pages/Settings';
- *   
- *   export const PAGES = {
- *       "HomePage": HomePage,
- *       "Dashboard": Dashboard,
- *       "Settings": Settings,
- *   }
- *   
- *   export const pagesConfig = {
- *       mainPage: "HomePage",
- *       Pages: PAGES,
- *   };
- * 
- * Example with Layout (wraps all pages):
- *
- *   import Home from './pages/Home';
- *   import Settings from './pages/Settings';
- *   import __Layout from './Layout.jsx';
- *
- *   export const PAGES = {
- *       "Home": Home,
- *       "Settings": Settings,
- *   }
- *
- *   export const pagesConfig = {
- *       mainPage: "Home",
- *       Pages: PAGES,
- *       Layout: __Layout,
- *   };
- *
- * To change the main page from HomePage to Dashboard, use find_replace:
- *   Old: mainPage: "HomePage",
- *   New: mainPage: "Dashboard",
- *
- * The mainPage value must match a key in the PAGES object exactly.
+ * Lazy-loaded page registry for optimal code splitting and fast initial load.
+ * Only the Home page is eagerly loaded; all other pages are lazy-loaded.
  */
-import AboutUs from './pages/AboutUs';
-import AllCities from './pages/AllCities';
-import AllProviders from './pages/AllProviders';
-import AllStates from './pages/AllStates';
-import ArticleDetail from './pages/ArticleDetail';
-import BillAnalyzer from './pages/BillAnalyzer';
-import BusinessCompareRates from './pages/BusinessCompareRates';
-import BusinessElectricity from './pages/BusinessElectricity';
-import BusinessHub from './pages/BusinessHub';
-import BusinessQuoteDashboard from './pages/BusinessQuoteDashboard';
-import CityRates from './pages/CityRates';
-import CompareRates from './pages/CompareRates';
-import ConnecticutElectricity from './pages/ConnecticutElectricity';
-import FAQ from './pages/FAQ';
+
+import { lazy } from 'react';
 import Home from './pages/Home';
-import HomeConcierge from './pages/HomeConcierge';
-import IllinoisElectricity from './pages/IllinoisElectricity';
-import Landing from './pages/Landing';
-import LearningCenter from './pages/LearningCenter';
-import MaineElectricity from './pages/MaineElectricity';
-import MarylandElectricity from './pages/MarylandElectricity';
-import MassachusettsElectricity from './pages/MassachusettsElectricity';
-import NewHampshireElectricity from './pages/NewHampshireElectricity';
-import NewJerseyElectricity from './pages/NewJerseyElectricity';
-import NewYorkElectricity from './pages/NewYorkElectricity';
-import NotFound from './pages/NotFound';
-import OhioElectricity from './pages/OhioElectricity';
-import PennsylvaniaElectricity from './pages/PennsylvaniaElectricity';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import ProviderDetails from './pages/ProviderDetails';
-import RenewableCompareRates from './pages/RenewableCompareRates';
-import RenewableEnergy from './pages/RenewableEnergy';
-import RhodeIslandElectricity from './pages/RhodeIslandElectricity';
-import Robots from './pages/Robots';
-import SavingsCalculator from './pages/SavingsCalculator';
-import Sitemap from './pages/Sitemap';
-import SitemapXML from './pages/SitemapXML';
-import TermsOfService from './pages/TermsOfService';
-import TexasElectricity from './pages/TexasElectricity';
 import __Layout from './Layout.jsx';
 
+// Lazy-loaded pages — each gets its own chunk for faster initial load
+const AboutUs = lazy(() => import('./pages/AboutUs'));
+const AllCities = lazy(() => import('./pages/AllCities'));
+const AllProviders = lazy(() => import('./pages/AllProviders'));
+const AllStates = lazy(() => import('./pages/AllStates'));
+const ArticleDetail = lazy(() => import('./pages/ArticleDetail'));
+const BillAnalyzer = lazy(() => import('./pages/BillAnalyzer'));
+const BusinessCompareRates = lazy(() => import('./pages/BusinessCompareRates'));
+const BusinessElectricity = lazy(() => import('./pages/BusinessElectricity'));
+const BusinessHub = lazy(() => import('./pages/BusinessHub'));
+const BusinessQuoteDashboard = lazy(() => import('./pages/BusinessQuoteDashboard'));
+const CityRates = lazy(() => import('./pages/CityRates'));
+const CompareRates = lazy(() => import('./pages/CompareRates'));
+const ConnecticutElectricity = lazy(() => import('./pages/ConnecticutElectricity'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const HomeConcierge = lazy(() => import('./pages/HomeConcierge'));
+const IllinoisElectricity = lazy(() => import('./pages/IllinoisElectricity'));
+const Landing = lazy(() => import('./pages/Landing'));
+const LearningCenter = lazy(() => import('./pages/LearningCenter'));
+const MaineElectricity = lazy(() => import('./pages/MaineElectricity'));
+const MarylandElectricity = lazy(() => import('./pages/MarylandElectricity'));
+const MassachusettsElectricity = lazy(() => import('./pages/MassachusettsElectricity'));
+const NewHampshireElectricity = lazy(() => import('./pages/NewHampshireElectricity'));
+const NewJerseyElectricity = lazy(() => import('./pages/NewJerseyElectricity'));
+const NewYorkElectricity = lazy(() => import('./pages/NewYorkElectricity'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const OhioElectricity = lazy(() => import('./pages/OhioElectricity'));
+const PennsylvaniaElectricity = lazy(() => import('./pages/PennsylvaniaElectricity'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const ProviderDetails = lazy(() => import('./pages/ProviderDetails'));
+const RenewableCompareRates = lazy(() => import('./pages/RenewableCompareRates'));
+const RenewableEnergy = lazy(() => import('./pages/RenewableEnergy'));
+const RhodeIslandElectricity = lazy(() => import('./pages/RhodeIslandElectricity'));
+const Robots = lazy(() => import('./pages/Robots'));
+const SavingsCalculator = lazy(() => import('./pages/SavingsCalculator'));
+const Sitemap = lazy(() => import('./pages/Sitemap'));
+const SitemapXML = lazy(() => import('./pages/SitemapXML'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const TexasElectricity = lazy(() => import('./pages/TexasElectricity'));
 
 export const PAGES = {
     "AboutUs": AboutUs,

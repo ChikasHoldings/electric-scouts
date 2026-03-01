@@ -15,6 +15,7 @@ import BillUploadStep from "../components/compare/BillUploadStep";
 import IneligibleZipMessage from "../components/compare/IneligibleZipMessage";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import EmailResults from "../components/compare/EmailResults";
+import PlanSearchLoader from "../components/compare/PlanSearchLoader";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { getProviderLogoUrl } from "@/utils/providerSlug";
@@ -265,35 +266,14 @@ export default function BusinessCompareRates() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Analyzing State */}
         {isAnalyzing && (
-          <div className="space-y-6">
-            <div className="text-center py-16">
-              <div className="relative w-24 h-24 mx-auto mb-8">
-                <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-[#0A5C8C] rounded-full border-t-transparent animate-spin"></div>
-                <Building className="absolute inset-0 m-auto w-10 h-10 text-[#0A5C8C]" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                Analyzing Your Business Profile
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Checking with our network of verified energy partners...
-              </p>
-              <div className="max-w-md mx-auto space-y-3">
-                <div className="flex items-center gap-3 bg-blue-50 rounded-lg p-4 animate-pulse">
-                  <CheckCircle className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
-                  <p className="text-sm text-gray-700 text-left">Matching your usage profile</p>
-                </div>
-                <div className="flex items-center gap-3 bg-blue-50 rounded-lg p-4 animate-pulse" style={{ animationDelay: '0.2s' }}>
-                  <CheckCircle className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
-                  <p className="text-sm text-gray-700 text-left">Reviewing contract options</p>
-                </div>
-                <div className="flex items-center gap-3 bg-blue-50 rounded-lg p-4 animate-pulse" style={{ animationDelay: '0.4s' }}>
-                  <CheckCircle className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
-                  <p className="text-sm text-gray-700 text-left">Calculating savings opportunities</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <PlanSearchLoader
+            type="business"
+            providerCount={availableProviders.length}
+            onComplete={() => {
+              setIsAnalyzing(false);
+              setStep(4);
+            }}
+          />
         )}
 
         {/* Step 1: ZIP Code */}

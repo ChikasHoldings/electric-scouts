@@ -13,6 +13,7 @@ import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import EmailResults from "../components/compare/EmailResults";
+import PlanSearchLoader from "../components/compare/PlanSearchLoader";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { getProviderLogoUrl } from "@/utils/providerSlug";
@@ -119,8 +120,10 @@ export default function RenewableCompareRates() {
     setStep(3);
   };
 
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
   const handlePreferencesSubmit = () => {
-    setStep(4);
+    setIsAnalyzing(true);
   };
 
   // Get current state from ZIP code
@@ -204,8 +207,22 @@ export default function RenewableCompareRates() {
         ]}
       />
 
+      {/* Analyzing State */}
+      {isAnalyzing && (
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+          <PlanSearchLoader
+            type="renewable"
+            providerCount={availableProviders.length}
+            onComplete={() => {
+              setIsAnalyzing(false);
+              setStep(4);
+            }}
+          />
+        </div>
+      )}
+
       {/* Progress Bar */}
-      {step > 1 && step < 4 && (
+      {!isAnalyzing && step > 1 && step < 4 && (
         <div className="bg-white border-b border-green-200 py-4">
           <div className="max-w-4xl mx-auto px-4">
             <div className="flex items-center justify-between">
@@ -237,7 +254,7 @@ export default function RenewableCompareRates() {
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Step 1: ZIP Code */}
-        {step === 1 && (
+        {!isAnalyzing && step === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full mb-4">
@@ -318,7 +335,7 @@ export default function RenewableCompareRates() {
         )}
 
         {/* Step 2: Bill Upload (Optional) - skipped property type selection */}
-        {step === 2 && (
+        {!isAnalyzing && step === 2 && (
           <BillUploadStep
             onSkip={handleSkipBillUpload}
             onAnalysisComplete={handleBillAnalysis}
@@ -328,7 +345,7 @@ export default function RenewableCompareRates() {
         )}
 
         {/* Step 3: Preferences */}
-        {step === 3 && (
+        {!isAnalyzing && step === 3 && (
           <div className="space-y-6">
             <div className="text-center mb-6">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
@@ -398,7 +415,7 @@ export default function RenewableCompareRates() {
         )}
 
         {/* Step 4: Results */}
-        {step === 4 && (
+        {!isAnalyzing && step === 4 && (
           <div className="space-y-6">
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full mb-3">
