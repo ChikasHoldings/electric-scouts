@@ -64,7 +64,7 @@ const emptyArticle = {
   excerpt: "",
   content: "",
   featured_image: "",
-  author_name: "ElectricScouts Team",
+  author: "ElectricScouts Team",
   published: false,
   tags: [],
   meta_description: "",
@@ -169,6 +169,9 @@ export default function AdminArticles() {
     delete data.created_date;
     delete data.updated_date;
     delete data.meta_title;
+    delete data.author_name; // legacy field name cleanup
+    delete data.keywords; // managed separately
+    delete data.related_articles; // managed separately
 
     if (editingArticle) {
       updateMutation.mutate({ id: editingArticle.id, data });
@@ -298,7 +301,7 @@ export default function AdminArticles() {
                         <Badge variant="outline">{article.category || "General"}</Badge>
                       </TableCell>
                       <TableCell className="text-sm text-gray-600">
-                        {article.author_name || "—"}
+                        {article.author || "—"}
                       </TableCell>
                       <TableCell>
                         <button
@@ -429,8 +432,8 @@ export default function AdminArticles() {
               <div className="space-y-2">
                 <Label>Author</Label>
                 <Input
-                  value={form.author_name || ""}
-                  onChange={(e) => setForm({ ...form, author_name: e.target.value })}
+                  value={form.author || ""}
+                  onChange={(e) => setForm({ ...form, author: e.target.value })}
                   placeholder="Electric Scouts Team"
                 />
               </div>

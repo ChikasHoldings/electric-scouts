@@ -34,7 +34,7 @@ export default function AdminLogin() {
 
   // If already logged in as admin, redirect
   useEffect(() => {
-    if (!isLoadingAuth && isAuthenticated && profile?.role === "admin") {
+    if (!isLoadingAuth && isAuthenticated && ["admin", "editor", "viewer"].includes(profile?.role)) {
       navigate("/admin", { replace: true });
     }
   }, [isAuthenticated, profile, isLoadingAuth, navigate]);
