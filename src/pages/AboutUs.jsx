@@ -61,7 +61,7 @@ export default function AboutUs() {
                 src="/images/about-hero.jpg" 
                 alt="Electric Scouts team analyzing electricity rate comparison data" 
                 className="rounded-2xl shadow-2xl w-full object-cover h-[400px]"
-              />
+              loading="lazy" />
             </div>
           </div>
         </div>

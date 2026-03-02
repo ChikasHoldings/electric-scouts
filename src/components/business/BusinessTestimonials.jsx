@@ -102,7 +102,7 @@ export default function BusinessTestimonials() {
                   src={testimonial.image}
                   alt={testimonial.contact}
                   className="w-12 h-12 rounded-full object-cover"
-                />
+                loading="lazy" />
                 <div>
                   <h4 className="font-bold text-gray-900 text-sm">{testimonial.contact}</h4>
                   <p className="text-xs text-gray-600">{testimonial.position}</p>

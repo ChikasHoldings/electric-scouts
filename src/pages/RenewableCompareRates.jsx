@@ -530,7 +530,7 @@ export default function RenewableCompareRates() {
                                     alt={plan.provider_name}
                                     className="h-8 w-auto object-contain"
                                     onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex'); }}
-                                  />
+                                  loading="lazy" />
                                 ) : null}
                                 <span className={`text-sm font-bold text-green-700 ${getProviderLogo(plan.provider_name) ? 'hidden' : 'flex'}`}>
                                   {plan.provider_name.substring(0, 3).toUpperCase()}
@@ -621,7 +621,7 @@ export default function RenewableCompareRates() {
                                   alt={plan.provider_name}
                                   className="h-9 w-auto object-contain"
                                   onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex'); }}
-                                />
+                                loading="lazy" />
                               ) : null}
                               <span className={`text-sm font-bold text-green-700 ${getProviderLogo(plan.provider_name) ? 'hidden' : 'flex'}`}>
                                 {plan.provider_name.substring(0, 3).toUpperCase()}

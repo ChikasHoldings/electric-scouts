@@ -97,7 +97,7 @@ export default function PlanCard({ plan, usage, estimatedMonthlyCost, isSaved, o
                     e.target.style.display = 'none';
                     e.target.nextSibling.style.display = 'flex';
                   }}
-                />
+                loading="lazy" />
               ) : null}
               <span 
                 className={`text-sm font-bold ${colors.text} ${logoUrl ? 'hidden' : 'flex'}`}

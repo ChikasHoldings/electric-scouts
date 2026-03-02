@@ -147,7 +147,7 @@ export default function ExitIntentPopup() {
                       src={popupImage}
                       alt="Save on electricity"
                       className="w-full max-w-[280px] h-auto object-contain drop-shadow-lg"
-                    />
+                    loading="lazy" />
                   </div>
 
                   {/* Bottom stats */}

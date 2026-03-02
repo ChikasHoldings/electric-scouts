@@ -212,7 +212,7 @@ export function generateOGData(page, customData = {}) {
     type: 'website',
     siteName: 'Electric Scouts',
     locale: 'en_US',
-    image: '/images/og-image.png',
+    image: '/images/og-image.jpg',
     imageWidth: 1200,
     imageHeight: 630
   };

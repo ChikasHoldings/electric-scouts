@@ -10,7 +10,11 @@ import {
   Clock, Users, ArrowRight, MapPin, Building2, FileText
 } from "lucide-react";
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
-import { getFullArticle } from "../components/learning/fullArticles";
+// Dynamic import for code splitting - fullArticles is 776KB and should only load when needed
+const getFullArticleDynamic = async (articleId) => {
+  const module = await import("../components/learning/fullArticles");
+  return module.getFullArticle(articleId);
+};
 import ArticleRecommendations from "../components/learning/ArticleRecommendations";
 import ArticleSuggestions from "../components/learning/ArticleSuggestions";
 import { trackDailyReading } from "../components/learning/ReadingAnalytics";
@@ -1110,23 +1114,34 @@ export default function ArticleDetail() {
     metaTitle: articleData.meta_title,
     metaDescription: articleData.meta_description,
     tags: articleData.tags
-  } : getFullArticle(articleId);
+  } : null;
+
+  // Dynamic load of full article content (code-split)
+  const [dynamicFullArticle, setDynamicFullArticle] = React.useState(fullArticle);
+  React.useEffect(() => {
+    if (!fullArticle && articleId) {
+      getFullArticleDynamic(articleId).then(result => {
+        setDynamicFullArticle(result);
+      });
+    }
+  }, [articleId, fullArticle]);
+  const resolvedFullArticle = fullArticle || dynamicFullArticle;
 
   // Generate optimized SEO data
   const articlePublishDate = articleData?.created_date || new Date().toISOString();
   const articleModifiedDate = articleData?.updated_date || articlePublishDate;
   
   // Optimized meta title with category and brand
-  const optimizedTitle = fullArticle?.metaTitle || 
+  const optimizedTitle = resolvedFullArticle?.metaTitle || 
     `${article.title} | ${article.category} Guide | Electric Scouts`;
   
   // Optimized meta description with excerpt and CTA
-  const optimizedDescription = fullArticle?.metaDescription || 
+  const optimizedDescription = resolvedFullArticle?.metaDescription || 
     `${article.excerpt || article.description} Compare electricity rates and save up to $800/year. Free guide from Electric Scouts.`;
   
   // Combine article keywords with tags for better SEO
   const optimizedKeywords = [
-    ...(fullArticle?.tags || []),
+    ...(resolvedFullArticle?.tags || []),
     ...article.keywords,
     `${article.category.toLowerCase()} electricity`,
     'compare electricity rates',
@@ -1135,8 +1150,8 @@ export default function ArticleDetail() {
   ].filter((v, i, a) => a.indexOf(v) === i).slice(0, 15).join(", ");
 
   const articleSchema = getArticleSchema({
-    title: fullArticle?.metaTitle || article.title,
-    description: fullArticle?.metaDescription || article.description,
+    title: resolvedFullArticle?.metaTitle || article.title,
+    description: resolvedFullArticle?.metaDescription || article.description,
     image: article.image,
     datePublished: articlePublishDate,
     dateModified: articleModifiedDate
@@ -1206,12 +1221,12 @@ export default function ArticleDetail() {
           </div>
           {/* Article Body */}
           <div className="p-6 sm:p-10 lg:p-12">
-            {fullArticle ? (
+            {resolvedFullArticle ? (
               <>
                 <div 
                   className="prose prose-lg max-w-none article-content"
                   dangerouslySetInnerHTML={{ __html: (() => {
-                    const content = fullArticle.content;
+                    const content = resolvedFullArticle.content;
                     const paragraphs = content.split('</p>');
                     const midPoint = Math.floor(paragraphs.length / 2);
                     const firstHalf = paragraphs.slice(0, midPoint).join('</p>') + '</p>';
@@ -1222,7 +1237,7 @@ export default function ArticleDetail() {
                 <div 
                   className="prose prose-lg max-w-none article-content"
                   dangerouslySetInnerHTML={{ __html: (() => {
-                    const content = fullArticle.content;
+                    const content = resolvedFullArticle.content;
                     const paragraphs = content.split('</p>');
                     const midPoint = Math.floor(paragraphs.length / 2);
                     const secondHalf = paragraphs.slice(midPoint).join('</p>');
@@ -1322,11 +1337,11 @@ export default function ArticleDetail() {
         </div>
 
         {/* Article Tags */}
-        {fullArticle?.tags && fullArticle.tags.length > 0 && (
+        {resolvedFullArticle?.tags && resolvedFullArticle.tags.length > 0 && (
           <div className="mt-8">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">Article Tags:</h3>
             <div className="flex flex-wrap gap-2">
-              {fullArticle.tags.map((tag, index) => (
+              {resolvedFullArticle.tags.map((tag, index) => (
                 <span 
                   key={index}
                   className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-gray-200 transition-colors"

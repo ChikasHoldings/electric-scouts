@@ -34,13 +34,13 @@ export default function SEOHead({
     const getPageSpecificImage = () => {
       if (image) return image;
       const path = window.location.pathname;
-      if (path.includes('/compare-rates')) return `${siteUrl}/images/og-compare.png`;
-      if (path.includes('/bill-analyzer')) return `${siteUrl}/images/og-bill-analyzer.png`;
-      if (path.includes('/providers')) return `${siteUrl}/images/og-providers.png`;
-      if (path.includes('/business-rates')) return `${siteUrl}/images/og-business.png`;
-      if (path.includes('/learning-center') || path.includes('/learn/')) return `${siteUrl}/images/og-learn.png`;
-      if (path.includes('/electricity-rates') || path.includes('/service-areas')) return `${siteUrl}/images/og-service-areas.png`;
-      return `${siteUrl}/images/og-default.png`;
+      if (path.includes('/compare-rates')) return `${siteUrl}/images/og-compare.jpg`;
+      if (path.includes('/bill-analyzer')) return `${siteUrl}/images/og-bill-analyzer.jpg`;
+      if (path.includes('/providers')) return `${siteUrl}/images/og-providers.jpg`;
+      if (path.includes('/business-rates')) return `${siteUrl}/images/og-business.jpg`;
+      if (path.includes('/learning-center') || path.includes('/learn/')) return `${siteUrl}/images/og-learn.jpg`;
+      if (path.includes('/electricity-rates') || path.includes('/service-areas')) return `${siteUrl}/images/og-service-areas.jpg`;
+      return `${siteUrl}/images/og-default.jpg`;
     };
     
     const defaultImage = getPageSpecificImage();

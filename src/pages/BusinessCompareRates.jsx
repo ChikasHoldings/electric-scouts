@@ -616,7 +616,7 @@ export default function BusinessCompareRates() {
                                     alt={plan.provider_name}
                                     className="h-8 w-auto object-contain"
                                     onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex'); }}
-                                  />
+                                  loading="lazy" />
                                 ) : null}
                                 <span className={`text-sm font-bold text-[#0A5C8C] ${getProviderLogo(plan.provider_name) ? 'hidden' : 'flex'}`}>
                                   {plan.provider_name.substring(0, 3).toUpperCase()}
@@ -707,7 +707,7 @@ export default function BusinessCompareRates() {
                                   alt={plan.provider_name}
                                   className="h-9 w-auto object-contain"
                                   onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex'); }}
-                                />
+                                loading="lazy" />
                               ) : null}
                               <span className={`text-sm font-bold text-[#0A5C8C] ${getProviderLogo(plan.provider_name) ? 'hidden' : 'flex'}`}>
                                 {plan.provider_name.substring(0, 3).toUpperCase()}
