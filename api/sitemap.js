@@ -22,43 +22,65 @@ const CITY_PAGES = [
   { city: "Plano", state: "TX" }, { city: "Corpus Christi", state: "TX" }, { city: "El Paso", state: "TX" },
   { city: "Lubbock", state: "TX" }, { city: "Irving", state: "TX" }, { city: "Frisco", state: "TX" },
   { city: "McKinney", state: "TX" }, { city: "Killeen", state: "TX" }, { city: "Midland", state: "TX" },
+  { city: "Amarillo", state: "TX" }, { city: "Beaumont", state: "TX" }, { city: "Brownsville", state: "TX" },
+  { city: "Denton", state: "TX" }, { city: "Garland", state: "TX" }, { city: "Grand Prairie", state: "TX" },
+  { city: "Laredo", state: "TX" }, { city: "McAllen", state: "TX" }, { city: "Round Rock", state: "TX" },
+  { city: "Sugar Land", state: "TX" },
   // Illinois
   { city: "Chicago", state: "IL" }, { city: "Aurora", state: "IL" }, { city: "Naperville", state: "IL" },
   { city: "Rockford", state: "IL" }, { city: "Joliet", state: "IL" }, { city: "Springfield", state: "IL" },
   { city: "Peoria", state: "IL" }, { city: "Elgin", state: "IL" }, { city: "Champaign", state: "IL" },
   { city: "Schaumburg", state: "IL" },
+  { city: "Bloomington", state: "IL" }, { city: "Cicero", state: "IL" }, { city: "Decatur", state: "IL" },
+  { city: "Evanston", state: "IL" }, { city: "Oak Park", state: "IL" }, { city: "Waukegan", state: "IL" },
   // Ohio
   { city: "Columbus", state: "OH" }, { city: "Cleveland", state: "OH" }, { city: "Cincinnati", state: "OH" },
   { city: "Toledo", state: "OH" }, { city: "Akron", state: "OH" }, { city: "Dayton", state: "OH" },
   { city: "Canton", state: "OH" }, { city: "Youngstown", state: "OH" },
+  { city: "Dublin", state: "OH" }, { city: "Elyria", state: "OH" }, { city: "Hamilton", state: "OH" },
+  { city: "Lakewood", state: "OH" }, { city: "Lorain", state: "OH" }, { city: "Parma", state: "OH" },
   // Pennsylvania
   { city: "Philadelphia", state: "PA" }, { city: "Pittsburgh", state: "PA" }, { city: "Allentown", state: "PA" },
   { city: "Reading", state: "PA" }, { city: "Erie", state: "PA" }, { city: "Scranton", state: "PA" },
   { city: "Bethlehem", state: "PA" }, { city: "Lancaster", state: "PA" },
+  { city: "Chester", state: "PA" }, { city: "Harrisburg", state: "PA" }, { city: "Norristown", state: "PA" },
+  { city: "State College", state: "PA" }, { city: "Wilkes-Barre", state: "PA" }, { city: "York", state: "PA" },
   // New York
   { city: "New York City", state: "NY" }, { city: "Buffalo", state: "NY" }, { city: "Rochester", state: "NY" },
   { city: "Syracuse", state: "NY" }, { city: "Albany", state: "NY" }, { city: "Yonkers", state: "NY" },
+  { city: "Binghamton", state: "NY" }, { city: "Hempstead", state: "NY" }, { city: "Long Beach", state: "NY" },
+  { city: "New Rochelle", state: "NY" }, { city: "Schenectady", state: "NY" }, { city: "White Plains", state: "NY" },
   // New Jersey
   { city: "Newark", state: "NJ" }, { city: "Paterson", state: "NJ" }, { city: "Edison", state: "NJ" },
   { city: "Trenton", state: "NJ" }, { city: "Camden", state: "NJ" }, { city: "Hoboken", state: "NJ" },
+  { city: "Jersey City", state: "NJ" }, { city: "Atlantic City", state: "NJ" }, { city: "Bayonne", state: "NJ" },
+  { city: "Clifton", state: "NJ" }, { city: "Elizabeth", state: "NJ" }, { city: "Toms River", state: "NJ" },
   // Maryland
   { city: "Baltimore", state: "MD" }, { city: "Columbia", state: "MD" }, { city: "Germantown", state: "MD" },
   { city: "Silver Spring", state: "MD" }, { city: "Annapolis", state: "MD" }, { city: "Frederick", state: "MD" },
+  { city: "Rockville", state: "MD" }, { city: "Bowie", state: "MD" }, { city: "Gaithersburg", state: "MD" },
+  { city: "Hagerstown", state: "MD" }, { city: "Waldorf", state: "MD" },
   // Massachusetts
   { city: "Boston", state: "MA" }, { city: "Worcester", state: "MA" }, { city: "Springfield", state: "MA" },
   { city: "Cambridge", state: "MA" }, { city: "Lowell", state: "MA" }, { city: "New Bedford", state: "MA" },
+  { city: "Brockton", state: "MA" }, { city: "Fall River", state: "MA" }, { city: "Quincy", state: "MA" },
+  { city: "Somerville", state: "MA" },
   // Maine
   { city: "Portland", state: "ME" }, { city: "Lewiston", state: "ME" }, { city: "Bangor", state: "ME" },
   { city: "Auburn", state: "ME" }, { city: "Augusta", state: "ME" },
+  { city: "Biddeford", state: "ME" }, { city: "South Portland", state: "ME" },
   // New Hampshire
   { city: "Manchester", state: "NH" }, { city: "Nashua", state: "NH" }, { city: "Concord", state: "NH" },
   { city: "Dover", state: "NH" }, { city: "Rochester", state: "NH" },
+  { city: "Keene", state: "NH" }, { city: "Laconia", state: "NH" },
   // Rhode Island
   { city: "Providence", state: "RI" }, { city: "Warwick", state: "RI" }, { city: "Cranston", state: "RI" },
   { city: "Pawtucket", state: "RI" }, { city: "East Providence", state: "RI" },
+  { city: "Newport", state: "RI" }, { city: "Woonsocket", state: "RI" },
   // Connecticut
   { city: "Bridgeport", state: "CT" }, { city: "New Haven", state: "CT" }, { city: "Hartford", state: "CT" },
   { city: "Stamford", state: "CT" }, { city: "Waterbury", state: "CT" }, { city: "Norwalk", state: "CT" },
+  { city: "Danbury", state: "CT" }, { city: "Meriden", state: "CT" }, { city: "New Britain", state: "CT" },
 ];
 
 export default async function handler(req, res) {
