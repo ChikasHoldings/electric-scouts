@@ -10,6 +10,7 @@ import {
   Clock, Users, ArrowRight, CheckCircle, MapPin, Building2, Home, FileText, Star, Tag, X
 } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema, getArticleSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import EnhancedSearch from "../components/learning/EnhancedSearch";
 import ArticleSuggestions from "../components/learning/ArticleSuggestions";
 
@@ -1129,6 +1130,14 @@ export default function LearningCenter() {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "Learning Center" }
+              ]}
+              variant="light"
+              className="mb-4 justify-center"
+            />
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs sm:text-sm mb-4">
               <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span>Free Expert Guides</span>

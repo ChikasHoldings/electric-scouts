@@ -12,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 

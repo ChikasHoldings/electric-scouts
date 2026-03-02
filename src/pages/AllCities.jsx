@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, MapPin, Users, Zap, ArrowRight, CheckCircle, TrendingDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 
 const cities = [
   // Texas Cities
@@ -458,6 +459,14 @@ export default function AllCities() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "All Service Areas" }
+              ]}
+              variant="light"
+              className="mb-4"
+            />
             <h1 className="text-4xl font-bold mb-4">
               All Service Areas
             </h1>

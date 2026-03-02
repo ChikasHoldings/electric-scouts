@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, DollarSign, Clock, Award, AlertCircle, Leaf } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import CustomQuoteModal from "../components/business/CustomQuoteModal";
 import ValidatedZipInput from "../components/ValidatedZipInput";
 import { ServiceSchema, FAQPageSchema } from "../components/seo/StructuredData";
@@ -101,6 +102,14 @@ export default function BusinessElectricity() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "Business Electricity" }
+              ]}
+              variant="light"
+              className="mb-3"
+            />
             <h1 className="text-3xl lg:text-4xl font-bold mb-4">
               Business Electricity Rates
             </h1>

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getCityUrl } from "@/utils/cityUrls";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -64,13 +67,15 @@ export default function RhodeIslandElectricity() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <nav className="mb-4 text-sm">
-              <Link to={createPageUrl("Home")} className="text-blue-200 hover:text-white">Home</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <Link to={createPageUrl("AllStates")} className="text-blue-200 hover:text-white">States</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <span className="text-white">Rhode Island</span>
-            </nav>
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "States", url: "/all-states" },
+                { name: "Rhode Island" }
+              ]}
+              variant="light"
+              className="mb-4"
+            />
 
             <h1 className="text-3xl lg:text-4xl font-bold mb-4">
               Rhode Island Electricity Rates & Providers
@@ -232,7 +237,7 @@ export default function RhodeIslandElectricity() {
               {stateData.topCities.map((city, index) => (
                 <Link 
                   key={index} 
-                  to={createPageUrl("CityRates") + `?city=${city}&state=RI`}
+                  to={getCityUrl(city, "RI")}
                   className="flex items-center gap-2 text-gray-700 hover:text-[#0A5C8C] transition-colors"
                 >
                   <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />

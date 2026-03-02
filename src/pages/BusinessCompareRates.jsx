@@ -14,6 +14,7 @@ import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import IneligibleZipMessage from "../components/compare/IneligibleZipMessage";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import EmailResults from "../components/compare/EmailResults";
 import PlanSearchLoader from "../components/compare/PlanSearchLoader";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
@@ -291,6 +292,15 @@ export default function BusinessCompareRates() {
         {!isAnalyzing && step === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
+              <PageBreadcrumbs
+                items={[
+                  { name: "Home", url: "/" },
+                  { name: "Business Electricity", url: "/business-electricity" },
+                  { name: "Compare Business Rates" }
+                ]}
+                variant="dark"
+                className="mb-4 justify-center"
+              />
               <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full mb-4">
                 <Building className="w-4 h-4" />
                 <span className="text-sm font-semibold">Business Electricity</span>

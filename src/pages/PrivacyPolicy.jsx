@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Eye, Lock, UserCheck, Cookie, Bell, Mail, FileText } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 
 export default function PrivacyPolicy() {
   const breadcrumbData = getBreadcrumbSchema([
@@ -238,6 +239,14 @@ export default function PrivacyPolicy() {
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <PageBreadcrumbs
+            items={[
+              { name: "Home", url: "/" },
+              { name: "Privacy Policy" }
+            ]}
+            variant="light"
+            className="mb-3"
+          />
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
               <Shield className="w-6 h-6 text-white" />

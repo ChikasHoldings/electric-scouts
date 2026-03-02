@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ChevronDown, Phone, Mail, MessageCircle, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { FAQPageSchema } from "../components/seo/StructuredData";
 
 const faqCategories = [
@@ -190,6 +191,14 @@ export default function FAQ() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "FAQ" }
+              ]}
+              variant="light"
+              className="mb-3 justify-center"
+            />
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
               Frequently Asked Questions
             </h1>

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Star, Zap, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
@@ -83,6 +84,14 @@ export default function AllProviders() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-10 sm:py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "All Providers" }
+              ]}
+              variant="light"
+              className="mb-3"
+            />
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
               Browse All Energy Providers
             </h1>

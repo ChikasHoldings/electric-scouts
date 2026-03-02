@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search, MapPin, CheckCircle, Zap, TrendingDown, ArrowRight } from "lucide-react";
 import { getAllDeregulatedStates, validateZipCode, getStateByZip } from "../components/compare/stateData";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import ValidatedZipInput from "../components/ValidatedZipInput";
 
 export default function AllStates() {
@@ -67,6 +68,14 @@ export default function AllStates() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-8 sm:py-10 lg:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "All States" }
+              ]}
+              variant="light"
+              className="mb-3"
+            />
             <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">
               Electricity Choice States
             </h1>

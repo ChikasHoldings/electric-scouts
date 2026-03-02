@@ -5,6 +5,7 @@ import { Award, Users, Heart, CheckCircle, ArrowRight, Mail, Zap, Shield, Trendi
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getBreadcrumbSchema, getOrganizationSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 
 export default function AboutUs() {
   const breadcrumbData = getBreadcrumbSchema([
@@ -31,6 +32,14 @@ export default function AboutUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
+              <PageBreadcrumbs
+                items={[
+                  { name: "Home", url: "/" },
+                  { name: "About Us" }
+                ]}
+                variant="light"
+                className="mb-4"
+              />
               <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 text-sm text-blue-100 mb-6">
                 <Zap className="w-4 h-4" />
                 Serving 12 States Across America

@@ -10,6 +10,7 @@ import {
   Clock, Users, ArrowRight, MapPin, Building2, FileText
 } from "lucide-react";
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 // Dynamic import for code splitting - fullArticles is 776KB and should only load when needed
 const getFullArticleDynamic = async (articleId) => {
   const module = await import("../components/learning/fullArticles");
@@ -1177,14 +1178,15 @@ export default function ArticleDetail() {
 
       {/* Article Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link to={createPageUrl("LearningCenter")}>
-          <Button
-            variant="outline"
-            className="mb-6 rounded-xl"
-          >
-            ← Back to Learning Center
-          </Button>
-        </Link>
+        <PageBreadcrumbs
+          items={[
+            { name: "Home", url: "/" },
+            { name: "Learning Center", url: "/learning-center" },
+            { name: article.title }
+          ]}
+          variant="dark"
+          className="mb-4"
+        />
 
         <article className="bg-white rounded-2xl shadow-xl border-2 overflow-hidden">
           {/* Hero Image */}

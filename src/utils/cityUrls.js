@@ -81,3 +81,18 @@ export function parseCityUrl(stateSlug, citySlug) {
 export function getArticleUrl(slugOrId) {
   return `/learn/${slugOrId}`;
 }
+
+/**
+ * State code to state page URL mapping
+ * "TX" → "/texas-electricity"
+ */
+const STATE_PAGE_URLS = {
+  TX: '/texas-electricity', IL: '/illinois-electricity', OH: '/ohio-electricity',
+  PA: '/pennsylvania-electricity', NY: '/new-york-electricity', NJ: '/new-jersey-electricity',
+  MD: '/maryland-electricity', MA: '/massachusetts-electricity', ME: '/maine-electricity',
+  NH: '/new-hampshire-electricity', RI: '/rhode-island-electricity', CT: '/connecticut-electricity'
+};
+
+export function getStatePageUrl(stateCode) {
+  return STATE_PAGE_URLS[stateCode] || '/all-states';
+}

@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star, MapPin, Zap, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp, ThumbsUp } from "lucide-react";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
 export default function ProviderDetails() {
@@ -169,13 +170,15 @@ export default function ProviderDetails() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-8 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <nav className="mb-4 text-sm">
-              <Link to={createPageUrl("Home")} className="text-blue-200 hover:text-white">Home</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <Link to={createPageUrl("AllProviders")} className="text-blue-200 hover:text-white">Providers</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <span className="text-white">{providerName}</span>
-            </nav>
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "All Providers", url: "/all-providers" },
+                { name: providerName }
+              ]}
+              variant="light"
+              className="mb-4"
+            />
 
             <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6">
               <div className="bg-white rounded-xl p-3 sm:p-4 shadow-lg flex-shrink-0">

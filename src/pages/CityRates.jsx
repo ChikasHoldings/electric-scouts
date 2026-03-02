@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams, useParams } from "react-router-dom";
-import { parseCityUrl, getCityUrl, STATE_CODES, STATE_DISPLAY_NAMES } from "@/utils/cityUrls";
+import { parseCityUrl, getCityUrl, getStatePageUrl, STATE_CODES, STATE_DISPLAY_NAMES } from "@/utils/cityUrls";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import RelatedCities from "@/components/RelatedCities";
+import ContextualLinks from "@/components/ContextualLinks";
 import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
@@ -1603,10 +1606,17 @@ function CityRatesInner() {
   const seoDescription = `Compare ${displayCityName} electricity rates from ${city.providers}+ providers. Average ${city.avgRate} (est. ${city.avgMonthlyBill}/mo). Serving ${city.county}, population ${city.population}. ${city.description.substring(0, 100)}... Switch & save today - 100% free comparison.`;
   const seoKeywords = `${displayCityName} electricity rates, ${displayCityName} ${city.stateCode} electricity providers, cheap electricity ${displayCityName}, ${displayCityName} power companies, electricity rates ${city.county}, best electricity rates ${displayCityName}, compare electricity ${displayCityName}, ${displayCityName} energy plans, ${displayCityName.toLowerCase()} electric rates, ${city.state.toLowerCase()} electricity, ${displayCityName} fixed rate electricity, ${displayCityName} variable rate plans, renewable energy ${displayCityName}, ${city.neighborhoods.slice(0, 3).join(' electricity, ')} electricity`;
 
+  const cleanCityUrl = getCityUrl(displayCityName, city.stateCode);
+  const statePageUrl = getStatePageUrl(city.stateCode);
+  const breadcrumbItems = [
+    { name: "Home", url: "/" },
+    { name: city.state, url: statePageUrl },
+    { name: displayCityName }
+  ];
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "/" },
-    { name: "All Cities", url: "/all-cities" },
-    { name: `${displayCityName}, ${city.stateCode}`, url: `/city-rates?city=${displayCityName}&state=${city.stateCode}` }
+    { name: city.state, url: statePageUrl },
+    { name: `${displayCityName}, ${city.stateCode}`, url: cleanCityUrl }
   ]);
 
   const serviceData = getServiceSchema(city.state);
@@ -1674,7 +1684,7 @@ function CityRatesInner() {
         title={seoTitle}
         description={seoDescription}
         keywords={seoKeywords}
-        canonical={`/city-rates?city=${displayCityName}&state=${city.stateCode}`}
+        canonical={cleanCityUrl}
         image={city.image}
         structuredData={[breadcrumbData, serviceData, faqData, localBusinessData]}
       />
@@ -1686,14 +1696,8 @@ function CityRatesInner() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-3xl">
-            {/* Breadcrumb for SEO */}
-            <nav className="mb-4 text-xs">
-              <Link to={createPageUrl("Home")} className="text-blue-200 hover:text-white">Home</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <Link to={createPageUrl("AllCities")} className="text-blue-200 hover:text-white">Service Areas</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <span className="text-white">{displayCityName}</span>
-            </nav>
+            {/* Breadcrumb Navigation */}
+            <PageBreadcrumbs items={breadcrumbItems} variant="light" className="mb-4" />
 
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
               Cheap Electricity Rates in {displayCityName}, {city.state}
@@ -2092,6 +2096,16 @@ function CityRatesInner() {
             </div>
           </div>
         </section>
+      </div>
+
+      {/* Related Cities & Internal Links */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <RelatedCities
+          currentCity={displayCityName}
+          stateCode={city.stateCode}
+          allCityKeys={Object.keys(cityData)}
+        />
+        <ContextualLinks pageType="city" context={{ zipCode }} className="mt-8" />
       </div>
 
       {/* SEO Footer Content */}

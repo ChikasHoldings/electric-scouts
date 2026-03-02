@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getCityUrl } from "@/utils/cityUrls";
+import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import ContextualLinks from "@/components/ContextualLinks";
 import { getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
@@ -130,13 +133,15 @@ export default function TexasElectricity() {
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <nav className="mb-4 text-sm">
-              <Link to={createPageUrl("Home")} className="text-blue-200 hover:text-white">Home</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <Link to={createPageUrl("AllStates")} className="text-blue-200 hover:text-white">States</Link>
-              <span className="mx-2 text-blue-300">/</span>
-              <span className="text-white">Texas</span>
-            </nav>
+            <PageBreadcrumbs
+              items={[
+                { name: "Home", url: "/" },
+                { name: "States", url: "/all-states" },
+                { name: "Texas" }
+              ]}
+              variant="light"
+              className="mb-4"
+            />
 
             <h1 className="text-3xl lg:text-4xl font-bold mb-4">
               Texas Electricity Rates & Providers
@@ -380,7 +385,7 @@ export default function TexasElectricity() {
             {stateData.topCities.map((city, index) => (
               <Link 
                 key={index}
-                to={createPageUrl("CityRates") + `?city=${city.name}&state=TX`}
+                to={getCityUrl(city.name, "TX")}
                 className="group"
               >
                 <Card className="hover:shadow-lg hover:border-[#0A5C8C] transition-all border h-full">
