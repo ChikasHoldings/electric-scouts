@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Always use branded sender name — extract raw email from env var if set, then wrap with display name
 const RAW_EMAIL = (process.env.FROM_EMAIL || "noreply@electricscouts.com").replace(/.*<(.+)>.*/, '$1').trim();
 const FROM_EMAIL = `Electric Scouts <${RAW_EMAIL}>`;
-const APP_BASE_URL = process.env.APP_BASE_URL || "https://electricscouts.com";
+const APP_BASE_URL = process.env.APP_BASE_URL || "https://www.electricscouts.com";
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim()).filter(Boolean);
 
 // Logo URLs (hosted on the live site)

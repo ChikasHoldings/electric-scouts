@@ -1,42 +1,70 @@
 # Electric Scouts - Robots.txt
-# https://electricscouts.com
+# https://www.electricscouts.com
 
+# Default rules for all crawlers
 User-agent: *
 Allow: /
 
-# Allow clean URL paths explicitly
+# Public content paths
 Allow: /electricity-rates/
 Allow: /learn/
 Allow: /providers/
 Allow: /compare-rates
 Allow: /bill-analyzer
+Allow: /savings-calculator
 Allow: /all-providers
 Allow: /all-states
 Allow: /all-cities
 Allow: /learning-center
+Allow: /renewable-energy
+Allow: /renewable-compare-rates
+Allow: /business-electricity
+Allow: /business-compare-rates
+Allow: /business-hub
 Allow: /faq
 Allow: /about-us
-Allow: /blog
+Allow: /home-concierge
+Allow: /privacy-policy
+Allow: /terms-of-service
+
+# State electricity pages
+Allow: /texas-electricity
+Allow: /illinois-electricity
+Allow: /ohio-electricity
+Allow: /pennsylvania-electricity
+Allow: /new-york-electricity
+Allow: /new-jersey-electricity
+Allow: /maryland-electricity
+Allow: /massachusetts-electricity
+Allow: /maine-electricity
+Allow: /new-hampshire-electricity
+Allow: /rhode-island-electricity
+Allow: /connecticut-electricity
 
 # Block admin, API, and internal areas
 Disallow: /admin/
 Disallow: /api/
 Disallow: /go/
-Disallow: /search?
 Disallow: /user-settings
 Disallow: /business-quote-dashboard
 Disallow: /not-found
 
-# Block legacy query param URLs (redirect to clean URLs)
-Disallow: /city-rates?
-Disallow: /article-detail?
-Disallow: /app/
+# Block utility/meta pages that should not be indexed
+Disallow: /robots
+Disallow: /sitemap
+Disallow: /sitemap-xml
 
-# Sitemap location
-Sitemap: https://electricscouts.com/sitemap.xml
-Sitemap: https://electricscouts.com/api/sitemap
+# Block legacy query-param URLs (superseded by clean URLs)
+Disallow: /city-rates
+Disallow: /article-detail
 
-# Google-specific rules (no crawl-delay — let Google crawl freely)
+# Block duplicate content pages
+Disallow: /landing
+
+# Sitemap location (canonical www domain)
+Sitemap: https://www.electricscouts.com/sitemap.xml
+
+# Google-specific rules
 User-agent: Googlebot
 Allow: /
 
@@ -45,7 +73,7 @@ User-agent: Bingbot
 Allow: /
 Crawl-delay: 2
 
-# Block AI crawlers from scraping content
+# Block AI training crawlers
 User-agent: GPTBot
 Disallow: /
 
@@ -59,4 +87,13 @@ User-agent: anthropic-ai
 Disallow: /
 
 User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
 Disallow: /

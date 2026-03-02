@@ -29,8 +29,8 @@ export function OrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Electric Scouts",
-    "url": "https://electricscouts.com",
-    "logo": "https://electricscouts.com/images/logo-header.png",
+    "url": "https://www.electricscouts.com",
+    "logo": "https://www.electricscouts.com/images/logo-header.png",
     "description": "Compare electricity rates from 40+ providers across 12 deregulated states. Save up to $800/year on your electricity bill.",
     "sameAs": [
       "https://facebook.com/electricscouts",
@@ -64,7 +64,7 @@ export function BreadcrumbSchema({ items }) {
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": item.url ? `https://electricscouts.com${item.url}` : undefined
+      "item": item.url ? `https://www.electricscouts.com${item.url}` : undefined
     }))
   };
 
@@ -164,12 +164,12 @@ export function ArticleSchema({ article }) {
       "name": "Electric Scouts",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://electricscouts.com/images/logo-header.png"
+        "url": "https://www.electricscouts.com/images/logo-header.png"
       }
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://electricscouts.com/article/${article.slug}`
+      "@id": `https://www.electricscouts.com/article/${article.slug}`
     }
   };
 
@@ -182,12 +182,12 @@ export function WebSiteSchema() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Electric Scouts",
-    "url": "https://electricscouts.com",
+    "url": "https://www.electricscouts.com",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://electricscouts.com/compare-rates?zip={search_term_string}"
+        "urlTemplate": "https://www.electricscouts.com/compare-rates?zip={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     }

@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SITE_URL = 'https://electricscouts.com';
+const SITE_URL = 'https://www.electricscouts.com';
 
 // State code to slug mapping for clean URLs
 const STATE_SLUGS = {
@@ -105,7 +105,7 @@ export default async function handler(req, res) {
     { url: '/faq', priority: '0.8', changefreq: 'monthly' },
     { url: '/about-us', priority: '0.7', changefreq: 'monthly' },
     { url: '/home-concierge', priority: '0.7', changefreq: 'monthly' },
-    { url: '/blog', priority: '0.8', changefreq: 'daily' },
+    // Note: /blog removed (duplicate of /learning-center), /landing removed (duplicate of /)
 
     // State pages
     { url: '/texas-electricity', priority: '0.9', changefreq: 'weekly' },
@@ -210,10 +210,23 @@ export default async function handler(req, res) {
 
   const allPages = [...staticPages, ...cityPages, ...providerPages, ...articlePages];
 
-  const urls = allPages.map(page => {
+  // Deduplicate URLs (keep first occurrence which has higher priority)
+  const seenUrls = new Set();
+  const uniquePages = allPages.filter(page => {
+    if (seenUrls.has(page.url)) return false;
+    seenUrls.add(page.url);
+    return true;
+  });
+
+  // XML-escape special characters in URLs
+  function escapeXml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+  }
+
+  const urls = uniquePages.map(page => {
     const pageLastmod = page.lastmod || lastmod;
     return `  <url>
-    <loc>${SITE_URL}${page.url}</loc>
+    <loc>${escapeXml(SITE_URL + page.url)}</loc>
     <lastmod>${pageLastmod}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
@@ -225,7 +238,8 @@ export default async function handler(req, res) {
 ${urls}
 </urlset>`;
 
-  res.setHeader('Content-Type', 'application/xml');
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+  res.setHeader('X-Robots-Tag', 'noindex');
   res.status(200).send(xml);
 }

@@ -3,7 +3,7 @@
  * Generates XML sitemap and pings Google Search Console
  */
 
-const SITE_URL = 'https://electricscouts.com';
+const SITE_URL = 'https://www.electricscouts.com';
 
 // Generate dynamic sitemap XML from database content
 export async function generateDynamicSitemap(articles = []) {

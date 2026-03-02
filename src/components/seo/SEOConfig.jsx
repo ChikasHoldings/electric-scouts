@@ -187,7 +187,7 @@ export function getInternalLinks(currentPage) {
 
 // Canonical URL generator
 export function generateCanonicalURL(path) {
-  const baseURL = 'https://electricscouts.com';
+  const baseURL = 'https://www.electricscouts.com';
   return `${baseURL}${path}`;
 }
 
