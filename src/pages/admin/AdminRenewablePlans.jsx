@@ -45,7 +45,7 @@ export default function AdminRenewablePlans() {
     queryKey: ["admin-renewable-plans"],
     queryFn: async () => {
       const plans = await ElectricityPlan.list();
-      return plans.filter(p => p.customer_type === "renewable");
+      return plans.filter(p => p.customer_type === "renewable" || (p.renewable_percentage || 0) >= 90);
     },
   });
 
