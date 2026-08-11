@@ -4,6 +4,11 @@ import { Lead } from "@/api/supabaseEntities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import LeadComparisonDetail, {
+  CustomerTypeCell,
+  QualificationBadge,
+  RouteBadge,
+} from "@/components/admin/LeadComparisonDetail";
 import {
   Dialog,
   DialogContent,
@@ -314,6 +319,8 @@ export default function AdminLeads() {
                   <TableHead className="font-semibold text-gray-700">Email</TableHead>
                   <TableHead className="font-semibold text-gray-700">Location</TableHead>
                   <TableHead className="font-semibold text-gray-700">Source</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Type</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Route</TableHead>
                   <TableHead className="font-semibold text-gray-700">Status</TableHead>
                   <TableHead className="font-semibold text-gray-700">Date</TableHead>
                   <TableHead className="font-semibold text-gray-700 text-right">Actions</TableHead>
@@ -348,6 +355,15 @@ export default function AdminLeads() {
                     </TableCell>
                     <TableCell>
                       {getSourceBadge(lead.source_page || lead.source)}
+                    </TableCell>
+                    <TableCell>
+                      <CustomerTypeCell lead={lead} />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <RouteBadge route={lead.monetization_route} />
+                        <QualificationBadge qualification={lead.qualification} />
+                      </div>
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(lead.status)}
@@ -394,7 +410,7 @@ export default function AdminLeads() {
 
       {/* View Lead Dialog */}
       <Dialog open={!!viewLead} onOpenChange={() => setViewLead(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <UserCheck className="w-5 h-5 text-[#0A5C8C]" />
@@ -412,6 +428,10 @@ export default function AdminLeads() {
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1">Email</p>
                   <p className="text-sm text-gray-900 break-all">{viewLead.email}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium mb-1">Phone</p>
+                  <p className="text-sm text-gray-900">{viewLead.phone || 'Not provided'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1">ZIP Code</p>
@@ -439,6 +459,11 @@ export default function AdminLeads() {
                   <p className="text-xs text-gray-500 font-medium mb-1">Created</p>
                   <p className="text-sm text-gray-900">{new Date(viewLead.created_at).toLocaleString()}</p>
                 </div>
+              </div>
+
+              {/* Comparison session — only renders when the lead came through /compare-rates */}
+              <div className="border-t pt-4">
+                <LeadComparisonDetail lead={viewLead} />
               </div>
 
               {/* Search Preferences */}
