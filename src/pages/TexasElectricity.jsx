@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, TrendingDown, ChevronDown, ArrowRight, Building2, ExternalLink } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 import { getProvidersForZipCode } from "../components/compare/providerAvailability";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
@@ -21,7 +22,11 @@ export default function TexasElectricity() {
   const { getAffiliateUrl } = useAffiliateLinks();
 
   // Fetch real plans from database
-  const { data: allPlans, isLoading } = useQuery({
+  // Defaulted to []: react-query only serves placeholderData while the query is
+  // pending, so a failed Supabase request leaves `data` undefined and the next
+  // .filter() throws — which blanked this page behind an error boundary for
+  // users and crawlers alike whenever the database was unreachable.
+  const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ['plans'],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
@@ -38,6 +43,10 @@ export default function TexasElectricity() {
     },
     placeholderData: [],
   });
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("TX");
 
   const stateData = {
     name: "Texas",
@@ -79,7 +88,7 @@ export default function TexasElectricity() {
       {
         id: 2,
         question: "How much can I save on electricity in Texas?",
-        answer: "Texas residents save an average of $800 per year by comparing rates and switching to better electricity plans. Savings vary based on your current rate, usage, and the plan you choose. With over 45 providers competing, Texas offers some of the most competitive electricity rates in the nation."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the Texas plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -122,8 +131,8 @@ export default function TexasElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Texas Electricity Rates - Compare 45+ Providers & Save $800/Year | Electric Scouts TX"
-        description="Compare Texas electricity rates from TXU, Reliant, Gexa & 40+ providers. Serving Houston, Dallas, Austin, San Antonio. Find cheap electricity plans for your home. Fixed & variable rates. 100% renewable options. Switch in minutes & save up to $800 annually. Free comparison, instant results."
+        title="Texas Electricity Rates & Providers | Electric Scouts"
+        description="Compare 108 Texas electricity plans from 22 suppliers, 8.9¢/kWh–19.7¢/kWh. Rates by city, renewable options and how switching works."
         keywords="Texas electricity rates, cheap electricity Texas, Houston electricity rates, Dallas electricity providers, Austin energy plans, Texas power companies, compare electricity Texas, TXU Energy rates, Reliant Energy, Gexa Energy, best electricity rates Texas, fixed rate electricity Texas, variable rate plans Texas, renewable energy Texas, deregulated electricity market Texas"
         canonical="/texas-electricity"
         structuredData={[breadcrumbData, serviceSchema, getFAQSchema(stateData.faqs)]}
@@ -147,7 +156,7 @@ export default function TexasElectricity() {
               Texas Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ providers across Texas. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active Texas plans. What you save depends on your current rate and usage.
             </p>
 
             {/* Quick Stats */}
@@ -157,12 +166,12 @@ export default function TexasElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
-                <div className="text-sm text-blue-100">Providers</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
+                <div className="text-sm text-blue-100">Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>
@@ -244,7 +253,7 @@ export default function TexasElectricity() {
                 contract length, and estimated monthly bills—all in one place.
               </p>
               <p className="text-sm text-gray-700 leading-relaxed mb-3">
-                By comparing rates, Texas residents save an average of $800 per year on electricity bills. Whether you're 
+                Whether you're 
                 looking for fixed-rate plans, month-to-month flexibility, or 100% renewable energy options, our comparison 
                 tool makes it simple to find the perfect plan for your home or business.
               </p>
@@ -342,7 +351,7 @@ export default function TexasElectricity() {
                 </div>
                 <h3 className="text-base font-bold text-gray-900 mb-2">Save $800/Year</h3>
                 <p className="text-sm text-gray-600">
-                  Average savings by comparing rates from 45+ providers
+                  Average savings by comparing rates from competing suppliers
                 </p>
               </CardContent>
             </Card>

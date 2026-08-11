@@ -8,11 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function OhioElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("OH");
 
   const stateData = {
     name: "Ohio",
@@ -31,7 +36,7 @@ export default function OhioElectricity() {
       {
         id: 2,
         question: "How much can I save on electricity in Ohio?",
-        answer: "Ohio residents save an average of $760 per year by shopping for competitive electricity rates. Savings vary by location and usage, but with 40+ providers competing across Columbus, Cleveland, Cincinnati, and other Ohio cities, there are significant opportunities to reduce your monthly bills."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the Ohio plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -55,8 +60,8 @@ export default function OhioElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Ohio Electricity Rates - Compare 40+ Suppliers & Save $760/Year | Electric Scouts OH"
-        description="Compare Ohio electricity rates from Constellation, Direct Energy, IGS Energy & 38+ suppliers. Serving Cleveland, Columbus, Cincinnati, Toledo, Akron. Find competitive electricity plans for your home. Fixed & variable rates. Renewable energy options. Switch & save up to $760 annually. Free Ohio electricity comparison tool."
+        title="Ohio Electricity Rates & Providers | Electric Scouts"
+        description="Compare 27 Ohio electricity plans from 13 suppliers, 6.2¢/kWh–9.5¢/kWh. Rates by city, renewable options and how switching works."
         keywords="Ohio electricity rates, Cleveland electricity providers, Columbus energy rates, Cincinnati electricity comparison, Ohio power companies, compare electricity Ohio, AEP Ohio alternatives, Duke Energy Ohio alternatives, FirstEnergy alternatives, cheap electricity Ohio, best electricity rates Ohio, Ohio electricity suppliers, deregulated electricity Ohio, fixed rate electricity Ohio, green energy Ohio, renewable electricity plans Ohio"
         canonical="/ohio-electricity"
         structuredData={[breadcrumbData, getServiceSchema("Ohio"), getFAQSchema(stateData.faqs)]}
@@ -79,7 +84,7 @@ export default function OhioElectricity() {
               Ohio Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ providers across Ohio. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active Ohio plans. What you save depends on your current rate and usage.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -88,12 +93,12 @@ export default function OhioElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
-                <div className="text-sm text-blue-100">Providers</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
+                <div className="text-sm text-blue-100">Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>

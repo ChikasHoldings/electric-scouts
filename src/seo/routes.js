@@ -21,6 +21,7 @@
 import { canonicalPath } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { getArticleRoutes } from './articles.js';
+import { formatRate, getStateMarket, parseRate } from './market.js';
 
 /**
  * Public, indexable pages with hand-authored metadata.
@@ -31,103 +32,103 @@ export const STATIC_ROUTES = [
     page: "Home",
     path: "/",
     title: "Electric Scouts | Stop Overpaying for Electricity — We'll Prove It",
-    description: "Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from 40+ providers across 12 states. Free Bill Analyzer included.",
+    description: "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     priority: 1.0,
     changefreq: "daily",
   },
   {
     page: "CompareRates",
     path: "/compare-rates",
-    title: "Side-by-Side Rate Comparison | Electric Scouts",
-    description: "Enter your ZIP code and instantly see side-by-side electricity rates from dozens of providers. Filter by price, term length, or green energy. Free, fast, and built for clarity.",
+    title: "Compare Electricity Rates Side by Side | Electric Scouts",
+    description: "Enter your ZIP code and see the electricity plans sold in your area side by side — rate, contract term and early termination fee on the same row.",
     priority: 1.0,
     changefreq: "daily",
   },
   {
     page: "BillAnalyzer",
     path: "/bill-analyzer",
-    title: "Bill Analyzer | Spot Hidden Savings on Your Electricity Bill | Electric Scouts",
-    description: "Upload your electricity bill and get instant AI-powered analysis. Discover better rates, calculate exact savings, find personalized plan recommendations. Free bill analysis for TX, PA, NY, OH, IL & more. Compare your current rate with 40+ providers. See how much you can save.",
+    title: "Electricity Bill Analyzer | Electric Scouts",
+    description: "Upload an electricity bill and see the rate you are actually paying once base charges and usage credits are counted, then compare it against current plans.",
     priority: 0.9,
     changefreq: "weekly",
   },
   {
     page: "AllProviders",
     path: "/all-providers",
-    title: "Browse All Energy Providers | Electric Scouts Directory",
-    description: "Explore our full directory of energy providers across 12 deregulated states. Filter by state, plan type, or rating to find the right fit for your home or business. Transparent details, real reviews, no sales pressure.",
+    title: "Electricity Supplier Directory | Electric Scouts",
+    description: "Browse every electricity supplier we track across 12 deregulated states, with the plans they offer, the states they cover and their contract terms.",
     priority: 0.9,
     changefreq: "weekly",
   },
   {
     page: "AllStates",
     path: "/all-states",
-    title: "Deregulated Electricity States - Compare Rates in 12 Markets | Electric Scouts",
-    description: "Compare electricity rates in 12 deregulated states: Texas (TX), Illinois (IL), Ohio (OH), Pennsylvania (PA), New York (NY), New Jersey (NJ), Maryland (MD), Massachusetts (MA), Maine (ME), New Hampshire (NH), Rhode Island (RI), Connecticut (CT). Choose your electricity supplier, compare 40+ providers, save up to $800/year. Free comparison across all competitive energy markets.",
+    title: "Deregulated Electricity States | Electric Scouts",
+    description: "Compare electricity markets in the 12 US states where households choose their own supplier — plans tracked, suppliers and rate ranges for each market.",
     priority: 0.9,
     changefreq: "weekly",
   },
   {
     page: "AllCities",
     path: "/all-cities",
-    title: "Compare Electricity Rates by City | All Cities | Electric Scouts",
-    description: "Browse electricity rates and providers in cities across deregulated states. Compare plans in Houston, Dallas, Chicago, New York, Philadelphia, and more.",
+    title: "Electricity Rates by City | Electric Scouts",
+    description: "Local electricity rates, utilities and coverage for every city we publish, from Houston and Dallas to Chicago, Philadelphia and New York.",
     priority: 0.9,
     changefreq: "weekly",
   },
   {
     page: "LearningCenter",
     path: "/learning-center",
-    title: "Energy Know-How | Guides & Tips from Electric Scouts",
-    description: "Practical guides and tips to help you understand electricity markets, pick the right plan, and keep your bills low. Written by the Electric Scouts team for real people, not industry insiders.",
+    title: "Electricity Guides and Tips | Electric Scouts",
+    description: "Practical guides on how electricity markets work, how to read a bill and what to check before signing a contract — written for people switching supplier.",
     priority: 0.9,
     changefreq: "weekly",
   },
   {
     page: "RenewableEnergy",
     path: "/renewable-energy",
-    title: "Renewable Energy Plans | Clean Power Options in 12 States | Electric Scouts",
-    description: "Compare 100% renewable energy plans from wind and solar in TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT. Green electricity at competitive rates. 50+ clean energy plans. Reduce carbon footprint. Save money while supporting renewable energy. Fixed & variable green energy rates. Switch to solar and wind power today.",
+    title: "Renewable Electricity Plans | Electric Scouts",
+    description: "How 100% renewable electricity plans actually work, what they cost, and which suppliers offer them in each deregulated state we cover.",
     priority: 0.8,
     changefreq: "weekly",
   },
   {
     page: "RenewableCompareRates",
     path: "/renewable-compare-rates",
-    title: "Go Green | Compare Renewable Electricity Plans | Electric Scouts",
-    description: "Find the best renewable energy electricity plans in your area. Compare 100% green energy rates from wind and solar providers. Support clean energy while saving money.",
+    title: "Compare Renewable Electricity Plans | Electric Scouts",
+    description: "Filter the comparison down to plans backed by 100% renewable energy and rank them by rate, contract length or supplier. Enter a ZIP code to start.",
     priority: 0.8,
     changefreq: "weekly",
   },
   {
     page: "BusinessElectricity",
     path: "/business-electricity",
-    title: "Business Electricity Solutions | Plans for Every Company Size | Electric Scouts",
-    description: "Compare business electricity rates for small businesses, large commercial facilities, and industrial operations across 12 states. Get custom quotes for tiered pricing, demand charges, and load management. Save up to $5,000+ annually on commercial energy costs with competitive business electricity plans.",
+    title: "Business Electricity Rates and Pricing | Electric Scouts",
+    description: "How commercial electricity is priced — demand charges, load profiles and contract terms — plus the business plans we track in each deregulated state.",
     priority: 0.8,
     changefreq: "weekly",
   },
   {
     page: "BusinessHub",
     path: "/business-hub",
-    title: "Business Electricity Plans - Commercial Energy Solutions | Electric Scouts",
-    description: "Compare commercial electricity rates for your business. Custom usage tiers, volume discounts, flexible contracts. Save up to 30% on business energy costs.",
+    title: "Business Electricity by Company Size | Electric Scouts",
+    description: "What a business needs from an electricity contract depends on its size and load shape. Compare the options for small, medium and industrial accounts.",
     priority: 0.8,
     changefreq: "weekly",
   },
   {
     page: "BusinessCompareRates",
     path: "/business-compare-rates",
-    title: "Business Rate Finder | Commercial Electricity Plans | Electric Scouts",
-    description: "Find the best electricity rates for your business. Compare commercial energy plans from 40+ providers. Fixed rates, volume discounts, and dedicated business support.",
+    title: "Business Electricity Quotes | Electric Scouts",
+    description: "Get commercial electricity quotes for your business. Commercial supply is priced against your load profile, so this is a quote request rather than a checkout.",
     priority: 0.8,
     changefreq: "weekly",
   },
   {
     page: "SavingsCalculator",
     path: "/savings-calculator",
-    title: "Electricity Savings Calculator - Predict Your Annual Savings | Electric Scouts",
-    description: "Calculate how much you can save on electricity bills. Input your current rate and usage to get personalized savings estimates and plan recommendations for your state.",
+    title: "Electricity Savings Calculator | Electric Scouts",
+    description: "Enter your current rate and monthly usage to estimate what a different electricity plan would cost you over a year, using your own numbers.",
     priority: 0.8,
     changefreq: "weekly",
   },
@@ -135,7 +136,7 @@ export const STATIC_ROUTES = [
     page: "FAQ",
     path: "/faq",
     title: "Electricity FAQ | Honest Answers from Electric Scouts",
-    description: "Get answers to frequently asked questions about electricity deregulation, switching providers, plan types, rates, billing, contracts & saving money. Expert guidance for TX, PA, NY, OH, IL, NJ, MD, MA & more. Learn about fixed vs variable rates, kWh usage, early termination fees, renewable energy, deposits & more.",
+    description: "Straight answers on switching electricity supplier: how long it takes, what happens to your service, and why the advertised rate is not what you end up paying.",
     priority: 0.8,
     changefreq: "monthly",
   },
@@ -143,31 +144,31 @@ export const STATIC_ROUTES = [
     page: "AboutUs",
     path: "/about-us",
     title: "About Electric Scouts | Who We Are & Why We Built This",
-    description: "Electric Scouts was built with one goal: make it dead simple to find a better electricity deal. We are an independent comparison platform covering 12 deregulated states, 40+ providers, and hundreds of plans. No hidden fees, no bias — just clarity.",
+    description: "Electric Scouts is an independent electricity comparison service covering 12 deregulated states. What we track, what we do not do, and how we make money.",
     priority: 0.7,
     changefreq: "monthly",
   },
   {
     page: "HomeConcierge",
     path: "/home-concierge",
-    title: "Home Concierge | Set Up All Utilities | Electric Scouts",
-    description: "Let Electric Scouts handle your electricity, internet, water, and phone setup. Free one-stop home concierge service for new movers.",
+    title: "Home Concierge | Set Up Utilities When You Move | Electric Scouts",
+    description: "Moving means setting up electricity before you arrive. We handle the electricity setup and coordinate internet, water and phone so nothing starts late.",
     priority: 0.7,
     changefreq: "monthly",
   },
   {
     page: "PrivacyPolicy",
     path: "/privacy-policy",
-    title: "Privacy Policy - Electric Scouts | How We Protect Your Data",
-    description: "Electric Scouts privacy policy. Learn how we protect your personal information and data when you compare electricity rates. We do not sell your information.",
+    title: "Privacy Policy | Electric Scouts",
+    description: "How Electric Scouts collects, uses and protects your information when you compare electricity plans. We do not sell your personal information.",
     priority: 0.3,
     changefreq: "yearly",
   },
   {
     page: "TermsOfService",
     path: "/terms-of-service",
-    title: "Terms of Service - Electric Scouts | User Agreement & Guidelines",
-    description: "Electric Scouts terms of service and user agreement. Understand your rights, responsibilities, and legal terms when using our free electricity rate comparison platform.",
+    title: "Terms of Service | Electric Scouts",
+    description: "The terms that apply when you use Electric Scouts to compare electricity plans, including accuracy of rates, affiliate relationships and limitation of liability.",
     priority: 0.3,
     changefreq: "yearly",
   },
@@ -191,69 +192,84 @@ export const NOINDEX_ROUTES = [
   { path: '/not-found', title: 'Page Not Found | Electric Scouts', reason: 'error page' },
 ];
 
-/** Metadata for the 12 state landing pages, keyed by state code. */
-export const STATE_ROUTE_META = {
-  TX: {
-    page: "TexasElectricity",
-    title: "Texas Electricity Rates - Compare 45+ Providers & Save $800/Year | Electric Scouts TX",
-    description: "Compare Texas electricity rates from TXU, Reliant, Gexa & 40+ providers. Serving Houston, Dallas, Austin, San Antonio. Find cheap electricity plans for your home. Fixed & variable rates. 100% renewable options. Switch in minutes & save up to $800 annually. Free comparison, instant results.",
-  },
-  IL: {
-    page: "IllinoisElectricity",
-    title: "Illinois Electricity Rates - Compare 36+ Providers & Save $700/Year | Electric Scouts IL",
-    description: "Compare Illinois electricity rates from Constellation, Direct Energy & 35+ providers. Serving Chicago, Aurora, Naperville, Rockford. Find affordable electricity plans for your home. Fixed & variable rates. 100% green energy options. Switch easily & save up to $700 annually. Free IL electricity comparison.",
-  },
-  OH: {
-    page: "OhioElectricity",
-    title: "Ohio Electricity Rates - Compare 40+ Suppliers & Save $760/Year | Electric Scouts OH",
-    description: "Compare Ohio electricity rates from Constellation, Direct Energy, IGS Energy & 38+ suppliers. Serving Cleveland, Columbus, Cincinnati, Toledo, Akron. Find competitive electricity plans for your home. Fixed & variable rates. Renewable energy options. Switch & save up to $760 annually. Free Ohio electricity comparison tool.",
-  },
-  PA: {
-    page: "PennsylvaniaElectricity",
-    title: "Pennsylvania Electricity Rates - Compare 38+ Suppliers & Save $750/Year | Electric Scouts PA",
-    description: "Compare Pennsylvania electricity rates from Constellation, Direct Energy, Champion Energy & 36+ suppliers. Serving Philadelphia, Pittsburgh, Allentown, Harrisburg. Find competitive electricity plans for your home. Fixed & variable rates. 100% green energy options. Switch easily & save up to $750 annually. Free PA electricity comparison.",
-  },
-  NY: {
-    page: "NewYorkElectricity",
-    title: "New York Electricity Rates - Compare 42+ ESCOs & Save $740/Year | Electric Scouts NY",
-    description: "Compare New York electricity rates from Constellation, Direct Energy, Verde Energy & 40+ ESCOs. Serving NYC, Buffalo, Rochester, Albany, Syracuse. Find competitive electricity plans for your home or business. Fixed & variable rates. 100% renewable energy options. Switch from Con Edison, National Grid & save up to $740 annually. Free NY ESCO comparison.",
-  },
-  NJ: {
-    page: "NewJerseyElectricity",
-    title: "New Jersey Electricity Rates - Compare 35+ Third Party Suppliers & Save $720/Year | NJ",
-    description: "Compare New Jersey electricity rates from Constellation, Direct Energy, Starion Energy & 33+ Third Party Suppliers. Serving Newark, Jersey City, Paterson, Elizabeth, Trenton. Find competitive electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from PSE&G, JCP&L & save up to $720 annually. Free NJ electricity comparison.",
-  },
-  MD: {
-    page: "MarylandElectricity",
-    title: "Maryland Electricity Rates - Compare 32+ Suppliers & Save $680/Year | Electric Scouts MD",
-    description: "Compare Maryland electricity rates from Constellation, Direct Energy, WGL Energy & 30+ suppliers. Serving Baltimore, Columbia, Germantown, Silver Spring, Annapolis. Find competitive electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from BGE, Pepco, Delmarva Power & save up to $680 annually. Free MD electricity comparison.",
-  },
-  MA: {
-    page: "MassachusettsElectricity",
-    title: "Massachusetts Electricity Rates - Compare 34+ Suppliers & Save $710/Year | Electric Scouts MA",
-    description: "Compare Massachusetts electricity rates from Constellation, Direct Energy, Verde Energy & 32+ competitive suppliers. Serving Boston, Worcester, Springfield, Cambridge, Lowell. Find affordable electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from Eversource, National Grid & save up to $710 annually. Free MA electricity comparison.",
-  },
-  ME: {
-    page: "MaineElectricity",
-    title: "Maine Electricity Rates - Compare 22+ Competitive Suppliers & Save $620/Year | Electric Scouts ME",
-    description: "Compare Maine electricity rates from Constellation, Direct Energy, Verde Energy & 20+ competitive suppliers. Serving Portland, Lewiston, Bangor, Auburn, South Portland. Find affordable electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from CMP, Versant Power & save up to $620 annually. Free Maine electricity comparison tool.",
-  },
-  NH: {
-    page: "NewHampshireElectricity",
-    title: "New Hampshire Electricity Rates - Compare 25+ Suppliers & Save $640/Year | Electric Scouts NH",
-    description: "Compare New Hampshire electricity rates from Constellation, Direct Energy, Verde Energy & 23+ competitive suppliers. Serving Manchester, Nashua, Concord, Derry, Rochester, Salem. Find affordable electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from Eversource, Liberty Utilities & save up to $640 annually. Free NH electricity comparison.",
-  },
-  RI: {
-    page: "RhodeIslandElectricity",
-    title: "Rhode Island Electricity Rates - Compare 26+ Suppliers & Save $660/Year | Electric Scouts RI",
-    description: "Compare Rhode Island electricity rates from Constellation, Direct Energy, Verde Energy & 24+ competitive suppliers. Serving Providence, Warwick, Cranston, Pawtucket, East Providence. Find affordable electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from Rhode Island Energy, National Grid & save up to $660 annually. Free RI electricity comparison.",
-  },
-  CT: {
-    page: "ConnecticutElectricity",
-    title: "Connecticut Electricity Rates - Compare 30+ Suppliers & Save $690/Year | Electric Scouts CT",
-    description: "Compare Connecticut electricity rates from Constellation, Direct Energy, Verde Energy & 28+ competitive suppliers. Serving Hartford, New Haven, Bridgeport, Stamford, Waterbury, Norwalk. Find competitive electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from Eversource, United Illuminating & save up to $690 annually. Free CT electricity comparison.",
-  },
+/**
+ * Page component name for each state landing page. Titles and descriptions are
+ * generated from the market snapshot rather than hand-written per state: the
+ * previous hand-written set carried savings claims ("Save $800/Year") that no
+ * data on this site supports, and provider counts that disagreed with what the
+ * pages actually listed.
+ */
+export const STATE_PAGE_COMPONENTS = {
+  TX: 'TexasElectricity',
+  IL: 'IllinoisElectricity',
+  OH: 'OhioElectricity',
+  PA: 'PennsylvaniaElectricity',
+  NY: 'NewYorkElectricity',
+  NJ: 'NewJerseyElectricity',
+  MD: 'MarylandElectricity',
+  MA: 'MassachusettsElectricity',
+  ME: 'MaineElectricity',
+  NH: 'NewHampshireElectricity',
+  RI: 'RhodeIslandElectricity',
+  CT: 'ConnecticutElectricity',
 };
+
+/** Title for a state landing page. Kept inside typical SERP truncation. */
+export function stateTitle(stateName) {
+  return `${stateName} Electricity Rates & Providers | Electric Scouts`;
+}
+
+/**
+ * Description for a state landing page, built from the plans we actually hold.
+ * Falls back to a claim-free sentence if the snapshot has nothing for a state,
+ * so a missing market can never produce a description with a blank in it.
+ */
+export function stateDescription(stateName, market) {
+  if (!market || !market.plans) {
+    return `Compare electricity suppliers and plans in ${stateName}. See rates by city, how the market works and what to check before switching.`;
+  }
+  const range = `${formatRate(market.minRate)}\u2013${formatRate(market.maxRate)}`;
+  return (
+    `Compare ${market.plans} ${stateName} electricity plans from ${market.providers} suppliers, ` +
+    `${range}. Rates by city, renewable options and how switching works.`
+  );
+}
+
+/** Title for a city page: the phrasing people actually search for. */
+export function cityTitle(city) {
+  return `Compare Electricity Rates in ${city.name}, ${city.stateCode} | Electric Scouts`;
+}
+
+/**
+ * Description for a city page. Leads with the city's own average rate and bill
+ * — the two figures that differ city to city — then the size of the market it
+ * sits in. No year is hard-coded: the previous titles still said "2025".
+ */
+export function cityDescription(city, market) {
+  const local = `Electricity in ${city.name}, ${city.stateCode} averages ${city.avgRate} (about ${city.avgMonthlyBill}/mo).`;
+  if (!market || !market.plans) {
+    return `${local} Compare suppliers serving ${city.county} and switch for free with Electric Scouts.`;
+  }
+  return `${local} Compare ${market.plans} ${city.stateName} plans from ${market.providers} suppliers by ZIP code.`;
+}
+
+/** Title for a provider detail page. */
+export function providerTitle(provider) {
+  return `${provider.name} Electricity Plans & Rates | Electric Scouts`;
+}
+
+export function providerDescription(provider) {
+  const rates =
+    provider.minRate !== null && provider.maxRate !== null
+      ? ` from ${formatRate(provider.minRate)} to ${formatRate(provider.maxRate)}`
+      : '';
+  const states = (provider.planStates || []).map((code) => STATE_NAMES[code]).filter(Boolean);
+  const where = states.length ? ` in ${states.length === 1 ? states[0] : `${states.length} states`}` : '';
+  return (
+    `Compare ${provider.plans} ${provider.name} electricity plans${where}${rates}. ` +
+    `Contract terms, renewable options and how they stack up against other suppliers.`
+  );
+}
 
 /* ------------------------------------------------------------------ *
  * Route builders
@@ -262,36 +278,40 @@ export const STATE_ROUTE_META = {
 /** The 12 state landing pages. */
 export function getStateRoutes() {
   return getStates().map((state) => {
-    const meta = STATE_ROUTE_META[state.code];
+    const market = getStateMarket(state.code);
     return {
       type: 'state',
+      page: STATE_PAGE_COMPONENTS[state.code],
       path: canonicalPath(state.path),
-      title: meta.title,
-      description: meta.description,
-      heading: `${state.name} Electricity Rates & Providers`,
+      title: stateTitle(state.name),
+      description: stateDescription(state.name, market),
+      heading: `${state.name} Electricity Rates and Providers`,
       priority: 0.9,
       changefreq: 'weekly',
       state,
+      market,
     };
   });
 }
 
 /** One route per city that has real data behind it. */
 export function getCityRoutes() {
-  return getCities().map((city) => ({
-    type: 'city',
-    path: city.path,
-    // Mirrors the title CityRates renders via <SEOHead>.
-    title: `${city.name}, ${city.stateCode} Electricity Rates 2025 - Compare ${city.providers}+ Providers | Electric Scouts`,
-    description:
-      `Compare ${city.name} electricity rates from ${city.providers}+ providers. ` +
-      `Average ${city.avgRate} (est. ${city.avgMonthlyBill}/mo) in ${city.county}. ` +
-      `Switch and save — 100% free comparison.`,
-    heading: `Cheap Electricity Rates in ${city.name}, ${city.stateName}`,
-    priority: 0.8,
-    changefreq: 'weekly',
-    city,
-  }));
+  return getCities().map((city) => {
+    const market = getStateMarket(city.stateCode);
+    return {
+      type: 'city',
+      path: city.path,
+      title: cityTitle(city),
+      description: cityDescription(city, market),
+      heading: `Compare Electricity Rates in ${city.name}, ${city.stateName}`,
+      // Cities are ranked by how much distinct data stands behind them, so the
+      // ones with local market notes are crawled ahead of the thinnest.
+      priority: parseRate(city.avgRate) !== null ? 0.8 : 0.7,
+      changefreq: 'weekly',
+      city,
+      market,
+    };
+  });
 }
 
 /**
@@ -316,31 +336,30 @@ export function getArticleRouteList(fullArticles) {
 }
 
 /**
- * Provider detail pages. Only providers the app actually renders belong here:
- * ProviderDetails resolves its slug against `is_active` providers, so an
- * inactive provider's URL would render a "Provider Not Found" shell.
+ * Provider detail pages.
  *
- * @param {Array<{name: string, updated_at?: string}>} activeProviders
+ * A provider earns a page only when ProviderDetails would actually render one:
+ * it must be flagged active (that page filters on `is_active`, so anything else
+ * renders a "Provider Not Found" shell) and it must have at least one plan.
+ * Both conditions are already applied by getPublishableProviders(); this keeps
+ * the guard anyway so a caller passing a raw list cannot publish empty profiles.
+ *
+ * @param {Array<object>} providers records from the market snapshot
  */
-export function getProviderRoutes(activeProviders = []) {
-  return activeProviders
-    .filter((provider) => provider && provider.name)
-    .map((provider) => {
-      const slug = providerSlug(provider.name);
-      return {
-        type: 'provider',
-        path: canonicalPath(`/providers/${slug}`),
-        title: `${provider.name} Electricity Plans & Rates | Electric Scouts`,
-        description:
-          `Compare ${provider.name} electricity plans, rates and contract terms. ` +
-          `See how ${provider.name} stacks up against other providers before you switch.`,
-        heading: provider.name,
-        priority: 0.8,
-        changefreq: 'weekly',
-        lastmod: provider.updated_at ? String(provider.updated_at).split('T')[0] : undefined,
-        provider,
-      };
-    })
+export function getProviderRoutes(providers = []) {
+  return providers
+    .filter((provider) => provider && provider.name && provider.isActive && provider.plans > 0)
+    .map((provider) => ({
+      type: 'provider',
+      path: canonicalPath(`/providers/${provider.slug || providerSlug(provider.name)}`),
+      title: providerTitle(provider),
+      description: providerDescription(provider),
+      heading: `${provider.name} Electricity Plans and Rates`,
+      priority: 0.8,
+      changefreq: 'weekly',
+      lastmod: provider.updatedAt ? String(provider.updatedAt).split('T')[0] : undefined,
+      provider,
+    }))
     .filter((route) => route.path !== '/providers/');
 }
 
@@ -359,7 +378,7 @@ export function providerSlug(name) {
  * it describes the same thing the React page renders.
  */
 export const STATIC_HEADINGS = {
-  '/': 'Compare Electricity Rates from 40+ Providers Across 12 States',
+  '/': 'Compare Electricity Rates Across 12 Deregulated States',
   '/compare-rates': 'Compare Electricity Rates Side by Side',
   '/bill-analyzer': 'Electricity Bill Analyzer',
   '/all-providers': 'Electricity Providers Directory',
@@ -414,7 +433,7 @@ export const ALIAS_ROUTES = [
     canonical: '/',
     title: "Electric Scouts | Stop Overpaying for Electricity — We'll Prove It",
     description:
-      'Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from 40+ providers across 12 states. Free Bill Analyzer included.',
+      "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     heading: 'Stop Overpaying for Electricity',
   },
 ];

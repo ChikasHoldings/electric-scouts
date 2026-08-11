@@ -8,11 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function NewHampshireElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("NH");
 
   const stateData = {
     name: "New Hampshire",
@@ -26,12 +31,12 @@ export default function NewHampshireElectricity() {
       {
         id: 1,
         question: "How does New Hampshire's electricity deregulation work?",
-        answer: "New Hampshire has a deregulated electricity market where residents can choose their competitive electricity supplier from over 25 providers. Eversource or Liberty Utilities continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
+        answer: "New Hampshire has a deregulated electricity market where residents can choose their competitive electricity supplier from competing suppliers. Eversource or Liberty Utilities continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
       },
       {
         id: 2,
         question: "How much can I save on electricity in New Hampshire?",
-        answer: "New Hampshire residents save an average of $640 per year by comparing electricity rates from competitive suppliers. Savings vary by location and usage, with strong competition in the Manchester and Nashua areas providing significant opportunities to reduce monthly bills."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the New Hampshire plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -49,8 +54,8 @@ export default function NewHampshireElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="New Hampshire Electricity Rates - Compare 25+ Suppliers & Save $640/Year | Electric Scouts NH"
-        description="Compare New Hampshire electricity rates from Constellation, Direct Energy, Verde Energy & 23+ competitive suppliers. Serving Manchester, Nashua, Concord, Derry, Rochester, Salem. Find affordable electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from Eversource, Liberty Utilities & save up to $640 annually. Free NH electricity comparison."
+        title="New Hampshire Electricity Rates & Providers | Electric Scouts"
+        description="Compare 22 New Hampshire electricity plans from 11 suppliers, 9.3¢/kWh–14.49¢/kWh. Rates by city, renewable options and how switching works."
         keywords="New Hampshire electricity rates, Manchester electricity providers, Nashua energy rates, Eversource NH alternatives, Liberty Utilities alternatives, compare electricity New Hampshire, cheap electricity NH, New Hampshire energy suppliers, best electricity rates NH, competitive electricity New Hampshire, deregulated electricity NH, fixed rate electricity New Hampshire, renewable energy NH, green energy plans New Hampshire"
         canonical="/new-hampshire-electricity"
         structuredData={[
@@ -81,7 +86,7 @@ export default function NewHampshireElectricity() {
               New Hampshire Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ competitive suppliers across New Hampshire. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active New Hampshire plans. What you save depends on your current rate and usage.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -90,12 +95,12 @@ export default function NewHampshireElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
                 <div className="text-sm text-blue-100">Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>

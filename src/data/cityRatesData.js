@@ -15,7 +15,7 @@ export const cityData = {
     zipCodes: ["77002", "77019", "77024", "77027", "77056", "77063", "77098"],
     avgRate: "8.9¢/kWh", avgMonthlyBill: "$128", providers: 45,
     neighborhoods: ["Downtown Houston", "The Heights", "Montrose", "River Oaks", "Midtown", "Galleria", "Memorial"],
-    description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to over 45 electricity providers in the deregulated market.",
+    description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to competing electricity suppliers in the deregulated market.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
   "Dallas-TX": {
@@ -23,7 +23,7 @@ export const cityData = {
     zipCodes: ["75201", "75202", "75204", "75205", "75214", "75219", "75230"],
     avgRate: "9.1¢/kWh", avgMonthlyBill: "$132", providers: 42,
     neighborhoods: ["Downtown Dallas", "Uptown", "Deep Ellum", "Highland Park", "Oak Lawn", "Lake Highlands", "North Dallas"],
-    description: "Dallas residents benefit from competitive electricity rates with access to over 42 providers offering a wide range of fixed and variable rate plans.",
+    description: "Dallas residents benefit from competitive electricity rates with access to competing suppliers offering a wide range of fixed and variable rate plans.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
   "Austin-TX": {
@@ -31,7 +31,7 @@ export const cityData = {
     zipCodes: ["78701", "78702", "78703", "78704", "78731", "78745", "78757"],
     avgRate: "9.3¢/kWh", avgMonthlyBill: "$135", providers: 38,
     neighborhoods: ["Downtown Austin", "South Congress", "East Austin", "West Lake Hills", "Hyde Park", "Zilker", "Mueller"],
-    description: "Austin, the state capital and tech hub, provides residents with competitive electricity rates and numerous green energy options from 38+ providers.",
+    description: "Austin, the state capital and tech hub, provides residents with competitive electricity rates and numerous green energy options from competing suppliers.",
     image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=400&h=300&fit=crop"
   },
   "San Antonio-TX": {
@@ -39,7 +39,7 @@ export const cityData = {
     zipCodes: ["78201", "78209", "78212", "78216", "78232", "78249", "78258"],
     avgRate: "8.8¢/kWh", avgMonthlyBill: "$127", providers: 40,
     neighborhoods: ["Downtown San Antonio", "Alamo Heights", "Stone Oak", "The Dominion", "Southtown", "King William", "Medical Center"],
-    description: "San Antonio offers some of the most competitive electricity rates in Texas, with 40+ providers serving the area's residential and commercial customers.",
+    description: "San Antonio offers some of the most competitive electricity rates in Texas, with competing suppliers serving the area's residential and commercial customers.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/136ff412-03e2-40c7-8934-8517d2404665.jpg"
   },
   "Fort Worth-TX": {
@@ -47,7 +47,7 @@ export const cityData = {
     zipCodes: ["76102", "76104", "76107", "76109", "76116", "76132", "76244"],
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 41,
     neighborhoods: ["Downtown Fort Worth", "Cultural District", "Sundance Square", "West 7th", "Ridglea", "Tanglewood", "Alliance"],
-    description: "Fort Worth residents enjoy access to competitive electricity rates from 41+ providers in the deregulated Texas energy market.",
+    description: "Fort Worth residents enjoy access to competitive electricity rates from competing suppliers in the deregulated Texas energy market.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
 
@@ -57,7 +57,7 @@ export const cityData = {
     zipCodes: ["60601", "60602", "60603", "60604", "60605", "60606", "60607"],
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 36,
     neighborhoods: ["Downtown Chicago", "Lincoln Park", "Wicker Park", "River North", "Loop", "Gold Coast", "West Loop"],
-    description: "Chicago residents have access to competitive electricity rates from 36+ suppliers in the ComEd service territory.",
+    description: "Chicago residents have access to competitive electricity rates from competing suppliers in the ComEd service territory.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Aurora-IL": {
@@ -65,7 +65,7 @@ export const cityData = {
     zipCodes: ["60502", "60503", "60504", "60505", "60506", "60507", "60519"],
     avgRate: "9.9¢/kWh", avgMonthlyBill: "$143", providers: 34,
     neighborhoods: ["Downtown Aurora", "Fox Valley", "Far East", "West Aurora", "North Aurora", "Indian Prairie", "Aurora Highlands"],
-    description: "Aurora residents benefit from competitive electricity rates with 34+ suppliers in the western Chicago suburbs.",
+    description: "Aurora residents benefit from competitive electricity rates with competing suppliers in the western Chicago suburbs.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Naperville-IL": {
@@ -73,7 +73,7 @@ export const cityData = {
     zipCodes: ["60540", "60563", "60564", "60565", "60585"],
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 35,
     neighborhoods: ["Downtown Naperville", "White Eagle", "Ashbury", "Springbrook", "College Hill", "Fort Hill", "Cress Creek"],
-    description: "Naperville residents enjoy competitive electricity rates from 35+ suppliers in the affluent DuPage County area.",
+    description: "Naperville residents enjoy competitive electricity rates from competing suppliers in the affluent DuPage County area.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
   },
   "Joliet-IL": {
@@ -81,7 +81,7 @@ export const cityData = {
     zipCodes: ["60431", "60432", "60433", "60434", "60435", "60436"],
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$141", providers: 33,
     neighborhoods: ["Cathedral Area", "Fairmont", "Pilcher Park", "Rockdale", "West Joliet", "Laraway", "Highland Park"],
-    description: "Joliet residents have access to competitive electricity rates from 33+ suppliers in Will County.",
+    description: "Joliet residents have access to competitive electricity rates from competing suppliers in Will County.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
   },
 
@@ -91,7 +91,7 @@ export const cityData = {
     zipCodes: ["43085", "43201", "43202", "43203", "43204", "43205", "43206"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$138", providers: 38,
     neighborhoods: ["Downtown Columbus", "German Village", "Short North", "Clintonville", "Victorian Village", "Arena District", "Brewery District"],
-    description: "Columbus residents enjoy competitive electricity rates from 38+ suppliers in the AEP Ohio service territory.",
+    description: "Columbus residents enjoy competitive electricity rates from competing suppliers in the AEP Ohio service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/03fe81c8-162d-4692-be26-32e20095399c.jpg"
   },
   "Cleveland-OH": {
@@ -99,7 +99,7 @@ export const cityData = {
     zipCodes: ["44101", "44102", "44103", "44104", "44105", "44106", "44107"],
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 37,
     neighborhoods: ["Downtown Cleveland", "Ohio City", "Tremont", "University Circle", "Detroit-Shoreway", "Edgewater", "Collinwood"],
-    description: "Cleveland residents have access to competitive electricity rates from 37+ suppliers in the FirstEnergy service territory.",
+    description: "Cleveland residents have access to competitive electricity rates from competing suppliers in the FirstEnergy service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
   },
   "Cincinnati-OH": {
@@ -107,7 +107,7 @@ export const cityData = {
     zipCodes: ["45201", "45202", "45203", "45204", "45205", "45206", "45207"],
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 36,
     neighborhoods: ["Downtown Cincinnati", "Over-the-Rhine", "Mount Adams", "Clifton", "Hyde Park", "Oakley", "Columbia-Tusculum"],
-    description: "Cincinnati residents benefit from competitive electricity rates with 36+ suppliers in the Duke Energy Ohio territory.",
+    description: "Cincinnati residents benefit from competitive electricity rates with competing suppliers in the Duke Energy Ohio territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
   },
   "Toledo-OH": {
@@ -115,7 +115,7 @@ export const cityData = {
     zipCodes: ["43601", "43604", "43606", "43607", "43608", "43609", "43610"],
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 35,
     neighborhoods: ["Downtown Toledo", "Old West End", "Ottawa Hills", "Sylvania", "Point Place", "Westgate", "South End"],
-    description: "Toledo residents enjoy competitive electricity rates from 35+ suppliers in the FirstEnergy service territory.",
+    description: "Toledo residents enjoy competitive electricity rates from competing suppliers in the FirstEnergy service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
   },
 
@@ -125,7 +125,7 @@ export const cityData = {
     zipCodes: ["19102", "19103", "19104", "19106", "19107", "19111", "19114"],
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$147", providers: 32,
     neighborhoods: ["Center City", "Old City", "Society Hill", "Rittenhouse Square", "University City", "Northern Liberties", "Fishtown"],
-    description: "Philadelphia residents benefit from competitive electricity rates with 32+ suppliers in the PECO service territory.",
+    description: "Philadelphia residents benefit from competitive electricity rates with competing suppliers in the PECO service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
   },
   "Pittsburgh-PA": {
@@ -133,7 +133,7 @@ export const cityData = {
     zipCodes: ["15201", "15202", "15203", "15204", "15205", "15206", "15207"],
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 30,
     neighborhoods: ["Downtown Pittsburgh", "Shadyside", "Squirrel Hill", "Oakland", "Lawrenceville", "South Side", "Strip District"],
-    description: "Pittsburgh residents enjoy competitive electricity rates from 30+ suppliers in the Duquesne Light service territory.",
+    description: "Pittsburgh residents enjoy competitive electricity rates from competing suppliers in the Duquesne Light service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
   },
   "Allentown-PA": {
@@ -141,7 +141,7 @@ export const cityData = {
     zipCodes: ["18101", "18102", "18103", "18104", "18105", "18106", "18109"],
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Allentown", "West Park", "Hanover Acres", "South Side", "East Side", "West End", "Cedar Crest"],
-    description: "Allentown residents benefit from competitive electricity rates with 28+ suppliers in the PPL Electric service territory.",
+    description: "Allentown residents benefit from competitive electricity rates with competing suppliers in the PPL Electric service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
   },
 
@@ -185,7 +185,7 @@ export const cityData = {
     zipCodes: ["07102", "07103", "07104", "07105", "07106", "07107", "07108"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Newark", "Ironbound", "Forest Hill", "North Ward", "Central Ward", "West Ward", "South Ward"],
-    description: "Newark residents benefit from competitive electricity rates with 27+ suppliers in the PSE&G service territory.",
+    description: "Newark residents benefit from competitive electricity rates with competing suppliers in the PSE&G service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
   },
   "Jersey City-NJ": {
@@ -193,7 +193,7 @@ export const cityData = {
     zipCodes: ["07302", "07304", "07305", "07306", "07307", "07310"],
     avgRate: "10.6¢/kWh", avgMonthlyBill: "$152", providers: 26,
     neighborhoods: ["Downtown Jersey City", "Journal Square", "The Heights", "Bergen-Lafayette", "Greenville", "McGinley Square", "Paulus Hook"],
-    description: "Jersey City residents enjoy competitive electricity rates from 26+ suppliers in the PSE&G service territory.",
+    description: "Jersey City residents enjoy competitive electricity rates from competing suppliers in the PSE&G service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/29c455be-4263-4009-8e75-1475730b0b76.jpg"
   },
   "Paterson-NJ": {
@@ -201,7 +201,7 @@ export const cityData = {
     zipCodes: ["07501", "07502", "07503", "07504", "07505", "07510", "07514"],
     avgRate: "10.7¢/kWh", avgMonthlyBill: "$153", providers: 25,
     neighborhoods: ["Downtown Paterson", "Eastside", "Riverside", "Peoples Park", "Hillcrest", "Northside", "Wrigley Park"],
-    description: "Paterson residents benefit from competitive electricity rates with 25+ suppliers in the PSE&G service territory.",
+    description: "Paterson residents benefit from competitive electricity rates with competing suppliers in the PSE&G service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
   },
 
@@ -211,7 +211,7 @@ export const cityData = {
     zipCodes: ["21201", "21202", "21205", "21206", "21207", "21208", "21209"],
     avgRate: "10.4¢/kWh", avgMonthlyBill: "$150", providers: 29,
     neighborhoods: ["Downtown Baltimore", "Federal Hill", "Fells Point", "Canton", "Inner Harbor", "Mount Vernon", "Charles Village"],
-    description: "Baltimore residents enjoy competitive electricity rates from 29+ suppliers in the BGE service territory.",
+    description: "Baltimore residents enjoy competitive electricity rates from competing suppliers in the BGE service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
   },
   "Frederick-MD": {
@@ -219,7 +219,7 @@ export const cityData = {
     zipCodes: ["21701", "21702", "21703", "21704", "21705"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Frederick", "Ballenger Creek", "Hood College", "North Frederick", "South Frederick", "West Frederick", "East Frederick"],
-    description: "Frederick residents benefit from competitive electricity rates with 27+ suppliers in the Potomac Edison service territory.",
+    description: "Frederick residents benefit from competitive electricity rates with competing suppliers in the Potomac Edison service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
   },
   "Rockville-MD": {
@@ -227,7 +227,7 @@ export const cityData = {
     zipCodes: ["20850", "20851", "20852", "20853", "20854", "20855"],
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Rockville", "Twinbrook", "West End", "King Farm", "Lincoln Park", "Woodley Gardens", "Fallsgrove"],
-    description: "Rockville residents enjoy competitive electricity rates from 28+ suppliers in the Pepco service territory.",
+    description: "Rockville residents enjoy competitive electricity rates from competing suppliers in the Pepco service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
   },
 
@@ -237,7 +237,7 @@ export const cityData = {
     zipCodes: ["02101", "02108", "02109", "02110", "02111", "02113", "02114"],
     avgRate: "11.2¢/kWh", avgMonthlyBill: "$161", providers: 22,
     neighborhoods: ["Downtown Boston", "Back Bay", "Beacon Hill", "North End", "South End", "Fenway", "Charlestown"],
-    description: "Boston residents benefit from competitive electricity rates with 22+ suppliers across multiple utility territories.",
+    description: "Boston residents benefit from competitive electricity rates with competing suppliers across multiple utility territories.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
   },
   "Worcester-MA": {
@@ -245,7 +245,7 @@ export const cityData = {
     zipCodes: ["01601", "01602", "01603", "01604", "01605", "01606", "01607"],
     avgRate: "11.3¢/kWh", avgMonthlyBill: "$162", providers: 21,
     neighborhoods: ["Downtown Worcester", "Main South", "Tatnuck", "West Side", "East Side", "Shrewsbury Street", "Canal District"],
-    description: "Worcester residents enjoy competitive electricity rates from 21+ suppliers in the National Grid service territory.",
+    description: "Worcester residents enjoy competitive electricity rates from competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
   },
   "Springfield-MA": {
@@ -253,7 +253,7 @@ export const cityData = {
     zipCodes: ["01101", "01103", "01104", "01105", "01107", "01108", "01109"],
     avgRate: "11.4¢/kWh", avgMonthlyBill: "$163", providers: 20,
     neighborhoods: ["Downtown Springfield", "Forest Park", "Sixteen Acres", "East Springfield", "South End", "Six Corners", "Metro Center"],
-    description: "Springfield residents benefit from competitive electricity rates with 20+ suppliers in the Eversource service territory.",
+    description: "Springfield residents benefit from competitive electricity rates with competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
   },
 
@@ -263,7 +263,7 @@ export const cityData = {
     zipCodes: ["06101", "06103", "06105", "06106", "06107", "06112", "06114"],
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 19,
     neighborhoods: ["Downtown Hartford", "South End", "Asylum Hill", "West End", "North End", "Parkville", "Frog Hollow"],
-    description: "Hartford residents enjoy competitive electricity rates from 19+ suppliers in the Eversource service territory.",
+    description: "Hartford residents enjoy competitive electricity rates from competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ottawa-street.jpg"
   },
   "New Haven-CT": {
@@ -271,7 +271,7 @@ export const cityData = {
     zipCodes: ["06510", "06511", "06513", "06515", "06519", "06520"],
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$168", providers: 19,
     neighborhoods: ["Downtown New Haven", "East Rock", "Wooster Square", "Fair Haven", "Westville", "Dixwell", "West River"],
-    description: "New Haven residents benefit from competitive electricity rates with 19+ suppliers in the United Illuminating service territory.",
+    description: "New Haven residents benefit from competitive electricity rates with competing suppliers in the United Illuminating service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
   },
   "Bridgeport-CT": {
@@ -279,7 +279,7 @@ export const cityData = {
     zipCodes: ["06601", "06604", "06605", "06606", "06607", "06608", "06610"],
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 18,
     neighborhoods: ["Downtown Bridgeport", "South End", "East End", "West End", "North End", "Black Rock", "Brooklawn"],
-    description: "Bridgeport residents enjoy competitive electricity rates from 18+ suppliers in the United Illuminating service territory.",
+    description: "Bridgeport residents enjoy competitive electricity rates from competing suppliers in the United Illuminating service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
   },
 
@@ -289,7 +289,7 @@ export const cityData = {
     zipCodes: ["04101", "04102", "04103", "04104", "04105", "04106", "04107"],
     avgRate: "11.5¢/kWh", avgMonthlyBill: "$165", providers: 17,
     neighborhoods: ["Downtown Portland", "Old Port", "West End", "East End", "Munjoy Hill", "Libbytown", "Bayside"],
-    description: "Portland residents benefit from competitive electricity rates with 17+ suppliers in the CMP service territory.",
+    description: "Portland residents benefit from competitive electricity rates with competing suppliers in the CMP service territory.",
     image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400&h=300&fit=crop"
   },
   "Lewiston-ME": {
@@ -297,7 +297,7 @@ export const cityData = {
     zipCodes: ["04240", "04241", "04243"],
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 16,
     neighborhoods: ["Downtown Lewiston", "College Street", "Bates College", "Tree Streets", "Webster Street", "East Avenue", "Sabattus Street"],
-    description: "Lewiston residents enjoy competitive electricity rates from 16+ suppliers in the CMP service territory.",
+    description: "Lewiston residents enjoy competitive electricity rates from competing suppliers in the CMP service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
   },
   "Bangor-ME": {
@@ -305,7 +305,7 @@ export const cityData = {
     zipCodes: ["04401", "04402"],
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Bangor", "Fairmount", "State Street", "Little City", "Broadway", "West Bangor", "East Side"],
-    description: "Bangor residents benefit from competitive electricity rates with 16+ suppliers in the Emera Maine service territory.",
+    description: "Bangor residents benefit from competitive electricity rates with competing suppliers in the Emera Maine service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
   },
 
@@ -315,7 +315,7 @@ export const cityData = {
     zipCodes: ["03101", "03102", "03103", "03104", "03109"],
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 17,
     neighborhoods: ["Downtown Manchester", "North End", "South End", "West Side", "East Side", "Pinardville", "Piscataquog Village"],
-    description: "Manchester residents enjoy competitive electricity rates from 17+ suppliers in the Eversource service territory.",
+    description: "Manchester residents enjoy competitive electricity rates from competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
   },
   "Nashua-NH": {
@@ -323,7 +323,7 @@ export const cityData = {
     zipCodes: ["03060", "03061", "03062", "03063", "03064"],
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Nashua", "North End", "South End", "West Hollis Street", "Broad Street Parkway", "Daniel Webster", "Crown Hill"],
-    description: "Nashua residents benefit from competitive electricity rates with 16+ suppliers in the Eversource service territory.",
+    description: "Nashua residents benefit from competitive electricity rates with competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
   },
   "Concord-NH": {
@@ -331,7 +331,7 @@ export const cityData = {
     zipCodes: ["03301", "03302", "03303"],
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 16,
     neighborhoods: ["Downtown Concord", "Penacook", "West Concord", "East Concord", "Heights", "South End", "North End"],
-    description: "Concord residents enjoy competitive electricity rates from 16+ suppliers in the Eversource service territory.",
+    description: "Concord residents enjoy competitive electricity rates from competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c2b6c002-b461-43af-873e-02caf45e467b.jpg"
   },
 
@@ -341,7 +341,7 @@ export const cityData = {
     zipCodes: ["02901", "02903", "02904", "02905", "02906", "02907", "02908"],
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 15,
     neighborhoods: ["Downtown Providence", "Federal Hill", "Fox Point", "East Side", "West End", "Smith Hill", "Mount Pleasant"],
-    description: "Providence residents benefit from competitive electricity rates with 15+ suppliers in the National Grid service territory.",
+    description: "Providence residents benefit from competitive electricity rates with competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
   },
   "Warwick-RI": {
@@ -349,7 +349,7 @@ export const cityData = {
     zipCodes: ["02886", "02888", "02889"],
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 15,
     neighborhoods: ["Warwick Neck", "Oakland Beach", "Apponaug", "Gaspee", "Hillsgrove", "Pawtuxet Village", "Conimicut"],
-    description: "Warwick residents enjoy competitive electricity rates from 15+ suppliers in the National Grid service territory.",
+    description: "Warwick residents enjoy competitive electricity rates from competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
   },
   "Cranston-RI": {
@@ -357,7 +357,7 @@ export const cityData = {
     zipCodes: ["02905", "02907", "02910", "02920", "02921"],
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 14,
     neighborhoods: ["Edgewood", "Garden City", "Knightsville", "Meshanticut", "Park View", "Western Hills", "Pawtuxet"],
-    description: "Cranston residents benefit from competitive electricity rates with 14+ suppliers in the National Grid service territory.",
+    description: "Cranston residents benefit from competitive electricity rates with competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
   },
 
@@ -367,7 +367,7 @@ export const cityData = {
     zipCodes: ["77002", "77019", "77024", "77027", "77056", "77063", "77098"],
     avgRate: "8.9¢/kWh", avgMonthlyBill: "$128", providers: 45,
     neighborhoods: ["Downtown Houston", "The Heights", "Montrose", "River Oaks", "Midtown", "Galleria", "Memorial"],
-    description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to over 45 electricity providers in the deregulated market.",
+    description: "Houston, the largest city in Texas and the energy capital of the world, offers residents access to competing electricity suppliers in the deregulated market.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
   "Dallas": {
@@ -375,7 +375,7 @@ export const cityData = {
     zipCodes: ["75201", "75202", "75204", "75205", "75214", "75219", "75230"],
     avgRate: "9.1¢/kWh", avgMonthlyBill: "$132", providers: 42,
     neighborhoods: ["Downtown Dallas", "Uptown", "Deep Ellum", "Highland Park", "Oak Lawn", "Lake Highlands", "North Dallas"],
-    description: "Dallas residents benefit from competitive electricity rates with access to over 42 providers offering a wide range of fixed and variable rate plans.",
+    description: "Dallas residents benefit from competitive electricity rates with access to competing suppliers offering a wide range of fixed and variable rate plans.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
   "Austin": {
@@ -383,7 +383,7 @@ export const cityData = {
     zipCodes: ["78701", "78702", "78703", "78704", "78731", "78745", "78757"],
     avgRate: "9.3¢/kWh", avgMonthlyBill: "$135", providers: 38,
     neighborhoods: ["Downtown Austin", "South Congress", "East Austin", "West Lake Hills", "Hyde Park", "Zilker", "Mueller"],
-    description: "Austin, the state capital and tech hub, provides residents with competitive electricity rates and numerous green energy options from 38+ providers.",
+    description: "Austin, the state capital and tech hub, provides residents with competitive electricity rates and numerous green energy options from competing suppliers.",
     image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=400&h=300&fit=crop"
   },
   "San Antonio": {
@@ -391,7 +391,7 @@ export const cityData = {
     zipCodes: ["78201", "78209", "78212", "78216", "78232", "78249", "78258"],
     avgRate: "8.8¢/kWh", avgMonthlyBill: "$127", providers: 40,
     neighborhoods: ["Downtown San Antonio", "Alamo Heights", "Stone Oak", "The Dominion", "Southtown", "King William", "Medical Center"],
-    description: "San Antonio offers some of the most competitive electricity rates in Texas, with 40+ providers serving the area's residential and commercial customers.",
+    description: "San Antonio offers some of the most competitive electricity rates in Texas, with competing suppliers serving the area's residential and commercial customers.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/136ff412-03e2-40c7-8934-8517d2404665.jpg"
   },
   "Fort Worth": {
@@ -399,7 +399,7 @@ export const cityData = {
     zipCodes: ["76102", "76104", "76107", "76109", "76116", "76132", "76244"],
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 41,
     neighborhoods: ["Downtown Fort Worth", "Cultural District", "Sundance Square", "West 7th", "Ridglea", "Tanglewood", "Alliance"],
-    description: "Fort Worth residents enjoy access to competitive electricity rates from 41+ providers in the deregulated Texas energy market.",
+    description: "Fort Worth residents enjoy access to competitive electricity rates from competing suppliers in the deregulated Texas energy market.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
   "Chicago": {
@@ -407,7 +407,7 @@ export const cityData = {
     zipCodes: ["60601", "60602", "60603", "60604", "60605", "60606", "60607"],
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 36,
     neighborhoods: ["Downtown Chicago", "Lincoln Park", "Wicker Park", "River North", "Loop", "Gold Coast", "West Loop"],
-    description: "Chicago residents have access to competitive electricity rates from 36+ suppliers in the ComEd service territory.",
+    description: "Chicago residents have access to competitive electricity rates from competing suppliers in the ComEd service territory.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Aurora": {
@@ -415,7 +415,7 @@ export const cityData = {
     zipCodes: ["60502", "60503", "60504", "60505", "60506", "60507", "60519"],
     avgRate: "9.9¢/kWh", avgMonthlyBill: "$143", providers: 34,
     neighborhoods: ["Downtown Aurora", "Fox Valley", "Far East", "West Aurora", "North Aurora", "Indian Prairie", "Aurora Highlands"],
-    description: "Aurora residents benefit from competitive electricity rates with 34+ suppliers in the western Chicago suburbs.",
+    description: "Aurora residents benefit from competitive electricity rates with competing suppliers in the western Chicago suburbs.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Naperville": {
@@ -423,7 +423,7 @@ export const cityData = {
     zipCodes: ["60540", "60563", "60564", "60565", "60585"],
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 35,
     neighborhoods: ["Downtown Naperville", "White Eagle", "Ashbury", "Springbrook", "College Hill", "Fort Hill", "Cress Creek"],
-    description: "Naperville residents enjoy competitive electricity rates from 35+ suppliers in the affluent DuPage County area.",
+    description: "Naperville residents enjoy competitive electricity rates from competing suppliers in the affluent DuPage County area.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
   },
   "Joliet": {
@@ -431,7 +431,7 @@ export const cityData = {
     zipCodes: ["60431", "60432", "60433", "60434", "60435", "60436"],
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$141", providers: 33,
     neighborhoods: ["Cathedral Area", "Fairmont", "Pilcher Park", "Rockdale", "West Joliet", "Laraway", "Highland Park"],
-    description: "Joliet residents have access to competitive electricity rates from 33+ suppliers in Will County.",
+    description: "Joliet residents have access to competitive electricity rates from competing suppliers in Will County.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
   },
   "Columbus": {
@@ -439,7 +439,7 @@ export const cityData = {
     zipCodes: ["43085", "43201", "43202", "43203", "43204", "43205", "43206"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$138", providers: 38,
     neighborhoods: ["Downtown Columbus", "German Village", "Short North", "Clintonville", "Victorian Village", "Arena District", "Brewery District"],
-    description: "Columbus residents enjoy competitive electricity rates from 38+ suppliers in the AEP Ohio service territory.",
+    description: "Columbus residents enjoy competitive electricity rates from competing suppliers in the AEP Ohio service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/03fe81c8-162d-4692-be26-32e20095399c.jpg"
   },
   "Cleveland": {
@@ -447,7 +447,7 @@ export const cityData = {
     zipCodes: ["44101", "44102", "44103", "44104", "44105", "44106", "44107"],
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 37,
     neighborhoods: ["Downtown Cleveland", "Ohio City", "Tremont", "University Circle", "Detroit-Shoreway", "Edgewater", "Collinwood"],
-    description: "Cleveland residents have access to competitive electricity rates from 37+ suppliers in the FirstEnergy service territory.",
+    description: "Cleveland residents have access to competitive electricity rates from competing suppliers in the FirstEnergy service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
   },
   "Cincinnati": {
@@ -455,7 +455,7 @@ export const cityData = {
     zipCodes: ["45201", "45202", "45203", "45204", "45205", "45206", "45207"],
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 36,
     neighborhoods: ["Downtown Cincinnati", "Over-the-Rhine", "Mount Adams", "Clifton", "Hyde Park", "Oakley", "Columbia-Tusculum"],
-    description: "Cincinnati residents benefit from competitive electricity rates with 36+ suppliers in the Duke Energy Ohio territory.",
+    description: "Cincinnati residents benefit from competitive electricity rates with competing suppliers in the Duke Energy Ohio territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
   },
   "Toledo": {
@@ -463,7 +463,7 @@ export const cityData = {
     zipCodes: ["43601", "43604", "43606", "43607", "43608", "43609", "43610"],
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 35,
     neighborhoods: ["Downtown Toledo", "Old West End", "Ottawa Hills", "Sylvania", "Point Place", "Westgate", "South End"],
-    description: "Toledo residents enjoy competitive electricity rates from 35+ suppliers in the FirstEnergy service territory.",
+    description: "Toledo residents enjoy competitive electricity rates from competing suppliers in the FirstEnergy service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
   },
   "Philadelphia": {
@@ -471,7 +471,7 @@ export const cityData = {
     zipCodes: ["19102", "19103", "19104", "19106", "19107", "19111", "19114"],
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$147", providers: 32,
     neighborhoods: ["Center City", "Old City", "Society Hill", "Rittenhouse Square", "University City", "Northern Liberties", "Fishtown"],
-    description: "Philadelphia residents benefit from competitive electricity rates with 32+ suppliers in the PECO service territory.",
+    description: "Philadelphia residents benefit from competitive electricity rates with competing suppliers in the PECO service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
   },
   "Pittsburgh": {
@@ -479,7 +479,7 @@ export const cityData = {
     zipCodes: ["15201", "15202", "15203", "15204", "15205", "15206", "15207"],
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 30,
     neighborhoods: ["Downtown Pittsburgh", "Shadyside", "Squirrel Hill", "Oakland", "Lawrenceville", "South Side", "Strip District"],
-    description: "Pittsburgh residents enjoy competitive electricity rates from 30+ suppliers in the Duquesne Light service territory.",
+    description: "Pittsburgh residents enjoy competitive electricity rates from competing suppliers in the Duquesne Light service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
   },
   "Allentown": {
@@ -487,7 +487,7 @@ export const cityData = {
     zipCodes: ["18101", "18102", "18103", "18104", "18105", "18106", "18109"],
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Allentown", "West Park", "Hanover Acres", "South Side", "East Side", "West End", "Cedar Crest"],
-    description: "Allentown residents benefit from competitive electricity rates with 28+ suppliers in the PPL Electric service territory.",
+    description: "Allentown residents benefit from competitive electricity rates with competing suppliers in the PPL Electric service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
   },
   "New York City": {
@@ -527,7 +527,7 @@ export const cityData = {
     zipCodes: ["07102", "07103", "07104", "07105", "07106", "07107", "07108"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Newark", "Ironbound", "Forest Hill", "North Ward", "Central Ward", "West Ward", "South Ward"],
-    description: "Newark residents benefit from competitive electricity rates with 27+ suppliers in the PSE&G service territory.",
+    description: "Newark residents benefit from competitive electricity rates with competing suppliers in the PSE&G service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
   },
   "Jersey City": {
@@ -535,7 +535,7 @@ export const cityData = {
     zipCodes: ["07302", "07304", "07305", "07306", "07307", "07310"],
     avgRate: "10.6¢/kWh", avgMonthlyBill: "$152", providers: 26,
     neighborhoods: ["Downtown Jersey City", "Journal Square", "The Heights", "Bergen-Lafayette", "Greenville", "McGinley Square", "Paulus Hook"],
-    description: "Jersey City residents enjoy competitive electricity rates from 26+ suppliers in the PSE&G service territory.",
+    description: "Jersey City residents enjoy competitive electricity rates from competing suppliers in the PSE&G service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/29c455be-4263-4009-8e75-1475730b0b76.jpg"
   },
   "Paterson": {
@@ -543,7 +543,7 @@ export const cityData = {
     zipCodes: ["07501", "07502", "07503", "07504", "07505", "07510", "07514"],
     avgRate: "10.7¢/kWh", avgMonthlyBill: "$153", providers: 25,
     neighborhoods: ["Downtown Paterson", "Eastside", "Riverside", "Peoples Park", "Hillcrest", "Northside", "Wrigley Park"],
-    description: "Paterson residents benefit from competitive electricity rates with 25+ suppliers in the PSE&G service territory.",
+    description: "Paterson residents benefit from competitive electricity rates with competing suppliers in the PSE&G service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
   },
   "Baltimore": {
@@ -551,7 +551,7 @@ export const cityData = {
     zipCodes: ["21201", "21202", "21205", "21206", "21207", "21208", "21209"],
     avgRate: "10.4¢/kWh", avgMonthlyBill: "$150", providers: 29,
     neighborhoods: ["Downtown Baltimore", "Federal Hill", "Fells Point", "Canton", "Inner Harbor", "Mount Vernon", "Charles Village"],
-    description: "Baltimore residents enjoy competitive electricity rates from 29+ suppliers in the BGE service territory.",
+    description: "Baltimore residents enjoy competitive electricity rates from competing suppliers in the BGE service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
   },
   "Frederick": {
@@ -559,7 +559,7 @@ export const cityData = {
     zipCodes: ["21701", "21702", "21703", "21704", "21705"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$151", providers: 27,
     neighborhoods: ["Downtown Frederick", "Ballenger Creek", "Hood College", "North Frederick", "South Frederick", "West Frederick", "East Frederick"],
-    description: "Frederick residents benefit from competitive electricity rates with 27+ suppliers in the Potomac Edison service territory.",
+    description: "Frederick residents benefit from competitive electricity rates with competing suppliers in the Potomac Edison service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
   },
   "Rockville": {
@@ -567,7 +567,7 @@ export const cityData = {
     zipCodes: ["20850", "20851", "20852", "20853", "20854", "20855"],
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Rockville", "Twinbrook", "West End", "King Farm", "Lincoln Park", "Woodley Gardens", "Fallsgrove"],
-    description: "Rockville residents enjoy competitive electricity rates from 28+ suppliers in the Pepco service territory.",
+    description: "Rockville residents enjoy competitive electricity rates from competing suppliers in the Pepco service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
   },
   "Boston": {
@@ -575,7 +575,7 @@ export const cityData = {
     zipCodes: ["02101", "02108", "02109", "02110", "02111", "02113", "02114"],
     avgRate: "11.2¢/kWh", avgMonthlyBill: "$161", providers: 22,
     neighborhoods: ["Downtown Boston", "Back Bay", "Beacon Hill", "North End", "South End", "Fenway", "Charlestown"],
-    description: "Boston residents benefit from competitive electricity rates with 22+ suppliers across multiple utility territories.",
+    description: "Boston residents benefit from competitive electricity rates with competing suppliers across multiple utility territories.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
   },
   "Worcester": {
@@ -583,7 +583,7 @@ export const cityData = {
     zipCodes: ["01601", "01602", "01603", "01604", "01605", "01606", "01607"],
     avgRate: "11.3¢/kWh", avgMonthlyBill: "$162", providers: 21,
     neighborhoods: ["Downtown Worcester", "Main South", "Tatnuck", "West Side", "East Side", "Shrewsbury Street", "Canal District"],
-    description: "Worcester residents enjoy competitive electricity rates from 21+ suppliers in the National Grid service territory.",
+    description: "Worcester residents enjoy competitive electricity rates from competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
   },
   "Springfield": {
@@ -591,7 +591,7 @@ export const cityData = {
     zipCodes: ["01101", "01103", "01104", "01105", "01107", "01108", "01109"],
     avgRate: "11.4¢/kWh", avgMonthlyBill: "$163", providers: 20,
     neighborhoods: ["Downtown Springfield", "Forest Park", "Sixteen Acres", "East Springfield", "South End", "Six Corners", "Metro Center"],
-    description: "Springfield residents benefit from competitive electricity rates with 20+ suppliers in the Eversource service territory.",
+    description: "Springfield residents benefit from competitive electricity rates with competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
   },
   "Hartford": {
@@ -599,7 +599,7 @@ export const cityData = {
     zipCodes: ["06101", "06103", "06105", "06106", "06107", "06112", "06114"],
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 19,
     neighborhoods: ["Downtown Hartford", "South End", "Asylum Hill", "West End", "North End", "Parkville", "Frog Hollow"],
-    description: "Hartford residents enjoy competitive electricity rates from 19+ suppliers in the Eversource service territory.",
+    description: "Hartford residents enjoy competitive electricity rates from competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ottawa-street.jpg"
   },
   "New Haven": {
@@ -607,7 +607,7 @@ export const cityData = {
     zipCodes: ["06510", "06511", "06513", "06515", "06519", "06520"],
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$168", providers: 19,
     neighborhoods: ["Downtown New Haven", "East Rock", "Wooster Square", "Fair Haven", "Westville", "Dixwell", "West River"],
-    description: "New Haven residents benefit from competitive electricity rates with 19+ suppliers in the United Illuminating service territory.",
+    description: "New Haven residents benefit from competitive electricity rates with competing suppliers in the United Illuminating service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
   },
   "Bridgeport": {
@@ -615,7 +615,7 @@ export const cityData = {
     zipCodes: ["06601", "06604", "06605", "06606", "06607", "06608", "06610"],
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 18,
     neighborhoods: ["Downtown Bridgeport", "South End", "East End", "West End", "North End", "Black Rock", "Brooklawn"],
-    description: "Bridgeport residents enjoy competitive electricity rates from 18+ suppliers in the United Illuminating service territory.",
+    description: "Bridgeport residents enjoy competitive electricity rates from competing suppliers in the United Illuminating service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
   },
   "Portland": {
@@ -623,7 +623,7 @@ export const cityData = {
     zipCodes: ["04101", "04102", "04103", "04104", "04105", "04106", "04107"],
     avgRate: "11.5¢/kWh", avgMonthlyBill: "$165", providers: 17,
     neighborhoods: ["Downtown Portland", "Old Port", "West End", "East End", "Munjoy Hill", "Libbytown", "Bayside"],
-    description: "Portland residents benefit from competitive electricity rates with 17+ suppliers in the CMP service territory.",
+    description: "Portland residents benefit from competitive electricity rates with competing suppliers in the CMP service territory.",
     image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400&h=300&fit=crop"
   },
   "Lewiston": {
@@ -631,7 +631,7 @@ export const cityData = {
     zipCodes: ["04240", "04241", "04243"],
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 16,
     neighborhoods: ["Downtown Lewiston", "College Street", "Bates College", "Tree Streets", "Webster Street", "East Avenue", "Sabattus Street"],
-    description: "Lewiston residents enjoy competitive electricity rates from 16+ suppliers in the CMP service territory.",
+    description: "Lewiston residents enjoy competitive electricity rates from competing suppliers in the CMP service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
   },
   "Bangor": {
@@ -639,7 +639,7 @@ export const cityData = {
     zipCodes: ["04401", "04402"],
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Bangor", "Fairmount", "State Street", "Little City", "Broadway", "West Bangor", "East Side"],
-    description: "Bangor residents benefit from competitive electricity rates with 16+ suppliers in the Emera Maine service territory.",
+    description: "Bangor residents benefit from competitive electricity rates with competing suppliers in the Emera Maine service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
   },
   "Manchester": {
@@ -647,7 +647,7 @@ export const cityData = {
     zipCodes: ["03101", "03102", "03103", "03104", "03109"],
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$166", providers: 17,
     neighborhoods: ["Downtown Manchester", "North End", "South End", "West Side", "East Side", "Pinardville", "Piscataquog Village"],
-    description: "Manchester residents enjoy competitive electricity rates from 17+ suppliers in the Eversource service territory.",
+    description: "Manchester residents enjoy competitive electricity rates from competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
   },
   "Nashua": {
@@ -655,7 +655,7 @@ export const cityData = {
     zipCodes: ["03060", "03061", "03062", "03063", "03064"],
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$167", providers: 16,
     neighborhoods: ["Downtown Nashua", "North End", "South End", "West Hollis Street", "Broad Street Parkway", "Daniel Webster", "Crown Hill"],
-    description: "Nashua residents benefit from competitive electricity rates with 16+ suppliers in the Eversource service territory.",
+    description: "Nashua residents benefit from competitive electricity rates with competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
   },
   "Concord": {
@@ -663,7 +663,7 @@ export const cityData = {
     zipCodes: ["03301", "03302", "03303"],
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$169", providers: 16,
     neighborhoods: ["Downtown Concord", "Penacook", "West Concord", "East Concord", "Heights", "South End", "North End"],
-    description: "Concord residents enjoy competitive electricity rates from 16+ suppliers in the Eversource service territory.",
+    description: "Concord residents enjoy competitive electricity rates from competing suppliers in the Eversource service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c2b6c002-b461-43af-873e-02caf45e467b.jpg"
   },
   "Providence": {
@@ -671,7 +671,7 @@ export const cityData = {
     zipCodes: ["02901", "02903", "02904", "02905", "02906", "02907", "02908"],
     avgRate: "11.9¢/kWh", avgMonthlyBill: "$170", providers: 15,
     neighborhoods: ["Downtown Providence", "Federal Hill", "Fox Point", "East Side", "West End", "Smith Hill", "Mount Pleasant"],
-    description: "Providence residents benefit from competitive electricity rates with 15+ suppliers in the National Grid service territory.",
+    description: "Providence residents benefit from competitive electricity rates with competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
   },
   "Warwick": {
@@ -679,7 +679,7 @@ export const cityData = {
     zipCodes: ["02886", "02888", "02889"],
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 15,
     neighborhoods: ["Warwick Neck", "Oakland Beach", "Apponaug", "Gaspee", "Hillsgrove", "Pawtuxet Village", "Conimicut"],
-    description: "Warwick residents enjoy competitive electricity rates from 15+ suppliers in the National Grid service territory.",
+    description: "Warwick residents enjoy competitive electricity rates from competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
   },
   "Cranston": {
@@ -687,7 +687,7 @@ export const cityData = {
     zipCodes: ["02905", "02907", "02910", "02920", "02921"],
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 14,
     neighborhoods: ["Edgewood", "Garden City", "Knightsville", "Meshanticut", "Park View", "Western Hills", "Pawtuxet"],
-    description: "Cranston residents benefit from competitive electricity rates with 14+ suppliers in the National Grid service territory.",
+    description: "Cranston residents benefit from competitive electricity rates with competing suppliers in the National Grid service territory.",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
   },
   "Akron-OH": {
@@ -695,7 +695,7 @@ export const cityData = {
     zipCodes: ["44301", "44302", "44303", "44305", "44306"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$110", providers: 30,
     neighborhoods: ["Merriman Valley", "Chapel Hill", "Highland Square", "Goodyear Heights", "Firestone Park", "Ellet"],
-    description: "Akron has a deregulated electricity market, offering residents a choice of around 30 providers, leading to competitive rates and plans.",
+    description: "Akron has a deregulated electricity market, offering residents a choice of competing suppliers, leading to competitive rates and plans.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Annapolis-MD": {
@@ -727,7 +727,7 @@ export const cityData = {
     zipCodes: ["04330", "04332", "04333", "04336", "04338"],
     avgRate: "16.5¢/kWh", avgMonthlyBill: "$135", providers: 14,
     neighborhoods: ["Pelton Hill", "Augusta East", "North Augusta", "Summerhaven", "City Center", "Augusta Northeast"],
-    description: "As the capital of Maine, Augusta benefits from a deregulated electricity market, offering residents a choice among 14 providers for competitive rates.",
+    description: "As the capital of Maine, Augusta benefits from a deregulated electricity market, offering residents a choice of competing suppliers for competitive rates.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Biddeford-ME": {
@@ -735,7 +735,7 @@ export const cityData = {
     zipCodes: ["04005", "04006"],
     avgRate: "12.8¢/kWh", avgMonthlyBill: "$185", providers: 15,
     neighborhoods: ["Downtown Biddeford", "Pool", "Hills Beach", "Biddeford Pool", "West Street", "Alfred Road"],
-    description: "Biddeford residents in York County can compare electricity rates from 15+ suppliers in Maine's deregulated energy market.",
+    description: "Biddeford residents in York County can compare electricity rates from competing suppliers in Maine's deregulated energy market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "South Portland-ME": {
@@ -743,7 +743,7 @@ export const cityData = {
     zipCodes: ["04106"],
     avgRate: "12.5¢/kWh", avgMonthlyBill: "$181", providers: 16,
     neighborhoods: ["Mill Creek", "Willard Beach", "Knightville", "Cash Corner", "Redbank", "Ferry Village"],
-    description: "South Portland residents benefit from 16+ electricity suppliers offering competitive rates in Cumberland County.",
+    description: "South Portland residents benefit from competing electricity suppliers offering competitive rates in Cumberland County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Bethlehem-PA": {
@@ -759,7 +759,7 @@ export const cityData = {
     zipCodes: ["02138", "02139", "02140", "02141", "02142"],
     avgRate: "19.5¢/kWh", avgMonthlyBill: "$173", providers: 20,
     neighborhoods: ["East Cambridge", "Cambridgeport", "Mid-Cambridge", "North Cambridge", "West Cambridge", "Riverside"],
-    description: "As a city in a deregulated state, Cambridge residents can choose from over 20 electricity providers, fostering a competitive market for electricity rates.",
+    description: "As a city in a deregulated state, Cambridge residents can choose from competing electricity suppliers, fostering a competitive market for electricity rates.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Camden-NJ": {
@@ -767,7 +767,7 @@ export const cityData = {
     zipCodes: ["08102", "08103", "08104", "08105", "08109"],
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
     neighborhoods: ["Cooper Grant", "Cramer Hill", "Fairview", "Gateway", "Lanning Square", "Parkside"],
-    description: "Camden has a deregulated electricity market with around 25 providers, offering residents a variety of choices for their energy needs.",
+    description: "Camden has a deregulated electricity market with competing suppliers, offering residents a variety of choices for their energy needs.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Canton-OH": {
@@ -775,7 +775,7 @@ export const cityData = {
     zipCodes: ["44702", "44703", "44704", "44705", "44706"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$85", providers: 30,
     neighborhoods: ["Washington Square", "Avondale", "Martindale Park", "Historic Ridgewood", "Sippo Lake", "Meyers Lake"],
-    description: "Canton's deregulated electricity market offers residents a choice of over 30 providers, fostering competitive rates and energy options.",
+    description: "Canton's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Champaign-IL": {
@@ -783,7 +783,7 @@ export const cityData = {
     zipCodes: ["61820", "61821", "61822", "61824", "61825"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$115", providers: 34,
     neighborhoods: ["Robeson Meadows West-Prairie Ridge Place", "Pembroke Point", "Cherry Hills", "Ashland Park", "Boulder Ridge", "Clark Park"],
-    description: "Champaign has a deregulated electricity market with over 30 providers, offering residents a wide range of choices for their energy needs.",
+    description: "Champaign has a deregulated electricity market with competing suppliers, offering residents a wide range of choices for their energy needs.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Columbia-MD": {
@@ -807,7 +807,7 @@ export const cityData = {
     zipCodes: ["45402", "45403", "45404", "45405", "45406"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$83", providers: 30,
     neighborhoods: ["Downtown Dayton", "Oregon District", "South Park", "Dayton View", "Huffman", "McPherson Town"],
-    description: "Dayton has a deregulated electricity market with around 30 providers, offering residents a wide range of choices for their energy needs.",
+    description: "Dayton has a deregulated electricity market with competing suppliers, offering residents a wide range of choices for their energy needs.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Dover-NH": {
@@ -823,7 +823,7 @@ export const cityData = {
     zipCodes: ["02914", "02915", "02916"],
     avgRate: "19.5¢/kWh", avgMonthlyBill: "$175", providers: 15,
     neighborhoods: ["Rumford", "Phillipsdale", "Boyden Heights", "Kent Heights", "Riverside", "Watchemoket"],
-    description: "East Providence's deregulated electricity market offers residents a choice of around 15 providers, fostering competitive rates and energy options.",
+    description: "East Providence's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Edison-NJ": {
@@ -831,7 +831,7 @@ export const cityData = {
     zipCodes: ["08817", "08818", "08820", "08837", "08899"],
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
     neighborhoods: ["Clara Barton", "Oak Tree", "Menlo Park", "North Edison", "New Durham", "Stephenville"],
-    description: "Edison has a deregulated electricity market with over 20 providers, offering residents a wide range of choices for their energy supply.",
+    description: "Edison has a deregulated electricity market with competing suppliers, offering residents a wide range of choices for their energy supply.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "El Paso-TX": {
@@ -839,7 +839,7 @@ export const cityData = {
     zipCodes: ["79936", "79938", "79928", "79912", "79924"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Album Park", "Castner Heights", "Cielo Vista", "Mesa Hills", "North Hills", "Mountain View"],
-    description: "El Paso has a deregulated electricity market with over 40 providers, giving residents the power to choose their energy supplier.",
+    description: "El Paso has a deregulated electricity market with competing suppliers, giving residents the power to choose their energy supplier.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Elgin-IL": {
@@ -847,7 +847,7 @@ export const cityData = {
     "zipCodes": ["60120", "60121", "60123", "60124", "60103"],
     "avgRate": "10.5¢/kWh", "avgMonthlyBill": "$115", "providers": 34,
     "neighborhoods": ["Bowes Creek", "Providence", "Randall Ridge", "Highland Woods", "Century Oaks", "Eagle Heights"],
-    "description": "Elgin's deregulated electricity market offers residents a choice from over 30 providers, fostering competitive rates and energy options.",
+    "description": "Elgin's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
     "image": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Erie-PA": {
@@ -863,7 +863,7 @@ export const cityData = {
     zipCodes: ["75033", "75034", "75035", "75036", "75072"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Starwood", "Phillips Creek Ranch", "Newman Village", "Trails of Frisco", "Panther Creek", "Chapel Creek"],
-    description: "As part of Texas's deregulated electricity market, Frisco residents can choose from over 40 providers, fostering competitive rates and plans.",
+    description: "As part of Texas's deregulated electricity market, Frisco residents can choose from competing suppliers, fostering competitive rates and plans.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Germantown-MD": {
@@ -879,7 +879,7 @@ export const cityData = {
     zipCodes: ["07030"],
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
     neighborhoods: ["Castle Point", "Downtown Hoboken", "Southwest Hoboken", "The Waterfront", "Uptown Hoboken", "Midtown"],
-    description: "Hoboken's deregulated electricity market offers residents a choice of around 25 providers, fostering competition and potentially lower rates.",
+    description: "Hoboken's deregulated electricity market offers residents a choice of competing suppliers, fostering competition and potentially lower rates.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Irving-TX": {
@@ -887,7 +887,7 @@ export const cityData = {
     zipCodes: ["75014", "75015", "75016", "75038", "75039"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$95", providers: 40,
     neighborhoods: ["Las Colinas", "Valley Ranch", "Hackberry Creek", "Song", "Lamar Brown", "University Hills"],
-    description: "Irving is a city in the deregulated energy market of Texas, offering residents a choice of over 40 electricity providers.",
+    description: "Irving is a city in the deregulated energy market of Texas, offering residents a choice of competing electricity suppliers.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Killeen-TX": {
@@ -895,7 +895,7 @@ export const cityData = {
     zipCodes: ["76541", "76542", "76543", "76544", "76549"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$112", providers: 40,
     neighborhoods: ["Yowell Ranch", "White Rock Estates", "Sunflower Estates", "Trimmier Estates", "The Highlands at Saegert", "Bellaire Heights"],
-    description: "As a city in the deregulated Texas electricity market, Killeen offers residents a choice of over 40 providers, fostering competitive rates and plans.",
+    description: "As a city in the deregulated Texas electricity market, Killeen offers residents a choice of competing suppliers, fostering competitive rates and plans.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Lancaster-PA": {
@@ -919,7 +919,7 @@ export const cityData = {
     zipCodes: ["79401", "79403", "79404", "79406", "79407"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Tech Terrace", "Maxey Park", "Heart of Lubbock", "Wheelock and Monterey", "Maedgen Area", "Rush"],
-    description: "In Lubbock, the deregulated electricity market offers residents a wide array of choices, with around 40 providers competing to offer competitive rates and plans.",
+    description: "In Lubbock, the deregulated electricity market offers residents a wide array of choices, with suppliers competing to offer competitive rates and plans.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "McKinney-TX": {
@@ -927,7 +927,7 @@ export const cityData = {
     zipCodes: ["75069", "75070", "75071", "75072", "75454"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Adriatica Villa District", "Arbor Glen", "Arbor Hollow", "Aspendale", "Auburn Hills", "Avalon"],
-    description: "McKinney is a city in the deregulated energy market of Texas, offering residents a choice of over 40 electricity providers.",
+    description: "McKinney is a city in the deregulated energy market of Texas, offering residents a choice of competing electricity suppliers.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Midland-TX": {
@@ -935,7 +935,7 @@ export const cityData = {
     zipCodes: ["79701", "79703", "79705", "79706", "79707"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Green Tree", "Grassland Estates", "Saddle Club", "Briarwood", "Trinity", "Kimber-Lea"],
-    description: "Midland has a deregulated electricity market with around 40 providers, offering residents a wide range of competitive energy plans to choose from.",
+    description: "Midland has a deregulated electricity market with competing suppliers, offering residents a wide range of competitive energy plans to choose from.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "New Bedford-MA": {
@@ -951,7 +951,7 @@ export const cityData = {
     zipCodes: ["02301", "02302"],
     avgRate: "14.2¢/kWh", avgMonthlyBill: "$206", providers: 22,
     neighborhoods: ["Downtown Brockton", "Campello", "Montello", "East Side", "West Side", "Avon"],
-    description: "Brockton residents in Plymouth County can compare electricity rates from 22+ suppliers to find savings on their energy bills.",
+    description: "Brockton residents in Plymouth County can compare electricity rates from competing suppliers to find savings on their energy bills.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Fall River-MA": {
@@ -959,7 +959,7 @@ export const cityData = {
     zipCodes: ["02720", "02721", "02722", "02723", "02724"],
     avgRate: "14.5¢/kWh", avgMonthlyBill: "$210", providers: 21,
     neighborhoods: ["Downtown Fall River", "Highlands", "Flint", "South End", "Steep Brook", "Globe Corners"],
-    description: "Fall River residents in Bristol County benefit from 21+ electricity suppliers offering competitive alternatives to Eversource rates.",
+    description: "Fall River residents in Bristol County benefit from competing electricity suppliers offering competitive alternatives to Eversource rates.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Quincy-MA": {
@@ -967,7 +967,7 @@ export const cityData = {
     zipCodes: ["02169", "02170", "02171"],
     avgRate: "14.0¢/kWh", avgMonthlyBill: "$203", providers: 24,
     neighborhoods: ["Downtown Quincy", "Quincy Center", "Wollaston", "North Quincy", "South Quincy", "Marina Bay"],
-    description: "Quincy, the City of Presidents, offers residents access to 24+ electricity suppliers with competitive rates south of Boston.",
+    description: "Quincy, the City of Presidents, offers residents access to competing electricity suppliers with competitive rates south of Boston.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Somerville-MA": {
@@ -975,7 +975,7 @@ export const cityData = {
     zipCodes: ["02143", "02144", "02145"],
     avgRate: "14.1¢/kWh", avgMonthlyBill: "$204", providers: 24,
     neighborhoods: ["Davis Square", "Union Square", "Assembly Row", "Ball Square", "Winter Hill", "East Somerville"],
-    description: "Somerville residents near Boston benefit from 24+ electricity suppliers offering competitive rates in Middlesex County.",
+    description: "Somerville residents near Boston benefit from competing electricity suppliers offering competitive rates in Middlesex County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Norwalk-CT": {
@@ -999,7 +999,7 @@ export const cityData = {
     zipCodes: ["02840", "02841"],
     avgRate: "13.8¢/kWh", avgMonthlyBill: "$200", providers: 18,
     neighborhoods: ["Downtown Newport", "Thames Street", "Bellevue Avenue", "Ocean Drive", "Middletown", "Portsmouth"],
-    description: "Newport residents can compare electricity rates from 18+ suppliers to find savings in Rhode Island's deregulated energy market.",
+    description: "Newport residents can compare electricity rates from competing suppliers to find savings in Rhode Island's deregulated energy market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Woonsocket-RI": {
@@ -1007,7 +1007,7 @@ export const cityData = {
     zipCodes: ["02895"],
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$195", providers: 19,
     neighborhoods: ["Downtown Woonsocket", "Social", "Bernon", "Fairmount", "Globe", "Hamlet"],
-    description: "Woonsocket residents in Providence County benefit from 19+ electricity suppliers with competitive rates in northern Rhode Island.",
+    description: "Woonsocket residents in Providence County benefit from competing electricity suppliers with competitive rates in northern Rhode Island.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Peoria-IL": {
@@ -1023,7 +1023,7 @@ export const cityData = {
     zipCodes: ["75023", "75024", "75025", "75074", "75093"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 38,
     neighborhoods: ["Willow Bend", "Whiffletree", "Normandy Estates", "Lakeside on Preston", "Indian Creek", "Gleneagles"],
-    description: "Plano's deregulated electricity market offers residents a wide selection of energy plans from over 38 providers, ensuring competitive rates and options.",
+    description: "Plano's deregulated electricity market offers residents a wide selection of energy plans from competing suppliers, ensuring competitive rates and options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Amarillo-TX": {
@@ -1031,7 +1031,7 @@ export const cityData = {
     zipCodes: ["79101", "79102", "79106", "79107", "79109", "79110", "79119"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$133", providers: 35,
     neighborhoods: ["Downtown Amarillo", "Wolflin", "Sleepy Hollow", "Westover", "Bivins", "San Jacinto", "Belmar"],
-    description: "Amarillo, located in the Texas Panhandle, offers residents access to 35+ electricity providers with competitive rates in the deregulated market.",
+    description: "Amarillo, located in the Texas Panhandle, offers residents access to competing electricity suppliers with competitive rates in the deregulated market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Beaumont-TX": {
@@ -1039,7 +1039,7 @@ export const cityData = {
     zipCodes: ["77701", "77702", "77703", "77705", "77706", "77707", "77708"],
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 32,
     neighborhoods: ["Downtown Beaumont", "Old Town", "West End", "North End", "Pear Orchard", "Calder Highlands", "Amelia"],
-    description: "Beaumont residents in the Golden Triangle region benefit from competitive electricity rates with 32+ providers serving Jefferson County.",
+    description: "Beaumont residents in the Golden Triangle region benefit from competitive electricity rates with competing suppliers serving Jefferson County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Brownsville-TX": {
@@ -1047,7 +1047,7 @@ export const cityData = {
     zipCodes: ["78520", "78521", "78526", "78550", "78575", "78578"],
     avgRate: "9.4¢/kWh", avgMonthlyBill: "$136", providers: 28,
     neighborhoods: ["Downtown Brownsville", "Los Ebanos", "West Brownsville", "Palm Boulevard", "Southmost", "Four Corners", "Rancho Viejo"],
-    description: "Brownsville, at the southern tip of Texas, offers residents access to 28+ electricity providers with plans suited to the Rio Grande Valley climate.",
+    description: "Brownsville, at the southern tip of Texas, offers residents access to competing electricity suppliers with plans suited to the Rio Grande Valley climate.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Denton-TX": {
@@ -1055,7 +1055,7 @@ export const cityData = {
     zipCodes: ["76201", "76205", "76207", "76208", "76209", "76210", "76226"],
     avgRate: "9.1¢/kWh", avgMonthlyBill: "$131", providers: 40,
     neighborhoods: ["Downtown Denton", "Rayzor Ranch", "Robson Ranch", "Corinth", "Highland Village", "Argyle", "University"],
-    description: "Denton, a vibrant college town north of Dallas, provides residents with 40+ electricity providers and some of the most competitive rates in North Texas.",
+    description: "Denton, a vibrant college town north of Dallas, provides residents with competing electricity suppliers and some of the most competitive rates in North Texas.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Garland-TX": {
@@ -1063,7 +1063,7 @@ export const cityData = {
     zipCodes: ["75040", "75041", "75042", "75043", "75044", "75046", "75048"],
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 42,
     neighborhoods: ["Downtown Garland", "Firewheel", "Duck Creek", "Eastern Hills", "Buckingham", "Embree", "Spring Creek"],
-    description: "Garland residents enjoy access to 42+ electricity providers in the Dallas-Fort Worth metroplex with competitive fixed and variable rate plans.",
+    description: "Garland residents enjoy access to competing electricity suppliers in the Dallas-Fort Worth metroplex with competitive fixed and variable rate plans.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Grand Prairie-TX": {
@@ -1071,7 +1071,7 @@ export const cityData = {
     zipCodes: ["75050", "75051", "75052", "75053", "75054", "75104"],
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 41,
     neighborhoods: ["Downtown Grand Prairie", "Mira Lagos", "Lake Ridge", "Westchester", "Dalworth Park", "South Grand Prairie", "Lone Star Park"],
-    description: "Grand Prairie, centrally located between Dallas and Fort Worth, offers residents 41+ electricity providers with diverse plan options.",
+    description: "Grand Prairie, centrally located between Dallas and Fort Worth, offers residents competing electricity suppliers with diverse plan options.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Laredo-TX": {
@@ -1079,7 +1079,7 @@ export const cityData = {
     zipCodes: ["78040", "78041", "78043", "78045", "78046"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 25,
     neighborhoods: ["Downtown Laredo", "Del Mar", "Heights", "Mines Road", "North Laredo", "Plantation", "Santa Rita"],
-    description: "Laredo, one of the fastest-growing cities in Texas, provides residents with 25+ electricity providers and competitive rates along the border.",
+    description: "Laredo, one of the fastest-growing cities in Texas, provides residents with competing electricity suppliers and competitive rates along the border.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "McAllen-TX": {
@@ -1087,7 +1087,7 @@ export const cityData = {
     zipCodes: ["78501", "78503", "78504", "78539", "78541", "78572"],
     avgRate: "9.3¢/kWh", avgMonthlyBill: "$135", providers: 27,
     neighborhoods: ["Downtown McAllen", "North McAllen", "Sharyland", "Tres Lagos", "La Plaza Mall Area", "Nolana", "Trenton"],
-    description: "McAllen residents in the Rio Grande Valley benefit from 27+ electricity providers offering plans designed for the South Texas climate.",
+    description: "McAllen residents in the Rio Grande Valley benefit from competing electricity suppliers offering plans designed for the South Texas climate.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Round Rock-TX": {
@@ -1095,7 +1095,7 @@ export const cityData = {
     zipCodes: ["78664", "78665", "78681", "78717"],
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$133", providers: 38,
     neighborhoods: ["Downtown Round Rock", "Old Settlers Park", "Brushy Creek", "Cat Hollow", "Teravista", "Forest Creek", "Paloma Lake"],
-    description: "Round Rock, a thriving suburb of Austin, offers residents access to 38+ electricity providers with competitive rates in Williamson County.",
+    description: "Round Rock, a thriving suburb of Austin, offers residents access to competing electricity suppliers with competitive rates in Williamson County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Sugar Land-TX": {
@@ -1103,7 +1103,7 @@ export const cityData = {
     zipCodes: ["77478", "77479", "77498"],
     avgRate: "8.9¢/kWh", avgMonthlyBill: "$128", providers: 43,
     neighborhoods: ["Sugar Land Town Square", "New Territory", "First Colony", "Telfair", "Riverstone", "Greatwood", "Commonwealth"],
-    description: "Sugar Land, one of Houston's most affluent suburbs, provides residents with 43+ electricity providers and some of the best rates in Fort Bend County.",
+    description: "Sugar Land, one of Houston's most affluent suburbs, provides residents with competing electricity suppliers and some of the best rates in Fort Bend County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Reading-PA": {
@@ -1127,7 +1127,7 @@ export const cityData = {
     zipCodes: ["03431"],
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$174", providers: 14,
     neighborhoods: ["Downtown Keene", "West Keene", "East Side", "Swanzey", "Marlborough", "Colony Mill"],
-    description: "Keene residents in Cheshire County can compare electricity rates from 14+ suppliers in New Hampshire's deregulated market.",
+    description: "Keene residents in Cheshire County can compare electricity rates from competing suppliers in New Hampshire's deregulated market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Laconia-NH": {
@@ -1135,7 +1135,7 @@ export const cityData = {
     zipCodes: ["03246", "03247"],
     avgRate: "12.2¢/kWh", avgMonthlyBill: "$177", providers: 14,
     neighborhoods: ["Downtown Laconia", "Weirs Beach", "Lakeport", "The Weirs", "Gilford", "Belmont"],
-    description: "Laconia residents in the Lakes Region benefit from 14+ electricity suppliers offering competitive rates in Belknap County.",
+    description: "Laconia residents in the Lakes Region benefit from competing electricity suppliers offering competitive rates in Belknap County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Rockford-IL": {
@@ -1143,7 +1143,7 @@ export const cityData = {
     zipCodes: ["61101", "61102", "61103", "61104", "61107"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 34,
     neighborhoods: ["Bello Reserve", "Beverly Park", "Central Park", "Chestnut", "Edgewater", "Fairgrounds"],
-    description: "Rockford's deregulated electricity market offers residents a choice from over 30 providers, fostering competitive rates and energy options.",
+    description: "Rockford's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Schaumburg-IL": {
@@ -1151,7 +1151,7 @@ export const cityData = {
     zipCodes: ["60173", "60193", "60194", "60195", "60196"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$105", providers: 34,
     neighborhoods: ["Weathersfield", "Timbercrest", "Stone Bridge Court", "Lions Gate", "Plumwood Estates", "Park St. Claire"],
-    description: "Schaumburg's deregulated electricity market offers residents a choice of over 30 providers, fostering competitive rates and energy options.",
+    description: "Schaumburg's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Scranton-PA": {
@@ -1159,7 +1159,7 @@ export const cityData = {
     zipCodes: ["18501", "18502", "18503", "18504", "18505"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$125", providers: 30,
     neighborhoods: ["Downtown Scranton", "West Mountain", "East Mountain", "Greenridge", "Minooka", "Hill Section"],
-    description: "As the county seat of Lackawanna County, Scranton boasts a deregulated electricity market with around 30 providers, offering residents a wide range of competitive energy choices.",
+    description: "As the county seat of Lackawanna County, Scranton boasts a deregulated electricity market with competing suppliers, offering residents a wide range of competitive energy choices.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Chester-PA": {
@@ -1167,7 +1167,7 @@ export const cityData = {
     zipCodes: ["19013", "19014", "19015"],
     avgRate: "10.8¢/kWh", avgMonthlyBill: "$156", providers: 30,
     neighborhoods: ["Downtown Chester", "Sun Village", "Highland Gardens", "Chester Township", "Upland", "Brookhaven"],
-    description: "Chester residents in Delaware County can compare electricity rates from 30+ suppliers in Pennsylvania's deregulated energy market.",
+    description: "Chester residents in Delaware County can compare electricity rates from competing suppliers in Pennsylvania's deregulated energy market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Harrisburg-PA": {
@@ -1175,7 +1175,7 @@ export const cityData = {
     zipCodes: ["17101", "17102", "17103", "17104", "17109", "17110", "17111"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$152", providers: 32,
     neighborhoods: ["Downtown Harrisburg", "Midtown", "Uptown", "Italian Lake", "Allison Hill", "Shipoke", "Penbrook"],
-    description: "Harrisburg, the state capital, offers residents access to 32+ electricity suppliers with competitive rates in Dauphin County.",
+    description: "Harrisburg, the state capital, offers residents access to competing electricity suppliers with competitive rates in Dauphin County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Norristown-PA": {
@@ -1183,7 +1183,7 @@ export const cityData = {
     zipCodes: ["19401", "19403", "19404"],
     avgRate: "10.6¢/kWh", avgMonthlyBill: "$153", providers: 31,
     neighborhoods: ["Downtown Norristown", "East Norriton", "West Norriton", "Plymouth Meeting", "Whitemarsh", "Bridgeport"],
-    description: "Norristown residents in Montgomery County benefit from 31+ electricity suppliers offering competitive rates in the Philadelphia suburbs.",
+    description: "Norristown residents in Montgomery County benefit from competing electricity suppliers offering competitive rates in the Philadelphia suburbs.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "State College-PA": {
@@ -1191,7 +1191,7 @@ export const cityData = {
     zipCodes: ["16801", "16802", "16803"],
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$149", providers: 26,
     neighborhoods: ["Downtown State College", "Penn State Campus", "Toftrees", "Park Forest", "Boalsburg", "Lemont"],
-    description: "State College, home to Penn State University, provides residents with 26+ electricity suppliers and competitive rates in Centre County.",
+    description: "State College, home to Penn State University, provides residents with competing electricity suppliers and competitive rates in Centre County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Wilkes-Barre-PA": {
@@ -1199,7 +1199,7 @@ export const cityData = {
     zipCodes: ["18701", "18702", "18705", "18706"],
     avgRate: "10.4¢/kWh", avgMonthlyBill: "$150", providers: 28,
     neighborhoods: ["Downtown Wilkes-Barre", "Heights", "South Wilkes-Barre", "Parsons", "Kingston", "Edwardsville"],
-    description: "Wilkes-Barre residents in the Wyoming Valley benefit from 28+ electricity suppliers with competitive rates in Luzerne County.",
+    description: "Wilkes-Barre residents in the Wyoming Valley benefit from competing electricity suppliers with competitive rates in Luzerne County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "York-PA": {
@@ -1207,7 +1207,7 @@ export const cityData = {
     zipCodes: ["17401", "17402", "17403", "17404"],
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$152", providers: 30,
     neighborhoods: ["Downtown York", "Springettsbury", "West York", "North York", "Dallastown", "Red Lion"],
-    description: "York residents benefit from 30+ electricity suppliers offering competitive fixed and variable rate plans in York County.",
+    description: "York residents benefit from competing electricity suppliers offering competitive fixed and variable rate plans in York County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Silver Spring-MD": {
@@ -1215,7 +1215,7 @@ export const cityData = {
     zipCodes: ["20901", "20902", "20904", "20905", "20906"],
     avgRate: "12.5¢/kWh", avgMonthlyBill: "$125", providers: 25,
     neighborhoods: ["Woodmoor", "Indian Spring", "Downtown Silver Spring", "East Silver Spring", "Woodside", "Clifton Park Village"],
-    description: "In Silver Spring's deregulated electricity market, residents can choose from over 25 providers, fostering competitive rates and energy options.",
+    description: "In Silver Spring's deregulated electricity market, residents can choose from competing suppliers, fostering competitive rates and energy options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Bowie-MD": {
@@ -1223,7 +1223,7 @@ export const cityData = {
     zipCodes: ["20715", "20716", "20720", "20721"],
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Old Town Bowie", "Northview", "Pointer Ridge", "Whitehall", "Kenilworth", "Mitchellville"],
-    description: "Bowie residents in Prince George's County can compare electricity rates from 28+ suppliers in Maryland's deregulated market.",
+    description: "Bowie residents in Prince George's County can compare electricity rates from competing suppliers in Maryland's deregulated market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Gaithersburg-MD": {
@@ -1231,7 +1231,7 @@ export const cityData = {
     zipCodes: ["20877", "20878", "20879", "20882", "20886"],
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$149", providers: 29,
     neighborhoods: ["Olde Towne", "Kentlands", "Lakeforest", "Quince Orchard", "Washingtonian Center", "Rio"],
-    description: "Gaithersburg residents in Montgomery County benefit from 29+ electricity suppliers with competitive rates in the DC suburbs.",
+    description: "Gaithersburg residents in Montgomery County benefit from competing electricity suppliers with competitive rates in the DC suburbs.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Hagerstown-MD": {
@@ -1239,7 +1239,7 @@ export const cityData = {
     zipCodes: ["21740", "21742"],
     avgRate: "10.0¢/kWh", avgMonthlyBill: "$145", providers: 25,
     neighborhoods: ["Downtown Hagerstown", "North End", "South End", "West End", "Halfway", "Funkstown"],
-    description: "Hagerstown residents in Western Maryland can compare electricity rates from 25+ suppliers in Washington County.",
+    description: "Hagerstown residents in Western Maryland can compare electricity rates from competing suppliers in Washington County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Waldorf-MD": {
@@ -1247,7 +1247,7 @@ export const cityData = {
     zipCodes: ["20601", "20602", "20603"],
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 27,
     neighborhoods: ["St. Charles", "Waldorf Center", "Pinefield", "Bennsville", "White Plains", "La Plata"],
-    description: "Waldorf residents in Charles County benefit from 27+ electricity suppliers offering competitive rates south of Washington DC.",
+    description: "Waldorf residents in Charles County benefit from competing electricity suppliers offering competitive rates south of Washington DC.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Springfield-IL": {
@@ -1263,7 +1263,7 @@ export const cityData = {
     zipCodes: ["61701", "61704", "61705", "61761"],
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 30,
     neighborhoods: ["Downtown Bloomington", "Normal", "Towanda", "East Side", "West Side", "Miller Park", "Founders Grove"],
-    description: "Bloomington-Normal residents benefit from competitive electricity rates with 30+ suppliers in the Ameren Illinois service territory.",
+    description: "Bloomington-Normal residents benefit from competitive electricity rates with competing suppliers in the Ameren Illinois service territory.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Cicero-IL": {
@@ -1271,7 +1271,7 @@ export const cityData = {
     zipCodes: ["60804"],
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 35,
     neighborhoods: ["Downtown Cicero", "Grant Works", "Hawthorne Works", "Warren Park", "Clyde Park", "Liberty Park"],
-    description: "Cicero residents in the Chicago suburbs have access to 35+ electricity suppliers in the ComEd service territory.",
+    description: "Cicero residents in the Chicago suburbs have access to competing electricity suppliers in the ComEd service territory.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Decatur-IL": {
@@ -1279,7 +1279,7 @@ export const cityData = {
     zipCodes: ["62521", "62522", "62526"],
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Decatur", "South Shores", "Millikin", "Lakeshore", "Johns Hill", "Fairview", "East End"],
-    description: "Decatur residents can compare electricity rates from 28+ suppliers serving the Ameren Illinois territory in Macon County.",
+    description: "Decatur residents can compare electricity rates from competing suppliers serving the Ameren Illinois territory in Macon County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Evanston-IL": {
@@ -1287,7 +1287,7 @@ export const cityData = {
     zipCodes: ["60201", "60202", "60203", "60204", "60208"],
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 36,
     neighborhoods: ["Downtown Evanston", "Central Evanston", "South Evanston", "North Evanston", "West Evanston", "Lakefront", "Northwestern"],
-    description: "Evanston, home to Northwestern University, offers residents access to 36+ electricity suppliers with competitive rates in the ComEd territory.",
+    description: "Evanston, home to Northwestern University, offers residents access to competing electricity suppliers with competitive rates in the ComEd territory.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Oak Park-IL": {
@@ -1295,7 +1295,7 @@ export const cityData = {
     zipCodes: ["60301", "60302", "60303", "60304"],
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 35,
     neighborhoods: ["Downtown Oak Park", "Frank Lloyd Wright District", "Ridgeland-Oak Park", "South Oak Park", "Gunderson", "Barrie Park"],
-    description: "Oak Park, famous for its Frank Lloyd Wright architecture, provides residents with 35+ electricity suppliers in the ComEd service area.",
+    description: "Oak Park, famous for its Frank Lloyd Wright architecture, provides residents with competing electricity suppliers in the ComEd service area.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Waukegan-IL": {
@@ -1303,7 +1303,7 @@ export const cityData = {
     zipCodes: ["60085", "60087"],
     avgRate: "9.9¢/kWh", avgMonthlyBill: "$143", providers: 34,
     neighborhoods: ["Downtown Waukegan", "Lakehurst", "Glen Flora", "Clearview", "Bonnie Brook", "Beach Park"],
-    description: "Waukegan residents in Lake County benefit from 34+ electricity suppliers offering competitive rates in the northern Chicago suburbs.",
+    description: "Waukegan residents in Lake County benefit from competing electricity suppliers offering competitive rates in the northern Chicago suburbs.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Stamford-CT": {
@@ -1311,7 +1311,7 @@ export const cityData = {
     zipCodes: ["06901", "06902", "06903", "06905", "06906"],
     avgRate: "21.5¢/kWh", avgMonthlyBill: "$191", providers: 18,
     neighborhoods: ["Downtown", "Shippan", "Glenbrook", "Westover", "North Stamford", "Cove"],
-    description: "Stamford's deregulated electricity market offers residents a choice of around 18 providers, fostering competitive rates and energy options.",
+    description: "Stamford's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Trenton-NJ": {
@@ -1327,7 +1327,7 @@ export const cityData = {
     zipCodes: ["08401", "08404"],
     avgRate: "11.5¢/kWh", avgMonthlyBill: "$166", providers: 24,
     neighborhoods: ["Boardwalk", "Chelsea", "Ducktown", "Inlet", "Marina District", "Ventnor"],
-    description: "Atlantic City residents can compare electricity rates from 24+ suppliers to find savings in the Atlantic City Electric service territory.",
+    description: "Atlantic City residents can compare electricity rates from competing suppliers to find savings in the Atlantic City Electric service territory.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Bayonne-NJ": {
@@ -1335,7 +1335,7 @@ export const cityData = {
     zipCodes: ["07002"],
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$171", providers: 26,
     neighborhoods: ["Downtown Bayonne", "Bergen Point", "Constable Hook", "Centerville", "Saltersville", "East Side"],
-    description: "Bayonne residents in Hudson County benefit from 26+ electricity suppliers offering competitive alternatives to PSE&G rates.",
+    description: "Bayonne residents in Hudson County benefit from competing electricity suppliers offering competitive alternatives to PSE&G rates.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Clifton-NJ": {
@@ -1343,7 +1343,7 @@ export const cityData = {
     zipCodes: ["07011", "07012", "07013", "07014"],
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$168", providers: 27,
     neighborhoods: ["Main Avenue", "Botany Village", "Allwood", "Delawanna", "Athenia", "Richfield"],
-    description: "Clifton residents in Passaic County can compare electricity rates from 27+ suppliers in New Jersey's deregulated energy market.",
+    description: "Clifton residents in Passaic County can compare electricity rates from competing suppliers in New Jersey's deregulated energy market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Elizabeth-NJ": {
@@ -1351,7 +1351,7 @@ export const cityData = {
     zipCodes: ["07201", "07202", "07206", "07207", "07208"],
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$169", providers: 27,
     neighborhoods: ["Downtown Elizabeth", "Elmora", "Bayway", "Peterstown", "Westminster", "North Elizabeth"],
-    description: "Elizabeth, New Jersey's fourth-largest city, offers residents access to 27+ electricity suppliers with competitive rates in Union County.",
+    description: "Elizabeth, New Jersey's fourth-largest city, offers residents access to competing electricity suppliers with competitive rates in Union County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Toms River-NJ": {
@@ -1359,7 +1359,7 @@ export const cityData = {
     zipCodes: ["08753", "08754", "08755", "08757"],
     avgRate: "11.4¢/kWh", avgMonthlyBill: "$165", providers: 25,
     neighborhoods: ["Downtown Toms River", "Silver Ridge", "Holiday City", "North Dover", "Silverton", "Pine Beach"],
-    description: "Toms River residents in Ocean County benefit from 25+ electricity suppliers offering competitive rates at the Jersey Shore.",
+    description: "Toms River residents in Ocean County benefit from competing electricity suppliers offering competitive rates at the Jersey Shore.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Waterbury-CT": {
@@ -1375,7 +1375,7 @@ export const cityData = {
     zipCodes: ["06810", "06811", "06813", "06814"],
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$195", providers: 20,
     neighborhoods: ["Downtown Danbury", "Candlewood Lake", "Mill Plain", "Shelter Rock", "Great Plain", "Pembroke"],
-    description: "Danbury residents in Fairfield County can compare electricity rates from 20+ suppliers in Connecticut's deregulated energy market.",
+    description: "Danbury residents in Fairfield County can compare electricity rates from competing suppliers in Connecticut's deregulated energy market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Meriden-CT": {
@@ -1383,7 +1383,7 @@ export const cityData = {
     zipCodes: ["06450", "06451"],
     avgRate: "13.8¢/kWh", avgMonthlyBill: "$200", providers: 19,
     neighborhoods: ["Downtown Meriden", "South Meriden", "East Side", "West Side", "North End", "Yalesville"],
-    description: "Meriden residents in New Haven County benefit from 19+ electricity suppliers offering competitive alternatives to Eversource rates.",
+    description: "Meriden residents in New Haven County benefit from competing electricity suppliers offering competitive alternatives to Eversource rates.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "New Britain-CT": {
@@ -1391,7 +1391,7 @@ export const cityData = {
     zipCodes: ["06050", "06051", "06052", "06053"],
     avgRate: "13.6¢/kWh", avgMonthlyBill: "$197", providers: 20,
     neighborhoods: ["Downtown New Britain", "East Side", "West End", "South Side", "Stanley Quarter", "Shuttle Meadow"],
-    description: "New Britain residents in Hartford County can compare electricity rates from 20+ suppliers in the Eversource service territory.",
+    description: "New Britain residents in Hartford County can compare electricity rates from competing suppliers in the Eversource service territory.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Yonkers-NY": {
@@ -1407,7 +1407,7 @@ export const cityData = {
     zipCodes: ["44502", "44503", "44504", "44505", "44509"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$105", providers: 30,
     neighborhoods: ["Brier Hill", "Brownlee Woods", "Downtown", "Hazelton", "Kirkmere", "Idora"],
-    description: "Youngstown's deregulated electricity market offers residents a choice of around 30 providers, fostering competitive rates and energy options.",
+    description: "Youngstown's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Dublin-OH": {
@@ -1415,7 +1415,7 @@ export const cityData = {
     zipCodes: ["43016", "43017"],
     avgRate: "9.4¢/kWh", avgMonthlyBill: "$136", providers: 30,
     neighborhoods: ["Historic Dublin", "Bridge Street District", "Muirfield Village", "Ballantrae", "Tartan Fields", "Glacier Ridge"],
-    description: "Dublin, an affluent Columbus suburb, offers residents access to 30+ electricity suppliers with competitive rates in Franklin County.",
+    description: "Dublin, an affluent Columbus suburb, offers residents access to competing electricity suppliers with competitive rates in Franklin County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Elyria-OH": {
@@ -1423,7 +1423,7 @@ export const cityData = {
     zipCodes: ["44035", "44036"],
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 28,
     neighborhoods: ["Downtown Elyria", "West Elyria", "South Elyria", "Gates Mills", "Cascade Park", "Midway Mall Area"],
-    description: "Elyria residents in Lorain County can compare electricity rates from 28+ suppliers in Ohio's deregulated energy market.",
+    description: "Elyria residents in Lorain County can compare electricity rates from competing suppliers in Ohio's deregulated energy market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Hamilton-OH": {
@@ -1431,7 +1431,7 @@ export const cityData = {
     zipCodes: ["45011", "45012", "45013", "45015"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 29,
     neighborhoods: ["Downtown Hamilton", "German Village", "Lindenwald", "Ross", "Fairfield Township", "Beckett Ridge"],
-    description: "Hamilton residents in Butler County benefit from 29+ electricity suppliers offering competitive fixed and variable rate plans.",
+    description: "Hamilton residents in Butler County benefit from competing electricity suppliers offering competitive fixed and variable rate plans.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Lakewood-OH": {
@@ -1439,7 +1439,7 @@ export const cityData = {
     zipCodes: ["44107"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 32,
     neighborhoods: ["Downtown Lakewood", "Birdtown", "Gold Coast", "Clifton Park", "Webb Road", "Madison Park"],
-    description: "Lakewood, a vibrant Cleveland suburb, provides residents with 32+ electricity suppliers and competitive rates in Cuyahoga County.",
+    description: "Lakewood, a vibrant Cleveland suburb, provides residents with competing electricity suppliers and competitive rates in Cuyahoga County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Lorain-OH": {
@@ -1447,7 +1447,7 @@ export const cityData = {
     zipCodes: ["44052", "44053", "44055"],
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 28,
     neighborhoods: ["Downtown Lorain", "South Lorain", "Oakwood", "Sheffield", "Black River Landing", "Lakeview Park"],
-    description: "Lorain residents on Lake Erie benefit from 28+ electricity suppliers with competitive rates in the deregulated Ohio market.",
+    description: "Lorain residents on Lake Erie benefit from competing electricity suppliers with competitive rates in the deregulated Ohio market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Parma-OH": {
@@ -1455,7 +1455,7 @@ export const cityData = {
     zipCodes: ["44129", "44130", "44134"],
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 32,
     neighborhoods: ["Downtown Parma", "Parma Heights", "Seven Hills", "Ridgewood", "State Road", "Pleasant Valley"],
-    description: "Parma, Cleveland's largest suburb, offers residents access to 32+ electricity suppliers with diverse plan options in Cuyahoga County.",
+    description: "Parma, Cleveland's largest suburb, offers residents access to competing electricity suppliers with diverse plan options in Cuyahoga County.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Albany-NY": {
@@ -1463,7 +1463,7 @@ export const cityData = {
     zipCodes: ["12201", "12202", "12203", "12204", "12205"],
     avgRate: "15.5¢/kWh", avgMonthlyBill: "$145", providers: 22,
     neighborhoods: ["Downtown Albany", "Center Square", "Pine Hills", "Buckingham Pond", "Delaware Avenue", "Lark Street"],
-    description: "Albany, the capital of New York, offers residents access to over 22 electricity suppliers in the deregulated ESCO market, providing competitive rates and plan options.",
+    description: "Albany, the capital of New York, offers residents access to competing electricity suppliers in the deregulated ESCO market, providing competitive rates and plan options.",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Binghamton-NY": {
@@ -1471,7 +1471,7 @@ export const cityData = {
     zipCodes: ["13901", "13902", "13903", "13905"],
     avgRate: "11.2¢/kWh", avgMonthlyBill: "$162", providers: 22,
     neighborhoods: ["Downtown Binghamton", "West Side", "North Side", "First Ward", "Prospect Terrace", "Chenango Bridge"],
-    description: "Binghamton residents in the Southern Tier can compare electricity rates from 22+ suppliers in New York's deregulated energy market.",
+    description: "Binghamton residents in the Southern Tier can compare electricity rates from competing suppliers in New York's deregulated energy market.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Hempstead-NY": {
@@ -1479,7 +1479,7 @@ export const cityData = {
     zipCodes: ["11549", "11550", "11551", "11553"],
     avgRate: "14.5¢/kWh", avgMonthlyBill: "$210", providers: 25,
     neighborhoods: ["Downtown Hempstead", "Garden City", "West Hempstead", "East Meadow", "Uniondale", "Roosevelt"],
-    description: "Hempstead residents on Long Island benefit from 25+ electricity suppliers offering competitive alternatives to PSEG Long Island rates.",
+    description: "Hempstead residents on Long Island benefit from competing electricity suppliers offering competitive alternatives to PSEG Long Island rates.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Long Beach-NY": {
@@ -1487,7 +1487,7 @@ export const cityData = {
     zipCodes: ["11561"],
     avgRate: "14.8¢/kWh", avgMonthlyBill: "$214", providers: 24,
     neighborhoods: ["West End", "East End", "North Park", "Canals", "Boardwalk Area", "City by the Sea"],
-    description: "Long Beach residents on Long Island's barrier island can compare electricity rates from 24+ suppliers to find savings.",
+    description: "Long Beach residents on Long Island's barrier island can compare electricity rates from competing suppliers to find savings.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "New Rochelle-NY": {
@@ -1495,7 +1495,7 @@ export const cityData = {
     zipCodes: ["10801", "10802", "10803", "10804", "10805"],
     avgRate: "13.2¢/kWh", avgMonthlyBill: "$191", providers: 26,
     neighborhoods: ["Downtown New Rochelle", "Wykagyl", "Larchmont", "Pelham", "North End", "Huguenot Park"],
-    description: "New Rochelle residents in Westchester County benefit from 26+ electricity suppliers with competitive rates north of New York City.",
+    description: "New Rochelle residents in Westchester County benefit from competing electricity suppliers with competitive rates north of New York City.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Schenectady-NY": {
@@ -1503,7 +1503,7 @@ export const cityData = {
     zipCodes: ["12301", "12302", "12303", "12304", "12305", "12306", "12307", "12308", "12309"],
     avgRate: "11.0¢/kWh", avgMonthlyBill: "$159", providers: 23,
     neighborhoods: ["Downtown Schenectady", "Stockade District", "GE Plot", "Woodlawn", "Mont Pleasant", "Bellevue"],
-    description: "Schenectady residents in the Capital District can compare electricity rates from 23+ suppliers in the National Grid service area.",
+    description: "Schenectady residents in the Capital District can compare electricity rates from competing suppliers in the National Grid service area.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "White Plains-NY": {
@@ -1511,7 +1511,7 @@ export const cityData = {
     zipCodes: ["10601", "10602", "10603", "10604", "10605", "10606", "10607"],
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$195", providers: 26,
     neighborhoods: ["Downtown White Plains", "Battle Hill", "Gedney Farms", "Fisher Hill", "Highlands", "Mamaroneck Avenue"],
-    description: "White Plains, the Westchester County seat, offers residents access to 26+ electricity suppliers with competitive rates.",
+    description: "White Plains, the Westchester County seat, offers residents access to competing electricity suppliers with competitive rates.",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
 };

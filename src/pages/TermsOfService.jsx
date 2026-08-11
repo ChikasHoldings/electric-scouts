@@ -245,8 +245,8 @@ export default function TermsOfService() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Terms of Service - Electric Scouts | User Agreement & Guidelines"
-        description="Electric Scouts terms of service and user agreement. Understand your rights, responsibilities, and legal terms when using our free electricity rate comparison platform."
+        title="Terms of Service | Electric Scouts"
+        description="The terms that apply when you use Electric Scouts to compare electricity plans, including accuracy of rates, affiliate relationships and limitation of liability."
         keywords="terms of service, user agreement, electricity comparison terms, service guidelines, legal terms"
         canonical="/terms-of-service"
         structuredData={breadcrumbData}

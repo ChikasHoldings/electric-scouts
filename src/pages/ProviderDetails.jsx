@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, MapPin, Zap, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp, ThumbsUp } from "lucide-react";
+import { MapPin, Zap, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp } from "lucide-react";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -20,7 +20,11 @@ export default function ProviderDetails() {
   // Support both slug-based routing (/providers/:slug) and legacy query param (?provider=Name)
   const params = useParams();
 
-  const { data: allPlans } = useQuery({
+  // Defaulted to []: react-query only serves placeholderData while the query is
+  // pending, so a failed Supabase request leaves `data` undefined and the next
+  // .filter() throws — which blanked this page behind an error boundary for
+  // users and crawlers alike whenever the database was unreachable.
+  const { data: allPlans = [] } = useQuery({
     queryKey: ['plans'],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
@@ -67,7 +71,6 @@ export default function ProviderDetails() {
     features: Array.isArray(providerFromDB.features) && providerFromDB.features.length > 0
       ? providerFromDB.features
       : [],
-    reviewCount: providerFromDB.review_count || 0,
     phone: providerFromDB.phone || null,
   } : null;
 
@@ -100,33 +103,16 @@ export default function ProviderDetails() {
   const lowestRate = providerPlans.length > 0 ? providerPlans[0].rate_per_kwh : 'N/A';
   const renewablePlansCount = providerPlans.filter(p => p.renewable_percentage >= 50).length;
 
-  // Sample reviews - in production, fetch from database
-  const sampleReviews = [
-    {
-      author: "Sarah M.",
-      location: "Houston, TX",
-      rating: 5,
-      date: "2025-11-15",
-      text: "Great rates and excellent customer service. Switching was seamless and I'm saving $50+ per month!",
-      verified: true
-    },
-    {
-      author: "John D.",
-      location: "Dallas, TX",
-      rating: 4,
-      date: "2025-11-10",
-      text: "Competitive pricing and transparent billing. Very satisfied with my choice.",
-      verified: true
-    },
-    {
-      author: "Maria L.",
-      location: "Austin, TX",
-      rating: 5,
-      date: "2025-11-05",
-      text: "Love the renewable energy options. Highly recommend for anyone looking to go green.",
-      verified: true
-    }
-  ];
+  // Built from the plans actually loaded for this provider, so the description
+  // never claims coverage or a rate the page cannot show. Mirrors the shape of
+  // providerDescription() in src/seo/routes.js, which writes the static head.
+  const coverage = providerInfo?.states?.length
+    ? ` in ${providerInfo.states.length === 1 ? providerInfo.states[0] : `${providerInfo.states.length} states`}`
+    : '';
+  const fromRate = providerPlans.length > 0 ? ` from ${lowestRate}¢/kWh` : '';
+  const metaDescription =
+    `Compare ${providerPlans.length} ${providerName} electricity plans${coverage}${fromRate}. ` +
+    `Contract terms, renewable options and how they compare with other suppliers.`;
 
   const providerSlug = generateProviderSlug(providerName);
   const breadcrumbData = getBreadcrumbSchema([
@@ -165,10 +151,14 @@ export default function ProviderDetails() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Title matches providerTitle() in src/seo/routes.js exactly, so the tag
+          React sets on hydration is the same one the prerendered HTML carries —
+          the previous title promised "Reviews" this page no longer has, and
+          disagreed with the static head on every provider URL. The description
+          mirrors providerDescription()'s shape using live plan data. */}
       <SEOHead
-        title={`${providerName} Electricity Rates & Reviews - Compare Plans | Electric Scouts`}
-        description={`Compare ${providerName} electricity rates and plans. Read reviews, check availability, find best ${providerName} deals. Serving multiple states with fixed, variable & renewable energy options. Starting at ${lowestRate}¢/kWh. Switch and save today.`}
-        keywords={`${providerName} electricity rates, ${providerName} reviews, ${providerName} plans, ${providerName} energy, best ${providerName} deals, ${providerName} renewable energy, compare ${providerName} rates`}
+        title={`${providerName} Electricity Plans & Rates | Electric Scouts`}
+        description={metaDescription}
         canonical={`/providers/${providerSlug}`}
         structuredData={breadcrumbData}
       />
@@ -210,19 +200,18 @@ export default function ProviderDetails() {
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="text-2xl sm:text-3xl font-bold mb-2">{providerName}</h1>
+                {/* The star rating that sat here fell back to a hard-coded 4.8
+                    whenever the database had no rating, so most providers showed
+                    a score nobody had given them. Only counts we can actually
+                    stand behind are shown now. */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{providerFromDB?.rating || 4.8}</span>
-                  </div>
-                  {providerInfo.reviewCount > 0 && (
+                  <span className="text-blue-100 text-sm">{providerPlans.length} Plans Available</span>
+                  {renewablePlansCount > 0 && (
                     <>
                       <span className="text-blue-200 hidden sm:inline">•</span>
-                      <span className="text-blue-100 text-sm">{providerInfo.reviewCount.toLocaleString()} reviews</span>
+                      <span className="text-blue-100 text-sm">{renewablePlansCount} renewable plans</span>
                     </>
                   )}
-                  <span className="text-blue-200 hidden sm:inline">•</span>
-                  <span className="text-blue-100 text-sm">{providerPlans.length} Plans Available</span>
                 </div>
                 <p className="text-blue-100 text-sm sm:text-base">
                   {providerFromDB?.description || `Competitive electricity rates serving ${providerInfo.states.join(", ")}`}
@@ -375,50 +364,15 @@ export default function ProviderDetails() {
           </section>
         )}
 
-        {/* Customer Reviews */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <ThumbsUp className="w-6 h-6 text-[#0A5C8C]" />
-              <h2 className="text-2xl font-bold text-gray-900">
-                Customer Reviews
-              </h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-              <span className="font-bold text-lg">{providerFromDB?.rating || 4.8}</span>
-              <span className="text-gray-500 text-sm">({sampleReviews.length} reviews)</span>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            {sampleReviews.map((review, index) => (
-              <Card key={index} className="border">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                        />
-                      ))}
-                    </div>
-                    {review.verified && (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
-                        Verified
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-700 mb-3 leading-relaxed">"{review.text}"</p>
-                  <div className="text-xs text-gray-500">
-                    <div className="font-semibold text-gray-900">{review.author}</div>
-                    <div>{review.location} • {new Date(review.date).toLocaleDateString()}</div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+        {/* No customer reviews section.
+            This page used to render three hard-coded reviews — invented authors,
+            locations, dates and "Verified" badges — under a rating that fell back
+            to 4.8 when the database had none. Every provider row carries
+            review_count = 0, so there was no first-party review data behind any
+            of it. Presenting invented testimonials as genuine breaks Google's
+            structured data and spam policies and misleads customers, so it is
+            gone rather than restyled. If real reviews are collected later, render
+            them from the database and add Review markup at the same time. */}
 
         {/* All Available Plans */}
         <section className="mb-12">

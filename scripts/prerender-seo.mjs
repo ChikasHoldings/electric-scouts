@@ -22,20 +22,21 @@
  *                                 the build (no canonical, no robots meta — the
  *                                 client sets both)
  *   dist/robots.txt               generated from src/seo/robots.js
+ *   dist/sitemap.xml              every indexable URL, same registry as above
  */
 
-import { createServer } from 'vite';
-import { createClient } from '@supabase/supabase-js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { SITE_NAME, SITE_URL } from '../src/seo/site.js';
-import { getAllRoutes, getStateRoutes, getCityRoutes } from '../src/seo/routes.js';
+import { getAllRoutes, getStateRoutes, getCityRoutes, getArticleRouteList } from '../src/seo/routes.js';
 import { getCities, getStates } from '../src/seo/locations.js';
-import { getArticleRouteList } from '../src/seo/routes.js';
 import { generateRobotsTxt } from '../src/seo/robots.js';
-import { renderBody, renderHead, escapeHtml } from '../src/seo/render.js';
+import { generateSitemap } from '../src/seo/sitemap.js';
+import { buildPageContent, renderBody, renderHead, escapeHtml } from '../src/seo/render.js';
+import { loadSeoData } from '../src/seo/data.mjs';
+import { MARKET_GENERATED_AT } from '../src/seo/market.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -81,60 +82,6 @@ function outputPathFor(routePath) {
 }
 
 /* ------------------------------------------------------------------ *
- * Data loading
- * ------------------------------------------------------------------ */
-
-/**
- * Article bodies live in a .jsx module, so they are loaded through Vite rather
- * than plain Node. A failure here is fatal on purpose: shipping 73 articles
- * with no title or description is the bug this script exists to prevent.
- */
-async function loadArticleData() {
-  const server = await createServer({
-    server: { middlewareMode: true },
-    appType: 'custom',
-    logLevel: 'error',
-    optimizeDeps: { noDiscovery: true, include: [] },
-  });
-  try {
-    const module = await server.ssrLoadModule('/src/components/learning/fullArticles.jsx');
-    const articles = module.fullArticles;
-    if (!articles || !Object.keys(articles).length) {
-      throw new Error('fullArticles resolved to an empty map');
-    }
-    return articles;
-  } finally {
-    await server.close();
-  }
-}
-
-/**
- * Providers whose detail pages actually render. Missing credentials are not
- * fatal — the routes simply are not prerendered and fall back to the neutral
- * app shell, which still resolves client-side.
- */
-async function loadActiveProviders() {
-  const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const key = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
-  if (!url || !key) {
-    console.warn('[prerender] Supabase credentials unavailable — skipping provider pages');
-    return [];
-  }
-  try {
-    const supabase = createClient(url, key);
-    const { data, error } = await supabase
-      .from('electricity_providers')
-      .select('name, updated_at')
-      .eq('is_active', true);
-    if (error) throw error;
-    return data || [];
-  } catch (error) {
-    console.warn(`[prerender] could not load providers: ${error.message}`);
-    return [];
-  }
-}
-
-/* ------------------------------------------------------------------ *
  * Extra artefacts
  * ------------------------------------------------------------------ */
 
@@ -159,9 +106,10 @@ function build404Page(template, context) {
     description: 'The page you are looking for does not exist. Browse electricity rates by state, city or provider instead.',
     heading: 'Page Not Found',
   };
+  const content = buildPageContent(route, context);
   return buildPage(template, {
-    headTags: renderHead(route),
-    bodyHtml: renderBody(route, context),
+    headTags: renderHead(route, content),
+    bodyHtml: renderBody(route, content, context),
   });
 }
 
@@ -182,16 +130,21 @@ async function main() {
     throw new Error(`${templatePath} is already prerendered — run "vite build" before prerendering`);
   }
 
-  const [fullArticles, providers] = await Promise.all([loadArticleData(), loadActiveProviders()]);
+  const seoData = await loadSeoData();
+  const { fullArticles, providers } = seoData;
 
   const states = getStates();
   const citiesByState = {};
   for (const city of getCities()) {
     (citiesByState[city.stateCode] ||= []).push(city);
   }
-  const context = { states, citiesByState };
+  // Article routes are handed to the content builder so /learning-center can
+  // link to every article — without that list the 73 article pages have no
+  // inbound link anywhere on the site and stay orphaned.
+  const articles = getArticleRouteList(fullArticles);
+  const context = { states, citiesByState, articles };
 
-  const routes = getAllRoutes({ providers, fullArticles });
+  const routes = getAllRoutes(seoData);
 
   // Every route must have unique, non-empty metadata — the failure mode we are
   // fixing is hundreds of URLs sharing one title and one canonical.
@@ -215,9 +168,10 @@ async function main() {
 
   let written = 0;
   for (const route of routes) {
+    const content = buildPageContent(route, context);
     const html = buildPage(template, {
-      headTags: renderHead(route),
-      bodyHtml: renderBody(route, context),
+      headTags: renderHead(route, content),
+      bodyHtml: renderBody(route, content, context),
     });
     const outputPath = outputPathFor(route.path);
     await fs.mkdir(path.dirname(outputPath), { recursive: true });
@@ -228,6 +182,10 @@ async function main() {
   await fs.writeFile(path.join(DIST, '404.html'), build404Page(template, context), 'utf8');
   await fs.writeFile(path.join(DIST, 'app-shell.html'), buildAppShell(template), 'utf8');
   await fs.writeFile(path.join(DIST, 'robots.txt'), generateRobotsTxt(), 'utf8');
+  // Written as a static file rather than served by a function: it is now fully
+  // determined by the same registry that produced the pages above, so it cannot
+  // drift from them, and Google never waits on a cold start to read it.
+  await fs.writeFile(path.join(DIST, 'sitemap.xml'), generateSitemap(seoData), 'utf8');
 
   const counts = routes.reduce((acc, route) => {
     acc[route.type] = (acc[route.type] || 0) + 1;
@@ -235,13 +193,14 @@ async function main() {
   }, {});
 
   console.log(`[prerender] canonical host: ${SITE_URL}`);
+  console.log(`[prerender] market snapshot: ${MARKET_GENERATED_AT}`);
   console.log(`[prerender] wrote ${written} pages (${JSON.stringify(counts)})`);
-  console.log('[prerender] wrote 404.html, app-shell.html, robots.txt');
+  console.log('[prerender] wrote 404.html, app-shell.html, robots.txt, sitemap.xml');
 
   // Surfaced so a build with no provider pages is obvious in the deploy log.
   const stateCount = getStateRoutes().length;
   const cityCount = getCityRoutes().length;
-  const articleCount = getArticleRouteList(fullArticles).length;
+  const articleCount = articles.length;
   console.log(
     `[prerender] states=${stateCount} cities=${cityCount} articles=${articleCount} providers=${providers.length}`
   );

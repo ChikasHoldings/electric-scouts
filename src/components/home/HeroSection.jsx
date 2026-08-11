@@ -29,7 +29,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
-                Enter your ZIP code to compare plans from 40+ providers across 12 deregulated states. Free, unbiased, instant.
+                Enter your ZIP code to compare plans from competing suppliers across 12 deregulated states. Free, unbiased, instant.
               </p>
             </div>
 

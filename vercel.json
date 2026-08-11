@@ -379,27 +379,11 @@
       "destination": "/api/go?slug=:slug"
     },
     {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
       "source": "/admin",
       "destination": "/app-shell.html"
     },
     {
       "source": "/admin/:path*",
-      "destination": "/app-shell.html"
-    },
-    {
-      "source": "/providers/:slug",
-      "destination": "/app-shell.html"
-    },
-    {
-      "source": "/electricity-rates/:stateSlug/:citySlug",
-      "destination": "/app-shell.html"
-    },
-    {
-      "source": "/learn/:slug",
       "destination": "/app-shell.html"
     }
   ],

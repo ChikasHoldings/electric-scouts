@@ -457,7 +457,7 @@ export default function HomeConcierge() {
   if (step >= 1) {
     return (
       <>
-        <SEOHead title="Home Concierge | Set Up All Utilities | Electric Scouts" canonical="/home-concierge" />
+        <SEOHead title="Home Concierge | Set Up Utilities When You Move | Electric Scouts" canonical="/home-concierge" />
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
           {/* Progress Bar */}
           <div className="bg-white border-b sticky top-0 z-10">
@@ -510,7 +510,7 @@ export default function HomeConcierge() {
     <>
     <SEOHead
       title="Home Concierge | Set Up All Utilities in One Place | Electric Scouts"
-      description="Let Electric Scouts handle your electricity, internet, water, and phone setup. Free one-stop home concierge service for new movers."
+      description="Moving means setting up electricity before you arrive. We handle the electricity setup and coordinate internet, water and phone so nothing starts late."
       canonical="/home-concierge"
       keywords="home concierge, utility setup, new home utilities, electricity setup service"
       structuredData={getOrganizationSchema()}

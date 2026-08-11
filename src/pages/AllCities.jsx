@@ -448,8 +448,8 @@ export default function AllCities() {
   return (
     <>
     <SEOHead
-      title="Compare Electricity Rates by City | All Cities | Electric Scouts"
-      description="Browse electricity rates and providers in cities across deregulated states. Compare plans in Houston, Dallas, Chicago, New York, Philadelphia, and more."
+      title="Electricity Rates by City | Electric Scouts"
+      description="Local electricity rates, utilities and coverage for every city we publish, from Houston and Dallas to Chicago, Philadelphia and New York."
       canonical="/all-cities"
       keywords="electricity rates by city, compare electricity city, cheap electricity Houston, Dallas electricity rates"
       structuredData={[getOrganizationSchema(), getBreadcrumbSchema([{name:'Home',url:'/'},{name:'All Cities',url:'/all-cities'}])]}

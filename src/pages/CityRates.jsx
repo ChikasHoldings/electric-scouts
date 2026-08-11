@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams, useParams } from "react-router-dom";
 import { parseCityUrl, getCityUrl, getStatePageUrl, STATE_CODES, STATE_DISPLAY_NAMES } from "@/utils/cityUrls";
+import { cityTitle, cityDescription } from "@/seo/routes.js";
+import { getStateMarket } from "@/seo/market.js";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import RelatedCities from "@/components/RelatedCities";
 import ContextualLinks from "@/components/ContextualLinks";
@@ -16,7 +18,7 @@ import {
 import PlanCard from "../components/compare/PlanCard";
 import { getProvidersForZipCode, getProviderDetails } from "../components/compare/providerAvailability";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
-import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema, getLocalBusinessSchema } from "../components/SEOHead";
+import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 import ValidatedZipInput from "../components/ValidatedZipInput";
 
 // Comprehensive city data for all states
@@ -95,9 +97,23 @@ function CityRatesInner() {
     image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80"
   };
 
-  // Generate dynamic SEO data with city-specific details
-  const seoTitle = `${displayCityName}, ${city.stateCode} Electricity Rates 2025 - Compare ${city.providers}+ Providers | Electric Scouts`;
-  const seoDescription = `Compare ${displayCityName} electricity rates from ${city.providers}+ providers. Average ${city.avgRate} (est. ${city.avgMonthlyBill}/mo). Serving ${city.county}, population ${city.population}. ${city.description.substring(0, 100)}... Switch & save today - 100% free comparison.`;
+  // SEO metadata, mirroring src/seo/routes.js so the prerendered <head> and the
+  // hydrated one agree. Generated from the same shape rather than hand-written:
+  // the previous title hard-coded "2025", which every city page still carried
+  // long after that year ended.
+  const cityMarket = getStateMarket(city.stateCode);
+  const seoTitle = cityTitle({ name: displayCityName, stateCode: city.stateCode });
+  const seoDescription = cityDescription(
+    {
+      name: displayCityName,
+      stateCode: city.stateCode,
+      stateName: city.state,
+      avgRate: city.avgRate,
+      avgMonthlyBill: city.avgMonthlyBill,
+      county: city.county,
+    },
+    cityMarket
+  );
   const seoKeywords = `${displayCityName} electricity rates, ${displayCityName} ${city.stateCode} electricity providers, cheap electricity ${displayCityName}, ${displayCityName} power companies, electricity rates ${city.county}, best electricity rates ${displayCityName}, compare electricity ${displayCityName}, ${displayCityName} energy plans, ${displayCityName.toLowerCase()} electric rates, ${city.state.toLowerCase()} electricity, ${displayCityName} fixed rate electricity, ${displayCityName} variable rate plans, renewable energy ${displayCityName}, ${city.neighborhoods.slice(0, 3).join(' electricity, ')} electricity`;
 
   const cleanCityUrl = getCityUrl(displayCityName, city.stateCode);
@@ -118,7 +134,7 @@ function CityRatesInner() {
   const cityFaqs = [
     {
       question: `What is the average electricity rate in ${displayCityName}, ${city.stateCode}?`,
-      answer: `The average electricity rate in ${displayCityName} is approximately ${city.avgRate}, though rates vary by provider, plan type, and usage level. With Electric Scouts, you can compare rates from all ${city.providers}+ providers serving ${city.county} to find the best deal for your home.`
+      answer: `The average electricity rate in ${displayCityName} is approximately ${city.avgRate}, though rates vary by provider, plan type, and usage level. With Electric Scouts, you can compare the suppliers with active ${city.state} plans to find the best deal for your home.`
     },
     {
       question: `How do I switch electricity providers in ${displayCityName}?`,
@@ -135,9 +151,16 @@ function CityRatesInner() {
   ];
   
   const faqData = getFAQSchema(cityFaqs);
-  const localBusinessData = getLocalBusinessSchema(displayCityName, city.state, city.county);
+  // No LocalBusiness schema. It declared "Electric Scouts - <City> Electricity
+  // Comparison" as a local business on all 144 city pages, but Electric Scouts
+  // is a national online comparison service with no premises in any of them.
+  // getServiceSchema already models this correctly: a service with an areaServed.
 
-  const { data: plans, isLoading } = useQuery({
+  // Defaulted to []: react-query only serves placeholderData while the query is
+  // pending, so a failed Supabase request leaves `data` undefined and the next
+  // .filter() throws — which blanked this page behind an error boundary for
+  // users and crawlers alike whenever the database was unreachable.
+  const { data: plans = [], isLoading } = useQuery({
     queryKey: ['plans'],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
@@ -180,7 +203,7 @@ function CityRatesInner() {
         keywords={seoKeywords}
         canonical={cleanCityUrl}
         image={city.image}
-        structuredData={[breadcrumbData, serviceData, faqData, localBusinessData]}
+        structuredData={[breadcrumbData, serviceData, faqData]}
       />
 
       {/* Hero Section - SEO Optimized */}
@@ -197,7 +220,7 @@ function CityRatesInner() {
               Cheap Electricity Rates in {displayCityName}, {city.state}
             </h1>
             <p className="text-lg text-blue-100 mb-5">
-              Compare electricity plans from {city.providers}+ providers serving {city.county}. 
+              Compare electricity plans from the suppliers serving {city.county}. 
               Average rates starting at {city.avgRate} with potential savings up to $800/year.
             </p>
 
@@ -208,8 +231,8 @@ function CityRatesInner() {
                 <div className="text-xs text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                <div className="text-xl font-bold mb-1">{city.providers}+</div>
-                <div className="text-xs text-blue-100">Providers</div>
+                <div className="text-xl font-bold mb-1">{cityMarket?.providers ?? "—"}</div>
+                <div className="text-xs text-blue-100">{city.state} Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                 <div className="text-xl font-bold mb-1">{city.avgMonthlyBill}</div>
@@ -292,7 +315,7 @@ function CityRatesInner() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">More Options</h3>
                 <p className="text-gray-600">
-                  Access {city.providers}+ providers with fixed, variable, and renewable energy plans
+                  Access suppliers offering fixed, variable, and renewable energy plans
                 </p>
               </CardContent>
             </Card>
@@ -613,7 +636,7 @@ function CityRatesInner() {
               As a resident of {displayCityName}, {city.county}, you have the power to choose your electricity provider 
               thanks to {city.state}'s deregulated energy market. This means you're not stuck with one utility company – 
               you can shop around and find the electricity plan that best fits your needs and budget. Electric Scouts 
-              makes this process simple by allowing you to compare rates from {city.providers}+ providers in minutes.
+              makes this process simple by allowing you to compare the available plans in minutes.
             </p>
             <p>
               Whether you live in {city.neighborhoods[0]}, {city.neighborhoods[1]}, or any other {displayCityName} neighborhood, 

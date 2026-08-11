@@ -8,11 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, TrendingDown, ChevronDown, ArrowRight } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function IllinoisElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("IL");
 
   const stateData = {
     name: "Illinois",
@@ -31,7 +36,7 @@ export default function IllinoisElectricity() {
       {
         id: 2,
         question: "How much can I save on electricity in Illinois?",
-        answer: "Illinois residents save an average of $700 per year by comparing electricity rates from competitive suppliers. Savings are especially significant in the Chicago area where competition among providers is strongest. Your actual savings depend on your current rate, usage patterns, and the plan you select."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the Illinois plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -57,8 +62,8 @@ export default function IllinoisElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Illinois Electricity Rates - Compare 36+ Providers & Save $700/Year | Electric Scouts IL"
-        description="Compare Illinois electricity rates from Constellation, Direct Energy & 35+ providers. Serving Chicago, Aurora, Naperville, Rockford. Find affordable electricity plans for your home. Fixed & variable rates. 100% green energy options. Switch easily & save up to $700 annually. Free IL electricity comparison."
+        title="Illinois Electricity Rates & Providers | Electric Scouts"
+        description="Compare 25 Illinois electricity plans from 15 suppliers, 7.5¢/kWh–11.49¢/kWh. Rates by city, renewable options and how switching works."
         keywords="Illinois electricity rates, Chicago electricity providers, Illinois energy comparison, ComEd alternatives, Ameren alternatives, cheap electricity Illinois, compare electricity rates Illinois, Illinois power companies, best electricity rates Chicago, fixed rate electricity Illinois, renewable energy Illinois, green energy plans Illinois, deregulated electricity Illinois, Illinois electricity suppliers"
         canonical="/illinois-electricity"
         structuredData={[breadcrumbData, serviceSchema, getFAQSchema(stateData.faqs)]}
@@ -82,7 +87,7 @@ export default function IllinoisElectricity() {
               Illinois Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ providers across Illinois. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active Illinois plans. What you save depends on your current rate and usage.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -91,12 +96,12 @@ export default function IllinoisElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
-                <div className="text-sm text-blue-100">Providers</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
+                <div className="text-sm text-blue-100">Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>
@@ -142,7 +147,7 @@ export default function IllinoisElectricity() {
                 contract length, and estimated monthly bills—all in one place.
               </p>
               <p className="text-sm text-gray-700 leading-relaxed mb-3">
-                By comparing rates, Illinois residents save an average of $750 per year on electricity bills. Whether you're 
+                Whether you're 
                 looking for fixed-rate plans, month-to-month flexibility, or 100% renewable energy options, our comparison 
                 tool makes it simple to find the perfect plan for your home or business.
               </p>

@@ -13,6 +13,14 @@
  */
 
 import { SITE_NAME, SITE_URL, absoluteUrl } from './site.js';
+import { MARKET_TOTALS } from './market.js';
+import {
+  buildArticleSections,
+  buildCitySections,
+  buildProviderSections,
+  buildStateSections,
+  buildStaticSections,
+} from './content.js';
 
 /** Escape text for use in an HTML text node or double-quoted attribute. */
 export function escapeHtml(value) {
@@ -67,8 +75,14 @@ export function organizationSchema() {
       width: 200,
       height: 60,
     },
+    // Counted from the market snapshot rather than asserted. The previous copy
+    // claimed "40+ providers" on all 258 pages while the snapshot holds 35 with
+    // an active plan, so the one org-level fact the site repeated everywhere was
+    // one it could not support.
     description:
-      'Electric Scouts is a free, independent electricity comparison platform covering 40+ providers across 12 deregulated US states.',
+      `Electric Scouts is a free, independent electricity comparison platform tracking ` +
+      `${MARKET_TOTALS.activePlans} electricity plans from ${MARKET_TOTALS.providersWithPlans} ` +
+      `suppliers across ${MARKET_TOTALS.states} deregulated US states.`,
     sameAs: [
       'https://facebook.com/electricscouts',
       'https://x.com/electricscouts',
@@ -135,7 +149,25 @@ export function breadcrumbsFor(route) {
   }
 }
 
-export function structuredDataFor(route) {
+/**
+ * FAQPage markup for the questions a page actually renders.
+ *
+ * Google requires the Q&A to be visible on the page, so this is built from the
+ * same content model the body renders rather than from a separate list — there
+ * is no way for the markup to describe questions the page does not show.
+ */
+export function faqSchema(faqs) {
+  return {
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  };
+}
+
+export function structuredDataFor(route, content) {
   const graph = [organizationSchema(), websiteSchema()];
   const trail = breadcrumbsFor(route);
   if (trail.length > 1) graph.push(breadcrumbSchema(trail));
@@ -151,6 +183,9 @@ export function structuredDataFor(route) {
     });
   }
 
+  const faqs = (content?.sections || []).flatMap((section) => section.faqs || []);
+  if (faqs.length) graph.push(faqSchema(faqs));
+
   return { '@context': 'https://schema.org', '@graph': graph };
 }
 
@@ -158,7 +193,7 @@ export function structuredDataFor(route) {
  * <head>
  * ------------------------------------------------------------------ */
 
-export function renderHead(route) {
+export function renderHead(route, content) {
   // route.canonical lets a duplicate URL point at the page it consolidates onto
   // (e.g. /landing -> /). Everything else self-canonicalizes.
   const canonical = absoluteUrl(route.canonical || route.path);
@@ -191,7 +226,7 @@ export function renderHead(route) {
     `<meta name="twitter:title" content="${escapeHtml(title)}" />`,
     `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
     `<meta name="twitter:image" content="${escapeHtml(image)}" />`,
-    `<script type="application/ld+json">${escapeJsonLd(JSON.stringify(structuredDataFor(route)))}</script>`,
+    `<script type="application/ld+json">${escapeJsonLd(JSON.stringify(structuredDataFor(route, content)))}</script>`,
   ];
 
   return tags.map((tag) => `    ${tag}`).join('\n');
@@ -208,11 +243,6 @@ function link(path, label) {
 function linkList(links) {
   if (!links.length) return '';
   return `<ul>${links.map(([path, label]) => `<li>${link(path, label)}</li>`).join('')}</ul>`;
-}
-
-function section(heading, links) {
-  if (!links.length) return '';
-  return `<section><h2>${escapeHtml(heading)}</h2>${linkList(links)}</section>`;
 }
 
 /**
@@ -238,110 +268,95 @@ function siteNav(states) {
     '<nav aria-label="Primary">',
     `<a href="/">${escapeHtml(SITE_NAME)}</a>`,
     linkList(primary),
-    `<h2>Electricity Rates by State</h2>`,
     linkList(states.map((state) => [state.path, `${state.name} Electricity Rates`])),
     '</nav>',
   ].join('');
 }
 
-function renderHomeBody(route, context) {
-  const { states } = context;
-  const featuredCities = states
-    .flatMap((state) => state.cities.slice(0, 2))
-    .slice(0, 12)
-    .map((city) => [city.path, `${city.name} Electricity Rates`]);
+/* ------------------------------------------------------------------ *
+ * Section serialization
+ *
+ * The content model (src/seo/content.js) decides what a page may say; these
+ * functions decide only how it is marked up. A section renders exactly the
+ * parts it carries, so a city with no utility on record produces no empty
+ * heading rather than a heading with nothing under it.
+ * ------------------------------------------------------------------ */
 
-  return [
-    `<p>${escapeHtml(route.description)}</p>`,
-    section('Popular Cities', featuredCities),
-  ].join('');
+/** A table cell is either a plain string or {text, path} for a linked cell. */
+function renderCell(cell) {
+  if (cell && typeof cell === 'object') {
+    return cell.path ? link(cell.path, cell.text) : escapeHtml(cell.text);
+  }
+  return escapeHtml(cell);
 }
 
-function renderStateBody(route) {
-  const { state } = route;
-  const cityLinks = state.cities.map((city) => [city.path, `${city.name} Electricity Rates`]);
-
-  return [
-    `<p>${escapeHtml(route.description)}</p>`,
-    `<p>${escapeHtml(
-      `Electric Scouts tracks electricity plans across ${state.name}. Compare rates by city, ` +
-        `check what providers serve your address, and switch without losing power.`
-    )}</p>`,
-    section(`Electricity Rates in ${state.name} Cities`, cityLinks),
-    section('Next Steps', [
-      ['/compare-rates', 'Compare rates for your ZIP code'],
-      ['/all-providers', 'Browse all electricity providers'],
-      ['/all-states', 'See every deregulated state'],
-    ]),
-  ].join('');
+function renderTable(table) {
+  if (!table || !table.rows || !table.rows.length) return '';
+  const head = `<thead><tr>${table.columns.map((c) => `<th scope="col">${escapeHtml(c)}</th>`).join('')}</tr></thead>`;
+  const body = table.rows
+    .map((row) => `<tr>${row.map((cell, i) => (i === 0 ? `<th scope="row">${renderCell(cell)}</th>` : `<td>${renderCell(cell)}</td>`)).join('')}</tr>`)
+    .join('');
+  return `<table>${head}<tbody>${body}</tbody></table>`;
 }
 
-function renderCityBody(route, context) {
-  const { city } = route;
-  const nearby = (context.citiesByState[city.stateCode] || [])
-    .filter((other) => other.path !== city.path)
-    .slice(0, 8)
-    .map((other) => [other.path, `${other.name} Electricity Rates`]);
+function renderFacts(facts) {
+  if (!facts || !facts.length) return '';
+  return `<dl>${facts
+    .map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`)
+    .join('')}</dl>`;
+}
 
-  const facts = [
-    ['Average rate', city.avgRate],
-    ['Estimated monthly bill', city.avgMonthlyBill],
-    ['Providers serving the area', `${city.providers}+`],
-    ['County', city.county],
-    ['Population', city.population],
-  ].filter(([, value]) => value);
+/** FAQs render as real H3/paragraph pairs — the visibility FAQPage requires. */
+function renderFaqs(faqs) {
+  if (!faqs || !faqs.length) return '';
+  return faqs
+    .map((faq) => `<h3>${escapeHtml(faq.question)}</h3><p>${escapeHtml(faq.answer)}</p>`)
+    .join('');
+}
 
-  return [
-    `<p>${escapeHtml(city.description)}</p>`,
-    `<p>${escapeHtml(
-      `Compare electricity plans from ${city.providers}+ providers serving ${city.name}, ` +
-        `${city.stateName}. The average rate in ${city.county} is ${city.avgRate}, ` +
-        `about ${city.avgMonthlyBill} a month for typical usage.`
-    )}</p>`,
-    `<h2>${escapeHtml(`${city.name} Electricity at a Glance`)}</h2>`,
-    `<ul>${facts
-      .map(([label, value]) => `<li>${escapeHtml(label)}: ${escapeHtml(value)}</li>`)
-      .join('')}</ul>`,
-    city.zipCodes.length
-      ? `<p>${escapeHtml(`ZIP codes covered include ${city.zipCodes.slice(0, 8).join(', ')}.`)}</p>`
+function renderProviders(providers) {
+  if (!providers || !providers.length) return '';
+  return `<ul>${providers
+    .map((provider) => `<li>${provider.path ? link(provider.path, provider.name) : escapeHtml(provider.name)}</li>`)
+    .join('')}</ul>`;
+}
+
+function renderSection(section) {
+  const parts = [
+    (section.paragraphs || []).map((text) => `<p>${escapeHtml(text)}</p>`).join(''),
+    section.facts ? renderFacts(section.facts) : '',
+    section.bullets && section.bullets.length
+      ? `<ul>${section.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
       : '',
-    section(`More Cities in ${city.stateName}`, nearby),
-    section('Next Steps', [
-      [city.statePath, `${city.stateName} electricity rates`],
-      ['/compare-rates', 'Compare rates for your ZIP code'],
-      ['/all-cities', 'Browse every city we cover'],
-    ]),
-  ].join('');
+    section.table ? renderTable(section.table) : '',
+    section.faqs ? renderFaqs(section.faqs) : '',
+    section.providers ? renderProviders(section.providers) : '',
+    section.links && section.links.length ? linkList(section.links) : '',
+  ].filter(Boolean);
+
+  // A heading with nothing under it is noise for a crawler and a dead end for a
+  // reader, so an empty section is dropped entirely.
+  if (!parts.length) return '';
+  return `<section><h2>${escapeHtml(section.heading)}</h2>${parts.join('')}</section>`;
 }
 
-function renderArticleBody(route) {
-  // The article body is already trusted, hand-authored HTML from the bundled
-  // article data — the same markup ArticleDetail renders.
-  const body = route.content || `<p>${escapeHtml(route.description || '')}</p>`;
-  return [
-    route.description ? `<p>${escapeHtml(route.description)}</p>` : '',
-    body,
-    section('Keep Reading', [
-      ['/learning-center', 'More electricity guides'],
-      ['/compare-rates', 'Compare electricity rates'],
-      ['/all-states', 'Electricity rates by state'],
-    ]),
-  ].join('');
-}
-
-function renderProviderBody(route) {
-  return [
-    `<p>${escapeHtml(route.description)}</p>`,
-    section('Next Steps', [
-      ['/all-providers', 'Compare all electricity providers'],
-      ['/compare-rates', 'Compare rates for your ZIP code'],
-      ['/all-states', 'Electricity rates by state'],
-    ]),
-  ].join('');
-}
-
-function renderStaticBody(route) {
-  return `<p>${escapeHtml(route.description || '')}</p>`;
+/**
+ * The content model for a route. Exported so the prerenderer can build it once
+ * and hand the same object to both renderHead (for FAQ markup) and renderBody.
+ */
+export function buildPageContent(route, context = {}) {
+  switch (route.type) {
+    case 'city':
+      return buildCitySections(route, context);
+    case 'state':
+      return buildStateSections(route, context);
+    case 'provider':
+      return buildProviderSections(route, context);
+    case 'article':
+      return buildArticleSections(route, context);
+    default:
+      return buildStaticSections(route, context);
+  }
 }
 
 function renderBreadcrumbNav(route) {
@@ -359,27 +374,26 @@ function renderBreadcrumbNav(route) {
  * Full initial HTML for a route's #root container.
  *
  * @param {object} route
+ * @param {{intro: string[], sections: object[]}} content
  * @param {{states: Array, citiesByState: Record<string, Array>}} context
  */
-export function renderBody(route, context) {
-  let main;
-  switch (route.type) {
-    case 'home': main = renderHomeBody(route, context); break;
-    case 'state': main = renderStateBody(route); break;
-    case 'city': main = renderCityBody(route, context); break;
-    case 'article': main = renderArticleBody(route); break;
-    case 'provider': main = renderProviderBody(route); break;
-    default: main = renderStaticBody(route); break;
-  }
-
+export function renderBody(route, content, context) {
   const heading = route.heading || route.title;
+  const intro = (content.intro || []).map((text) => `<p>${escapeHtml(text)}</p>`).join('');
+  const sections = (content.sections || []).map(renderSection).filter(Boolean).join('');
+
+  // Article bodies are hand-authored HTML from the bundled article data — the
+  // same markup ArticleDetail renders — so they are inserted verbatim.
+  const articleBody = route.type === 'article' && route.content ? route.content : '';
 
   return [
     '<div data-seo-prerender="true" style="max-width:1100px;margin:0 auto;padding:24px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;line-height:1.6">',
-    siteNav(context.states),
+    siteNav(context.states || []),
     renderBreadcrumbNav(route),
     `<main><h1>${escapeHtml(heading)}</h1>`,
-    main,
+    intro,
+    articleBody,
+    sections,
     '</main>',
     `<footer><p>&copy; ${new Date().getFullYear()} ${escapeHtml(SITE_NAME)}. ` +
       `${link('/privacy-policy', 'Privacy Policy')} &middot; ${link('/terms-of-service', 'Terms of Service')}</p></footer>`,

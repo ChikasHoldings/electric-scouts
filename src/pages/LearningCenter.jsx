@@ -1115,8 +1115,8 @@ export default function LearningCenter() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Energy Know-How | Guides & Tips from Electric Scouts"
-        description="Practical guides and tips to help you understand electricity markets, pick the right plan, and keep your bills low. Written by the Electric Scouts team for real people, not industry insiders."
+        title="Electricity Guides and Tips | Electric Scouts"
+        description="Practical guides on how electricity markets work, how to read a bill and what to check before signing a contract — written for people switching supplier."
         keywords="electricity guides, energy saving tips, electricity deregulation, compare electricity plans, fixed vs variable rates, switch electricity provider, lower electricity bill, Texas electricity guide, Houston electricity rates, electricity FAQs"
         canonical="/learning-center"
         structuredData={breadcrumbData}

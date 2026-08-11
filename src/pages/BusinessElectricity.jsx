@@ -21,7 +21,11 @@ export default function BusinessElectricity() {
   const [showCustomQuoteModal, setShowCustomQuoteModal] = useState(false);
   const [isZipValid, setIsZipValid] = useState(false);
 
-  const { data: plans } = useQuery({
+  // Defaulted to []: react-query only serves placeholderData while the query is
+  // pending, so a failed Supabase request leaves `data` undefined and the next
+  // .filter() throws — which blanked this page behind an error boundary for
+  // users and crawlers alike whenever the database was unreachable.
+  const { data: plans = [] } = useQuery({
     queryKey: ['plans'],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
@@ -85,14 +89,14 @@ export default function BusinessElectricity() {
       <ServiceSchema 
         service={{
           type: "Business Electricity Rate Comparison",
-          description: "Compare commercial and industrial electricity rates from 40+ providers. Get custom quotes for tiered pricing, demand charges, and load management."
+          description: "Compare commercial and industrial electricity rates from competing suppliers. Get custom quotes for tiered pricing, demand charges, and load management."
         }}
       />
       <FAQPageSchema faqs={businessFAQs} />
       
       <SEOHead
-        title="Business Electricity Solutions | Plans for Every Company Size | Electric Scouts"
-        description="Compare business electricity rates for small businesses, large commercial facilities, and industrial operations across 12 states. Get custom quotes for tiered pricing, demand charges, and load management. Save up to $5,000+ annually on commercial energy costs with competitive business electricity plans."
+        title="Business Electricity Rates and Pricing | Electric Scouts"
+        description="How commercial electricity is priced — demand charges, load profiles and contract terms — plus the business plans we track in each deregulated state."
         keywords="business electricity rates, commercial electricity providers, industrial power rates, small business energy plans, commercial electric rates, demand charges, tiered pricing, business energy comparison, industrial electricity rates, commercial power companies"
         canonical="/business-electricity"
         structuredData={breadcrumbData}

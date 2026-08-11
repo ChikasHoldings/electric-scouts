@@ -15,7 +15,7 @@ const LINK_SETS = {
     { to: `/compare-rates${ctx.zipCode ? `?zip=${ctx.zipCode}` : ''}`, icon: Zap, label: "Compare Rates in Your Area", desc: "Side-by-side plan comparison" },
     { to: "/bill-analyzer", icon: Calculator, label: "Bill Analyzer Tool", desc: "Upload your bill for savings analysis" },
     { to: "/learning-center", icon: BookOpen, label: "Energy Guides", desc: "Tips to lower your electricity bill" },
-    { to: "/all-providers", icon: Building2, label: "All Providers", desc: "Browse 40+ electricity providers" },
+    { to: "/all-providers", icon: Building2, label: "All Providers", desc: "Browse the electricity supplier directory" },
   ],
   state: (ctx) => [
     { to: "/compare-rates", icon: Zap, label: "Compare Rates", desc: "Find the best rates in your ZIP code" },
@@ -39,7 +39,7 @@ const LINK_SETS = {
   ],
   provider: (ctx) => [
     { to: "/compare-rates", icon: Zap, label: "Compare All Providers", desc: "Side-by-side rate comparison" },
-    { to: "/all-providers", icon: Building2, label: "Provider Directory", desc: "Browse all 40+ providers" },
+    { to: "/all-providers", icon: Building2, label: "Provider Directory", desc: "Browse every supplier we track" },
     { to: "/all-states", icon: MapPin, label: "Browse by State", desc: "Find providers in your state" },
     { to: "/learning-center", icon: BookOpen, label: "Switching Guide", desc: "How to switch providers" },
   ],

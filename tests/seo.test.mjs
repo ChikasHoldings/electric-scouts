@@ -31,7 +31,10 @@ import {
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS } from '../src/seo/articles.js';
-import { buildSitemapEntries, buildSitemapXml } from '../api/sitemap.js';
+import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
+import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, getStateMarket } from '../src/seo/market.js';
+import { buildCitySections, buildStateSections, buildProviderSections } from '../src/seo/content.js';
+import { createResolver, parseHtml } from '../src/seo/audit.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -237,9 +240,32 @@ describe('route registry', () => {
   });
 
   test('provider routes are only generated for providers that render', () => {
-    const routes = getProviderRoutes([{ name: 'TXU Energy' }, { name: null }, {}]);
-    assert.equal(routes.length, 1);
-    assert.equal(routes[0].path, '/providers/txu-energy');
+    // ProviderDetails resolves its slug against active providers only, and a
+    // profile with no plans is an empty page — both must be excluded or the
+    // sitemap advertises URLs that render a "Provider Not Found" shell.
+    const routes = getProviderRoutes([
+      { name: 'TXU Energy', slug: 'txu-energy', isActive: true, plans: 4, planStates: ['TX'], minRate: 9.8, maxRate: 16.4 },
+      { name: 'Inactive Co', slug: 'inactive-co', isActive: false, plans: 9 },
+      { name: 'No Plans Co', slug: 'no-plans-co', isActive: true, plans: 0 },
+      { name: null, isActive: true, plans: 3 },
+      {},
+    ]);
+    assert.deepEqual(routes.map((r) => r.path), ['/providers/txu-energy']);
+  });
+
+  test('every publishable provider is active and has plans', () => {
+    for (const provider of getPublishableProviders()) {
+      assert.ok(provider.isActive, `${provider.name} is not active but would get a page`);
+      assert.ok(provider.plans > 0, `${provider.name} has no plans but would get a page`);
+    }
+  });
+
+  test('providers with no plans never reach the indexable set', () => {
+    const empty = getAllProviders().filter((p) => p.plans === 0).map((p) => `/providers/${p.slug}`);
+    const indexablePaths = new Set(indexable.map((r) => r.path));
+    for (const path of empty) {
+      assert.ok(!indexablePaths.has(path), `${path} has no plans and must not be indexable`);
+    }
   });
 
   test('private and legacy duplicate routes are excluded from the indexable set', () => {
@@ -257,15 +283,12 @@ describe('route registry', () => {
  * ================================================================== */
 
 describe('sitemap.xml', () => {
-  const entries = buildSitemapEntries({
-    providers: [{ name: 'NextVolt Energy', updated_at: '2026-03-03T00:00:00Z' }],
-    articles: [],
-  });
+  const entries = buildSitemapEntries({ providers: getPublishableProviders() });
   const xml = buildSitemapXml(entries);
 
   test('contains every indexable route', () => {
     const locs = new Set(entries.map((e) => e.loc));
-    for (const route of getIndexableRoutes()) {
+    for (const route of getIndexableRoutes({ providers: getPublishableProviders() })) {
       assert.ok(locs.has(absoluteUrl(route.path)), `${route.path} is missing from the sitemap`);
     }
   });
@@ -309,14 +332,31 @@ describe('sitemap.xml', () => {
     }
   });
 
-  test('database articles are merged in without displacing bundled ones', () => {
-    const merged = buildSitemapEntries({
-      providers: [],
-      articles: [{ id: 'uuid-1', slug: 'a-new-guide', updated_date: '2026-05-01T10:00:00Z' }],
-    });
-    const locs = merged.map((e) => e.loc);
-    assert.ok(locs.includes(`${CANONICAL_HOST}/learn/a-new-guide`));
-    assert.ok(locs.includes(`${CANONICAL_HOST}/learn/1`));
+  test('advertises only article URLs the app can actually resolve', () => {
+    // /learn/:id resolves by numeric id. The previous sitemap also emitted
+    // /learn/<slug> for database articles, and every one of those rendered
+    // "Article Not Found" behind a 200 — a soft 404 we asked Google to crawl.
+    const articleLocs = entries.map((e) => e.loc).filter((loc) => loc.includes('/learn/'));
+    for (const loc of articleLocs) {
+      const identifier = loc.split('/learn/')[1];
+      assert.match(identifier, /^\d+$/, `${loc} is not an article id the route resolves`);
+      assert.ok(ARTICLE_IDS.includes(Number(identifier)), `${loc} has no article behind it`);
+    }
+    assert.equal(articleLocs.length, ARTICLE_IDS.length);
+  });
+
+  test('every sitemap URL was prerendered by this build', { skip: !distExists }, () => {
+    for (const entry of entries) {
+      const routePath = entry.loc.replace(CANONICAL_HOST, '') || '/';
+      const file = path.join(DIST, distFileFor(routePath === '' ? '/' : routePath));
+      assert.ok(fs.existsSync(file), `${entry.loc} is in the sitemap but was not prerendered`);
+    }
+  });
+
+  test('the built sitemap.xml matches the registry', { skip: !distExists }, () => {
+    const built = readDist('sitemap.xml');
+    const builtLocs = [...built.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    assert.deepEqual(builtLocs, entries.map((e) => e.loc));
   });
 });
 
@@ -540,21 +580,27 @@ describe('vercel.json routing', () => {
     }
   });
 
-  test('sitemap.xml is routed to the generator', () => {
-    const rewrite = (config.rewrites || []).find((r) => r.source === '/sitemap.xml');
-    assert.ok(rewrite, '/sitemap.xml has no rewrite');
-    assert.equal(rewrite.destination, '/api/sitemap');
+  test('sitemap.xml is a built file, not a rewrite to a function', () => {
+    // Generated at build time from the same registry that produced the pages,
+    // so it cannot advertise a URL this build did not prerender.
+    assert.ok(
+      !(config.rewrites || []).some((r) => r.source === '/sitemap.xml'),
+      '/sitemap.xml should be served from dist, not rewritten to a function'
+    );
+    if (distExists) assert.ok(fs.existsSync(path.join(DIST, 'sitemap.xml')), 'dist/sitemap.xml was not built');
   });
 
-  test('client-routed sections fall back to the neutral app shell', () => {
-    const sources = (config.rewrites || []).map((r) => r.source);
-    for (const prefix of ['/admin/:path*', '/providers/:slug', '/electricity-rates/:stateSlug/:citySlug', '/learn/:slug']) {
-      assert.ok(sources.includes(prefix), `${prefix} has no SPA fallback`);
-    }
+  test('no public dynamic route falls back to the empty app shell', () => {
+    // These rewrites made /providers/<anything>, /electricity-rates/<anything>
+    // and /learn/<anything> return 200 with an empty shell — a soft 404 on
+    // every invalid slug. Only /admin, which is noindex and auth-gated, may
+    // still fall back.
     for (const rewrite of config.rewrites || []) {
-      if (rewrite.source.startsWith('/admin') || rewrite.source.startsWith('/providers')) {
-        assert.equal(rewrite.destination, '/app-shell.html');
-      }
+      if (rewrite.destination !== '/app-shell.html') continue;
+      assert.ok(
+        rewrite.source.startsWith('/admin'),
+        `public route ${rewrite.source} falls back to the app shell and will soft-404`
+      );
     }
   });
 
@@ -607,6 +653,407 @@ describe('vercel.json routing', () => {
     const sources = new Set(redirects.map((r) => r.source));
     for (const redirect of redirects) {
       assert.ok(!sources.has(redirect.destination), `redirect chain: ${redirect.source} -> ${redirect.destination}`);
+    }
+  });
+});
+
+/* ================================================================== *
+ * Soft 404s
+ *
+ * A dynamic URL with no record behind it must not return 200 with a page
+ * that looks real. /providers/:slug, /electricity-rates/:state/:city and
+ * /learn/:id all used to rewrite to an empty app shell, so every invalid
+ * slug was a 200 with no content — the shape Google reports as "Crawled -
+ * currently not indexed" and, at scale, as a soft 404.
+ * ================================================================== */
+
+describe('invalid dynamic URLs do not masquerade as pages', { skip: !distExists }, () => {
+  const config = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+  const resolve = createResolver({ distDir: DIST, vercelConfig: config });
+
+  const invalid = [
+    '/providers/this-provider-does-not-exist',
+    '/providers/txu-energy',              // real supplier, but not active: no page
+    '/electricity-rates/texas/not-a-real-city',
+    '/electricity-rates/atlantis/springfield',
+    '/learn/999999',
+    '/learn/71',                          // inside the id range but unpublished
+    '/this-page-does-not-exist',
+  ];
+
+  for (const url of invalid) {
+    test(`${url} returns 404`, () => {
+      const result = resolve(url);
+      assert.equal(result.status, 404, `${url} returned ${result.status} (kind=${result.kind})`);
+    });
+  }
+
+  test('the 404 body is a real error page, not an empty shell', () => {
+    const result = resolve('/nope');
+    const parsed = parseHtml(result.html);
+    assert.match(parsed.robots || '', /noindex/);
+    assert.equal(parsed.canonical, undefined, '404 must not canonicalize to a URL that does not resolve');
+    assert.ok(parsed.h1s.length >= 1, '404 page has no H1');
+    assert.ok(parsed.links.length > 3, '404 page offers no way back into the site');
+  });
+
+  test('valid dynamic URLs still resolve to their prerendered page', () => {
+    for (const url of ['/electricity-rates/texas/houston', '/learn/1', ...getProviderRoutes(getPublishableProviders()).map((r) => r.path)]) {
+      const result = resolve(url);
+      assert.equal(result.status, 200, `${url} should resolve`);
+      assert.ok(parseHtml(result.html).prerendered, `${url} served a shell with no prerendered body`);
+    }
+  });
+});
+
+/* ================================================================== *
+ * Content depth and differentiation
+ * ================================================================== */
+
+describe('pages carry content that justifies indexing', () => {
+  const citiesByState = {};
+  for (const route of getCityRoutes()) {
+    (citiesByState[route.city.stateCode] ||= []).push(route.city);
+  }
+
+  test('every city page renders sections built from its own data', () => {
+    for (const route of getCityRoutes()) {
+      const { intro, sections } = buildCitySections(route, { citiesByState });
+      assert.ok(intro.length >= 1, `${route.path} has no intro`);
+      assert.ok(sections.length >= 5, `${route.path} has only ${sections.length} sections`);
+      const headings = sections.map((s) => s.heading);
+      assert.ok(
+        headings.some((h) => h.includes(route.city.name)),
+        `${route.path} has no section naming the city`
+      );
+      assert.ok(sections.some((s) => s.faqs && s.faqs.length), `${route.path} has no FAQ section`);
+    }
+  });
+
+  test('city pages never emit a section with no content under it', () => {
+    for (const route of getCityRoutes()) {
+      const { sections } = buildCitySections(route, { citiesByState });
+      for (const section of sections) {
+        const populated =
+          (section.paragraphs || []).length ||
+          (section.bullets || []).length ||
+          (section.facts || []).length ||
+          (section.links || []).length ||
+          (section.faqs || []).length ||
+          (section.providers || []).length ||
+          section.table;
+        assert.ok(populated, `${route.path}: empty section "${section.heading}"`);
+      }
+    }
+  });
+
+  test('state pages expose their own market figures, not a shared template', () => {
+    const introSets = new Set();
+    for (const route of getStateRoutes()) {
+      const { intro, sections } = buildStateSections(route);
+      assert.ok(sections.length >= 5, `${route.path} has only ${sections.length} sections`);
+      assert.ok(sections.some((s) => s.table), `${route.path} has no city rate table`);
+      introSets.add(intro.join(' '));
+    }
+    assert.equal(introSets.size, getStateRoutes().length, 'state intros are not unique');
+  });
+
+  test('provider pages list the plans behind them', () => {
+    for (const route of getProviderRoutes(getPublishableProviders())) {
+      const { intro, sections } = buildProviderSections(route);
+      assert.ok(intro.length >= 1, `${route.path} has no description`);
+      assert.ok(
+        sections.some((s) => (s.bullets || []).some((b) => /plans/.test(b))),
+        `${route.path} does not say what plans it has`
+      );
+    }
+  });
+
+  test('no page claims a saving the data does not support', () => {
+    const claim = /save (up to )?\$|save \d+%|guaranteed saving/i;
+    for (const route of [...getStaticRoutes(), ...getStateRoutes(), ...getCityRoutes()]) {
+      assert.ok(!claim.test(route.title), `${route.path} title makes a savings claim: ${route.title}`);
+      assert.ok(!claim.test(route.description), `${route.path} description makes a savings claim`);
+    }
+  });
+
+  test('city titles carry no hard-coded year', () => {
+    for (const route of getCityRoutes()) {
+      assert.ok(!/\b20\d\d\b/.test(route.title), `${route.path} title hard-codes a year: ${route.title}`);
+    }
+  });
+
+  test('titles and descriptions stay within what a SERP shows', () => {
+    for (const route of [...getStaticRoutes(), ...getStateRoutes(), ...getCityRoutes()]) {
+      assert.ok(route.title.length <= 70, `${route.path} title is ${route.title.length} chars`);
+      assert.ok(
+        route.description.length >= 70 && route.description.length <= 165,
+        `${route.path} description is ${route.description.length} chars`
+      );
+    }
+  });
+
+  test('city pages publish no unsourced supplier count', () => {
+    // locationData/cityRatesData carried a per-city `providers` estimate (45 for
+    // Houston, 38 for Austin) with nothing behind it, rendered on the same page
+    // as the snapshot figure of 22 for all of Texas. Only snapshot-backed
+    // supplier counts may appear.
+    for (const route of getCityRoutes()) {
+      const { intro, sections } = buildCitySections(route, { citiesByState });
+      // Each fragment is scanned on its own: joining them would run the value of
+      // one fact ("$170") into the label of the next ("Suppliers with...").
+      const fragments = [
+        ...intro,
+        ...sections.flatMap((s) => [
+          ...(s.paragraphs || []),
+          ...(s.facts || []).flatMap(([label, value]) => [label, String(value)]),
+          ...(s.faqs || []).flatMap((f) => [f.question, f.answer]),
+        ]),
+      ];
+      // A page may cite the total number of suppliers in the state or the
+      // narrower count behind renewable plans — both come from the snapshot.
+      // Anything else is an estimate with no source.
+      const supported = new Set(
+        [route.market?.providers, route.market?.renewableProviders].filter((n) => Number.isFinite(n))
+      );
+      for (const fragment of fragments) {
+        const claimed = fragment.match(/(\d+)\s*\+?\s*(?:electricity\s+)?(?:providers|suppliers)/gi) || [];
+        for (const phrase of claimed) {
+          const count = Number(phrase.match(/\d+/)[0]);
+          assert.ok(
+            supported.has(count),
+            `${route.path} claims "${phrase.trim()}" but the snapshot holds ${[...supported].join(' or ')}`
+          );
+        }
+      }
+    }
+  });
+
+  test('no city page body asserts a savings figure', () => {
+    // Local insight notes carried lines like "can save families $400-$600
+    // annually" and "rates 15-20% below the default utility rate". Electric
+    // Scouts holds plan rates, not utility default rates or customer bills.
+    const money = /\$\s?\d/;
+    const pctClaim = /\d+\s*%\s*(?:below|lower|less|off)/i;
+    for (const route of getCityRoutes()) {
+      const { intro, sections } = buildCitySections(route, { citiesByState });
+      for (const text of [...intro, ...sections.flatMap((s) => s.paragraphs || [])]) {
+        assert.ok(!money.test(text), `${route.path} body asserts a dollar figure: ${text}`);
+        assert.ok(!pctClaim.test(text), `${route.path} body asserts a rate comparison: ${text}`);
+      }
+    }
+  });
+});
+
+/* ================================================================== *
+ * Article metadata
+ * ================================================================== */
+
+describe('article metadata is ours and is supportable', { skip: !distExists }, () => {
+  const articleFiles = ARTICLE_IDS.map((id) => ({ id, file: `learn/${id}/index.html` })).filter(
+    ({ file }) => fs.existsSync(path.join(DIST, file))
+  );
+
+  before(() => {
+    assert.equal(articleFiles.length, ARTICLE_IDS.length, 'some article pages were not prerendered');
+  });
+
+  test('no article carries a placeholder or third-party brand', () => {
+    // 37 of 73 titles shipped a brand that was not ours: literal placeholders
+    // (YourBrand, [Brand]), invented agency brands (PowerUp, PowerSmart,
+    // EcoEnergy) and real third parties whose inclusion implies endorsement
+    // (Power to Choose Texas, PA PUC, TXU, Octopus Energy).
+    const foreign =
+      /YourBrand|\[Brand|PowerUp|PowerSmart|PowerNY|PowerChoice|PowerHub|PowerHelp|PowerPro|PowerBrand|PowerCompare|PowerSave|EcoEnergy|SolarSmart|SolarBrand|GreenEnergy|EnergyShield|Power Insights|Power to Choose|PA PUC/i;
+    for (const { id, file } of articleFiles) {
+      const html = readDist(file);
+      const title = tag.title(html);
+      const description = tag.description(html);
+      assert.ok(!foreign.test(title), `/learn/${id} title carries a foreign brand: ${title}`);
+      assert.ok(!foreign.test(description), `/learn/${id} description carries a foreign brand`);
+    }
+  });
+
+  test('every article title ends with the site brand', () => {
+    for (const { id, file } of articleFiles) {
+      const title = tag.title(readDist(file));
+      assert.ok(
+        title.endsWith('| Electric Scouts'),
+        `/learn/${id} title is not branded Electric Scouts: ${title}`
+      );
+    }
+  });
+
+  test('no article title or description claims a saving', () => {
+    const claim = /\$\s?[\d,]+|save \d+\s*-?\s*\d*\s*%/i;
+    for (const { id, file } of articleFiles) {
+      const html = readDist(file);
+      assert.ok(!claim.test(tag.title(html)), `/learn/${id} title claims a saving: ${tag.title(html)}`);
+      assert.ok(!claim.test(tag.description(html)), `/learn/${id} description claims a saving`);
+    }
+  });
+
+  test('article titles and descriptions are unique and SERP-sized', () => {
+    const titles = new Map();
+    const descriptions = new Map();
+    for (const { id, file } of articleFiles) {
+      const html = readDist(file);
+      const title = tag.title(html);
+      const description = tag.description(html);
+
+      assert.ok(title.length <= 70, `/learn/${id} title is ${title.length} chars: ${title}`);
+      assert.ok(
+        description.length >= 70 && description.length <= 165,
+        `/learn/${id} description is ${description.length} chars`
+      );
+
+      assert.ok(!titles.has(title), `/learn/${id} duplicates the title of /learn/${titles.get(title)}`);
+      titles.set(title, id);
+      assert.ok(
+        !descriptions.has(description),
+        `/learn/${id} duplicates the description of /learn/${descriptions.get(description)}`
+      );
+      descriptions.set(description, id);
+    }
+  });
+});
+
+/* ================================================================== *
+ * Structured data honesty
+ * ================================================================== */
+
+describe('structured data describes what the page shows', { skip: !distExists }, () => {
+  function jsonLdOf(routePath) {
+    const html = readDist(distFileFor(routePath));
+    return tag.jsonLd(html).map((raw) =>
+      JSON.parse(raw.replace(/\\u003c/g, '<').replace(/\\u003e/g, '>').replace(/\\u0026/g, '&'))
+    );
+  }
+
+  test('FAQPage markup only appears where the page renders the questions', () => {
+    for (const routePath of ['/electricity-rates/texas/houston', '/texas-electricity', '/faq']) {
+      const html = readDist(distFileFor(routePath));
+      const graph = jsonLdOf(routePath).flatMap((doc) => doc['@graph'] || [doc]);
+      const faqPage = graph.find((node) => node['@type'] === 'FAQPage');
+      assert.ok(faqPage, `${routePath} renders FAQs but has no FAQPage markup`);
+      for (const question of faqPage.mainEntity) {
+        assert.ok(
+          html.includes(question.name.replace(/&/g, '&amp;').replace(/'/g, '&#39;')),
+          `${routePath}: FAQPage question is not visible on the page: ${question.name}`
+        );
+      }
+    }
+  });
+
+  test('pages with no FAQ section carry no FAQPage markup', () => {
+    for (const routePath of ['/privacy-policy', '/all-cities']) {
+      const graph = jsonLdOf(routePath).flatMap((doc) => doc['@graph'] || [doc]);
+      assert.ok(!graph.some((node) => node['@type'] === 'FAQPage'), `${routePath} has FAQPage markup with no FAQs`);
+    }
+  });
+
+  test('breadcrumb markup matches the on-page breadcrumb trail', () => {
+    for (const routePath of ['/electricity-rates/texas/houston', '/texas-electricity', '/learn/1']) {
+      const html = readDist(distFileFor(routePath));
+      const graph = jsonLdOf(routePath).flatMap((doc) => doc['@graph'] || [doc]);
+      const crumbs = graph.find((node) => node['@type'] === 'BreadcrumbList');
+      assert.ok(crumbs, `${routePath} has no BreadcrumbList`);
+      for (const item of crumbs.itemListElement) {
+        assert.ok(item.item.startsWith(CANONICAL_HOST), `${routePath}: breadcrumb uses a non-canonical URL`);
+      }
+      assert.ok(html.includes('aria-label="Breadcrumb"'), `${routePath} has breadcrumb markup but no visible trail`);
+    }
+  });
+
+  test('no page invents ratings, review counts, prices or offers', () => {
+    const banned = ['aggregateRating', 'reviewCount', 'ratingValue', '"Offer"', '"Review"'];
+    for (const routePath of ['/', '/texas-electricity', '/electricity-rates/texas/houston', '/all-providers',
+                             ...getProviderRoutes(getPublishableProviders()).map((r) => r.path)]) {
+      const html = readDist(distFileFor(routePath));
+      for (const term of banned) {
+        assert.ok(!html.includes(term), `${routePath} contains fabricated structured data: ${term}`);
+      }
+    }
+  });
+});
+
+/* ================================================================== *
+ * Internal linking
+ * ================================================================== */
+
+describe('crawl paths reach every indexable page', { skip: !distExists }, () => {
+  test('the learning centre links to every article', () => {
+    const links = new Set(internalLinks(readDist(distFileFor('/learning-center'))));
+    for (const id of ARTICLE_IDS) {
+      assert.ok(links.has(`/learn/${id}`), `/learn/${id} is not linked from the learning centre`);
+    }
+  });
+
+  test('the city index links to every city', () => {
+    const links = new Set(internalLinks(readDist(distFileFor('/all-cities'))));
+    for (const route of getCityRoutes()) {
+      assert.ok(links.has(route.path), `${route.path} is not linked from /all-cities`);
+    }
+  });
+
+  test('the supplier directory links to every provider page', () => {
+    const links = new Set(internalLinks(readDist(distFileFor('/all-providers'))));
+    for (const route of getProviderRoutes(getPublishableProviders())) {
+      assert.ok(links.has(route.path), `${route.path} is not linked from /all-providers`);
+    }
+  });
+
+  test('no page links to a URL that redirects', () => {
+    const config = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+    const redirectSources = new Set((config.redirects || []).map((r) => r.source));
+    for (const route of getAllRoutes({ providers: getPublishableProviders() })) {
+      const links = internalLinks(readDist(distFileFor(route.path)));
+      for (const href of links) {
+        assert.ok(!redirectSources.has(href), `${route.path} links to ${href}, which redirects`);
+      }
+    }
+  });
+
+  test('createPageUrl never produces a URL that redirects', async () => {
+    const { createPageUrl } = await import('../src/utils/index.ts');
+    const config = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+    const redirectSources = new Set((config.redirects || []).map((r) => r.source));
+    for (const page of ['Home', 'CompareRates', 'AboutUs', 'FAQ', 'AllStates', 'BillAnalyzer']) {
+      const url = createPageUrl(page);
+      assert.ok(!redirectSources.has(url), `createPageUrl("${page}") returns ${url}, which redirects`);
+    }
+    assert.equal(createPageUrl('Home'), '/');
+  });
+});
+
+/* ================================================================== *
+ * Market snapshot
+ * ================================================================== */
+
+describe('market snapshot backs the published pages', () => {
+  test('the snapshot carries a generation date', () => {
+    assert.match(MARKET_GENERATED_AT, /^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  test('every state we publish has market data behind it', () => {
+    for (const route of getStateRoutes()) {
+      const market = getStateMarket(route.state.code);
+      assert.ok(market, `${route.path} has no market data`);
+      assert.ok(market.plans > 0, `${route.path} claims a market with no plans`);
+      assert.ok(market.providerNames.length > 0, `${route.path} lists no suppliers`);
+    }
+  });
+
+  test('rate ranges are internally consistent', () => {
+    for (const [code, market] of Object.entries(getStateMarket('TX') ? { TX: getStateMarket('TX') } : {})) {
+      assert.ok(market.minRate <= market.medianRate, `${code}: min rate above median`);
+      assert.ok(market.medianRate <= market.maxRate, `${code}: median above max`);
+    }
+    for (const route of getStateRoutes()) {
+      const m = getStateMarket(route.state.code);
+      assert.ok(m.minRate <= m.maxRate, `${route.state.code}: min rate above max`);
+      assert.ok(m.residentialPlans + m.businessPlans <= m.plans, `${route.state.code}: plan counts exceed the total`);
+      assert.ok(m.renewablePlans <= m.plans, `${route.state.code}: more renewable plans than plans`);
     }
   });
 });

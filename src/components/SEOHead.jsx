@@ -207,7 +207,7 @@ export const getOrganizationSchema = () => ({
   "name": "Electric Scouts",
   "url": SITE_URL,
   "logo": `${SITE_URL}/images/logo-header.png`,
-  "description": "Compare electricity rates from 40+ providers across 13 deregulated states. Save up to $800 per year on your electricity bills.",
+  "description": "Compare electricity plans from competing suppliers across 12 deregulated US states.",
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "Customer Service",
@@ -422,7 +422,7 @@ export const getSearchActionSchema = () => ({
   "@type": "WebSite",
   "url": SITE_URL,
   "name": "Electric Scouts",
-  "description": "Compare electricity rates from 40+ providers across 13 deregulated states",
+  "description": "Compare electricity plans from competing suppliers across 12 deregulated US states",
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
@@ -445,5 +445,5 @@ export const getSoftwareApplicationSchema = () => ({
     "price": "0",
     "priceCurrency": "USD"
   },
-  "description": "Free electricity rate comparison tool covering 40+ providers across 13 deregulated US states"
+  "description": "Free electricity rate comparison tool covering 12 deregulated US states"
 });

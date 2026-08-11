@@ -65,8 +65,8 @@ export default function CompareRates() {
 
   const seoBlock = (
     <SEOHead
-      title="Side-by-Side Rate Comparison | Electric Scouts"
-      description="Enter your ZIP code and instantly see side-by-side electricity rates from dozens of providers. Filter by price, term length, or green energy. Free, fast, and built for clarity."
+      title="Compare Electricity Rates Side by Side | Electric Scouts"
+      description="Enter your ZIP code and see the electricity plans sold in your area side by side — rate, contract term and early termination fee on the same row."
       canonical="/compare-rates"
       keywords="compare electricity rates, electricity plans, cheapest electricity, energy comparison, deregulated electricity"
       structuredData={[

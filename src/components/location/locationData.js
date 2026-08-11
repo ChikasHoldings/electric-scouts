@@ -70,7 +70,7 @@ export const LOCATION_DATA = {
         population: "394,000",
         avgRate: "12.7¢/kWh",
         avgUsage: "1,140 kWh/month",
-        insights: "Arlington residents enjoy some of the most competitive electricity rates in the DFW metroplex, with 50+ providers offering plans starting under 10¢/kWh.",
+        insights: "Arlington residents enjoy some of the most competitive electricity rates in the DFW metroplex, with competing suppliers offering plans starting under 10¢/kWh.",
         utilityCompany: "Oncor Electric Delivery",
         topZips: ["76010", "76011", "76012", "76013", "76014"]
       },
