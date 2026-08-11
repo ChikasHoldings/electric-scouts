@@ -1,619 +1,373 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
-import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Leaf, Sun, Wind, Droplet, CheckCircle, TrendingDown, 
-  Shield, Heart, MapPin, ArrowRight, ChevronDown, Zap,
-  Award, Globe, Sprout
-} from "lucide-react";
-import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
+import { Building2, Home, Info, Leaf, Plug, ScrollText } from "lucide-react";
+
+import { ElectricityPlan } from "@/api/supabaseEntities";
+import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "@/components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import ZipHandoffForm from "@/components/landing/ZipHandoffForm";
+import {
+  DataTable,
+  FaqList,
+  FinalCta,
+  InfoCard,
+  RelatedLinks,
+  Section,
+  SectionHeading,
+} from "@/components/landing/LandingSections";
+import { captureAttributionFromWindow, campaignContext } from "@/components/compare/engine/attribution";
+import { track, EVENTS } from "@/components/compare/engine/analytics";
+import { ENTRY_CONTEXTS } from "@/components/compare/engine/entryContext";
+import { getStates } from "@/seo/locations";
+import { formatRate, getStateMarket, MARKET_GENERATED_AT } from "@/seo/market.js";
+
+/**
+ * /renewable-energy — the entry page for renewable supply.
+ *
+ * The page explains what a renewable plan on a competitive market actually is,
+ * and says only what our own plan data supports: how many renewable plans we
+ * track, which suppliers sell them and where. It claims no carbon saving, no
+ * tree equivalence and no price premium or discount, because none of those are
+ * things this site measures.
+ *
+ * Renewable is a product, not an audience — so the handoff carries the
+ * preference and the ZIP code, and /compare-rates opens on "Is this for your
+ * home or business?".
+ */
+
+const FAQS = [
+  {
+    question: "What does a 100% renewable plan actually mean?",
+    answer:
+      "The supplier matches the electricity you use with renewable energy certificates, so an equivalent amount of renewable generation is put onto the grid on your behalf. There is no separate wire from a wind farm to your meter — the electricity itself is the same.",
+  },
+  {
+    question: "Does switching to a renewable plan change anything at my property?",
+    answer:
+      "No. Your meter, your wiring and your utility stay exactly as they are, and reliability is unchanged. Only the supply contract and how that supply is sourced change.",
+  },
+  {
+    question: "Do renewable plans cost more?",
+    answer:
+      "It depends on the market and the plan. In several of the states we track, a renewable plan is among the cheapest on the board; elsewhere there is a premium that reflects the certificates the supplier buys. Compare at your own ZIP code and usage — that is the only figure that answers this for you.",
+  },
+  {
+    question: "What counts as a renewable plan here?",
+    answer:
+      "A plan whose renewable content is recorded in our plan data. The comparison can filter to plans matched entirely with renewable generation, and each plan card shows the renewable percentage we hold for it.",
+  },
+  {
+    question: "Can a business buy renewable supply?",
+    answer:
+      "Yes. Commercial renewable supply works the same way, but it is quoted against your load profile rather than listed, so the flow routes a business to a quote instead of an instant plan list.",
+  },
+  {
+    question: "Is renewable electricity available in every state you cover?",
+    answer:
+      "Not everywhere, and not in the same depth. The table on this page shows the states where we currently hold renewable plans and the lowest renewable rate tracked in each. Where a ZIP code has no renewable inventory, the comparison says so instead of showing a standard plan as if it were green.",
+  },
+];
 
 export default function RenewableEnergy() {
-  const [zipCode, setZipCode] = useState("");
-  const [openFaq, setOpenFaq] = useState(null);
+  const states = getStates();
 
-  const { data: plans, isLoading } = useQuery({
-    queryKey: ['plans'],
+  const rows = states
+    .map((state) => ({ state, market: getStateMarket(state.code) }))
+    .filter((entry) => entry.market && entry.market.renewablePlans);
+
+  const totalRenewablePlans = rows.reduce((sum, entry) => sum + entry.market.renewablePlans, 0);
+
+  const { data: plans = [] } = useQuery({
+    queryKey: ["plans"],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
   });
 
-  // Filter for renewable plans - show cheapest first with diverse state representation
-  const allRenewablePlans = plans
-    .filter(plan => plan.renewable_percentage >= 50 && plan.customer_type === 'residential')
-    .sort((a, b) => a.rate_per_kwh - b.rate_per_kwh);
+  // The cheapest renewable plan in each state, so the list reads as coverage
+  // rather than as six variations of the same Texas plan.
+  const featuredPlans = (() => {
+    const green = plans
+      .filter(
+        (plan) =>
+          Number(plan.renewable_percentage) >= 50 &&
+          plan.customer_type !== "business" &&
+          Number.isFinite(Number(plan.rate_per_kwh))
+      )
+      .sort((a, b) => Number(a.rate_per_kwh) - Number(b.rate_per_kwh));
 
-  // Pick the best plan from each state first, then fill remaining slots
-  const seenStates = new Set();
-  const diversePlans = [];
-  const remainingPlans = [];
-  
-  for (const plan of allRenewablePlans) {
-    if (!seenStates.has(plan.state)) {
-      seenStates.add(plan.state);
-      diversePlans.push(plan);
-    } else {
-      remainingPlans.push(plan);
-    }
-  }
-  
-  // Combine: one per state first (sorted by rate), then remaining cheapest
-  const renewablePlans = [...diversePlans.sort((a, b) => a.rate_per_kwh - b.rate_per_kwh), ...remainingPlans].slice(0, 6);
+    const seen = new Set();
+    return green
+      .filter((plan) => {
+        if (seen.has(plan.state)) return false;
+        seen.add(plan.state);
+        return true;
+      })
+      .slice(0, 6);
+  })();
 
-  const benefits = [
-    {
-      icon: Heart,
-      title: "Environmental Impact",
-      description: "Reduce your carbon footprint by supporting clean, renewable energy from wind and solar farms nationwide"
-    },
-    {
-      icon: TrendingDown,
-      title: "Competitive Pricing",
-      description: "Renewable energy plans are often priced competitively with traditional plans, sometimes even cheaper"
-    },
-    {
-      icon: Shield,
-      title: "Fixed Rate Protection",
-      description: "Lock in stable rates with fixed-term renewable plans to protect against market volatility"
-    },
-    {
-      icon: Award,
-      title: "Support Clean Energy",
-      description: "Your choice directly supports the growth of renewable energy infrastructure across America"
-    }
-  ];
-
-  const energyTypes = [
-    {
-      icon: Wind,
-      title: "Wind Energy",
-      color: "blue",
-      description: "Wind farms across TX, PA, OH, IL, and other states generate clean electricity from renewable wind resources",
-      percentage: "Leading",
-      stat: "renewable source"
-    },
-    {
-      icon: Sun,
-      title: "Solar Energy",
-      color: "yellow",
-      description: "Rapidly growing solar capacity nationwide, harnessing sunshine to power homes and businesses",
-      percentage: "Fastest",
-      stat: "growing source"
-    },
-    {
-      icon: Droplet,
-      title: "Hydro & Other",
-      color: "cyan",
-      description: "Hydroelectric and other renewable sources contribute to America's diverse clean energy portfolio",
-      percentage: "Clean",
-      stat: "& reliable"
-    }
-  ];
-
-  const myths = [
-    {
-      myth: "Renewable energy is more expensive",
-      reality: "Many renewable plans are competitively priced and can actually save you money. Abundant wind and solar resources make clean energy affordable nationwide."
-    },
-    {
-      myth: "Renewable energy isn't reliable",
-      reality: "Diverse renewable energy sources (wind, solar, hydro) combined with modern grid infrastructure ensure reliable power delivery 24/7 across all states."
-    },
-    {
-      myth: "Switching to renewable is complicated",
-      reality: "Switching to a renewable plan is as easy as switching to any other electricity plan - often taking just a few minutes online."
-    },
-    {
-      myth: "My individual choice doesn't matter",
-      reality: "Every household that switches to renewable energy supports clean energy development and reduces carbon emissions by several tons per year."
-    }
-  ];
-
-  const faqs = [
-    {
-      id: 1,
-      question: "What does 100% renewable energy mean?",
-      answer: "When you choose a 100% renewable energy plan, your electricity provider purchases Renewable Energy Credits (RECs) equal to your usage from renewable sources like wind and solar farms. This ensures that for every kWh you use, an equivalent amount of clean energy is added to the grid. While the actual electrons may be mixed, your plan financially supports renewable energy production."
-    },
-    {
-      id: 2,
-      question: "Are renewable energy plans more expensive?",
-      answer: "Not necessarily! Many renewable energy plans are priced competitively with traditional plans. Thanks to abundant wind and solar resources across our 12 served states, renewable energy has become very cost-effective. In fact, some 100% renewable plans are among the cheapest available. The best way to know is to compare rates - you might be surprised at how affordable clean energy can be."
-    },
-    {
-      id: 3,
-      question: "Will my power be less reliable with renewable energy?",
-      answer: "No. When you choose a renewable energy plan, your power reliability remains exactly the same. You're still connected to the same grid with the same infrastructure. The difference is that your provider sources renewable energy credits equivalent to your usage. Your lights stay on 24/7 regardless of weather conditions."
-    },
-    {
-      id: 4,
-      question: "How does renewable energy help the environment?",
-      answer: "Renewable energy reduces greenhouse gas emissions and air pollution by displacing fossil fuel generation. An average household using 100% renewable energy avoids approximately 7-10 tons of CO2 emissions per year - equivalent to planting 150+ trees or not driving 16,000 miles. Your choice directly supports the development of more wind and solar farms across America."
-    },
-    {
-      id: 5,
-      question: "Where can I get renewable energy plans?",
-      answer: "You can choose renewable energy plans in any of our 12 deregulated states: Texas, Ohio, Pennsylvania, New York, New Jersey, Maryland, Illinois, Connecticut, Massachusetts, Maine, New Hampshire, and Rhode Island. Major cities like Houston, Dallas, Chicago, Philadelphia, New York City, and many more are covered. Use our comparison tool to see renewable options in your ZIP code."
-    }
-  ];
-
-  const breadcrumbData = getBreadcrumbSchema([
-    { name: "Home", url: "/" },
-    { name: "Resources", url: "/learning-center" },
-    { name: "Renewable Energy", url: "/renewable-energy" }
-  ]);
-
-  const faqSchema = getFAQSchema(faqs);
+  useEffect(() => {
+    const attribution = captureAttributionFromWindow();
+    track(EVENTS.RENEWABLE_LANDING_VIEWED, {
+      entry_context: ENTRY_CONTEXTS.RENEWABLE_LANDING,
+      service: "renewable",
+      ...campaignContext(attribution),
+    });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="bg-white">
       <SEOHead
         title="Renewable Electricity Plans | Electric Scouts"
         description="How 100% renewable electricity plans actually work, what they cost, and which suppliers offer them in each deregulated state we cover."
-        keywords="renewable energy plans, 100% green energy, renewable electricity, solar energy plans, wind energy plans, clean energy, green electricity providers, renewable energy rates, eco-friendly electricity, sustainable energy plans, carbon-free electricity, green power, renewable energy Texas, renewable energy Pennsylvania, renewable energy New York, wind power plans, solar power plans"
+        keywords="renewable electricity plans, 100% renewable energy, green electricity, renewable energy certificates, wind energy plans, solar energy plans, clean energy supplier"
         canonical="/renewable-energy"
-        structuredData={[breadcrumbData, faqSchema]}
+        structuredData={[
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Renewable Energy", url: "/renewable-energy" },
+          ]),
+          getFAQSchema(FAQS),
+        ]}
       />
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white py-6 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-32 h-32 border-4 border-white rounded-full"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 border-4 border-white rounded-full"></div>
-          <div className="absolute top-1/2 left-1/3 w-24 h-24 border-4 border-white rounded-full"></div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <PageBreadcrumbs
-              items={[
-                { name: "Home", url: "/" },
-                { name: "Renewable Energy" }
-              ]}
-              variant="light"
-              className="mb-3 justify-center"
-            />
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Leaf className="w-12 h-12" />
-              <Wind className="w-10 h-10" />
-              <Sun className="w-12 h-12" />
-            </div>
-            <h1 className="text-3xl lg:text-4xl font-bold mb-3">
-              100% Renewable Energy Plans Across America
+
+      {/* ── Hero ── */}
+      <div className="border-b border-green-100 bg-gradient-to-b from-green-50 to-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 pt-8 pb-14 sm:pb-16">
+          <PageBreadcrumbs
+            items={[{ name: "Home", url: "/" }, { name: "Renewable Energy" }]}
+            variant="dark"
+            className="mb-6"
+          />
+
+          <div className="max-w-3xl">
+            <p className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wider text-green-800">
+              <Leaf className="w-4 h-4" aria-hidden="true" />
+              Renewable electricity
+            </p>
+            <h1 className="mt-3 text-[32px] sm:text-[42px] leading-[1.1] font-semibold text-gray-900 tracking-[-0.02em]">
+              Renewable Electricity Plans
             </h1>
-            <p className="text-lg text-green-100">
-              Power your home with clean energy from wind and solar farms. Good for the planet, great for your wallet. Available in 12 states.
+            <p className="mt-4 text-[17px] leading-relaxed text-gray-600">
+              We track {totalRenewablePlans} electricity plans backed by renewable generation across{" "}
+              {rows.length} deregulated states. Enter your ZIP code and the comparison keeps the
+              renewable preference — it will only ask whether this is for a home or a business.
+            </p>
+
+            <div className="mt-8 max-w-xl">
+              <ZipHandoffForm
+                service="renewable"
+                ctaLabel="Compare Renewable Electricity"
+                label="Your ZIP code"
+                hint="Renewable availability varies by utility territory, so this decides what you can buy."
+              />
+            </div>
+
+            <p className="mt-6 text-[13px] leading-relaxed text-gray-500">
+              Plan counts and rates are from our snapshot of {MARKET_GENERATED_AT}. Where a ZIP code
+              has no renewable plan available, we say so rather than showing a standard plan as a
+              green one.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Quick Stats Bar */}
-      <div className="bg-white border-b shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <div className="text-3xl font-bold text-green-600 mb-1">50+</div>
-              <div className="text-sm text-gray-600">Renewable Plans</div>
+      {/* ── What a renewable plan is ── */}
+      <Section>
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+          <div>
+            <SectionHeading
+              title="What a 100% renewable plan actually is"
+              description="Worth understanding before you compare, because it explains why the price difference is small and why nothing changes at your property."
+            />
+            <div className="space-y-4 text-[16px] leading-relaxed text-gray-600">
+              <p>
+                On a competitive market, a renewable plan does not mean a dedicated wire from a wind
+                farm to your building. The supplier buys renewable energy certificates matching the
+                electricity you use, so an equivalent amount of renewable generation is added to the
+                grid on your behalf.
+              </p>
+              <p>
+                That matters when comparing: a renewable plan and a standard plan deliver identical
+                electricity to the same meter over the same wires. What differs is how the supply is
+                sourced and priced — which is why the two can be compared on rate, contract length
+                and termination fee exactly like any other pair of plans.
+              </p>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600 mb-1">12</div>
-              <div className="text-sm text-gray-600">States Available</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600 mb-1">7-10</div>
-              <div className="text-sm text-gray-600">Tons CO2 Saved/Year</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600 mb-1">$0</div>
-              <div className="text-sm text-gray-600">Extra Cost</div>
-            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-5">
+            <InfoCard icon={ScrollText} iconClass="text-green-700 bg-green-50" title="Certificates, not wires">
+              <p>
+                One certificate represents one megawatt-hour of renewable generation. Buying and
+                retiring them on your behalf is what backs the claim.
+              </p>
+            </InfoCard>
+            <InfoCard icon={Plug} iconClass="text-green-700 bg-green-50" title="Same grid, same reliability">
+              <p>
+                Your utility still delivers the power and still handles outages. Supply contracts do
+                not change the physical connection.
+              </p>
+            </InfoCard>
+            <InfoCard icon={Info} iconClass="text-green-700 bg-green-50" title="What we do not claim">
+              <p>
+                We do not publish carbon savings, tree equivalents or emissions figures for a plan.
+                We hold plan rates and renewable percentages, and that is what we show.
+              </p>
+            </InfoCard>
+            <InfoCard icon={Leaf} iconClass="text-green-700 bg-green-50" title="Percentages come from plan data">
+              <p>
+                Each plan carries the renewable content recorded for it. The comparison can filter
+                to fully matched plans rather than treating partial content as green.
+              </p>
+            </InfoCard>
           </div>
         </div>
-      </div>
+      </Section>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* ZIP Code Search */}
-        <section className="mb-20">
-          <Card className="bg-gradient-to-br from-green-50 to-teal-50 border-0 shadow-xl">
-            <CardContent className="p-12 text-center">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Find Renewable Energy Plans in Your Area
-              </h2>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                Enter your ZIP code to compare 100% renewable energy rates
-              </p>
-
-              <div className="bg-white rounded-xl shadow-lg p-1.5 max-w-2xl mx-auto mb-6">
-                <div className="flex flex-col sm:flex-row items-stretch gap-2">
-                  <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gray-50 rounded-xl">
-                    <MapPin className="w-5 h-5 text-green-600 flex-shrink-0" />
-                    <Input
-                      type="text"
-                      placeholder="Enter ZIP code"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                      className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-lg p-0 h-auto font-semibold"
-                      maxLength={5}
-                    />
-                  </div>
-                  <Link to={createPageUrl("RenewableCompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
-                    <Button className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-green-600 hover:bg-green-700 text-white h-full">
-                      Compare Green Plans
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-center gap-6 flex-wrap text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>100% Renewable Options</span>
-                </div>
-                <span className="text-gray-400">•</span>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>Competitive Rates</span>
-                </div>
-                <span className="text-gray-400">•</span>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>Easy Switching</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* SEO Content Section */}
-        <section className="mb-16">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Clean Energy Plans Across 12 States
-            </h2>
-            <div className="prose prose-lg max-w-none text-gray-700">
-              <p className="text-base leading-relaxed mb-4">
-                Renewable energy plans are now available across Texas, Pennsylvania, New York, Ohio, Illinois, New Jersey, Maryland, Massachusetts, Maine, New Hampshire, Rhode Island, and Connecticut. These 100% renewable electricity plans source power from wind farms, solar installations, and other clean energy sources, allowing you to reduce your carbon footprint without installing solar panels or making any changes to your home.
-              </p>
-              <p className="text-base leading-relaxed">
-                Whether you're in Houston, Dallas, Chicago, Philadelphia, New York City, or any other city in a deregulated market, you can choose from dozens of renewable energy providers offering competitive rates. Many green energy plans are priced similarly to traditional electricity plans, and some are even cheaper. By choosing renewable energy, you're supporting the growth of clean energy infrastructure while potentially saving money on your monthly electricity bills.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Benefits Section */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose Renewable Energy?
-            </h2>
-            <p className="text-xl text-gray-600">
-              Good for the environment and your budget
+      {/* ── Home or business ── */}
+      <Section tone="muted">
+        <SectionHeading
+          title="Renewable supply for a home or a business"
+          description="Renewable is a product rather than an audience, so this is the one thing the comparison still has to ask after your ZIP code."
+        />
+        <div className="grid gap-5 md:grid-cols-2 max-w-4xl">
+          <InfoCard icon={Home} iconClass="text-green-700 bg-green-50" title="For a home">
+            <p>
+              Renewable plans sit alongside standard ones and are bought the same way: pick the
+              plan, enroll with the supplier, keep your utility. The comparison shows the renewable
+              options at your address first.
             </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {benefits.map((benefit, index) => {
-              const Icon = benefit.icon;
-              return (
-                <Card key={index} className="border-2 hover:shadow-lg transition-all">
-                  <CardContent className="p-8 flex gap-6">
-                    <div className="w-14 h-14 bg-gradient-to-br from-green-100 to-teal-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-7 h-7 text-green-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{benefit.title}</h3>
-                      <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Energy Types Section */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Renewable Energy Sources
-            </h2>
-            <p className="text-xl text-gray-600">
-              Clean energy from wind, solar, and hydroelectric sources
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {energyTypes.map((type, index) => {
-              const Icon = type.icon;
-              return (
-                <Card key={index} className="border-2 hover:border-green-500 hover:shadow-xl transition-all">
-                  <CardContent className="p-8 text-center">
-                    <div className={`w-20 h-20 bg-${type.color}-100 rounded-full flex items-center justify-center mx-auto mb-6`}>
-                      <Icon className={`w-10 h-10 text-${type.color}-600`} />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{type.title}</h3>
-                    <div className="text-3xl font-bold text-green-600 mb-1">{type.percentage}</div>
-                    <div className="text-sm text-gray-600 mb-4">{type.stat}</div>
-                    <p className="text-gray-600 leading-relaxed">{type.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Top Renewable Plans */}
-        {renewablePlans.length > 0 && (
-          <section className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Featured Renewable Energy Plans
-              </h2>
-              <p className="text-xl text-gray-600">
-                Current 100% renewable plans available in your area
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {renewablePlans.map((plan) => (
-                <Card key={plan.id} className="border-2 hover:border-green-500 hover:shadow-xl transition-all">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.provider_name}</h3>
-                        <p className="text-sm text-gray-600">{plan.plan_name}</p>
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="bg-green-100 px-3 py-1 rounded-full flex items-center gap-1">
-                          <Leaf className="w-4 h-4 text-green-600" />
-                          <span className="text-sm font-semibold text-green-700">{plan.renewable_percentage}%</span>
-                        </div>
-                        {plan.state && (
-                          <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{plan.state}</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="bg-gradient-to-r from-green-50 to-teal-50 rounded-lg p-4 mb-4 text-center">
-                      <div className="text-3xl font-bold text-green-600 mb-1">
-                        {plan.rate_per_kwh.toFixed(1)}¢
-                      </div>
-                      <div className="text-sm text-gray-600">per kWh</div>
-                    </div>
-
-                    <div className="space-y-2 mb-4 text-sm text-gray-600">
-                      <div className="flex items-center justify-between">
-                        <span>Contract Length:</span>
-                        <span className="font-semibold text-gray-900">{plan.contract_length || 'N/A'} months</span>
-                      </div>
-                      {plan.monthly_base_charge > 0 && (
-                        <div className="flex items-center justify-between">
-                          <span>Base Charge:</span>
-                          <span className="font-semibold text-gray-900">${plan.monthly_base_charge.toFixed(2)}/mo</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <Link to={createPageUrl("CompareRates")}>
-                      <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                        View Details
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <div className="text-center mt-8">
-              <Link to={createPageUrl("RenewableCompareRates")}>
-                <Button variant="outline" className="border-2 border-green-600 text-green-600 hover:bg-green-50">
-                  View All Renewable Plans
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+            <p>
+              <Link to="/residential-electricity" className="text-[#0A5C8C] hover:underline">
+                How comparing works for a home
               </Link>
-            </div>
-          </section>
-        )}
-
-        {/* Myths vs Reality Section */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Common Myths About Renewable Energy
-            </h2>
-            <p className="text-xl text-gray-600">
-              Let's separate fact from fiction
             </p>
-          </div>
+          </InfoCard>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {myths.map((item, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-all">
-                <CardContent className="p-8">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl font-bold text-red-600">✗</span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900 mb-2">Myth:</h3>
-                      <p className="text-gray-700">{item.myth}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900 mb-2">Reality:</h3>
-                      <p className="text-gray-700">{item.reality}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+          <InfoCard icon={Building2} iconClass="text-green-700 bg-green-50" title="For a business">
+            <p>
+              Commercial renewable supply is quoted against your load profile rather than listed, so
+              the flow collects what a supplier needs to price it instead of showing an instant
+              list.
+            </p>
+            <p>
+              <Link to="/business-electricity" className="text-[#0A5C8C] hover:underline">
+                How commercial electricity is priced
+              </Link>
+            </p>
+          </InfoCard>
+        </div>
+      </Section>
 
-        {/* Environmental Impact Section */}
-        <section className="mb-20">
-          <Card className="bg-gradient-to-br from-green-600 to-teal-600 text-white border-0">
-            <CardContent className="p-12">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                  <Globe className="w-16 h-16 mb-6 opacity-90" />
-                  <h2 className="text-3xl font-bold mb-4">
-                    Your Impact Matters
-                  </h2>
-                  <p className="text-lg text-green-100 mb-6">
-                    Switching to 100% renewable energy makes a real difference for our planet and future generations.
-                  </p>
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-6 h-6 flex-shrink-0 mt-1" />
-                      <div>
-                        <div className="font-bold mb-1">Reduce Carbon Emissions</div>
-                        <div className="text-green-100">Average household avoids 7-10 tons of CO2 per year</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-6 h-6 flex-shrink-0 mt-1" />
-                      <div>
-                        <div className="font-bold mb-1">Support Clean Energy Growth</div>
-                        <div className="text-green-100">Drive investment in wind and solar farms nationwide</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-6 h-6 flex-shrink-0 mt-1" />
-                      <div>
-                        <div className="font-bold mb-1">Cleaner Air & Water</div>
-                        <div className="text-green-100">Reduce pollution and improve public health</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+      {/* ── Coverage ── */}
+      <Section>
+        <SectionHeading
+          title="Renewable plans by state"
+          description="Where we currently hold renewable plans, how many suppliers sell them and the lowest renewable rate tracked in each market."
+        />
+        <DataTable
+          caption="Renewable electricity plans tracked by state"
+          columns={["State", "Renewable plans", "Suppliers", "From"]}
+          rows={rows.map(({ state, market }) => [
+            { text: state.name, path: state.path },
+            String(market.renewablePlans),
+            String(market.renewableProviders),
+            formatRate(market.minRenewableRate) || "—",
+          ])}
+          footnote={`Tracked as of ${MARKET_GENERATED_AT}. Rates change often, and what is sold at a given ZIP code is a subset of the state total.`}
+        />
+      </Section>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                  <h3 className="text-2xl font-bold mb-6 text-center">Equivalent To:</h3>
-                  <div className="space-y-6">
-                    <div className="text-center">
-                      <Sprout className="w-12 h-12 mx-auto mb-3" />
-                      <div className="text-4xl font-bold mb-2">150+</div>
-                      <div className="text-green-100">Tree Seedlings Planted</div>
-                    </div>
-                    <div className="text-center">
-                      <Zap className="w-12 h-12 mx-auto mb-3" />
-                      <div className="text-4xl font-bold mb-2">16,000</div>
-                      <div className="text-green-100">Miles Not Driven</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Renewable Energy FAQs
-          </h2>
-          <div className="space-y-4 max-w-4xl mx-auto">
-            {faqs.map((faq) => (
-              <Card 
-                key={faq.id} 
-                className="border-2 hover:border-green-500 transition-all cursor-pointer overflow-hidden"
-                onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
-              >
-                <CardContent className="p-0">
-                  <div className="flex items-center justify-between p-6">
-                    <h3 className="text-lg font-bold text-gray-900 pr-4">
-                      {faq.question}
+      {/* ── Featured plans ── */}
+      {featuredPlans.length > 0 && (
+        <Section tone="muted">
+          <SectionHeading
+            title="Renewable plans we currently track"
+            description="The lowest-rate renewable plan in each state we hold one for. Availability depends on your utility territory, so check your own ZIP code before choosing."
+          />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredPlans.map((plan) => (
+              <div key={plan.id} className="rounded-2xl border border-gray-200 bg-white p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="text-[16px] font-semibold text-gray-900 truncate">
+                      {plan.provider_name}
                     </h3>
-                    <ChevronDown 
-                      className={`w-5 h-5 text-green-600 flex-shrink-0 transition-transform duration-300 ${
-                        openFaq === faq.id ? 'rotate-180' : ''
-                      }`}
-                    />
+                    <p className="mt-0.5 text-[14px] text-gray-600 truncate">{plan.plan_name}</p>
                   </div>
-                  <div 
-                    className={`transition-all duration-300 ease-in-out ${
-                      openFaq === faq.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <div className="px-6 pb-6 pt-0">
-                      <p className="text-gray-600 leading-relaxed">
-                        {faq.answer}
-                      </p>
-                    </div>
+                  <span className="flex-shrink-0 inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-[12px] font-medium text-green-800">
+                    <Leaf className="w-3.5 h-3.5" aria-hidden="true" />
+                    {Number(plan.renewable_percentage)}%
+                  </span>
+                </div>
+
+                <p className="mt-5 text-[28px] font-semibold text-gray-900 leading-none">
+                  {Number(plan.rate_per_kwh).toFixed(1)}
+                  <span className="text-[16px] font-medium text-gray-500">¢/kWh</span>
+                </p>
+
+                <dl className="mt-4 space-y-1.5 text-[14px] text-gray-600">
+                  <div className="flex justify-between gap-4">
+                    <dt>State</dt>
+                    <dd className="text-gray-900">{plan.state || "—"}</dd>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="flex justify-between gap-4">
+                    <dt>Contract</dt>
+                    <dd className="text-gray-900">
+                      {plan.contract_length ? `${plan.contract_length} months` : "Month to month"}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
             ))}
           </div>
-        </section>
+          <p className="mt-6 text-[13px] text-gray-500">
+            Rates shown are the plan rates we hold and exclude utility delivery charges. Verify
+            details with the supplier before enrolling.
+          </p>
+        </Section>
+      )}
 
-        {/* Final CTA */}
-        <section>
-          <Card className="bg-gradient-to-r from-green-600 to-teal-600 text-white border-0">
-            <CardContent className="p-12 text-center">
-              <Leaf className="w-16 h-16 mx-auto mb-6 opacity-90" />
-              <h2 className="text-3xl font-bold mb-4">
-                Ready to Go Green?
-              </h2>
-              <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-                Compare 100% renewable energy plans and start making a positive impact today
-              </p>
-              
-              <div className="bg-white rounded-xl shadow-lg p-1.5 max-w-2xl mx-auto mb-6">
-                <div className="flex flex-col sm:flex-row items-stretch gap-2">
-                  <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gray-50 rounded-xl">
-                    <MapPin className="w-5 h-5 text-green-600 flex-shrink-0" />
-                    <Input
-                      type="text"
-                      placeholder="Enter your ZIP code"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ''))}
-                      className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-gray-900 text-lg p-0 h-auto font-semibold"
-                      maxLength={5}
-                    />
-                  </div>
-                  <Link to={createPageUrl("RenewableCompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
-                    <Button className="w-full sm:w-auto px-10 py-6 text-lg font-bold rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] text-white h-full">
-                      Compare Now
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+      {/* ── FAQ + related ── */}
+      <Section>
+        <div className="grid lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2">
+            <SectionHeading
+              title="Renewable electricity questions"
+              description="What people ask before switching to a green plan."
+            />
+            <FaqList items={FAQS} accent="text-green-700" />
+          </div>
 
-              <div className="flex items-center justify-center gap-6 flex-wrap text-sm">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-300" />
-                  <span>100% Renewable</span>
-                </div>
-                <span className="text-green-300">•</span>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-300" />
-                  <span>Competitive Rates</span>
-                </div>
-                <span className="text-green-300">•</span>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-300" />
-                  <span>Easy Switch</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-      </div>
+          <div className="lg:pt-4">
+            <RelatedLinks
+              title="Also on Electric Scouts"
+              links={[
+                ["/renewable-compare-rates", "Compare renewable plans only"],
+                ["/compare-rates", "Compare every plan at your ZIP code"],
+                ["/residential-electricity", "Electricity for your home"],
+                ["/business-electricity", "Electricity for a business"],
+                ["/all-providers", "Suppliers we track"],
+                ["/learning-center", "Guides on green energy plans"],
+              ]}
+            />
+          </div>
+        </div>
+      </Section>
+
+      {/* ── Final CTA ── */}
+      <FinalCta
+        tone="renewable"
+        title="See the renewable plans sold at your address"
+        description="Enter your ZIP code and the comparison keeps the renewable preference — one question and you are into the plans."
+      >
+        <ZipHandoffForm
+          service="renewable"
+          ctaLabel="Compare Renewable Electricity"
+          label="Your ZIP code"
+        />
+      </FinalCta>
     </div>
   );
 }

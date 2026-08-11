@@ -705,6 +705,7 @@ const STATIC_BUILDERS = {
       {
         heading: 'Shop by What You Need',
         links: [
+          ['/residential-electricity', 'Electricity for your home'],
           ['/renewable-energy', 'Renewable and 100% green electricity plans'],
           ['/business-electricity', 'Business and commercial electricity'],
           ['/all-providers', 'Every supplier in our directory'],
@@ -823,6 +824,122 @@ const STATIC_BUILDERS = {
     };
   },
 
+  '/residential-electricity': (route, { states }) => {
+    const rows = stateRows(states, ({ state, market }) => ({ state, market })).filter(
+      (entry) => entry.market.residentialPlans
+    );
+    const totalResidential = rows.reduce((sum, entry) => sum + entry.market.residentialPlans, 0);
+    const totalRenewable = rows.reduce((sum, entry) => sum + entry.market.renewablePlans, 0);
+
+    return {
+      intro: [
+        `Electric Scouts tracks ${totalResidential} residential electricity plans across ` +
+          `${rows.length} deregulated states (${asOf}). This page covers how buying electricity ` +
+          'for a home works, what the comparison asks you and what it can tell you before you switch.',
+        'Supply is licensed by utility territory, so what you can actually buy is decided by your ' +
+          'ZIP code rather than by your state.',
+      ],
+      sections: [
+        {
+          heading: 'How Residential Electricity Shopping Works',
+          bullets: [
+            'Your ZIP code determines which suppliers are allowed to sell to your address',
+            'You describe the home — house, apartment or condo — and roughly how much you use',
+            'A recent bill can be uploaded instead, and the measured usage replaces the estimate',
+            'Plans are shown with rate per kWh, contract length and early termination fee together',
+            'Enrollment happens with the supplier; the utility, meter and wiring stay unchanged',
+          ],
+        },
+        {
+          heading: 'Moving, Switching or Checking Your Rate',
+          paragraphs: [
+            'Starting new service means the supply has to be live on the day you arrive: enrollment ' +
+              'takes minutes, but the connection itself is scheduled by the utility.',
+            'Switching supplier is worth timing against your current contract, because leaving a ' +
+              'fixed term early can carry an early termination fee. Contracts can usually be quoted ' +
+              'before the end date rather than after it.',
+            'If you are out of contract you may have rolled onto a variable rate, which is the case ' +
+              'where comparing against currently sold plans tells you the most.',
+          ],
+        },
+        {
+          heading: 'Using Your Bill Instead of an Estimate',
+          paragraphs: [
+            'A headline rate per kWh is not the whole bill. Monthly base charges and usage credits ' +
+              'with thresholds change what you pay, and by how much, as your usage moves. Uploading a ' +
+              'bill lets the comparison work from your measured usage and the rate you are actually ' +
+              'paying rather than from a band.',
+          ],
+          links: [['/bill-analyzer', 'Analyse an electricity bill']],
+        },
+        {
+          heading: 'Residential Plans by State',
+          table: {
+            columns: ['State', 'Plans for homes', 'Suppliers', 'From'],
+            rows: rows.map(({ state, market }) => [
+              { text: state.name, path: state.path },
+              String(market.residentialPlans),
+              String(market.providers),
+              formatRate(market.minResidentialRate) || '—',
+            ]),
+          },
+        },
+        {
+          heading: 'Renewable Options for a Home',
+          paragraphs: [
+            `${totalRenewable} of the plans we track are backed by renewable generation. On a ` +
+              'competitive market that means the supplier matches your consumption with renewable ' +
+              'certificates — the electricity arriving at your meter is the same either way.',
+          ],
+          links: [['/renewable-energy', 'How renewable electricity plans work']],
+        },
+        {
+          heading: 'Residential Electricity Questions',
+          faqs: [
+            {
+              question: 'Will my power go out when I switch suppliers?',
+              answer:
+                'No. Your local utility still owns the wires, the meter and the outage line, and ' +
+                'nothing at your property changes. Switching changes which company sells you the ' +
+                'supply and bills you for it.',
+            },
+            {
+              question: 'Can I compare plans for an apartment or a condo?',
+              answer:
+                'Yes, as long as you pay an electricity bill in your own name at a deregulated ' +
+                'address. Where supply is bundled into rent or billed by the building, the choice ' +
+                'sits with whoever holds the account.',
+            },
+            {
+              question: 'Do I need a bill to compare plans?',
+              answer:
+                'No. A ZIP code and a rough idea of your usage is enough to see what is available. ' +
+                'A bill makes the estimate more accurate because it replaces the usage band with a ' +
+                'measured figure.',
+            },
+            {
+              question: 'Why is the cheapest rate per kWh not always the cheapest bill?',
+              answer:
+                'Monthly base charges and usage credits with thresholds change the effective rate at ' +
+                'different usage levels. Comparing estimated cost at your own usage is the only way ' +
+                'to see which plan is cheaper for you.',
+            },
+          ],
+        },
+        {
+          heading: 'Next Steps',
+          links: [
+            ['/compare-rates', 'Compare plans for your ZIP code'],
+            ['/bill-analyzer', 'See the rate you are actually paying'],
+            ['/renewable-energy', 'Renewable electricity plans'],
+            ['/business-electricity', 'Electricity for a business or commercial property'],
+            ['/all-cities', 'Electricity rates by city'],
+          ],
+        },
+      ],
+    };
+  },
+
   '/renewable-energy': (route, { states }) => {
     const rows = stateRows(states, ({ state, market }) => ({ state, market })).filter(
       (entry) => entry.market.renewablePlans
@@ -860,6 +977,8 @@ const STATIC_BUILDERS = {
           heading: 'Next Steps',
           links: [
             ['/renewable-compare-rates', 'Compare renewable plans for your ZIP code'],
+            ['/residential-electricity', 'Renewable supply for a home'],
+            ['/business-electricity', 'Renewable supply for a business'],
             ['/all-providers', 'Browse suppliers'],
             ['/learning-center', 'Guides on green energy plans'],
           ],
@@ -995,8 +1114,10 @@ const STATIC_BUILDERS = {
         {
           heading: 'Next Steps',
           links: [
+            ['/compare-rates', 'Start a business comparison with your ZIP code'],
             ['/business-compare-rates', 'Request business electricity quotes'],
             ['/business-hub', 'Business electricity by company size'],
+            ['/residential-electricity', 'Electricity for a home instead'],
           ],
         },
       ],
@@ -1162,6 +1283,8 @@ const STATIC_BUILDERS = {
         links: [
           ['/bill-analyzer', 'Analyse your current bill first'],
           ['/savings-calculator', 'Estimate savings before you switch'],
+          ['/residential-electricity', 'How comparing works for a home'],
+          ['/business-electricity', 'How commercial electricity is priced'],
           ['/renewable-compare-rates', 'Compare renewable plans only'],
         ],
       },

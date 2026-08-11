@@ -1,507 +1,389 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
-import { ElectricityPlan } from "@/api/supabaseEntities";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, DollarSign, Clock, Award, AlertCircle } from "lucide-react";
-import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
+import { Building2, CalendarClock, FileText, Gauge, Layers, Leaf, LineChart } from "lucide-react";
+
+import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "@/components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import CustomQuoteModal from "../components/business/CustomQuoteModal";
-import ValidatedZipInput from "../components/ValidatedZipInput";
-import { ServiceSchema, FAQPageSchema } from "../components/seo/StructuredData";
+import ZipHandoffForm from "@/components/landing/ZipHandoffForm";
+import {
+  DataTable,
+  FaqList,
+  FinalCta,
+  InfoCard,
+  RelatedLinks,
+  Section,
+  SectionHeading,
+} from "@/components/landing/LandingSections";
+import { captureAttributionFromWindow, campaignContext } from "@/components/compare/engine/attribution";
+import { track, EVENTS } from "@/components/compare/engine/analytics";
+import { ENTRY_CONTEXTS } from "@/components/compare/engine/entryContext";
+import { getStates } from "@/seo/locations";
+import { formatRate, getStateMarket, MARKET_GENERATED_AT } from "@/seo/market.js";
+
+/**
+ * /business-electricity — the entry page for commercial supply.
+ *
+ * Commercial electricity is quoted against a load profile rather than sold off
+ * a rate card, so this page does not pretend to be a price list. It explains how
+ * that pricing works, tells a business what it will be asked for, and hands the
+ * ZIP code and the commercial audience straight into /compare-rates — which
+ * then opens on "What type of business is this?" rather than starting over.
+ */
+
+const FAQS = [
+  {
+    question: "Why can I not just see a business rate the way I see a residential rate?",
+    answer:
+      "Commercial supply is priced against your load profile — when you use power, not only how much. Two businesses on the same street with the same annual consumption can be quoted different rates, which is why business supply is quoted rather than listed.",
+  },
+  {
+    question: "What is a demand charge?",
+    answer:
+      "A demand charge bills you on the highest rate of power you drew during the billing period, measured in kW, separately from the total energy you consumed. For a business with short heavy peaks it can be a large share of the bill.",
+  },
+  {
+    question: "Can one contract cover several locations?",
+    answer:
+      "Usually yes, provided the sites sit in the same deregulated market. Aggregating sites gives a supplier a larger volume to price against, which is normally reflected in the quote.",
+  },
+  {
+    question: "We are still under contract. Is it too early to look?",
+    answer:
+      "No — it is usually the right time. Suppliers commonly price a contract that begins when your current one ends, so quoting a few months before your end date gives you options rather than a deadline.",
+  },
+  {
+    question: "What do you need from us to start?",
+    answer:
+      "The service ZIP code, the type of business and roughly what you spend each month. Recent bills — ideally twelve months of them — make the quote sharper, and peak demand in kW matters if your bill shows it.",
+  },
+  {
+    question: "Does a small business get competitive pricing?",
+    answer:
+      "Small commercial accounts are often priced on structures close to residential ones, and a fixed-term contract is usually the simplest way to make the cost predictable. What we cannot tell you in advance is the number — that comes from the supplier against your usage.",
+  },
+];
+
+const BUSINESS_PROFILES = [
+  {
+    icon: Building2,
+    title: "Offices, shops and restaurants",
+    body: "Steady, modest load. Pricing is often close to residential structures, and the lever that matters most is contract length rather than load shape.",
+  },
+  {
+    icon: Layers,
+    title: "Warehouses, clinics and hotels",
+    body: "Larger and less uniform load. This is where demand charges start to move the bill and where a supplier's view of your usage pattern begins to change the rate.",
+  },
+  {
+    icon: Gauge,
+    title: "Industrial and multi-site",
+    body: "High sustained load, or several meters under one operator. Supply is negotiated individually, and the shape of consumption drives the price more than the headline rate.",
+  },
+];
 
 export default function BusinessElectricity() {
-  const [zipCode, setZipCode] = useState("");
-  const [businessType, setBusinessType] = useState("");
-  const [monthlyUsage, setMonthlyUsage] = useState("");
-  const [showCustomQuoteModal, setShowCustomQuoteModal] = useState(false);
-  const [isZipValid, setIsZipValid] = useState(false);
+  const states = getStates();
 
-  // Defaulted to []: react-query only serves placeholderData while the query is
-  // pending, so a failed Supabase request leaves `data` undefined and the next
-  // .filter() throws — which blanked this page behind an error boundary for
-  // users and crawlers alike whenever the database was unreachable.
-  const { data: plans = [] } = useQuery({
-    queryKey: ['plans'],
-    queryFn: () => ElectricityPlan.list(),
-    placeholderData: [],
-  });
+  const rows = states
+    .map((state) => ({ state, market: getStateMarket(state.code) }))
+    .filter((entry) => entry.market && entry.market.businessPlans);
 
-  const states = [
-    { code: "TX", name: "Texas", avgRate: "8.5¢/kWh", demandCharges: "Yes", specialPrograms: "Large Commercial Rebates" },
-    { code: "IL", name: "Illinois", avgRate: "9.2¢/kWh", demandCharges: "Yes", specialPrograms: "Energy Efficiency Incentives" },
-    { code: "OH", name: "Ohio", avgRate: "8.8¢/kWh", demandCharges: "Yes", specialPrograms: "Industrial Rate Schedules" },
-    { code: "PA", name: "Pennsylvania", avgRate: "9.4¢/kWh", demandCharges: "Yes", specialPrograms: "Commercial Load Management" },
-    { code: "NY", name: "New York", avgRate: "11.2¢/kWh", demandCharges: "Yes", specialPrograms: "NYSERDA Programs" },
-    { code: "NJ", name: "New Jersey", avgRate: "10.1¢/kWh", demandCharges: "Yes", specialPrograms: "Peak Load Pricing" },
-    { code: "MD", name: "Maryland", avgRate: "9.8¢/kWh", demandCharges: "Yes", specialPrograms: "EmPOWER Maryland" },
-    { code: "MA", name: "Massachusetts", avgRate: "11.8¢/kWh", demandCharges: "Yes", specialPrograms: "Mass Save Business" },
-    { code: "ME", name: "Maine", avgRate: "10.2¢/kWh", demandCharges: "Limited", specialPrograms: "Business Efficiency Programs" },
-    { code: "NH", name: "New Hampshire", avgRate: "11.0¢/kWh", demandCharges: "Limited", specialPrograms: "NHSaves Commercial" },
-    { code: "RI", name: "Rhode Island", avgRate: "11.9¢/kWh", demandCharges: "Yes", specialPrograms: "Commercial & Industrial Programs" },
-    { code: "CT", name: "Connecticut", avgRate: "11.5¢/kWh", demandCharges: "Yes", specialPrograms: "Energize CT Business" }
-  ];
+  const totalBusinessPlans = rows.reduce((sum, entry) => sum + entry.market.businessPlans, 0);
 
-  const businessTypes = [
-    { value: "small", label: "Small Business", usage: "< 10,000 kWh/month", employees: "1-10" },
-    { value: "medium", label: "Medium Business", usage: "10,000-50,000 kWh/month", employees: "10-100" },
-    { value: "large", label: "Large Commercial", usage: "50,000-200,000 kWh/month", employees: "100-500" },
-    { value: "industrial", label: "Industrial", usage: "> 200,000 kWh/month", employees: "500+" }
-  ];
+  // The cheapest commercial plan we hold anywhere, stated as a tracked figure
+  // rather than as an offer — commercial supply is quoted, and the hero says so.
+  const businessRates = rows
+    .map(({ market }) => Number(market.minBusinessRate))
+    .filter((rate) => Number.isFinite(rate));
+  const lowestBusinessRate = businessRates.length ? formatRate(Math.min(...businessRates)) : null;
 
-  const handleBusinessQuoteSubmit = () => {
-    if (zipCode && businessType && monthlyUsage) {
-      // Open custom quote modal for business customers
-      setShowCustomQuoteModal(true);
-    }
-  };
-
-  const breadcrumbData = getBreadcrumbSchema([
-    { name: "Home", url: "/" },
-    { name: "Business Electricity", url: "/business-electricity" }
-  ]);
-
-  const businessFAQs = [
-    {
-      question: "What's the difference between business and residential rates?",
-      answer: "Business rates include demand charges, have different rate structures based on usage levels, offer longer contract terms, and may include time-of-use pricing. Commercial customers also get access to load management programs and custom pricing for high usage."
-    },
-    {
-      question: "How are demand charges calculated?",
-      answer: "Demand charges are based on your peak power draw (measured in kW) during any 15-minute interval in the billing period. If you have a 100 kW peak and the demand charge is $10/kW, you'll pay $1,000 in demand charges that month, separate from energy usage charges."
-    },
-    {
-      question: "Can small businesses get competitive rates?",
-      answer: "Yes! Small businesses using as little as 2,000-5,000 kWh/month can access competitive rates. While you may not qualify for demand-based pricing, fixed-rate plans and group purchasing programs can deliver 15-30% savings vs. utility default rates."
-    },
-    {
-      question: "Should I choose a fixed or variable rate plan?",
-      answer: "Most businesses prefer fixed-rate plans for budget predictability. Variable rates can work if you have flexible operations and can adjust usage based on market prices, but they carry risk during price spikes. Industrial users sometimes blend both strategies."
-    }
-  ];
+  useEffect(() => {
+    const attribution = captureAttributionFromWindow();
+    track(EVENTS.COMMERCIAL_LANDING_VIEWED, {
+      entry_context: ENTRY_CONTEXTS.COMMERCIAL_LANDING,
+      service: "commercial",
+      ...campaignContext(attribution),
+    });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <ServiceSchema 
-        service={{
-          type: "Business Electricity Rate Comparison",
-          description: "Compare commercial and industrial electricity rates from competing suppliers. Get custom quotes for tiered pricing, demand charges, and load management."
-        }}
-      />
-      <FAQPageSchema faqs={businessFAQs} />
-      
+    <div className="bg-white">
       <SEOHead
         title="Business Electricity Rates and Pricing | Electric Scouts"
         description="How commercial electricity is priced — demand charges, load profiles and contract terms — plus the business plans we track in each deregulated state."
-        keywords="business electricity rates, commercial electricity providers, industrial power rates, small business energy plans, commercial electric rates, demand charges, tiered pricing, business energy comparison, industrial electricity rates, commercial power companies"
+        keywords="business electricity rates, commercial electricity providers, demand charges, load profile, commercial energy contracts, multi-site electricity, business energy comparison"
         canonical="/business-electricity"
-        structuredData={breadcrumbData}
+        structuredData={[
+          getBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Business Electricity", url: "/business-electricity" },
+          ]),
+          getFAQSchema(FAQS),
+        ]}
       />
 
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <PageBreadcrumbs
-              items={[
-                { name: "Home", url: "/" },
-                { name: "Business Electricity" }
-              ]}
-              variant="light"
-              className="mb-3"
-            />
-            <h1 className="text-3xl lg:text-4xl font-bold mb-4">
-              Business Electricity Rates
-            </h1>
-            <p className="text-xl text-blue-100 mb-8">
-              Commercial and industrial electricity plans tailored for your business needs. Compare rates, understand demand charges, and optimize your energy costs.
-            </p>
+      {/* ── Hero ── */}
+      <div className="bg-[#0A5C8C] text-white">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 pt-8 pb-14 sm:pb-16">
+          <PageBreadcrumbs
+            items={[{ name: "Home", url: "/" }, { name: "Business Electricity" }]}
+            variant="light"
+            className="mb-6"
+          />
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">$5K+</div>
-                <div className="text-sm text-blue-100">Avg. Annual Savings</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">40+</div>
-                <div className="text-sm text-blue-100">Business Providers</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">12</div>
-                <div className="text-sm text-blue-100">States Served</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">24/7</div>
-                <div className="text-sm text-blue-100">Support Available</div>
-              </div>
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_400px] gap-10 lg:gap-14 items-start">
+            <div className="min-w-0 max-w-2xl">
+              <p className="text-[13px] font-semibold uppercase tracking-wider text-white/70">
+                Commercial electricity
+              </p>
+              <h1 className="mt-3 text-[32px] sm:text-[42px] leading-[1.1] font-semibold tracking-[-0.02em]">
+                Business Electricity Rates
+              </h1>
+              <p className="mt-4 text-[17px] leading-relaxed text-white/80">
+                Commercial supply is priced against your usage pattern and contract term, not sold
+                from a rate card. Start with your service ZIP code and we will take it from your
+                business type — no re-entering anything.
+              </p>
+
+              <dl className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6 max-w-lg border-t border-white/15 pt-6">
+                {[
+                  ["Commercial plans", String(totalBusinessPlans)],
+                  ["Markets covered", String(rows.length)],
+                  ["Lowest tracked", lowestBusinessRate || "—"],
+                ].map(([label, value]) => (
+                  <div key={label} className="min-w-0">
+                    <dt className="text-[12px] uppercase tracking-wide text-white/60">{label}</dt>
+                    <dd className="mt-1 text-[20px] font-semibold">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-4 text-[12px] text-white/60">
+                From our plan snapshot of {MARKET_GENERATED_AT}. A quote priced against your own
+                load profile can land above or below a listed plan.
+              </p>
             </div>
 
-            {/* Business Quote Form */}
-            <Card id="business-quote-form" className="border-0 shadow-2xl">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Get Custom Business Quotes</h3>
-                <div className="grid md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">ZIP Code</label>
-                    <div className="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
-                      <ValidatedZipInput
-                        value={zipCode}
-                        onChange={setZipCode}
-                        placeholder="Business ZIP"
-                        onValidationChange={setIsZipValid}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">Business Type</label>
-                    <Select value={businessType} onValueChange={setBusinessType}>
-                      <SelectTrigger className="bg-gray-50">
-                        <SelectValue placeholder="Select business type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {businessTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label} - {type.usage}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Monthly Usage (kWh)</label>
-                  <Input
-                    type="text"
-                    placeholder="e.g., 15000"
-                    value={monthlyUsage}
-                    onChange={(e) => setMonthlyUsage(e.target.value.replace(/\D/g, ''))}
-                    className="bg-gray-50"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <Link to={createPageUrl("BusinessCompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
-                    <Button 
-                      disabled={!isZipValid}
-                      className="w-full bg-[#0A5C8C] hover:bg-[#084a6f] text-white font-bold py-3 rounded-lg"
-                    >
-                      Compare Business Rates
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </Link>
-
-                </div>
-              </CardContent>
-            </Card>
+            <div className="rounded-2xl bg-white p-6 shadow-[0_12px_40px_-12px_rgba(8,74,111,0.6)]">
+              <h2 className="text-[17px] font-semibold text-gray-900">
+                Start a commercial comparison
+              </h2>
+              <p className="mt-1.5 text-[14px] leading-relaxed text-gray-600">
+                We will ask about the business next — the ZIP code carries over.
+              </p>
+              <div className="mt-5">
+                <ZipHandoffForm
+                  service="commercial"
+                  ctaLabel="Compare Business Electricity"
+                  label="Service ZIP code"
+                  hint="Use the ZIP code of the site that takes the supply."
+                />
+              </div>
+              <p className="mt-4 text-[12px] leading-relaxed text-gray-500">
+                No obligation. Multi-site accounts can be aggregated under one contract where the
+                sites share a deregulated market.
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Understanding Business Electricity */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Understanding Business Electricity Pricing
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <DollarSign className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Tiered Pricing</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Business electricity rates often include tiered pricing based on consumption levels. Higher usage typically results in lower per-kWh rates, benefiting larger operations.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                  <Zap className="w-6 h-6 text-orange-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Demand Charges</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Many commercial plans include demand charges based on your peak power usage during billing periods. Managing peak demand can significantly reduce costs.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="p-6">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                  <Clock className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Time-of-Use Rates</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Business plans may offer time-of-use pricing with different rates for on-peak, off-peak, and shoulder periods. Shift usage to save.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Business Size Categories */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Plans by Business Size
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {businessTypes.map((type, index) => (
-              <Card key={index} className="border-2 hover:border-[#0A5C8C] transition-all">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Building2 className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">{type.label}</h3>
-                      <div className="space-y-1 mb-3">
-                        <p className="text-sm text-gray-600">
-                          <span className="font-semibold">Usage:</span> {type.usage}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          <span className="font-semibold">Typical Size:</span> {type.employees} employees
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Fixed Rates Available</span>
-                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Custom Terms</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* State-Specific Business Regulations */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Business Energy by State
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Each state has unique regulations, demand charge structures, and incentive programs for commercial customers.
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full bg-white border-2 rounded-lg overflow-hidden">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">State</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">Avg. Rate</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">Demand Charges</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">Special Programs</th>
-                  <th className="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {states.map((state, index) => (
-                  <tr key={index} className="border-t hover:bg-blue-50 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-gray-900">{state.name}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-sm font-semibold text-[#0A5C8C]">{state.avgRate}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-sm text-gray-700">{state.demandCharges}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-sm text-gray-600">{state.specialPrograms}</div>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <Link to={createPageUrl("BusinessCompareRates")}>
-                        <Button size="sm" variant="outline" className="text-xs">
-                          Compare
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Key Considerations for Businesses */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Key Considerations for Business Electricity
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-2 bg-gradient-to-br from-blue-50 to-white">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Demand Charge Management</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                      Demand charges are based on your highest 15-minute usage interval during the billing period. Reduce peak demand by:
-                    </p>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Staggering equipment start-up times</li>
-                      <li>• Shifting non-critical operations to off-peak</li>
-                      <li>• Installing demand response systems</li>
-                      <li>• Using energy storage for peak shaving</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 bg-gradient-to-br from-green-50 to-white">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <FileText className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Contract Considerations</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                      Business electricity contracts differ from residential:
-                    </p>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Longer terms (1-5 years) often get better rates</li>
-                      <li>• Custom pricing for large users (500+ kW)</li>
-                      <li>• Early termination fees can be substantial</li>
-                      <li>• Load factor requirements in some agreements</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 bg-gradient-to-br from-purple-50 to-white">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <TrendingDown className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Energy Efficiency Incentives</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                      Many states offer commercial incentives:
-                    </p>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• LED lighting upgrade rebates</li>
-                      <li>• HVAC system efficiency incentives</li>
-                      <li>• Energy audits (often free)</li>
-                      <li>• Demand response program payments</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 bg-gradient-to-br from-orange-50 to-white">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <Award className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-2">Renewable Energy Options</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                      Business renewable energy solutions:
-                    </p>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• 100% renewable electricity plans</li>
-                      <li>• Virtual Power Purchase Agreements (VPPAs)</li>
-                      <li>• On-site solar + battery storage</li>
-                      <li>• Renewable Energy Credits (RECs)</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Business FAQs */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Business Electricity FAQs
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <Card className="border-2">
-              <CardContent className="p-5">
-                <h3 className="font-bold text-gray-900 mb-2">What's the difference between business and residential rates?</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Business rates include demand charges, have different rate structures based on usage levels, offer longer contract terms, and may include time-of-use pricing. Commercial customers also get access to load management programs and custom pricing for high usage.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="p-5">
-                <h3 className="font-bold text-gray-900 mb-2">How are demand charges calculated?</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Demand charges are based on your peak power draw (measured in kW) during any 15-minute interval in the billing period. If you have a 100 kW peak and the demand charge is $10/kW, you'll pay $1,000 in demand charges that month, separate from energy usage charges.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="p-5">
-                <h3 className="font-bold text-gray-900 mb-2">Can small businesses get competitive rates?</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Yes! Small businesses using as little as 2,000-5,000 kWh/month can access competitive rates. While you may not qualify for demand-based pricing, fixed-rate plans and group purchasing programs can deliver 15-30% savings vs. utility default rates.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2">
-              <CardContent className="p-5">
-                <h3 className="font-bold text-gray-900 mb-2">Should I choose a fixed or variable rate plan?</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Most businesses prefer fixed-rate plans for budget predictability. Variable rates can work if you have flexible operations and can adjust usage based on market prices, but they carry risk during price spikes. Industrial users sometimes blend both strategies.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] rounded-2xl p-10 text-center text-white">
-          <h2 className="text-2xl lg:text-3xl font-bold mb-3">
-            Ready to Reduce Your Business Energy Costs?
-          </h2>
-          <p className="text-base text-blue-100 mb-6 max-w-2xl mx-auto">
-            Get custom quotes from commercial electricity providers. Save thousands annually with the right business energy plan.
-          </p>
-          
-          <Link to={createPageUrl("BusinessCompareRates")}>
-            <Button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-bold px-10 py-4 text-lg rounded-lg">
-              Get Business Quotes
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </Link>
-
-          <div className="flex items-center justify-center gap-5 flex-wrap text-xs mt-6">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="w-3.5 h-3.5 text-green-400" />
-              <span>Custom Pricing</span>
-            </div>
-            <span className="text-blue-300">•</span>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="w-3.5 h-3.5 text-green-400" />
-              <span>Free Consultation</span>
-            </div>
-            <span className="text-blue-300">•</span>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="w-3.5 h-3.5 text-green-400" />
-              <span>No Obligation</span>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {showCustomQuoteModal && (
-        <CustomQuoteModal 
-          onClose={() => setShowCustomQuoteModal(false)}
-          initialData={{ zipCode, businessType, monthlyUsage }}
+      {/* ── How commercial pricing differs ── */}
+      <Section>
+        <SectionHeading
+          title="How business electricity pricing differs"
+          description="Four things behave differently from a household contract, and each one changes what a supplier quotes you."
         />
-      )}
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <InfoCard icon={LineChart} title="Load profile, not just kWh">
+            <p>
+              Suppliers price on when you draw power as well as how much. A predictable daytime load
+              is cheaper to serve than the same annual total in short spikes.
+            </p>
+          </InfoCard>
+          <InfoCard icon={Gauge} title="Demand charges">
+            <p>
+              Billed on the highest rate of power drawn in the period, measured in kW, separately
+              from consumption. Staggering start-up and shifting non-critical load is what moves it.
+            </p>
+          </InfoCard>
+          <InfoCard icon={CalendarClock} title="Contract timing">
+            <p>
+              Terms are negotiated and often longer than residential ones, and a contract can be
+              priced now to start when your current one ends.
+            </p>
+          </InfoCard>
+          <InfoCard icon={Layers} title="Multi-site aggregation">
+            <p>
+              Several meters in the same market can usually sit under one contract, which gives a
+              supplier more volume to price against.
+            </p>
+          </InfoCard>
+        </div>
+      </Section>
+
+      {/* ── What we ask ── */}
+      <Section tone="muted">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+          <div>
+            <SectionHeading
+              title="What the comparison asks a business"
+              description="Short, and in this order. Anything a bill answers is not asked at all."
+            />
+            <ol className="space-y-4">
+              {[
+                ["Type of business", "Office, retail, restaurant, multifamily, industrial or healthcare — it sets the load pattern a supplier expects."],
+                ["A recent bill, if you have one", "Optional. Uploading one fills in usage, spend and contract end date in a single step."],
+                ["Monthly electricity spend", "A band is enough. A measured figure from a bill takes priority over the band."],
+                ["When you need the plan", "Starting now, within 30 days, or timed to a contract end date."],
+                ["Business and contact details", "So a supplier can price against your account and get back to you."],
+              ].map(([title, body], index) => (
+                <li key={title} className="flex gap-4">
+                  <span className="flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#0A5C8C] text-white text-[13px] font-semibold">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <p className="text-[16px] font-medium text-gray-900">{title}</p>
+                    <p className="mt-0.5 text-[15px] leading-relaxed text-gray-600">{body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-7">
+            <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-orange-50 text-[#FF6B35]">
+              <FileText className="w-5 h-5" aria-hidden="true" />
+            </span>
+            <h2 className="mt-4 text-[20px] font-semibold text-gray-900">
+              Have a recent business electricity bill?
+            </h2>
+            <p className="mt-2.5 text-[15px] leading-relaxed text-gray-600">
+              Upload it and we read the usage, the spend and — where the bill shows it — the
+              contract end date, so we can match your business against appropriate options without
+              asking you to look any of it up. The upload step sits inside the comparison, right
+              after your business type.
+            </p>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Link
+                to="/bill-analyzer"
+                className="inline-flex items-center justify-center h-12 px-6 rounded-xl border border-gray-300 bg-white text-gray-700 text-[15px] font-medium hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5C8C] focus-visible:ring-offset-2"
+              >
+                Analyze a bill first
+              </Link>
+              <Link
+                to="/business-compare-rates"
+                className="inline-flex items-center justify-center h-12 px-6 rounded-xl border border-gray-300 bg-white text-gray-700 text-[15px] font-medium hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5C8C] focus-visible:ring-offset-2"
+              >
+                Request a full quote
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ── Business profiles ── */}
+      <Section>
+        <SectionHeading
+          title="What changes with the size of the account"
+          description="The same market, priced three quite different ways."
+        />
+        <div className="grid gap-5 md:grid-cols-3">
+          {BUSINESS_PROFILES.map((profile) => (
+            <InfoCard key={profile.title} icon={profile.icon} title={profile.title}>
+              <p>{profile.body}</p>
+            </InfoCard>
+          ))}
+        </div>
+        <p className="mt-6 text-[15px] text-gray-600">
+          <Link to="/business-hub" className="text-[#0A5C8C] hover:underline">
+            Compare the options by company size
+          </Link>{" "}
+          if you are not sure which of these fits.
+        </p>
+      </Section>
+
+      {/* ── Coverage ── */}
+      <Section tone="muted">
+        <SectionHeading
+          title="Commercial plans by state"
+          description="Where we currently track commercial supply, and the lowest business rate in each market."
+        />
+        <DataTable
+          caption="Commercial electricity plans tracked by state"
+          columns={["State", "Business plans", "Suppliers", "From"]}
+          rows={rows.map(({ state, market }) => [
+            { text: state.name, path: state.path },
+            String(market.businessPlans),
+            String(market.providers),
+            formatRate(market.minBusinessRate) || "—",
+          ])}
+          footnote={`Tracked as of ${MARKET_GENERATED_AT}. These are listed commercial plans; a quote priced against your own load profile can land above or below them, and demand charges are billed separately.`}
+        />
+      </Section>
+
+      {/* ── Renewable + related ── */}
+      <Section>
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 grid sm:grid-cols-2 gap-5">
+            <InfoCard
+              icon={Leaf}
+              iconClass="text-green-700 bg-green-50"
+              title="Renewable supply for a business"
+            >
+              <p>
+                Renewable commercial supply works the same way as residential: the supplier matches
+                your consumption with renewable generation rather than running a separate wire.
+              </p>
+              <p>
+                <Link to="/renewable-energy" className="text-[#0A5C8C] hover:underline">
+                  How renewable electricity plans work
+                </Link>
+              </p>
+            </InfoCard>
+            <InfoCard icon={CalendarClock} title="If your contract is ending">
+              <p>
+                Bring the end date. Suppliers price forward contracts routinely, and quoting ahead
+                of the date is what keeps you out of a hold-over rate.
+              </p>
+            </InfoCard>
+          </div>
+
+          <RelatedLinks
+            title="Also on Electric Scouts"
+            links={[
+              ["/compare-rates", "Start a comparison with your ZIP code"],
+              ["/business-compare-rates", "Request commercial quotes"],
+              ["/business-hub", "Business electricity by company size"],
+              ["/bill-analyzer", "Analyze a business electricity bill"],
+              ["/residential-electricity", "Electricity for a home instead"],
+              ["/all-providers", "Suppliers we track"],
+            ]}
+          />
+        </div>
+      </Section>
+
+      {/* ── FAQ ── */}
+      <Section tone="muted">
+        <SectionHeading
+          title="Business electricity questions"
+          description="What businesses ask before they put an account out to quote."
+        />
+        <div className="max-w-3xl">
+          <FaqList items={FAQS} />
+        </div>
+      </Section>
+
+      {/* ── Final CTA ── */}
+      <FinalCta
+        title="Put your business account in front of suppliers"
+        description="Enter the service ZIP code and continue at your business type — we already know this is a commercial account."
+      >
+        <ZipHandoffForm
+          service="commercial"
+          ctaLabel="Compare Business Electricity"
+          label="Service ZIP code"
+        />
+      </FinalCta>
     </div>
   );
 }

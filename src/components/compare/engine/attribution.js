@@ -88,6 +88,21 @@ export function captureAttributionFromWindow() {
   );
 }
 
+/**
+ * The campaign fields worth attaching to a funnel event.
+ *
+ * Source, medium and campaign are enough to segment a funnel by acquisition
+ * channel; `referrer` and `landing_page` are full URLs that can carry query
+ * strings from elsewhere, so they stay on the lead record and out of analytics.
+ */
+export function campaignContext(attribution = {}) {
+  const context = {};
+  for (const key of ['utm_source', 'utm_medium', 'utm_campaign']) {
+    if (attribution && attribution[key]) context[key] = attribution[key];
+  }
+  return context;
+}
+
 export function clearAttribution() {
   const store = safeSessionStorage();
   if (!store) return;

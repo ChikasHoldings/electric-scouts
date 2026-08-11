@@ -11,8 +11,22 @@
  */
 
 export const EVENTS = {
+  // ── Landing funnel ──
+  // Each service landing reports its own view and its own ZIP submission, so
+  // visits, ZIP conversions and continuations into the engine can be counted
+  // per entry point instead of as one undifferentiated total.
+  RESIDENTIAL_LANDING_VIEWED: 'residential_landing_viewed',
+  COMMERCIAL_LANDING_VIEWED: 'commercial_landing_viewed',
+  RENEWABLE_LANDING_VIEWED: 'renewable_landing_viewed',
+  RESIDENTIAL_ZIP_SUBMITTED: 'residential_zip_submitted',
+  COMMERCIAL_ZIP_SUBMITTED: 'commercial_zip_submitted',
+  RENEWABLE_ZIP_SUBMITTED: 'renewable_zip_submitted',
+  LANDING_ZIP_REJECTED: 'landing_zip_rejected',
+  LANDING_COMPARISON_HANDOFF: 'landing_comparison_handoff',
+
   COMPARE_RATES_VIEWED: 'compare_rates_viewed',
   COMPARISON_STARTED: 'comparison_started',
+  SERVICE_TYPE_CHANGED: 'service_type_changed',
   ZIP_COMPLETED: 'zip_completed',
   CUSTOMER_TYPE_SELECTED: 'customer_type_selected',
   RENEWABLE_CONTEXT_SELECTED: 'renewable_context_selected',
@@ -37,6 +51,27 @@ export const EVENTS = {
   PARTNER_ROUTE_CREATED: 'partner_route_created',
   CONCIERGE_CREATED: 'concierge_created',
   COMPARISON_COMPLETED: 'comparison_completed',
+};
+
+/**
+ * The two landing events for each service, resolved by service id.
+ *
+ * Keyed rather than assembled from strings so a typo is a missing key at the
+ * call site instead of an event name nothing reports on.
+ */
+export const LANDING_EVENTS = {
+  residential: {
+    viewed: EVENTS.RESIDENTIAL_LANDING_VIEWED,
+    zipSubmitted: EVENTS.RESIDENTIAL_ZIP_SUBMITTED,
+  },
+  commercial: {
+    viewed: EVENTS.COMMERCIAL_LANDING_VIEWED,
+    zipSubmitted: EVENTS.COMMERCIAL_ZIP_SUBMITTED,
+  },
+  renewable: {
+    viewed: EVENTS.RENEWABLE_LANDING_VIEWED,
+    zipSubmitted: EVENTS.RENEWABLE_ZIP_SUBMITTED,
+  },
 };
 
 /** Keys that carry PII and must never be forwarded to analytics. */

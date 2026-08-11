@@ -10,10 +10,34 @@ import {
   BarChart3, Percent, Mail
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
 import { getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
+import { COMPARE_PATH, ENTRY_CONTEXTS } from "../components/compare/engine/entryContext";
+
+/**
+ * Carry the analysis into the comparison engine.
+ *
+ * The usage and provider read off the bill are exactly what /compare-rates
+ * would otherwise ask for, so they travel with the visitor and those questions
+ * disappear. `entry` records where the session came from, which is what lets the
+ * funnel separate analyzer traffic from the landing pages.
+ */
+function compareUrlFromBill(billData) {
+  const params = new URLSearchParams();
+
+  const zip = String(billData?.zip_code || "").replace(/\D/g, "").slice(0, 5);
+  if (zip.length === 5) params.set("zip", zip);
+
+  const usage = Number(billData?.monthly_usage_kwh);
+  if (Number.isFinite(usage) && usage > 0) params.set("usage", String(Math.round(usage)));
+
+  const provider = String(billData?.provider_name || "").trim();
+  if (provider) params.set("provider", provider.slice(0, 120));
+
+  params.set("entry", ENTRY_CONTEXTS.BILL_ANALYZER);
+  return `${COMPARE_PATH}?${params.toString()}`;
+}
 
 // ─── Session Storage Helpers ──────────────────────────────────
 const SESSION_KEY = "electricscouts_bill_analyzer";
@@ -941,7 +965,7 @@ export default function BillAnalyzer() {
                 <p className="text-sm text-gray-600 mb-4">
                   You already have a competitive rate! We'll keep monitoring for better options.
                 </p>
-                <Link to={createPageUrl("CompareRates")}>
+                <Link to={compareUrlFromBill(billData)}>
                   <Button variant="outline">
                     Browse All Plans
                   </Button>
@@ -1005,7 +1029,7 @@ export default function BillAnalyzer() {
             >
               Analyze Another Bill
             </Button>
-            <Link to={createPageUrl("CompareRates")} className="flex-1">
+            <Link to={compareUrlFromBill(billData)} className="flex-1">
               <Button className="w-full bg-[#0A5C8C] hover:bg-[#084a6f] text-white">
                 Compare All Plans
               </Button>

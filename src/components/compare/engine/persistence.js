@@ -14,7 +14,8 @@
  * State before that point lives in sessionStorage so a reload can resume.
  */
 
-import { CUSTOMER_TYPES } from './comparisonState.js';
+import { CUSTOMER_TYPES, createInitialState, invalidateBranchState } from './comparisonState.js';
+import { resolveEntryContext } from './entryContext.js';
 
 const SESSION_KEY = 'es_comparison_session';
 
@@ -45,16 +46,62 @@ export function getOrCreateSessionId() {
   return id;
 }
 
+/**
+ * Contact details are never written to browser storage.
+ *
+ * Everything else in the session is answers about a property and its energy
+ * use, which is what a reload needs in order to resume. A name, email address
+ * and phone number are not: they are already upserted onto the lead record the
+ * moment an email exists, so the durable copy lives server-side and the browser
+ * keeps none. The cost is that a visitor who reloads after the contact step is
+ * asked for their email again — the same email, which upserts onto the same
+ * row, so no duplicate lead is created.
+ */
+const CONTACT_FIELDS = ['firstName', 'email', 'phone', 'consentContact'];
+
+/** The subset of a session that is safe to keep in the browser. */
+export function safeSessionSnapshot(state) {
+  const snapshot = { ...state };
+  for (const field of CONTACT_FIELDS) delete snapshot[field];
+  return snapshot;
+}
+
 /** Persist in-progress answers so a reload doesn't lose the visitor's place. */
 export function saveLocalSession(state) {
   const store = safeStorage();
   if (!store) return;
   try {
     // The bill file itself is never cached — only the figures read from it.
-    store.setItem(SESSION_KEY, JSON.stringify(state));
+    store.setItem(SESSION_KEY, JSON.stringify(safeSessionSnapshot(state)));
   } catch {
     /* quota — resuming is a convenience, not a requirement */
   }
+}
+
+/**
+ * Open (or continue) a comparison session from a landing page.
+ *
+ * The landing page owns the handoff, so it writes the session rather than
+ * passing the whole thing through the URL. Merging onto whatever is already
+ * stored is what keeps a returning visitor's answers — and their original
+ * campaign attribution — intact across the hop, and `invalidateBranchState`
+ * makes sure a visitor who switches service on the way in does not arrive with
+ * the other branch's answers still attached.
+ *
+ * @param {Record<string, any>} seed  from `landingSeed()`
+ * @returns {Record<string, any>} the session as stored
+ */
+export function seedLocalSession(seed) {
+  const sessionId = getOrCreateSessionId();
+  const restored = loadLocalSession() || {};
+  let next = { ...createInitialState(), ...restored, ...seed, sessionId };
+
+  if (seed.customerType && restored.customerType && restored.customerType !== seed.customerType) {
+    next = invalidateBranchState(next, seed.customerType);
+  }
+
+  saveLocalSession(next);
+  return next;
 }
 
 export function loadLocalSession() {
@@ -100,6 +147,9 @@ export function buildLeadPayload(state, extra = {}) {
     comparison: {
       session_id: state.sessionId,
       status: extra.status || state.status,
+      // Which landing page produced this lead, carried through to the record so
+      // the funnel can be read per entry point rather than in aggregate.
+      entry_context: resolveEntryContext(state),
 
       customer_type: state.customerType || null,
       energy_preference: state.energyPreference || null,

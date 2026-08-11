@@ -255,6 +255,10 @@ function mapComparisonColumns(comparison, attribution) {
   const direct = {
     session_id: "comparison_session_id",
     status: "comparison_status",
+    // Which page opened the session — a landing page, the bill analyzer, or
+    // /compare-rates directly. Kept as a column rather than in the JSONB blob
+    // because the funnel is grouped by it.
+    entry_context: "entry_context",
     customer_type: "customer_type",
     energy_preference: "energy_preference",
     property_type: "property_type",

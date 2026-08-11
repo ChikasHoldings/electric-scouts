@@ -85,6 +85,14 @@ export const STATIC_ROUTES = [
     changefreq: "weekly",
   },
   {
+    page: "ResidentialElectricity",
+    path: "/residential-electricity",
+    title: "Compare Residential Electricity Rates | Electric Scouts",
+    description: "Compare the electricity plans sold to homes at your address — house, apartment or condo — with rate, contract length and early termination fee side by side.",
+    priority: 0.9,
+    changefreq: "weekly",
+  },
+  {
     page: "RenewableEnergy",
     path: "/renewable-energy",
     title: "Renewable Electricity Plans | Electric Scouts",
@@ -387,6 +395,7 @@ export const STATIC_HEADINGS = {
   '/all-states': 'Electricity Rates by State',
   '/all-cities': 'Electricity Rates by City',
   '/learning-center': 'Learning Center: Electricity Guides and Tips',
+  '/residential-electricity': 'Compare Residential Electricity Options',
   '/renewable-energy': 'Renewable Energy Plans',
   '/renewable-compare-rates': 'Compare Renewable Electricity Plans',
   '/business-electricity': 'Business Electricity Rates and Plans',

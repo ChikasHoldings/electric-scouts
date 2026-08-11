@@ -9,7 +9,6 @@ import SEOHead, {
   getBreadcrumbSchema,
 } from "@/components/SEOHead";
 
-import { validateZipCode } from "../components/compare/stateData";
 import { getCityFromZip } from "../components/compare/providerAvailability";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
@@ -17,10 +16,17 @@ import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import {
   createInitialState,
   invalidateBranchState,
+  resetServiceSelection,
   resolveUsageKwh,
   stageForQuestion,
   CUSTOMER_TYPES,
 } from "../components/compare/engine/comparisonState";
+import {
+  ENTRY_PARAM_KEYS,
+  parseEntryParams,
+  resolveEntryContext,
+  checkServiceZip,
+} from "../components/compare/engine/entryContext";
 import {
   determineNextQuestion,
   stepBack,
@@ -74,7 +80,7 @@ import {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function CompareRates() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [state, setState] = useState(() => createInitialState());
   const [view, setView] = useState("question"); // question | bill_upload | bill_summary | matching | results
   const [showAllPlans, setShowAllPlans] = useState(false);
@@ -83,27 +89,60 @@ export default function CompareRates() {
   const { getAffiliateUrl } = useAffiliateLinks();
 
   // ── Session bootstrap ──
+  //
+  // Three entry points converge here: a service landing page that already
+  // established the ZIP and the audience, the standalone Bill Analyzer, and a
+  // visitor who came straight to /compare-rates. All three end up as one
+  // comparison session, and `determineNextQuestion` decides what is still
+  // unanswered — so a prequalified session simply starts further in.
   useEffect(() => {
     const attribution = captureAttributionFromWindow();
     const sessionId = getOrCreateSessionId();
     const restored = loadLocalSession();
+    // Nothing off the URL is trusted: the ZIP is re-validated and the intent
+    // values are matched against allowlists before they reach state.
+    const { seed, hasEntryParams } = parseEntryParams(searchParams);
+    const entryContext = resolveEntryContext({
+      entryContext: seed.entryContext || restored?.entryContext,
+    });
 
-    setState((prev) => ({
-      ...prev,
-      ...(restored || {}),
-      sessionId,
-      // Attribution from the original landing always wins over a restored copy,
-      // so a resumed session keeps the campaign that produced it.
-      attribution: { ...(restored?.attribution || {}), ...attribution },
-      // A ZIP handed over from the standalone Bill Analyzer or a deep link
-      // seeds the flow so the visitor doesn't retype what we already know.
-      ...seedFromQuery(searchParams),
-    }));
+    setState((prev) => {
+      const merged = {
+        ...prev,
+        ...(restored || {}),
+        sessionId,
+        // Attribution from the original landing always wins over a restored
+        // copy, so a resumed session keeps the campaign that produced it.
+        attribution: { ...(restored?.attribution || {}), ...attribution },
+        ...seed,
+        entryContext,
+      };
 
-    track(EVENTS.COMPARE_RATES_VIEWED);
-    track(EVENTS.COMPARISON_STARTED);
+      // Arriving from a different service than the stored session was for must
+      // not leave the abandoned branch's answers attached to the lead.
+      const next =
+        seed.customerType && restored?.customerType && restored.customerType !== seed.customerType
+          ? invalidateBranchState(merged, seed.customerType)
+          : merged;
+
+      return { ...next, city: next.city || (next.zip ? getCityFromZip(next.zip) || "" : "") };
+    });
+
+    track(EVENTS.COMPARE_RATES_VIEWED, { entry_context: entryContext });
+    track(EVENTS.COMPARISON_STARTED, { entry_context: entryContext });
+
+    // The routing parameters have done their job, so they come out of the
+    // address bar: /compare-rates is the canonical URL, and a shared or
+    // bookmarked link should not carry someone else's ZIP code. Replacing
+    // rather than pushing keeps Back pointing at the landing page they came
+    // from, and only the keys this handoff owns are removed.
+    if (hasEntryParams) {
+      const remaining = new URLSearchParams(searchParams);
+      for (const key of ENTRY_PARAM_KEYS) remaining.delete(key);
+      setSearchParams(remaining, { replace: true });
+    }
     // Bootstrap runs once; searchParams is read only for the initial seed.
-     
+
   }, []);
 
   // Persist in-progress answers so a reload resumes rather than restarts.
@@ -162,6 +201,26 @@ export default function CompareRates() {
     }));
     setView("question");
   }, [state, currentQuestion]);
+
+  /**
+   * Let a visitor out of the branch they arrived in.
+   *
+   * Somebody who came through the Commercial landing page and realises they
+   * actually need residential supply must not be stuck there, and must not lose
+   * their ZIP code, their bill figures or their place in the flow for changing
+   * their mind. This puts "What are you shopping for?" back in front of them
+   * and keeps everything that is still true.
+   */
+  const handleChangeService = useCallback(() => {
+    track(EVENTS.SERVICE_TYPE_CHANGED, {
+      from: state.energyPreference === "renewable" && !state.customerType
+        ? "renewable"
+        : state.customerType,
+      entry_context: state.entryContext,
+    });
+    setState((prev) => resetServiceSelection(prev));
+    setView("question");
+  }, [state.customerType, state.energyPreference, state.entryContext]);
 
   // ── Plans ──
   const { data: allPlans = [] } = useQuery({
@@ -400,6 +459,14 @@ export default function CompareRates() {
           setState={setState}
           setView={setView}
           onBack={state.history.length > 1 ? handleBack : null}
+          // Offered from the moment a service is known — including when it came
+          // from a landing page rather than from an answer on this screen.
+          onChangeService={
+            currentQuestion.id !== "customer_type" &&
+            (state.customerType || state.energyPreference)
+              ? handleChangeService
+              : null
+          }
         />
       </ComparisonShell>
     </>
@@ -407,42 +474,6 @@ export default function CompareRates() {
 }
 
 /* ─────────────────────────────────────────────────────────── */
-
-function seedFromQuery(searchParams) {
-  const seed = {};
-  const zip = (searchParams.get("zip") || "").replace(/\D/g, "").slice(0, 5);
-
-  if (zip.length === 5) {
-    const validation = validateZipCode(zip);
-    if (validation.valid) {
-      seed.zip = zip;
-      seed.state = validation.state;
-      seed.city = getCityFromZip(zip) || "";
-    }
-  }
-
-  // Handoff from the standalone Bill Analyzer: usage already measured there
-  // must not be asked for again.
-  const usage = parseFloat(searchParams.get("usage"));
-  if (Number.isFinite(usage) && usage > 0) {
-    seed.monthlyUsageKwh = usage;
-    seed.billAnalysisStatus = "complete";
-    seed.billConfidence = "high";
-    seed.billOffered = true;
-  }
-
-  const provider = (searchParams.get("provider") || "").trim();
-  if (provider) seed.currentProvider = provider.slice(0, 120);
-
-  if (searchParams.get("type") === "business") {
-    seed.customerType = CUSTOMER_TYPES.COMMERCIAL;
-  } else if (searchParams.get("type") === "home") {
-    seed.customerType = CUSTOMER_TYPES.RESIDENTIAL;
-  }
-  if (searchParams.get("renewable") === "1") seed.energyPreference = "renewable";
-
-  return seed;
-}
 
 /** Reset the field a Back navigation is returning to. */
 function clearAnswerFor(questionId, prev) {
@@ -465,11 +496,17 @@ function clearAnswerFor(questionId, prev) {
   }
 }
 
-function QuestionScreen({ question, state, update, setState, setView, onBack }) {
+function QuestionScreen({ question, state, update, setState, setView, onBack, onChangeService }) {
   const title = resolveCopy(question.title, state);
   const subtitle = resolveCopy(question.subtitle, state);
 
-  const frameProps = { questionKey: question.id, title, subtitle, onBack };
+  const frameProps = {
+    questionKey: question.id,
+    title,
+    subtitle,
+    onBack,
+    footer: onChangeService ? <ChangeServiceButton onClick={onChangeService} /> : null,
+  };
 
   switch (question.type) {
     case "zip":
@@ -521,6 +558,24 @@ function QuestionScreen({ question, state, update, setState, setView, onBack }) 
     default:
       return null;
   }
+}
+
+/**
+ * The escape hatch out of a branch.
+ *
+ * Deliberately quiet — it sits opposite Back as a text link rather than a
+ * button, because it is a correction, not a step in the flow.
+ */
+function ChangeServiceButton({ onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-sm text-gray-500 hover:text-gray-900 transition-colors rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5C8C] focus-visible:ring-offset-2 px-1 py-1 -mr-1"
+    >
+      Change electricity type
+    </button>
+  );
 }
 
 function valueForChoice(questionId, state) {
@@ -591,30 +646,27 @@ function applyChoice(questionId, value, state, setState, update) {
   }
 }
 
-function ZipQuestion({ questionKey, title, subtitle, onBack, state, update }) {
+function ZipQuestion({ questionKey, title, subtitle, onBack, footer, state, update }) {
   const [draft, setDraft] = useState(state.zip || "");
   const [error, setError] = useState("");
 
   const submit = () => {
-    const zip = draft.replace(/\D/g, "").slice(0, 5);
-    const result = validateZipCode(zip);
+    // The same serviceability check the landing pages run, so a ZIP is accepted
+    // or refused identically whichever door the visitor came through.
+    const result = checkServiceZip(draft);
 
     if (!result.valid) {
-      setError(
-        result.waitlist
-          ? "We don't cover this ZIP code yet — electricity there isn't sold on a competitive market."
-          : result.error
-      );
+      setError(result.message);
       return;
     }
 
     setError("");
-    update({ zip, state: result.state, city: getCityFromZip(zip) || "" });
+    update({ zip: result.zip, state: result.state, city: getCityFromZip(result.zip) || "" });
     track(EVENTS.ZIP_COMPLETED, { state: result.state });
   };
 
   return (
-    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack}>
+    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack} footer={footer}>
       <TextQuestion
         id="zip"
         label="ZIP code"
@@ -644,7 +696,7 @@ function ZipQuestion({ questionKey, title, subtitle, onBack, state, update }) {
  * Asks about the single value we're unsure of, rather than re-running the whole
  * questionnaire because one number looked odd.
  */
-function VerifyQuestion({ questionKey, onBack, state, update }) {
+function VerifyQuestion({ questionKey, onBack, footer, state, update }) {
   const field = state.unverifiedFields[0];
   const [draft, setDraft] = useState(
     field === "monthlyUsageKwh" && state.monthlyUsageKwh
@@ -675,6 +727,7 @@ function VerifyQuestion({ questionKey, onBack, state, update }) {
       title={`We found about ${shown}. Does that look right?`}
       subtitle="We want to get your estimate right before we match plans."
       onBack={onBack}
+      footer={footer}
     >
       <div className="space-y-3">
         <PrimaryAction onClick={accept}>Yes, that&rsquo;s right</PrimaryAction>
@@ -696,7 +749,7 @@ function VerifyQuestion({ questionKey, onBack, state, update }) {
   );
 }
 
-function ContactQuestion({ questionKey, title, subtitle, onBack, question, state, update }) {
+function ContactQuestion({ questionKey, title, subtitle, onBack, footer, question, state, update }) {
   const initial =
     question.id === "business_name" ? state.businessName
       : question.id === "name" ? state.firstName
@@ -749,7 +802,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, question, state
   }[question.id] || { type: "text" };
 
   return (
-    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack}>
+    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack} footer={footer}>
       <TextQuestion
         id={question.id}
         label={question.inputLabel}

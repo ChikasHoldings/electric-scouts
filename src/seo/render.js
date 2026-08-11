@@ -257,6 +257,7 @@ function siteNav(states) {
     ['/all-states', 'Electricity Rates by State'],
     ['/all-cities', 'Electricity Rates by City'],
     ['/bill-analyzer', 'Bill Analyzer'],
+    ['/residential-electricity', 'Residential Electricity'],
     ['/business-electricity', 'Business Electricity'],
     ['/renewable-energy', 'Renewable Energy Plans'],
     ['/savings-calculator', 'Savings Calculator'],
