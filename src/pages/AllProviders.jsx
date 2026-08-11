@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { generateProviderSlug, getProviderLogoUrl, getProviderPageUrl } from "@/utils/providerSlug";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Star, Zap, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
+import { Search, Star, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";

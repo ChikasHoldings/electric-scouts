@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DollarSign, Zap, TrendingDown, Award, Leaf, ArrowRight, Calculator } from "lucide-react";
-import { getStateData, getCityData } from "../components/location/locationData";
+import { Zap, TrendingDown, Award, Leaf, ArrowRight, Calculator } from "lucide-react";
+import { getStateData } from "../components/location/locationData";
 import { validateZipCode } from "../components/compare/stateData";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";

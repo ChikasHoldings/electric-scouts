@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, MapPin, CheckCircle, Zap, TrendingDown, ArrowRight } from "lucide-react";
-import { getAllDeregulatedStates, validateZipCode, getStateByZip } from "../components/compare/stateData";
+import { Search, MapPin, CheckCircle, Zap, TrendingDown } from "lucide-react";
+import { getAllDeregulatedStates, validateZipCode } from "../components/compare/stateData";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ValidatedZipInput from "../components/ValidatedZipInput";
 
 export default function AllStates() {
   const [searchTerm, setSearchTerm] = useState("");

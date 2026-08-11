@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { useQuery } from "@tanstack/react-query";
@@ -12,7 +12,6 @@ import {
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
-import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 

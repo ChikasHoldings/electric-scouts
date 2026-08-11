@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { supabase } from "@/lib/supabaseClient";
@@ -9,10 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { 
-  Home, Zap, Wifi, Droplet, Phone, CheckCircle, 
-  Clock, Shield, Users, Star, ChevronDown, Mail, ArrowRight,
-  MapPin, Calendar, User, Building, Lock, Tv, Wrench,
-  FileText, Loader2, ChevronLeft, ChevronRight as ChevronRightIcon
+  Home, Zap, Wifi, Droplet, CheckCircle, 
+  Clock, Shield, Users, Star, ChevronDown, ArrowRight,
+  MapPin, User, Building, Lock, Tv, Wrench, Loader2, ChevronLeft, ChevronRight as ChevronRightIcon
 } from "lucide-react";
 import SEOHead, { getOrganizationSchema } from "@/components/SEOHead";
 

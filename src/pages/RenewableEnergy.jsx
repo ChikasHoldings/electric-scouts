@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ElectricityPlan } from "@/api/supabaseEntities";
@@ -11,7 +11,7 @@ import {
   Shield, Heart, MapPin, ArrowRight, ChevronDown, Zap,
   Award, Globe, Sprout
 } from "lucide-react";
-import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
+import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 
 export default function RenewableEnergy() {

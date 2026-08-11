@@ -1,4 +1,3 @@
-import React from "react";
 import { validateSchema } from "./schemaValidator";
 import { SITE_URL, absoluteUrl } from "@/seo/site";
 

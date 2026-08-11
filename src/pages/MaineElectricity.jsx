@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
 import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
@@ -31,7 +30,7 @@ export default function MaineElectricity() {
       {
         id: 1,
         question: "How does Maine's electricity deregulation work?",
-        answer: "Maine has a deregulated electricity market where residents can choose their competitive electricity provider from over 22 suppliers. Central Maine Power (CMP) or Versant Power continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
+        answer: "Maine has a deregulated electricity market where residents can choose their competitive electricity provider from competing suppliers. Central Maine Power (CMP) or Versant Power continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
       },
       {
         id: 2,

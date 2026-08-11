@@ -265,9 +265,11 @@ export function providerDescription(provider) {
       : '';
   const states = (provider.planStates || []).map((code) => STATE_NAMES[code]).filter(Boolean);
   const where = states.length ? ` in ${states.length === 1 ? states[0] : `${states.length} states`}` : '';
+  // Kept inside the ~165 characters a SERP will show. Suppliers with a long
+  // name, a wide footprint and a wide rate range were overflowing it.
   return (
     `Compare ${provider.plans} ${provider.name} electricity plans${where}${rates}. ` +
-    `Contract terms, renewable options and how they stack up against other suppliers.`
+    `Contract terms, renewable options and where they serve.`
   );
 }
 

@@ -1,4 +1,3 @@
-import { BookOpen, DollarSign, Leaf, TrendingDown, Shield, Clock, Users, Zap, Map, Building2, Home, FileText } from "lucide-react";
 
 // Comprehensive full-text articles with SEO optimization and internal linking
 export const fullArticles = {

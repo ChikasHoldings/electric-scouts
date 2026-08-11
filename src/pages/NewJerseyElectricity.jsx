@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
 import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
@@ -31,7 +30,7 @@ export default function NewJerseyElectricity() {
       {
         id: 1,
         question: "How does New Jersey's electricity deregulation work?",
-        answer: "New Jersey has a deregulated electricity market where residents can choose their Third Party Supplier (TPS) from over 35 competing providers. PSE&G, JCP&L, or Atlantic City Electric continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
+        answer: "New Jersey has a deregulated electricity market where residents can choose their Third Party Supplier (TPS) from competing providers. PSE&G, JCP&L, or Atlantic City Electric continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
       },
       {
         id: 2,

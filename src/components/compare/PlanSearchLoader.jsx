@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Zap, Building, Leaf, Shield, Search, BarChart3, CheckCircle2 } from "lucide-react";
 
 const THEMES = {

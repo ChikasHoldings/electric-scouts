@@ -24,7 +24,7 @@ async function getAuthHeaders() {
 /**
  * Call an LLM via the serverless API route
  * @param {Object} params - { prompt, system_prompt, model, response_format }
- * @returns {Object} - LLM response
+ * @returns {Promise<any>} - LLM response
  */
 export async function InvokeLLM(params) {
   const headers = await getAuthHeaders();
@@ -44,7 +44,7 @@ export async function InvokeLLM(params) {
 /**
  * Upload a file to Supabase Storage
  * @param {Object} params - { file, bucket? }
- * @returns {Object} - { file_url }
+ * @returns {Promise<any>} - { file_url }
  */
 export async function UploadFile({ file, bucket = 'bill-uploads' }) {
   const timestamp = Date.now();
@@ -81,7 +81,7 @@ export async function UploadFile({ file, bucket = 'bill-uploads' }) {
  * Extract data from an uploaded file (e.g., electricity bill OCR)
  * Calls the serverless API route which uses an LLM for extraction
  * @param {Object} params - { file_url, extraction_prompt }
- * @returns {Object} - Extracted data
+ * @returns {Promise<any>} - Extracted data
  */
 export async function ExtractDataFromUploadedFile(params) {
   const headers = await getAuthHeaders();
@@ -101,7 +101,7 @@ export async function ExtractDataFromUploadedFile(params) {
 /**
  * Send an email via the serverless API route
  * @param {Object} params - { to, subject, body }
- * @returns {Object} - Send result
+ * @returns {Promise<any>} - Send result
  */
 export async function SendEmail(params) {
   const headers = await getAuthHeaders();
@@ -121,7 +121,7 @@ export async function SendEmail(params) {
 /**
  * Send an SMS via the serverless API route
  * @param {Object} params - { to, message }
- * @returns {Object} - Send result
+ * @returns {Promise<any>} - Send result
  */
 export async function SendSMS(params) {
   const headers = await getAuthHeaders();
@@ -141,7 +141,7 @@ export async function SendSMS(params) {
 /**
  * Generate an image via the serverless API route
  * @param {Object} params - { prompt, size }
- * @returns {Object} - { image_url }
+ * @returns {Promise<any>} - { image_url }
  */
 export async function GenerateImage(params) {
   const headers = await getAuthHeaders();

@@ -493,7 +493,7 @@
     {
       "name": "Ambit Energy",
       "slug": "ambit-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Ambit Energy provides electricity and natural gas services through a network of independent consultants across multiple deregulated states.",
       "websiteUrl": "https://ambitenergy.com",
       "supportedStates": [
@@ -538,12 +538,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "APG&E",
       "slug": "apge",
-      "isActive": false,
+      "isActive": true,
       "description": "APG&E offers competitive fixed and variable rate electricity plans to residential and commercial customers across Texas.",
       "websiteUrl": "https://www.apge.com",
       "supportedStates": [
@@ -580,12 +580,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Champion Energy",
       "slug": "champion-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Champion Energy Services offers a variety of fixed-rate and renewable electricity plans for Texas homes and businesses.",
       "websiteUrl": "https://www.championenergyservices.com",
       "supportedStates": [
@@ -624,12 +624,12 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Chariot Energy",
       "slug": "chariot-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Chariot Energy is a 100% solar-powered electricity provider offering affordable clean energy plans across Texas.",
       "websiteUrl": "https://chariotenergy.com",
       "supportedStates": [
@@ -660,12 +660,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Cirro Energy",
       "slug": "cirro-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Cirro Energy provides simple, straightforward electricity plans with competitive rates for Texas residential customers.",
       "websiteUrl": "https://www.cirroenergy.com",
       "supportedStates": [
@@ -697,12 +697,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "CleanChoice Energy",
       "slug": "cleanchoice-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "CleanChoice Energy provides 100% renewable energy plans sourced from wind and solar.",
       "websiteUrl": "https://cleanchoiceenergy.com",
       "supportedStates": [
@@ -748,12 +748,12 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Clearview Energy",
       "slug": "clearview-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Clearview Energy offers competitive fixed-rate electricity plans across multiple deregulated states.",
       "websiteUrl": "https://www.clearviewenergy.com",
       "supportedStates": [
@@ -803,12 +803,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Constellation Energy",
       "slug": "constellation-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Constellation is one of the largest competitive energy suppliers in the US, offering electricity and natural gas plans nationwide.",
       "websiteUrl": "https://www.constellation.com",
       "supportedStates": [
@@ -867,12 +867,12 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Direct Energy",
       "slug": "direct-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Direct Energy is a leading North American retail energy provider offering electricity, natural gas, and home services.",
       "websiteUrl": "https://www.directenergy.com",
       "supportedStates": [
@@ -927,12 +927,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Discount Power",
       "slug": "discount-power",
-      "isActive": false,
+      "isActive": true,
       "description": "Discount Power offers some of the lowest electricity rates in Texas with straightforward, no-gimmick pricing.",
       "websiteUrl": "https://www.discountpowertx.com",
       "supportedStates": [
@@ -962,12 +962,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Electricity Maine",
       "slug": "electricity-maine",
-      "isActive": false,
+      "isActive": true,
       "description": "Electricity Maine offers fixed-rate plans for Maine residential customers.",
       "websiteUrl": "https://electricityme.com",
       "supportedStates": [
@@ -995,12 +995,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Eligo Energy",
       "slug": "eligo-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Eligo Energy offers fixed-rate and green energy plans across the Midwest and Northeast.",
       "websiteUrl": "https://www.eligoenergy.com",
       "supportedStates": [
@@ -1043,12 +1043,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Frontier Utilities",
       "slug": "frontier-utilities",
-      "isActive": false,
+      "isActive": true,
       "description": "Frontier Utilities provides affordable electricity plans with flexible terms and excellent customer service in Texas.",
       "websiteUrl": "https://www.frontierutilities.com",
       "supportedStates": [
@@ -1083,12 +1083,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Gexa Energy",
       "slug": "gexa-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Gexa Energy offers competitive fixed-rate electricity plans with options for renewable energy across Texas.",
       "websiteUrl": "https://www.gexaenergy.com",
       "supportedStates": [
@@ -1117,12 +1117,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Green Mountain Energy",
       "slug": "green-mountain-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Green Mountain Energy is America's longest-serving 100% renewable energy retailer, offering clean electricity from wind and solar.",
       "websiteUrl": "https://www.greenmountainenergy.com",
       "supportedStates": [
@@ -1165,12 +1165,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Indra Energy",
       "slug": "indra-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Indra Energy offers 100% renewable electricity and natural gas plans across the Northeast and Mid-Atlantic, with customer rewards and tree-planting initiatives.",
       "websiteUrl": "https://indraenergy.com",
       "supportedStates": [
@@ -1217,12 +1217,12 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Inspire Clean Energy",
       "slug": "inspire-clean-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Inspire offers unlimited clean energy subscription plans powered by 100% renewable sources.",
       "websiteUrl": "https://www.inspirecleanenergy.com",
       "supportedStates": [
@@ -1263,12 +1263,12 @@
       "minRenewableRate": null,
       "terms": [],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Just Energy",
       "slug": "just-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Just Energy provides electricity and natural gas plans with fixed-rate options and green energy choices across North America.",
       "websiteUrl": "https://www.justenergy.com",
       "supportedStates": [
@@ -1316,7 +1316,7 @@
         60
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Liberty Power",
@@ -1354,12 +1354,12 @@
       "minRenewableRate": null,
       "terms": [],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-03-03T04:52:22.083657+00:00"
     },
     {
       "name": "Major Energy",
       "slug": "major-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Major Energy offers fixed-rate electricity plans across the Northeast.\n\nNote: Acquired by Spark Energy (Via Renewables) in 2016. Still operates under Major Energy brand.",
       "websiteUrl": "https://majorenergy.com",
       "supportedStates": [
@@ -1403,7 +1403,7 @@
         23
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "NextVolt Energy",
@@ -1447,7 +1447,7 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-03-03T04:52:26.904824+00:00"
     },
     {
       "name": "North American Power",
@@ -1483,12 +1483,12 @@
       "minRenewableRate": null,
       "terms": [],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-03-03T04:52:22.717282+00:00"
     },
     {
       "name": "Octopus Energy",
       "slug": "octopus-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Octopus Energy offers 100% renewable electricity plans at affordable prices, backed by innovative technology and excellent service.",
       "websiteUrl": "https://octopusenergy.com",
       "supportedStates": [
@@ -1519,7 +1519,7 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "OnPoint Energy",
@@ -1553,12 +1553,12 @@
       "minRenewableRate": null,
       "terms": [],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-03-03T05:09:37.187459+00:00"
     },
     {
       "name": "Payless Power",
       "slug": "payless-power",
-      "isActive": false,
+      "isActive": true,
       "description": "Payless Power offers prepaid and no-deposit electricity plans, making it easy for anyone to get power in Texas.",
       "websiteUrl": "https://www.paylesspower.com",
       "supportedStates": [
@@ -1587,12 +1587,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Perch Energy",
       "slug": "perch-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Perch Energy is a leading community solar provider helping renters, homeowners, and businesses save 5-15% on electricity through local solar farm subscriptions.",
       "websiteUrl": "https://www.perchenergy.com",
       "supportedStates": [
@@ -1639,12 +1639,12 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Public Power",
       "slug": "public-power",
-      "isActive": false,
+      "isActive": true,
       "description": "Public Power provides affordable electricity plans in deregulated markets across the Northeast and Midwest.",
       "websiteUrl": "https://www.publicpower.com",
       "supportedStates": [
@@ -1686,12 +1686,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Reliant Energy",
       "slug": "reliant-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Reliant is one of Texas's largest and most trusted electricity providers, offering a wide range of plans for homes and businesses.",
       "websiteUrl": "https://www.reliant.com",
       "supportedStates": [
@@ -1730,12 +1730,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Rhythm Energy",
       "slug": "rhythm-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Rhythm Energy offers simple, transparent electricity plans powered by 100% renewable energy in Texas.",
       "websiteUrl": "https://www.gotrhythm.com",
       "supportedStates": [
@@ -1767,7 +1767,7 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "SmartEnergy",
@@ -1812,12 +1812,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-03-03T04:52:27.762167+00:00"
     },
     {
       "name": "Spark Energy",
       "slug": "spark-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Spark Energy provides electricity and natural gas services across 19 states with competitive rates and flexible plan options.",
       "websiteUrl": "https://www.sparkenergy.com",
       "supportedStates": [
@@ -1860,12 +1860,12 @@
         15
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Think Energy",
       "slug": "think-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Think Energy offers competitive electricity rates with a unique Free Energy Club referral program across multiple states.",
       "websiteUrl": "https://www.thinkenergy.com",
       "supportedStates": [
@@ -1913,12 +1913,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Town Square Energy",
       "slug": "town-square-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Town Square Energy provides competitive fixed-rate electricity plans.",
       "websiteUrl": "https://www.townsquareenergy.com",
       "supportedStates": [
@@ -1962,12 +1962,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "TriEagle Energy",
       "slug": "trieagle-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "TriEagle Energy offers straightforward, affordable electricity plans with no hidden fees for Texas customers.",
       "websiteUrl": "https://www.trieagleenergy.com",
       "supportedStates": [
@@ -1999,12 +1999,12 @@
         36
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "TXU Energy",
       "slug": "txu-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "TXU Energy is one of the oldest and largest electricity providers in Texas, offering a wide variety of plans including solar and free nights options.",
       "websiteUrl": "https://www.txu.com",
       "supportedStates": [
@@ -2033,12 +2033,12 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Verde Energy",
       "slug": "verde-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Verde Energy offers fixed and variable rate electricity plans with green energy options.",
       "websiteUrl": "https://www.verdeenergy.com",
       "supportedStates": [
@@ -2083,12 +2083,12 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "Viridian Energy",
       "slug": "viridian-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "Viridian Energy offers green electricity plans with a focus on sustainability.\n\nNote: Acquired by Crius Energy in 2012. Website is now a landing page. May have limited new enrollment.",
       "websiteUrl": "https://www.viridian.com",
       "supportedStates": [
@@ -2133,12 +2133,12 @@
         12
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
       "name": "XOOM Energy",
       "slug": "xoom-energy",
-      "isActive": false,
+      "isActive": true,
       "description": "XOOM Energy is a subsidiary of ACN Inc offering electricity plans in 11 deregulated states.",
       "websiteUrl": "https://www.xoomenergy.com",
       "supportedStates": [
@@ -2196,7 +2196,7 @@
         24
       ],
       "monthToMonth": false,
-      "updatedAt": null
+      "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     }
   ]
 }

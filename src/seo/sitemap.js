@@ -28,7 +28,11 @@ function escapeXml(value) {
     .replace(/'/g, '&apos;');
 }
 
-/** Sitemap entries for every indexable route, in registry order. */
+/**
+ * Sitemap entries for every indexable route, in registry order.
+ *
+ * @param {{providers?: any[], fullArticles?: Record<string, any>, today?: string}} [options]
+ */
 export function buildSitemapEntries({ providers = [], fullArticles, today } = {}) {
   const lastmodDefault = today || new Date().toISOString().split('T')[0];
 

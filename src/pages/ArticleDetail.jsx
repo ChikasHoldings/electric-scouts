@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   BookOpen, Zap, DollarSign, Leaf, TrendingDown, Shield, 
-  Clock, Users, ArrowRight, MapPin, Building2, FileText
+  Clock, ArrowRight, MapPin, Building2, FileText
 } from "lucide-react";
 import SEOHead, { getArticleSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -1077,6 +1077,29 @@ export default function ArticleDetail() {
     trackDailyReading();
   }, [location.search, articleId]);
 
+  // Full article content, resolved above the early returns below. These two
+  // hooks used to sit after `if (isLoading)` and `if (!article)`, so the hook
+  // order changed between renders as those conditions flipped — React's
+  // rules-of-hooks violation, and the reason state leaked between articles.
+  const dbArticle = (dbArticles || []).find(a => String(a.id) === String(articleId));
+  const articleData = dbArticle?.data || dbArticle;
+  const fullArticle = articleData?.content ? {
+    content: fixArticleLinks(articleData.content),
+    metaTitle: articleData.meta_title,
+    metaDescription: articleData.meta_description,
+    tags: articleData.tags
+  } : null;
+
+  // Dynamic load of full article content (code-split)
+  const [dynamicFullArticle, setDynamicFullArticle] = React.useState(fullArticle);
+  React.useEffect(() => {
+    if (!fullArticle && articleId) {
+      getFullArticleDynamic(articleId).then(result => {
+        setDynamicFullArticle(result);
+      });
+    }
+  }, [articleId, fullArticle]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center px-4">
@@ -1107,25 +1130,6 @@ export default function ArticleDetail() {
   const Icon = article.icon;
   const colors = colorClasses[article.color];
 
-  // Get full article content from database
-  const dbArticle = dbArticles.find(a => String(a.id) === String(articleId));
-  const articleData = dbArticle?.data || dbArticle;
-  const fullArticle = articleData?.content ? { 
-    content: fixArticleLinks(articleData.content),
-    metaTitle: articleData.meta_title,
-    metaDescription: articleData.meta_description,
-    tags: articleData.tags
-  } : null;
-
-  // Dynamic load of full article content (code-split)
-  const [dynamicFullArticle, setDynamicFullArticle] = React.useState(fullArticle);
-  React.useEffect(() => {
-    if (!fullArticle && articleId) {
-      getFullArticleDynamic(articleId).then(result => {
-        setDynamicFullArticle(result);
-      });
-    }
-  }, [articleId, fullArticle]);
   const resolvedFullArticle = fullArticle || dynamicFullArticle;
 
   // Generate optimized SEO data

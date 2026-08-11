@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, MapPin, User, Mail, CheckCircle, TrendingDown, Shield, Zap } from "lucide-react";
 import popupImage from "/images/exit-popup-illustration.png";
 

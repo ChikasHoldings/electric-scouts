@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Scale, FileText, AlertTriangle, Users, Globe, Shield, Gavel, Mail, BookOpen, RefreshCw } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";

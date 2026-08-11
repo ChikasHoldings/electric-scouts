@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { generateProviderSlug, getProviderLogoUrl, getProviderPageUrl } from "@/utils/providerSlug";
+import { generateProviderSlug, getProviderLogoUrl } from "@/utils/providerSlug";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Zap, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp } from "lucide-react";
+import { MapPin, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp } from "lucide-react";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";

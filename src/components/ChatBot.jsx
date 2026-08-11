@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { UploadFile } from "@/api/supabaseIntegrations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { X, Send, MessageCircle, Loader2, Zap, ExternalLink, Upload, Paperclip } from "lucide-react";
+import { X, Send, MessageCircle, Loader2, Paperclip } from "lucide-react";
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);

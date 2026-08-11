@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf, Search } from "lucide-react";
-import ValidatedZipInput from "./components/ValidatedZipInput";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
-import ChatBot from "./components/ChatBot";
 import ExitIntentPopup from "./components/ExitIntentPopup";
 
 const topStates = [
@@ -130,7 +126,7 @@ export default function Layout({ children, currentPageName }) {
                   alt="Electric Scouts Logo - Compare Electricity Rates and Save on Your Energy Bill in 12 Deregulated States"
                   className="h-9 sm:h-9 lg:h-10"
                   loading="eager"
-                  fetchpriority="high"
+                  fetchPriority="high"
                   width="193"
                   height="40"
                 />

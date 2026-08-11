@@ -1,4 +1,3 @@
-import React from "react";
 
 /**
  * ImageOptimizer Component - Ensures all images have proper SEO attributes

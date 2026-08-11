@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { MapPin, AlertCircle, CheckCircle } from "lucide-react";
 import { validateZipCode } from "./compare/stateData";

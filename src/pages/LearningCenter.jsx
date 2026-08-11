@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   BookOpen, Zap, DollarSign, Leaf, TrendingDown, Shield, 
-  Clock, Users, ArrowRight, CheckCircle, MapPin, Building2, Home, FileText, Star, Tag, X
+  Clock, ArrowRight, MapPin, Building2, FileText, Star, Tag, X
 } from "lucide-react";
-import SEOHead, { getBreadcrumbSchema, getArticleSchema } from "../components/SEOHead";
+import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import EnhancedSearch from "../components/learning/EnhancedSearch";
 import ArticleSuggestions from "../components/learning/ArticleSuggestions";

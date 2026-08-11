@@ -1,4 +1,4 @@
-import { BookOpen, DollarSign, Leaf, TrendingDown, Shield, Clock, Users, Zap, Map, Building2, Home, FileText } from "lucide-react";
+import { BookOpen, Map, Building2 } from "lucide-react";
 
 // Comprehensive article database with real, human-written content
 export const articles = [

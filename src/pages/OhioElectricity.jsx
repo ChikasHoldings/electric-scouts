@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
 import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
@@ -31,7 +30,7 @@ export default function OhioElectricity() {
       {
         id: 1,
         question: "How does Ohio's deregulated electricity market work?",
-        answer: "Ohio has a fully deregulated electricity market where residents and businesses can choose their electricity supplier from over 40 competing providers. Your local utility company (AEP Ohio, Duke Energy, or FirstEnergy) still maintains the power grid and handles service issues, but you select who supplies your electricity and at what rate."
+        answer: "Ohio has a fully deregulated electricity market where residents and businesses can choose their electricity supplier from competing providers. Your local utility company (AEP Ohio, Duke Energy, or FirstEnergy) still maintains the power grid and handles service issues, but you select who supplies your electricity and at what rate."
       },
       {
         id: 2,

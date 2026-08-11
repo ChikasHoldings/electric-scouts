@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ElectricityProvider, ElectricityPlan, AffiliateLink } from "@/api/supabaseEntities";
 import { PROVIDER_SEED_DATA, PLAN_SEED_DATA, DEREGULATED_STATES } from "@/data/providerSeedData";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/table";
 import {
   Plus, Pencil, Trash2, Search, Loader2, Building2, ExternalLink,
-  Star, Link2, Download, Filter, CheckCircle2, XCircle, Leaf,
-  Zap, Building, AlertTriangle, RefreshCw, Database,
+  Star, CheckCircle2, XCircle, Leaf,
+  Zap, Building, AlertTriangle, Database,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -68,7 +68,7 @@ export default function AdminProviders() {
   const createMutation = useMutation({
     mutationFn: (data) => ElectricityProvider.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-providers"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
       toast({ title: "Provider created" });
       closeDialog();
     },
@@ -78,7 +78,7 @@ export default function AdminProviders() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => ElectricityProvider.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-providers"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
       toast({ title: "Provider updated" });
       closeDialog();
     },
@@ -88,7 +88,7 @@ export default function AdminProviders() {
   const deleteMutation = useMutation({
     mutationFn: (id) => ElectricityProvider.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-providers"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
       toast({ title: "Provider deleted" });
       setDeleteConfirm(null);
     },
@@ -97,7 +97,7 @@ export default function AdminProviders() {
 
   const toggleMutation = useMutation({
     mutationFn: ({ id, is_active }) => ElectricityProvider.update(id, { is_active }),
-    onSuccess: () => queryClient.invalidateQueries(["admin-providers"]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-providers"] }),
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 
@@ -159,7 +159,7 @@ export default function AdminProviders() {
       }
 
       // Refresh providers list to get IDs
-      await queryClient.invalidateQueries(["admin-providers"]);
+      await queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
       const { data: allProviders } = await supabase.from("electricity_providers").select("id, name, slug, website_url, affiliate_url, has_affiliate_program").order("name");
 
       // Step 2: Seed plans
@@ -204,11 +204,11 @@ export default function AdminProviders() {
         }
       }
 
-      queryClient.invalidateQueries(["admin-providers"]);
-      queryClient.invalidateQueries(["admin-plans-all"]);
-      queryClient.invalidateQueries(["admin-plans"]);
-      queryClient.invalidateQueries(["admin-business-plans"]);
-      queryClient.invalidateQueries(["admin-renewable-plans"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-plans-all"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-plans"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-renewable-plans"] });
 
       toast({
         title: "Database seeded successfully",
@@ -233,11 +233,11 @@ export default function AdminProviders() {
       const { error: provErr } = await supabase.from("electricity_providers").delete().neq("id", "00000000-0000-0000-0000-000000000000");
       if (provErr) throw provErr;
 
-      queryClient.invalidateQueries(["admin-providers"]);
-      queryClient.invalidateQueries(["admin-plans-all"]);
-      queryClient.invalidateQueries(["admin-plans"]);
-      queryClient.invalidateQueries(["admin-business-plans"]);
-      queryClient.invalidateQueries(["admin-renewable-plans"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-plans-all"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-plans"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-renewable-plans"] });
 
       toast({ title: "Cleanup complete", description: "All old providers, plans, and affiliate links removed." });
       setCleanupDialogOpen(false);

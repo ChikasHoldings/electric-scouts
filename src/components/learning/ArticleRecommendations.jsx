@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, TrendingUp, User, Sparkles } from "lucide-react";
 import { InvokeLLM } from "@/api/supabaseIntegrations";

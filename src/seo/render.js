@@ -168,6 +168,7 @@ export function faqSchema(faqs) {
 }
 
 export function structuredDataFor(route, content) {
+  /** @type {Record<string, any>[]} */
   const graph = [organizationSchema(), websiteSchema()];
   const trail = breadcrumbsFor(route);
   if (trail.length > 1) graph.push(breadcrumbSchema(trail));
@@ -344,16 +345,20 @@ function renderSection(section) {
  * The content model for a route. Exported so the prerenderer can build it once
  * and hand the same object to both renderHead (for FAQ markup) and renderBody.
  */
+/**
+ * @param {Record<string, any>} route
+ * @param {{citiesByState?: Record<string, any[]>, states?: any[], articles?: any[]}} [context]
+ */
 export function buildPageContent(route, context = {}) {
   switch (route.type) {
     case 'city':
-      return buildCitySections(route, context);
+      return buildCitySections(route, { citiesByState: context.citiesByState || {} });
     case 'state':
-      return buildStateSections(route, context);
+      return buildStateSections(route);
     case 'provider':
-      return buildProviderSections(route, context);
+      return buildProviderSections(route);
     case 'article':
-      return buildArticleSections(route, context);
+      return buildArticleSections(route);
     default:
       return buildStaticSections(route, context);
   }

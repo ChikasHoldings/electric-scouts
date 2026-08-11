@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -10,9 +8,7 @@ import { ArrowRight, ArrowLeft, Zap, CheckCircle, Building, TrendingDown, Shield
 import ValidatedZipInput from "../components/ValidatedZipInput";
 import { getCityFromZip, getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
-import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
-import IneligibleZipMessage from "../components/compare/IneligibleZipMessage";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import EmailResults from "../components/compare/EmailResults";

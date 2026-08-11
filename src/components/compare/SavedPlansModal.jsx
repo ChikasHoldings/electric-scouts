@@ -1,8 +1,7 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { X, Heart, Zap, Clock, Leaf, ExternalLink, Trash2 } from "lucide-react";
+import { X, Heart, Clock, Leaf, ExternalLink, Trash2 } from "lucide-react";
 
 export default function SavedPlansModal({ isOpen, onClose, savedPlans, usage, onToggleSave, isPlanSaved }) {
   if (!isOpen) return null;

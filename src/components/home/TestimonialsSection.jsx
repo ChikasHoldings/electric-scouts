@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { Star, User } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Dynamic time-ago calculation based on a base date offset from today

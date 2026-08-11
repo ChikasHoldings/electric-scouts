@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * /robots — a human-readable view of the live robots.txt.

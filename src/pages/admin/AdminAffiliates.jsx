@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabaseClient";
 import { Button } from "../../components/ui/button";
@@ -133,7 +133,7 @@ export default function AdminAffiliates() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-affiliates"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-affiliates"] });
       toast({ title: "Affiliate link created successfully" });
       closeDialog();
     },
@@ -150,7 +150,7 @@ export default function AdminAffiliates() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-affiliates"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-affiliates"] });
       toast({ title: "Affiliate link updated successfully" });
       closeDialog();
     },
@@ -167,8 +167,8 @@ export default function AdminAffiliates() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-affiliates"]);
-      queryClient.invalidateQueries(["admin-click-counts"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-affiliates"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-click-counts"] });
       toast({ title: "Affiliate link deleted" });
       setDeleteConfirm(null);
     },
@@ -185,7 +185,7 @@ export default function AdminAffiliates() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-affiliates"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-affiliates"] });
       toast({ title: "Status updated" });
     },
     onError: (err) =>

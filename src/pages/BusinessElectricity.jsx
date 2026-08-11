@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ElectricityPlan } from "@/api/supabaseEntities";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, DollarSign, Clock, Award, AlertCircle, Leaf } from "lucide-react";
+import { Building2, TrendingDown, Zap, FileText, CheckCircle, ArrowRight, DollarSign, Clock, Award, AlertCircle } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import CustomQuoteModal from "../components/business/CustomQuoteModal";

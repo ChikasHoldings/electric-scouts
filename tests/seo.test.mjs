@@ -673,7 +673,10 @@ describe('invalid dynamic URLs do not masquerade as pages', { skip: !distExists 
 
   const invalid = [
     '/providers/this-provider-does-not-exist',
-    '/providers/txu-energy',              // real supplier, but not active: no page
+    // A supplier row that exists but carries no active plan gets no page — an
+    // empty profile is exactly the thin content this rebuild removes. (TXU used
+    // to sit here as an inactive supplier; it now has plans and a real page.)
+    '/providers/liberty-power',
     '/electricity-rates/texas/not-a-real-city',
     '/electricity-rates/atlantis/springfield',
     '/learn/999999',

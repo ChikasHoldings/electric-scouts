@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
 import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
@@ -31,7 +30,7 @@ export default function NewYorkElectricity() {
       {
         id: 1,
         question: "How does New York's deregulated electricity market work?",
-        answer: "New York has a deregulated electricity market where residents and businesses can choose their electricity supplier (ESCO) from over 42 competing providers. Con Edison, National Grid, NYSEG, or RG&E still deliver your electricity and maintain the infrastructure, but you can shop for competitive supply rates from alternative providers."
+        answer: "New York has a deregulated electricity market where residents and businesses can choose their electricity supplier (ESCO) from competing providers. Con Edison, National Grid, NYSEG, or RG&E still deliver your electricity and maintain the infrastructure, but you can shop for competitive supply rates from alternative providers."
       },
       {
         id: 2,

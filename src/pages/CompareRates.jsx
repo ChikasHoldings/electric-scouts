@@ -7,20 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X, FileText, Mail, AlertCircle } from "lucide-react";
-import { validateZipCode, getStateByZip } from "../components/compare/stateData";
+import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, Mail } from "lucide-react";
+import { validateZipCode } from "../components/compare/stateData";
 import { 
   getProvidersForZipCode, 
-  getProviderDetails, 
   getCityFromZip,
   getStateFromZip
 } from "../components/compare/providerAvailability";
 import { 
-  filterPlansByZip, 
-  calculateMonthlyBill,
-  validateZipForComparison 
+  calculateMonthlyBill 
 } from "../components/compare/dataValidation";
-import { calculateMatchScore, calculateSavings, generatePlanSummary } from "../components/compare/matchScore";
+import { calculateMatchScore, generatePlanSummary } from "../components/compare/matchScore";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import EmailResults from "../components/compare/EmailResults";

@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Award, Users, Heart, CheckCircle, ArrowRight, Mail, Zap, Shield, TrendingDown, Globe, Target, Lightbulb, BarChart3 } from "lucide-react";

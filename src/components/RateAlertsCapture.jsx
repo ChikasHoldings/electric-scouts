@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Bell, CheckCircle, MapPin, Mail, User, ArrowRight } from "lucide-react";
 
 export default function RateAlertsCapture({ sourcePage = "homepage" }) {

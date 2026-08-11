@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import { CustomBusinessQuote } from "@/api/supabaseEntities";
 import { useAuth } from "@/lib/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -7,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Clock, CheckCircle, FileText, TrendingDown, AlertCircle, Mail, Phone, MapPin, Calendar, Zap, DollarSign } from "lucide-react";
+import { Building2, Clock, CheckCircle, FileText, TrendingDown, AlertCircle, Mail, Phone, MapPin, Calendar, Zap } from "lucide-react";
 
 export default function BusinessQuoteDashboard() {
   const { user, isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();

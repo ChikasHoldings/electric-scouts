@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Upload, FileText, AlertCircle, CheckCircle, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Upload, FileText, AlertCircle, CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
 
 export default function BillUploadStep({ onSkip, onAnalysisComplete, onBack, accentColor = "#0A5C8C" }) {
   const [file, setFile] = useState(null);

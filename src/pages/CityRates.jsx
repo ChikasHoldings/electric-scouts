@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams, useParams } from "react-router-dom";
-import { parseCityUrl, getCityUrl, getStatePageUrl, STATE_CODES, STATE_DISPLAY_NAMES } from "@/utils/cityUrls";
+import { parseCityUrl, getCityUrl, getStatePageUrl } from "@/utils/cityUrls";
 import { cityTitle, cityDescription } from "@/seo/routes.js";
 import { getStateMarket } from "@/seo/market.js";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -12,12 +12,10 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  Zap, TrendingDown, CheckCircle, 
+  Zap, CheckCircle, 
   ArrowRight, DollarSign, Shield, Star, Leaf, ChevronDown 
 } from "lucide-react";
-import PlanCard from "../components/compare/PlanCard";
 import { getProvidersForZipCode, getProviderDetails } from "../components/compare/providerAvailability";
-import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 import ValidatedZipInput from "../components/ValidatedZipInput";
 

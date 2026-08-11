@@ -1,19 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, TrendingDown, ChevronDown, ArrowRight, Building2, ExternalLink } from "lucide-react";
+import { MapPin, CheckCircle, Zap, DollarSign, Award, ChevronDown, ArrowRight, Building2, ExternalLink } from "lucide-react";
 import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
-import { getProvidersForZipCode } from "../components/compare/providerAvailability";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
 export default function TexasElectricity() {

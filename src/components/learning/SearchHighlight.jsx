@@ -1,4 +1,3 @@
-import React from "react";
 
 // Component to highlight search terms in text
 export default function SearchHighlight({ text, searchTerm }) {

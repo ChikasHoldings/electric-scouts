@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Article } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { generateDynamicSitemap } from "../components/seo/SitemapManager";

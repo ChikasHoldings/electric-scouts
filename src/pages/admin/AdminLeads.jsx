@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lead } from "@/api/supabaseEntities";
 import { Button } from "@/components/ui/button";
@@ -122,7 +122,7 @@ export default function AdminLeads() {
   const updateStatus = useMutation({
     mutationFn: ({ id, status }) => Lead.update(id, { status }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-leads"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
       toast({ title: "Lead status updated" });
     },
   });
@@ -130,7 +130,7 @@ export default function AdminLeads() {
   const deleteLead = useMutation({
     mutationFn: (id) => Lead.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-leads"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
       setDeleteConfirm(null);
       toast({ title: "Lead deleted" });
     },
@@ -218,7 +218,7 @@ export default function AdminLeads() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => queryClient.invalidateQueries(["admin-leads"])}
+            onClick={() => queryClient.invalidateQueries({ queryKey: ["admin-leads"] })}
           >
             <RefreshCw className="w-4 h-4 mr-1" /> Refresh
           </Button>
