@@ -4,9 +4,20 @@ import { createPageUrl } from "@/utils";
 import { getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Home as HomeIcon, FileText, Lightbulb, HelpCircle, Leaf, Search } from "lucide-react";
+import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Building2, Home as HomeIcon, FileText, Leaf, Search } from "lucide-react";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ExitIntentPopup from "./components/ExitIntentPopup";
+
+// Primary navigation — customer segments first (Residential → Commercial →
+// Renewable Energy), then the Bill Analyzer tool. Service Areas follows as a
+// dropdown, rendered separately below. Shared by the desktop nav and the mobile
+// slide-in menu so the two never drift.
+const navItems = [
+  { label: "Residential", page: "CompareRates", icon: HomeIcon, iconColor: "text-[#0A5C8C]" },
+  { label: "Commercial", page: "BusinessElectricity", icon: Building2, iconColor: "text-indigo-600" },
+  { label: "Renewable Energy", page: "RenewableEnergy", icon: Leaf, iconColor: "text-green-600" },
+  { label: "Bill Analyzer", page: "BillAnalyzer", icon: FileText, iconColor: "text-orange-600" }
+];
 
 const topStates = [
   { name: "Texas", code: "TX", page: "TexasElectricity" },
@@ -32,9 +43,7 @@ export default function Layout({ children, currentPageName }) {
   const [scrolled, setScrolled] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [serviceAreaOpen, setServiceAreaOpen] = useState(false);
-  const [zipCode, setZipCode] = useState("");
-  const [isZipValid, setIsZipValid] = useState(false);
-  
+
   // Auto-notify search engines on route changes (new articles published)
   useAutoSitemapNotify(location.pathname.includes('ArticleDetail') || location.pathname.startsWith('/learn/'), 5000);
 
@@ -134,24 +143,29 @@ export default function Layout({ children, currentPageName }) {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-              <Link
-                to={createPageUrl("AllProviders")}
-                className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium"
-              >
-                Providers
-              </Link>
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-8">
+              {navItems.map((item) => (
+                <Link
+                  key={item.page}
+                  to={createPageUrl(item.page)}
+                  className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium whitespace-nowrap"
+                >
+                  {item.label}
+                </Link>
+              ))}
 
-              <div 
+              <div
                 className="relative group"
                 onMouseEnter={() => setServiceAreaOpen(true)}
                 onMouseLeave={() => setServiceAreaOpen(false)}
               >
-                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium">
+                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium whitespace-nowrap">
                   Service Areas
                   <ChevronDown className={`w-4 h-4 transition-transform ${serviceAreaOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[480px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
+                {/* Anchored right: as the last nav item, a centered 480px panel
+                    would overhang the viewport on narrower desktop widths. */}
+                <div className={`absolute top-full right-0 mt-2 w-[480px] bg-white rounded-xl shadow-2xl transition-all duration-300 z-50 border border-gray-100 ${
                   serviceAreaOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
                 }`}>
                   <div className="p-4">
@@ -164,9 +178,9 @@ export default function Layout({ children, currentPageName }) {
                         </div>
                         <div className="space-y-0.5">
                           {topStates.map((state, index) => (
-                            <Link 
+                            <Link
                               key={index}
-                              to={createPageUrl(state.page)} 
+                              to={createPageUrl(state.page)}
                               className="block px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
                               onClick={() => setServiceAreaOpen(false)}
                             >
@@ -174,8 +188,8 @@ export default function Layout({ children, currentPageName }) {
                             </Link>
                           ))}
                         </div>
-                        <Link 
-                          to={createPageUrl("AllStates")} 
+                        <Link
+                          to={createPageUrl("AllStates")}
                           className="block mt-2.5 pt-2.5 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
                           onClick={() => setServiceAreaOpen(false)}
                         >
@@ -195,9 +209,9 @@ export default function Layout({ children, currentPageName }) {
                             const citySlug = city.name.toLowerCase().replace(/\s+/g, '-');
                             const stateSlug = stateSlugMap[city.state] || city.state.toLowerCase();
                             return (
-                            <Link 
+                            <Link
                               key={index}
-                              to={`/electricity-rates/${stateSlug}/${citySlug}`} 
+                              to={`/electricity-rates/${stateSlug}/${citySlug}`}
                               className="block px-3 py-2 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 hover:text-[#0A5C8C] rounded-lg transition-all font-medium"
                               onClick={() => setServiceAreaOpen(false)}
                             >
@@ -206,8 +220,8 @@ export default function Layout({ children, currentPageName }) {
                             );
                           })}
                         </div>
-                        <Link 
-                          to={createPageUrl("AllCities")} 
+                        <Link
+                          to={createPageUrl("AllCities")}
                           className="block mt-2.5 pt-2.5 border-t border-gray-100 text-sm text-[#FF6B35] hover:text-[#e55a2b] font-semibold transition-colors"
                           onClick={() => setServiceAreaOpen(false)}
                         >
@@ -215,43 +229,6 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <Link
-                to={createPageUrl("BillAnalyzer")}
-                className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium"
-              >
-                Bill Analyzer
-              </Link>
-
-              <Link
-                to={createPageUrl("BusinessElectricity")}
-                className="text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium"
-              >
-                Business Rates
-              </Link>
-
-              <div className="relative group">
-                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium">
-                  Resources
-                  <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
-                </button>
-                <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 p-3 z-50 border border-gray-100">
-                  <div className="space-y-1.5">
-                    <Link to={createPageUrl("LearningCenter")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
-                      Learning Center
-                    </Link>
-                    <Link to={createPageUrl("FAQ")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
-                      FAQs
-                    </Link>
-                    <Link to={createPageUrl("RenewableEnergy")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
-                      Renewable Energy
-                    </Link>
-                    <Link to={createPageUrl("HomeConcierge")} className="block text-sm text-gray-600 hover:text-blue-600 hover:translate-x-1 transition-all py-2">
-                      Home Concierge
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -324,81 +301,30 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Menu Content */}
             <div className="p-4">
-              {/* Navigation Links - Removed icon containers, reduced spacing */}
-              <Link 
-                to={createPageUrl("Home")} 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <HomeIcon className="w-5 h-5 text-[#0A5C8C] flex-shrink-0" />
-                <span className="text-gray-900 font-medium text-base">Home</span>
-              </Link>
+              {/* Navigation Links — same items and order as the desktop nav */}
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.page}
+                    to={createPageUrl(item.page)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Icon className={`w-5 h-5 ${item.iconColor} flex-shrink-0`} />
+                    <span className="text-gray-900 font-medium text-base">{item.label}</span>
+                  </Link>
+                );
+              })}
 
-              <div className="border-t border-gray-200 my-2"></div>
-
-              <Link 
-                to={createPageUrl("AllProviders")} 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Building className="w-5 h-5 text-purple-600 flex-shrink-0" />
-                <span className="text-gray-900 font-medium text-base">Providers</span>
-              </Link>
-
-              <Link 
-                to={createPageUrl("AllStates")} 
+              {/* Service Areas — the desktop dropdown flattens to its hub page here */}
+              <Link
+                to={createPageUrl("AllStates")}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <MapPin className="w-5 h-5 text-green-600 flex-shrink-0" />
                 <span className="text-gray-900 font-medium text-base">Service Areas</span>
-              </Link>
-
-              <Link 
-                to={createPageUrl("BillAnalyzer")} 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <FileText className="w-5 h-5 text-orange-600 flex-shrink-0" />
-                <span className="text-gray-900 font-medium text-base">Bill Analyzer</span>
-              </Link>
-
-              <Link 
-                to={createPageUrl("BusinessElectricity")} 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Building className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-                <span className="text-gray-900 font-medium text-base">Business Rates</span>
-              </Link>
-
-              <div className="border-t border-gray-200 my-2"></div>
-
-              <Link 
-                to={createPageUrl("LearningCenter")} 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Lightbulb className="w-5 h-5 text-indigo-600 flex-shrink-0" />
-                <span className="text-gray-900 font-medium text-base">Learning Center</span>
-              </Link>
-
-              <Link 
-                to={createPageUrl("FAQ")} 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <HelpCircle className="w-5 h-5 text-teal-600 flex-shrink-0" />
-                <span className="text-gray-900 font-medium text-base">FAQs</span>
-              </Link>
-
-              <Link 
-                to={createPageUrl("RenewableEnergy")} 
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Leaf className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <span className="text-gray-900 font-medium text-base">Renewable Energy</span>
               </Link>
 
               {/* Primary CTA */}
