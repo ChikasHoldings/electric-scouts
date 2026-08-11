@@ -449,10 +449,13 @@ describe('prerendered output in dist/', () => {
     assert.equal(tag.canonical(html), `${CANONICAL_HOST}/`);
   });
 
-  test('404.html is a real, noindex error page', () => {
+  test('404.html is a real, noindex error page with no canonical', () => {
     const html = readDist('404.html');
     assert.match(tag.robots(html) || '', /noindex/);
     assert.match(tag.title(html) || '', /not found/i);
+    // It answers for every unknown URL, so it represents none of them.
+    assert.equal(tag.canonical(html), undefined, '404 page must not declare a canonical');
+    assert.ok(tag.h1(html), 'missing <h1>');
   });
 
   test('app-shell.html declares no canonical and no robots directive', () => {

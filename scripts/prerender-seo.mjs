@@ -154,6 +154,7 @@ function build404Page(template, context) {
     type: 'static',
     path: '/404',
     noindex: true,
+    noCanonical: true,
     title: `Page Not Found | ${SITE_NAME}`,
     description: 'The page you are looking for does not exist. Browse electricity rates by state, city or provider instead.',
     heading: 'Page Not Found',

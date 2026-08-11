@@ -172,7 +172,9 @@ export function renderHead(route) {
     `<title>${escapeHtml(title)}</title>`,
     `<meta name="description" content="${escapeHtml(description)}" />`,
     `<meta name="robots" content="${robots}" />`,
-    `<link rel="canonical" href="${escapeHtml(canonical)}" />`,
+    // The 404 page is served from many URLs and represents none of them, so it
+    // declares no canonical rather than pointing at a URL that does not resolve.
+    ...(route.noCanonical ? [] : [`<link rel="canonical" href="${escapeHtml(canonical)}" />`]),
     `<meta name="author" content="${SITE_NAME}" />`,
     `<meta property="og:type" content="${ogType}" />`,
     `<meta property="og:site_name" content="${SITE_NAME}" />`,
