@@ -238,9 +238,84 @@ async function handleFollowUp(req, res) {
 
 // ─── Create Lead Handler ───
 
+/**
+ * Map the comparison-engine payload onto lead columns.
+ *
+ * Only keys that are actually present are returned, so a progressive write
+ * early in the flow cannot blank out a value a later write already recorded.
+ *
+ * The utility account number, customer name and service address read off a bill
+ * are deliberately absent: the client never sends them, and nothing here would
+ * store them if it did.
+ */
+function mapComparisonColumns(comparison, attribution) {
+  const columns = {};
+  if (!comparison || typeof comparison !== "object") return columns;
+
+  const direct = {
+    session_id: "comparison_session_id",
+    status: "comparison_status",
+    customer_type: "customer_type",
+    energy_preference: "energy_preference",
+    property_type: "property_type",
+    shopping_intent: "shopping_intent",
+    usage_range: "usage_range",
+    business_type: "business_type",
+    business_name: "business_name",
+    monthly_spend_range: "monthly_spend_range",
+    timing: "timing",
+    monthly_usage_kwh: "monthly_usage_kwh",
+    monthly_cost: "monthly_cost",
+    current_provider: "current_provider",
+    current_plan: "current_plan",
+    effective_rate: "effective_rate",
+    contract_end_date: "contract_end_date",
+    renewable_percentage: "renewable_percentage",
+    peak_demand_kw: "peak_demand_kw",
+    bill_uploaded: "bill_uploaded",
+    bill_analysis_status: "bill_analysis_status",
+    bill_confidence: "bill_confidence",
+    bill_analyzed_at: "bill_analyzed_at",
+    route: "monetization_route",
+    qualification: "qualification",
+    lead_score: "lead_score",
+  };
+
+  for (const [key, column] of Object.entries(direct)) {
+    const value = comparison[key];
+    if (value === null || value === undefined || value === "") continue;
+    columns[column] = value;
+  }
+
+  if (comparison.consent_contact) {
+    columns.consent_contact = true;
+    // Auditable evidence of when consent was given, not just that it was.
+    columns.consent_recorded_at = new Date().toISOString();
+  }
+
+  if (comparison.status === "completed") {
+    columns.comparison_status = "completed";
+    columns.completed_at = new Date().toISOString();
+  }
+
+  if (attribution && typeof attribution === "object") {
+    for (const key of [
+      "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
+      "referrer", "landing_page",
+    ]) {
+      if (attribution[key]) columns[key] = String(attribution[key]).slice(0, 500);
+    }
+  }
+
+  return columns;
+}
+
 async function handleCreateLead(req, res) {
   try {
-    const { email, zip, name, source, source_page, city } = req.body;
+    const {
+      email, zip, name, source, source_page, city,
+      phone, comparison, attribution,
+    } = req.body;
 
     if (!email || !source) {
       return res.status(400).json({ error: "Email and source are required" });
@@ -267,9 +342,13 @@ async function handleCreateLead(req, res) {
           duplicate: true,
         });
       }
-      const updateData = {};
+      // Progressive enrichment: the comparison engine calls this repeatedly as
+      // the visitor answers more questions, so the same row gains detail
+      // instead of a second row appearing.
+      const updateData = mapComparisonColumns(comparison, attribution);
       if (zip) updateData.zip = zip;
       if (name) updateData.name = name;
+      if (phone) updateData.phone = phone;
       if (city) updateData.city = city;
       if (resolvedState) updateData.state = resolvedState;
       if (source_page) updateData.source_page = source_page;
@@ -290,9 +369,11 @@ async function handleCreateLead(req, res) {
     const { data: lead, error: insertError } = await supabase
       .from("leads")
       .insert({
+        ...mapComparisonColumns(comparison, attribution),
         email: email.toLowerCase().trim(),
         zip: zip || null,
         name: name || null,
+        phone: phone || null,
         city: city || null,
         state: resolvedState || null,
         source,
