@@ -146,6 +146,13 @@ export default function ProviderDetails() {
     }
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
+        {/* An unknown or inactive provider slug renders no content — keep it out
+            of the index rather than letting a thin "not found" page qualify. */}
+        <SEOHead
+          title="Provider Not Found | Electric Scouts"
+          description="This electricity provider page is not available. Browse all providers to compare rates."
+          noindex
+        />
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Provider Not Found</h1>
           <Link to={createPageUrl("AllProviders")}>

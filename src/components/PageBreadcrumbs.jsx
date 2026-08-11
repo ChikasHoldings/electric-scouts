@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
+import { absoluteUrl } from "@/seo/site";
 
 /**
  * PageBreadcrumbs - Reusable breadcrumb component with visual UI and JSON-LD schema markup.
@@ -23,7 +24,7 @@ export default function PageBreadcrumbs({ items = [], variant = "light", classNa
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      ...(item.url ? { "item": `https://www.electricscouts.com${item.url}` } : {})
+      ...(item.url ? { "item": absoluteUrl(item.url) } : {})
     }))
   };
 

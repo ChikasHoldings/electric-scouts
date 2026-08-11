@@ -67,6 +67,7 @@ export default function Sitemap() {
         description="Complete sitemap of Electric Scouts electricity rate comparison platform. Find all pages, states, cities, providers, and resources."
         keywords="electricscouts sitemap, electricity comparison pages, all states electricity rates"
         canonical="/sitemap"
+        noindex
       />
 
       <div className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white py-12">
