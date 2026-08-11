@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Share2, Facebook, Twitter, Linkedin, Mail, Link, Check } from 'lucide-react';
 
 export default function SocialShareBar({ title, url, description, compact = false }) {

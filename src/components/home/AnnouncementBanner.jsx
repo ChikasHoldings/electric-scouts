@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { TrendingUp, Users, Award, Clock, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { TrendingUp, Users, Award, Clock } from "lucide-react";
 
 const announcements = [
   {

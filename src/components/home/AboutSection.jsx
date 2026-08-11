@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { FileText, Search, ShieldCheck } from "lucide-react";
@@ -64,7 +63,7 @@ export default function AboutSection() {
                 </div>
                 <div>
                   <span className="text-base sm:text-lg font-bold text-gray-900">No Bias. No Sponsored Rankings.</span>
-                  <p className="text-sm sm:text-base text-gray-600 mt-0.5">40+ providers compete so the best deal always wins.</p>
+                  <p className="text-sm sm:text-base text-gray-600 mt-0.5">Competing suppliers means the best deal wins your business.</p>
                 </div>
               </div>
             </div>

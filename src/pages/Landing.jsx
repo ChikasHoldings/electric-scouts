@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  MapPin, CheckCircle, Zap, TrendingDown, Shield, 
-  Clock, Star, Users, ArrowRight, Sparkles, FileText, Search, ShieldCheck
+  MapPin, CheckCircle, Zap, TrendingDown, Shield, Star, Users, ArrowRight, Sparkles, FileText, Search, ShieldCheck
 } from "lucide-react";
 import { 
   OrganizationSchema, 
@@ -15,7 +14,6 @@ import {
   FAQPageSchema,
   HowToSchema 
 } from "../components/seo/StructuredData";
-import { generateAltText } from "../components/seo/SEOConfig";
 import SEOHead from "@/components/SEOHead";
 
 export default function Landing() {

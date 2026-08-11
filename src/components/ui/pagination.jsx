@@ -16,6 +16,7 @@ const Pagination = ({
 )
 Pagination.displayName = "Pagination"
 
+/** @type {React.ForwardRefExoticComponent<any>} */
 const PaginationContent = React.forwardRef(({ className, ...props }, ref) => (
   <ul
     ref={ref}
@@ -24,6 +25,7 @@ const PaginationContent = React.forwardRef(({ className, ...props }, ref) => (
 ))
 PaginationContent.displayName = "PaginationContent"
 
+/** @type {React.ForwardRefExoticComponent<any>} */
 const PaginationItem = React.forwardRef(({ className, ...props }, ref) => (
   <li ref={ref} className={cn("", className)} {...props} />
 ))

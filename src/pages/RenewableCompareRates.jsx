@@ -5,11 +5,10 @@ import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, ArrowLeft, Zap, CheckCircle, Home, Building, Leaf, Wind, Sun } from "lucide-react";
+import { ArrowRight, ArrowLeft, Zap, CheckCircle, Home, Leaf, Wind, Sun } from "lucide-react";
 import ValidatedZipInput from "../components/ValidatedZipInput";
 import { getCityFromZip, getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
-import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -198,8 +197,8 @@ export default function RenewableCompareRates() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
       <SEOHead
-        title="Go Green | Compare Renewable Electricity Plans | Electric Scouts"
-        description="Find the best renewable energy electricity plans in your area. Compare 100% green energy rates from wind and solar providers. Support clean energy while saving money."
+        title="Compare Renewable Electricity Plans | Electric Scouts"
+        description="Filter the comparison down to plans backed by 100% renewable energy and rank them by rate, contract length or supplier. Enter a ZIP code to start."
         keywords="renewable energy plans, green electricity, 100% renewable, wind energy, solar power, clean energy rates"
         canonical="/renewable-compare-rates"
         structuredData={[

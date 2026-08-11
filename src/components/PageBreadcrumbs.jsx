@@ -1,14 +1,16 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
+import { absoluteUrl } from "@/seo/site";
 
 /**
  * PageBreadcrumbs - Reusable breadcrumb component with visual UI and JSON-LD schema markup.
  * 
- * @param {Array} items - Array of breadcrumb items: [{ name: "Home", url: "/" }, { name: "States", url: "/all-states" }, { name: "Texas" }]
- *   - Last item should NOT have a url (it's the current page)
- * @param {string} variant - "light" (for dark backgrounds) or "dark" (for light backgrounds)
- * @param {string} className - Additional CSS classes
+ * @param {object} props
+ * @param {Array<{name: string, url?: string}>} [props.items] - Breadcrumb trail:
+ *   [{ name: "Home", url: "/" }, { name: "States", url: "/all-states" }, { name: "Texas" }].
+ *   The last item should NOT have a url — it is the current page.
+ * @param {string} [props.variant] - "light" (for dark backgrounds) or "dark" (for light backgrounds)
+ * @param {string} [props.className] - Additional CSS classes
  */
 export default function PageBreadcrumbs({ items = [], variant = "light", className = "" }) {
   if (!items || items.length === 0) return null;
@@ -23,7 +25,7 @@ export default function PageBreadcrumbs({ items = [], variant = "light", classNa
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      ...(item.url ? { "item": `https://www.electricscouts.com${item.url}` } : {})
+      ...(item.url ? { "item": absoluteUrl(item.url) } : {})
     }))
   };
 

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { generateProviderSlug, getProviderLogoUrl, getProviderPageUrl } from "@/utils/providerSlug";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Star, Zap, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
+import { Search, Star, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -74,8 +74,8 @@ export default function AllProviders() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Browse All Energy Providers | Electric Scouts Directory"
-        description="Explore our full directory of energy providers across 12 deregulated states. Filter by state, plan type, or rating to find the right fit for your home or business. Transparent details, real reviews, no sales pressure."
+        title="Electricity Supplier Directory | Electric Scouts"
+        description="Browse every electricity supplier we track across 12 deregulated states, with the plans they offer, the states they cover and their contract terms."
         keywords="electricity providers, energy companies, power companies, best electricity provider, TXU Energy, Reliant Energy, Gexa Energy, Constellation Energy, electricity company reviews, energy provider comparison, electric companies near me"
         canonical="/all-providers"
         structuredData={breadcrumbData}

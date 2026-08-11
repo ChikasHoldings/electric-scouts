@@ -1,5 +1,5 @@
-import React from "react";
 import { validateSchema } from "./schemaValidator";
+import { SITE_URL, absoluteUrl } from "@/seo/site";
 
 /**
  * StructuredData Component
@@ -29,8 +29,8 @@ export function OrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Electric Scouts",
-    "url": "https://www.electricscouts.com",
-    "logo": "https://www.electricscouts.com/images/logo-header.png",
+    "url": SITE_URL,
+    "logo": `${SITE_URL}/images/logo-header.png`,
     "description": "Compare electricity rates from 40+ providers across 12 deregulated states. Save up to $800/year on your electricity bill.",
     "sameAs": [
       "https://facebook.com/electricscouts",
@@ -42,14 +42,10 @@ export function OrganizationSchema() {
       "contactType": "Customer Service",
       "email": "support@electricscouts.com",
       "areaServed": ["TX", "IL", "OH", "PA", "NY", "NJ", "MD", "MA", "ME", "NH", "RI", "CT"]
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "1200",
-      "bestRating": "5",
-      "worstRating": "1"
     }
+    // No aggregateRating: Electric Scouts publishes no verifiable first-party
+    // review data, and self-serving invented ratings breach Google's structured
+    // data policy (and risk a manual action).
   };
 
   return <StructuredData schema={schema} />;
@@ -64,7 +60,7 @@ export function BreadcrumbSchema({ items }) {
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": item.url ? `https://www.electricscouts.com${item.url}` : undefined
+      "item": item.url ? absoluteUrl(item.url) : undefined
     }))
   };
 
@@ -164,12 +160,12 @@ export function ArticleSchema({ article }) {
       "name": "Electric Scouts",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.electricscouts.com/images/logo-header.png"
+        "url": `${SITE_URL}/images/logo-header.png`
       }
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://www.electricscouts.com/article/${article.slug}`
+      "@id": absoluteUrl(`/learn/${article.slug}`)
     }
   };
 
@@ -182,12 +178,12 @@ export function WebSiteSchema() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Electric Scouts",
-    "url": "https://www.electricscouts.com",
+    "url": SITE_URL,
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://www.electricscouts.com/compare-rates?zip={search_term_string}"
+        "urlTemplate": `${SITE_URL}/compare-rates?zip={search_term_string}`
       },
       "query-input": "required name=search_term_string"
     }

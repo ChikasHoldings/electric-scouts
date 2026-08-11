@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Award, Users, Heart, CheckCircle, ArrowRight, Mail, Zap, Shield, TrendingDown, Globe, Target, Lightbulb, BarChart3 } from "lucide-react";
@@ -17,7 +16,7 @@ export default function AboutUs() {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
         title="About Electric Scouts | Who We Are & Why We Built This"
-        description="Electric Scouts was built with one goal: make it dead simple to find a better electricity deal. We are an independent comparison platform covering 12 deregulated states, 40+ providers, and hundreds of plans. No hidden fees, no bias — just clarity."
+        description="Electric Scouts is an independent electricity comparison service covering 12 deregulated states. What we track, what we do not do, and how we make money."
         keywords="about electricscouts, electricity comparison platform, energy comparison service, who we are, our mission, electricity shopping help, trusted energy comparison"
         canonical="/about-us"
         structuredData={[breadcrumbData, getOrganizationSchema()]}
@@ -48,7 +47,7 @@ export default function AboutUs() {
                 We Built the <span className="text-[#FF6B35]">Electricity Tool</span> We Wished Existed
               </h1>
               <p className="text-xl text-blue-100 leading-relaxed mb-8">
-                Electric Scouts is an independent platform that makes it simple to find a better electricity deal. We pull live rates from 40+ providers across 12 deregulated states so you can compare, decide, and switch — all without the sales pressure.
+                Electric Scouts is an independent platform that makes it simple to find a better electricity deal. We pull live rates from the suppliers we track across 12 deregulated states so you can compare, decide, and switch — all without the sales pressure.
               </p>
               <div className="flex flex-wrap gap-6 text-sm">
                 <div className="flex items-center gap-2">
@@ -57,7 +56,7 @@ export default function AboutUs() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span>40+ Providers</span>
+                  <span>12 Deregulated States</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-400" />
@@ -135,7 +134,7 @@ export default function AboutUs() {
                   Electric Scouts launched in Texas — one of the most competitive energy markets in the country — with a simple idea: pull every available plan into one place and let people see the real numbers. No jargon, no sponsored rankings, no pressure to sign up.
                 </p>
                 <p>
-                  Today we cover 12 deregulated states, 40+ providers, and hundreds of plans. Thousands of households and businesses use Electric Scouts every month to find rates that actually fit their needs — and on average, switchers save around $800 a year.
+                  Today we cover 12 deregulated states and hundreds of plans. Households and businesses use Electric Scouts to find rates that actually fit their needs — what you save depends on your current rate, your usage and the plan you pick.
                 </p>
               </div>
             </div>
@@ -144,7 +143,7 @@ export default function AboutUs() {
                 { year: "2019", event: "Electric Scouts founded in Texas", detail: "Launched with a mission to bring transparency to electricity shopping" },
                 { year: "2020", event: "Expanded to 6 states", detail: "Added Pennsylvania, New York, Illinois, Ohio, and New Jersey" },
                 { year: "2022", event: "Reached 10,000+ users", detail: "Milestone of helping thousands of families save on electricity" },
-                { year: "2024", event: "12 states, 40+ providers", detail: "Added Maryland, Massachusetts, Connecticut, and more" },
+                { year: "2024", event: "Expanded to 12 states", detail: "Added Maryland, Massachusetts, Connecticut, and more" },
                 { year: "2025", event: "Business & Renewable tools", detail: "Launched commercial rates comparison and green energy tools" },
                 { year: "2026", event: "AI-powered bill analysis", detail: "Introduced smart bill analyzer for personalized savings recommendations" }
               ].map((item, i) => (

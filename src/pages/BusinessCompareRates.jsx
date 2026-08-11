@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -10,9 +8,7 @@ import { ArrowRight, ArrowLeft, Zap, CheckCircle, Building, TrendingDown, Shield
 import ValidatedZipInput from "../components/ValidatedZipInput";
 import { getCityFromZip, getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { validateZipCode } from "../components/compare/stateData";
-import PlanCard from "../components/compare/PlanCard";
 import BillUploadStep from "../components/compare/BillUploadStep";
-import IneligibleZipMessage from "../components/compare/IneligibleZipMessage";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import EmailResults from "../components/compare/EmailResults";
@@ -223,8 +219,8 @@ export default function BusinessCompareRates() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <SEOHead
-        title="Business Rate Finder | Commercial Electricity Plans | Electric Scouts"
-        description="Find the best electricity rates for your business. Compare commercial energy plans from 40+ providers. Fixed rates, volume discounts, and dedicated business support."
+        title="Business Electricity Quotes | Electric Scouts"
+        description="Get commercial electricity quotes for your business. Commercial supply is priced against your load profile, so this is a quote request rather than a checkout."
         keywords="business electricity rates, commercial energy plans, business energy comparison, commercial electricity"
         canonical="/business-compare-rates"
         structuredData={[

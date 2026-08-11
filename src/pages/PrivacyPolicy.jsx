@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Eye, Lock, UserCheck, Cookie, Bell, Mail, FileText } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
@@ -229,8 +228,8 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Privacy Policy - Electric Scouts | How We Protect Your Data"
-        description="Electric Scouts privacy policy. Learn how we protect your personal information and data when you compare electricity rates. We do not sell your information."
+        title="Privacy Policy | Electric Scouts"
+        description="How Electric Scouts collects, uses and protects your information when you compare electricity plans. We do not sell your personal information."
         keywords="privacy policy, data protection, electricity comparison privacy, personal information security"
         canonical="/privacy-policy"
         structuredData={breadcrumbData}

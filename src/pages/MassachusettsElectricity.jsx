@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function MassachusettsElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("MA");
 
   const stateData = {
     name: "Massachusetts",
@@ -26,12 +30,12 @@ export default function MassachusettsElectricity() {
       {
         id: 1,
         question: "How does Massachusetts electricity deregulation work?",
-        answer: "Massachusetts has a deregulated electricity market where residents can choose their competitive supplier from over 34 providers. Eversource, National Grid, or Unitil continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
+        answer: "Massachusetts has a deregulated electricity market where residents can choose their competitive supplier from competing suppliers. Eversource, National Grid, or Unitil continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
       },
       {
         id: 2,
         question: "How much can I save on electricity in Massachusetts?",
-        answer: "Massachusetts residents save an average of $710 per year by comparing electricity rates from competitive suppliers. Savings are particularly strong in the Boston metro area. Your actual savings depend on your current basic service rate from Eversource or National Grid versus competitive offers."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the Massachusetts plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -49,8 +53,8 @@ export default function MassachusettsElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Massachusetts Electricity Rates - Compare 34+ Suppliers & Save $710/Year | Electric Scouts MA"
-        description="Compare Massachusetts electricity rates from Constellation, Direct Energy, Verde Energy & 32+ competitive suppliers. Serving Boston, Worcester, Springfield, Cambridge, Lowell. Find affordable electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from Eversource, National Grid & save up to $710 annually. Free MA electricity comparison."
+        title="Massachusetts Electricity Rates & Providers | Electric Scouts"
+        description="Compare 23 Massachusetts electricity plans from 15 suppliers, 10.5¢/kWh–16.49¢/kWh. Rates by city, renewable options and how switching works."
         keywords="Massachusetts electricity rates, Boston electricity providers, Eversource alternatives, National Grid MA alternatives, compare electricity Massachusetts, cheap electricity MA, Massachusetts energy suppliers, best electricity rates Boston, competitive electricity Massachusetts, deregulated electricity MA, fixed rate electricity Massachusetts, renewable energy Massachusetts, green energy plans MA, Massachusetts power companies, competitive suppliers Massachusetts"
         canonical="/massachusetts-electricity"
         structuredData={[
@@ -81,7 +85,7 @@ export default function MassachusettsElectricity() {
               Massachusetts Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ competitive suppliers across Massachusetts. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active Massachusetts plans. What you save depends on your current rate and usage.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -90,12 +94,12 @@ export default function MassachusettsElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
                 <div className="text-sm text-blue-100">Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>

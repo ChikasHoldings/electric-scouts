@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { ConciergeRequest } from "@/api/supabaseEntities";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import {
-  Home, Search, Filter, Eye, Edit, Trash2, Mail,
-  Phone, MapPin, Calendar, Clock, DollarSign, CheckCircle,
-  AlertCircle, Loader2, ChevronDown, ArrowUpDown, X,
-  Zap, Wifi, Shield, Lock, Building, Wrench, Tv, Droplet, Users
+  Home, Search, Filter, Eye, Trash2, Mail,
+  Phone, Calendar, Clock, CheckCircle,
+  AlertCircle, Loader2, X,
+  Zap, Wifi, Tv, Droplet
 } from "lucide-react";
 
 const STATUS_CONFIG = {
@@ -90,7 +90,7 @@ export default function AdminConcierge() {
         admin_notes: editNotes,
         actual_revenue: parseFloat(editRevenue) || 0,
       });
-      queryClient.invalidateQueries(["concierge_requests"]);
+      queryClient.invalidateQueries({ queryKey: ["concierge_requests"] });
       toast({ title: "Updated", description: "Concierge request updated successfully." });
       setShowDetailDialog(false);
     } catch (err) {
@@ -104,7 +104,7 @@ export default function AdminConcierge() {
     if (!confirm("Are you sure you want to delete this request?")) return;
     try {
       await ConciergeRequest.delete(id);
-      queryClient.invalidateQueries(["concierge_requests"]);
+      queryClient.invalidateQueries({ queryKey: ["concierge_requests"] });
       toast({ title: "Deleted", description: "Request deleted." });
       setShowDetailDialog(false);
     } catch (err) {

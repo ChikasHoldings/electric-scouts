@@ -10,6 +10,7 @@ const ToggleGroupContext = React.createContext({
   variant: "default",
 })
 
+/** @type {React.ForwardRefExoticComponent<any>} */
 const ToggleGroup = React.forwardRef(({ className, variant, size, children, ...props }, ref) => (
   <ToggleGroupPrimitive.Root
     ref={ref}
@@ -23,6 +24,7 @@ const ToggleGroup = React.forwardRef(({ className, variant, size, children, ...p
 
 ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName
 
+/** @type {React.ForwardRefExoticComponent<any>} */
 const ToggleGroupItem = React.forwardRef(({ className, children, variant, size, ...props }, ref) => {
   const context = React.useContext(ToggleGroupContext)
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Clock, Eye, Award } from "lucide-react";
 import { getReadingHistory } from "./ArticleRecommendations";

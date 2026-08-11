@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DollarSign, Zap, TrendingDown, Award, Leaf, ArrowRight, Calculator } from "lucide-react";
-import { getStateData, getCityData } from "../components/location/locationData";
+import { Zap, TrendingDown, Award, Leaf, ArrowRight, Calculator } from "lucide-react";
+import { getStateData } from "../components/location/locationData";
 import { validateZipCode } from "../components/compare/stateData";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -147,8 +147,8 @@ export default function SavingsCalculator() {
       />
       
       <SEOHead
-        title="Electricity Savings Calculator - Predict Your Annual Savings | Electric Scouts"
-        description="Calculate how much you can save on electricity bills. Input your current rate and usage to get personalized savings estimates and plan recommendations for your state."
+        title="Electricity Savings Calculator | Electric Scouts"
+        description="Enter your current rate and monthly usage to estimate what a different electricity plan would cost you over a year, using your own numbers."
         keywords="electricity savings calculator, energy bill calculator, electricity cost calculator, power savings estimator, electricity rate comparison calculator"
         canonical="/savings-calculator"
       />

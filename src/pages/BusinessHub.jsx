@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,8 @@ export default function BusinessHub() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Business Electricity Plans - Commercial Energy Solutions | Electric Scouts"
-        description="Compare commercial electricity rates for your business. Custom usage tiers, volume discounts, flexible contracts. Save up to 30% on business energy costs."
+        title="Business Electricity by Company Size | Electric Scouts"
+        description="What a business needs from an electricity contract depends on its size and load shape. Compare the options for small, medium and industrial accounts."
         keywords="business electricity, commercial electricity rates, business energy plans, commercial power, business electricity comparison"
         canonical="/business-hub"
       />

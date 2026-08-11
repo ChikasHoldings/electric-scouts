@@ -7,20 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, X, FileText, Mail, AlertCircle } from "lucide-react";
-import { validateZipCode, getStateByZip } from "../components/compare/stateData";
+import { MapPin, Home, Building2, Zap, Leaf, Clock, CheckCircle, Filter, ArrowRight, Star, Award, TrendingDown, Mail } from "lucide-react";
+import { validateZipCode } from "../components/compare/stateData";
 import { 
   getProvidersForZipCode, 
-  getProviderDetails, 
   getCityFromZip,
   getStateFromZip
 } from "../components/compare/providerAvailability";
 import { 
-  filterPlansByZip, 
-  calculateMonthlyBill,
-  validateZipForComparison 
+  calculateMonthlyBill 
 } from "../components/compare/dataValidation";
-import { calculateMatchScore, calculateSavings, generatePlanSummary } from "../components/compare/matchScore";
+import { calculateMatchScore, generatePlanSummary } from "../components/compare/matchScore";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import BillUploadStep from "../components/compare/BillUploadStep";
 import EmailResults from "../components/compare/EmailResults";
@@ -65,8 +62,8 @@ export default function CompareRates() {
 
   const seoBlock = (
     <SEOHead
-      title="Side-by-Side Rate Comparison | Electric Scouts"
-      description="Enter your ZIP code and instantly see side-by-side electricity rates from dozens of providers. Filter by price, term length, or green energy. Free, fast, and built for clarity."
+      title="Compare Electricity Rates Side by Side | Electric Scouts"
+      description="Enter your ZIP code and see the electricity plans sold in your area side by side — rate, contract term and early termination fee on the same row."
       canonical="/compare-rates"
       keywords="compare electricity rates, electricity plans, cheapest electricity, energy comparison, deregulated electricity"
       structuredData={[

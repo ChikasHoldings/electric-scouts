@@ -1,9 +1,8 @@
-import React from "react";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Clock, Leaf, DollarSign, ExternalLink, Heart, Shield, Award, Wind, Sun, AlertTriangle } from "lucide-react";
+import { Zap, Clock, Leaf, ExternalLink, Heart, Shield, Award, AlertTriangle } from "lucide-react";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import { getProviderLogoUrl } from "@/utils/providerSlug";
 

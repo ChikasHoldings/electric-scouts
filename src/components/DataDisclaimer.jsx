@@ -1,4 +1,3 @@
-import React from "react";
 import { AlertCircle, Info } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 

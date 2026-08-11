@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ElectricityPlan, ElectricityProvider } from "@/api/supabaseEntities";
 import { Button } from "@/components/ui/button";
@@ -56,25 +56,25 @@ export default function AdminBusinessPlans() {
 
   const createMutation = useMutation({
     mutationFn: (data) => ElectricityPlan.create(data),
-    onSuccess: () => { queryClient.invalidateQueries(["admin-business-plans"]); toast({ title: "Business plan created" }); closeDialog(); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] }); toast({ title: "Business plan created" }); closeDialog(); },
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => ElectricityPlan.update(id, data),
-    onSuccess: () => { queryClient.invalidateQueries(["admin-business-plans"]); toast({ title: "Business plan updated" }); closeDialog(); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] }); toast({ title: "Business plan updated" }); closeDialog(); },
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => ElectricityPlan.delete(id),
-    onSuccess: () => { queryClient.invalidateQueries(["admin-business-plans"]); toast({ title: "Plan deleted" }); setDeleteConfirm(null); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] }); toast({ title: "Plan deleted" }); setDeleteConfirm(null); },
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 
   const toggleMutation = useMutation({
     mutationFn: ({ id, is_active }) => ElectricityPlan.update(id, { is_active }),
-    onSuccess: () => queryClient.invalidateQueries(["admin-business-plans"]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] }),
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 

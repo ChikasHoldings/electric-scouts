@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function PennsylvaniaElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("PA");
 
   const stateData = {
     name: "Pennsylvania",
@@ -31,7 +35,7 @@ export default function PennsylvaniaElectricity() {
       {
         id: 2,
         question: "How much can I save on electricity in Pennsylvania?",
-        answer: "Pennsylvania residents save an average of $750 per year by shopping for competitive electricity rates. Savings are particularly strong in the Philadelphia and Pittsburgh metro areas where competition is most intense. Your actual savings will depend on your current rate, usage, and the plan you select."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the Pennsylvania plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -55,8 +59,8 @@ export default function PennsylvaniaElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Pennsylvania Electricity Rates - Compare 38+ Suppliers & Save $750/Year | Electric Scouts PA"
-        description="Compare Pennsylvania electricity rates from Constellation, Direct Energy, Champion Energy & 36+ suppliers. Serving Philadelphia, Pittsburgh, Allentown, Harrisburg. Find competitive electricity plans for your home. Fixed & variable rates. 100% green energy options. Switch easily & save up to $750 annually. Free PA electricity comparison."
+        title="Pennsylvania Electricity Rates & Providers | Electric Scouts"
+        description="Compare 28 Pennsylvania electricity plans from 15 suppliers, 7.5¢/kWh–10.99¢/kWh. Rates by city, renewable options and how switching works."
         keywords="Pennsylvania electricity rates, Philadelphia electricity providers, Pittsburgh energy rates, PA power companies, compare electricity Pennsylvania, PECO alternatives, Duquesne Light alternatives, cheap electricity Pennsylvania, best electricity rates PA, Pennsylvania electricity suppliers, deregulated electricity Pennsylvania, fixed rate electricity PA, renewable energy Pennsylvania, green electricity plans PA, competitive electricity suppliers Pennsylvania"
         canonical="/pennsylvania-electricity"
         structuredData={[breadcrumbData, getServiceSchema("Pennsylvania"), getFAQSchema(stateData.faqs)]}
@@ -79,7 +83,7 @@ export default function PennsylvaniaElectricity() {
               Pennsylvania Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ providers across Pennsylvania. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active Pennsylvania plans. What you save depends on your current rate and usage.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -88,12 +92,12 @@ export default function PennsylvaniaElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
-                <div className="text-sm text-blue-100">Providers</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
+                <div className="text-sm text-blue-100">Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>

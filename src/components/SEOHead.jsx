@@ -1,8 +1,34 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { SITE_URL, absoluteUrl } from "@/seo/site";
 
-export default function SEOHead({ 
-  title, 
-  description, 
+/**
+ * Injects per-page metadata into <head>. Every prop is optional; a page passes
+ * only what it needs.
+ *
+ * @param {object} props
+ * @param {string} [props.title]
+ * @param {string} [props.description]
+ * @param {string} [props.canonical] Path only, e.g. "/texas-electricity".
+ * @param {string} [props.keywords]
+ * @param {string} [props.image] Absolute URL of the social share image.
+ * @param {string} [props.type] Open Graph type; "website" or "article".
+ * @param {object|object[]} [props.structuredData]
+ * @param {string|number} [props.imageWidth]
+ * @param {string|number} [props.imageHeight]
+ * @param {string} [props.imageAlt]
+ * @param {string} [props.locale]
+ * @param {string} [props.articlePublishedTime]
+ * @param {string} [props.articleModifiedTime]
+ * @param {string} [props.articleAuthor]
+ * @param {string} [props.articleSection]
+ * @param {string[]} [props.articleTags]
+ * @param {string} [props.twitterCreator]
+ * @param {boolean} [props.noindex] Emit "noindex, nofollow" instead of the
+ *   default indexable directive.
+ */
+export default function SEOHead({
+  title,
+  description,
   canonical,
   keywords,
   image,
@@ -27,9 +53,15 @@ export default function SEOHead({
       document.title = title;
     }
 
-    const siteUrl = window.location.origin;
-    const fullUrl = canonical ? `${siteUrl}${canonical}` : window.location.href;
-    
+    // Canonical URLs are always built from the fixed production origin, never
+    // from window.location.origin: on a preview deployment or on the apex
+    // domain (which redirects to www) that would emit a canonical pointing at
+    // the wrong host. Falling back to window.location.pathname — not .href —
+    // keeps query-string variants such as /compare-rates?planType=fixed
+    // canonicalizing to the single clean URL instead of each spawning its own.
+    const siteUrl = SITE_URL;
+    const fullUrl = absoluteUrl(canonical || window.location.pathname);
+
     // Page-specific OG image mapping
     const getPageSpecificImage = () => {
       if (image) return image;
@@ -173,9 +205,9 @@ export const getOrganizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Electric Scouts",
-  "url": window.location.origin,
-  "logo": `${window.location.origin}/logo.png`,
-  "description": "Compare electricity rates from 40+ providers across 13 deregulated states. Save up to $800 per year on your electricity bills.",
+  "url": SITE_URL,
+  "logo": `${SITE_URL}/images/logo-header.png`,
+  "description": "Compare electricity plans from competing suppliers across 12 deregulated US states.",
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "Customer Service",
@@ -259,21 +291,21 @@ export const getArticleSchema = (article) => ({
   "author": {
     "@type": "Organization",
     "name": "Electric Scouts",
-    "url": window.location.origin
+    "url": SITE_URL
   },
   "publisher": {
     "@type": "Organization",
     "name": "Electric Scouts",
     "logo": {
       "@type": "ImageObject",
-      "url": `${window.location.origin}/logo.png`,
+      "url": `${SITE_URL}/images/logo-header.png`,
       "width": 200,
       "height": 60
     }
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": article.url || window.location.href
+    "@id": absoluteUrl(article.url || window.location.pathname)
   }
 });
 
@@ -285,7 +317,7 @@ export const getBreadcrumbSchema = (items) => ({
     "@type": "ListItem",
     "position": index + 1,
     "name": item.name,
-    "item": `${window.location.origin}${item.url}`
+    "item": `${SITE_URL}${item.url}`
   }))
 });
 
@@ -295,7 +327,7 @@ export const getLocalBusinessSchema = (cityName, stateName, countyName) => ({
   "@type": "LocalBusiness",
   "name": `Electric Scouts - ${cityName} Electricity Comparison`,
   "description": `Compare electricity rates and save money in ${cityName}, ${stateName}`,
-  "url": window.location.origin,
+  "url": SITE_URL,
   "areaServed": {
     "@type": "City",
     "name": cityName,
@@ -350,7 +382,7 @@ export const getWebPageSchema = (title, description, url) => ({
   "@type": "WebPage",
   "name": title,
   "description": description,
-  "url": url || window.location.href,
+  "url": url || absoluteUrl(window.location.pathname),
   "publisher": {
     "@type": "Organization",
     "name": "Electric Scouts"
@@ -380,7 +412,7 @@ export const getItemListSchema = (name, items) => ({
     "@type": "ListItem",
     "position": index + 1,
     "name": item.name,
-    "url": item.url ? `${window.location.origin}${item.url}` : undefined
+    "url": item.url ? `${SITE_URL}${item.url}` : undefined
   }))
 });
 
@@ -388,14 +420,14 @@ export const getItemListSchema = (name, items) => ({
 export const getSearchActionSchema = () => ({
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "url": window.location.origin,
+  "url": SITE_URL,
   "name": "Electric Scouts",
-  "description": "Compare electricity rates from 40+ providers across 13 deregulated states",
+  "description": "Compare electricity plans from competing suppliers across 12 deregulated US states",
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": `${window.location.origin}/compare-rates?zip={search_term_string}`
+      "urlTemplate": `${SITE_URL}/compare-rates?zip={search_term_string}`
     },
     "query-input": "required name=search_term_string"
   }
@@ -413,5 +445,5 @@ export const getSoftwareApplicationSchema = () => ({
     "price": "0",
     "priceCurrency": "USD"
   },
-  "description": "Free electricity rate comparison tool covering 40+ providers across 13 deregulated US states"
+  "description": "Free electricity rate comparison tool covering 12 deregulated US states"
 });

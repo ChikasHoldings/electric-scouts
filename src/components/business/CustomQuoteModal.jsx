@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CustomBusinessQuote } from "@/api/supabaseEntities";
 import { UploadFile } from "@/api/supabaseIntegrations";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { X, Upload, FileText, CheckCircle, Loader2, DollarSign, Leaf, Clock, Zap, Calendar } from "lucide-react";
+import { X, Upload, CheckCircle, Loader2, DollarSign, Leaf, Clock, Zap } from "lucide-react";
 
 export default function CustomQuoteModal({ onClose, initialData = {} }) {
   const [step, setStep] = useState(1);
@@ -37,7 +36,7 @@ export default function CustomQuoteModal({ onClose, initialData = {} }) {
   const createQuoteMutation = useMutation({
     mutationFn: (data) => CustomBusinessQuote.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['businessQuotes']);
+      queryClient.invalidateQueries({ queryKey: ['businessQuotes'] });
       setStep(3);
     },
   });

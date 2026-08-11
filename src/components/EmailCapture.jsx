@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Zap, Mail, CheckCircle, X, ArrowRight, Shield } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Zap, CheckCircle, X } from "lucide-react";
 
 /**
  * Non-Intrusive Email Capture Component

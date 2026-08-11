@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Building, TrendingDown, Award, CheckCircle } from "lucide-react";
+import { TrendingDown, Award, CheckCircle } from "lucide-react";
 
 const businessTiers = [
   {

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Star, CheckCircle, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -29,7 +28,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
-                Enter your ZIP code to compare plans from 40+ providers across 12 deregulated states. Free, unbiased, instant.
+                Enter your ZIP code to compare plans from competing suppliers across 12 deregulated states. Free, unbiased, instant.
               </p>
             </div>
 
@@ -104,7 +103,7 @@ export default function HeroSection({ zipCode, setZipCode }) {
                 className="w-full h-auto max-w-lg mx-auto"
                 loading="eager"
                 decoding="async"
-                fetchpriority="high"
+                fetchPriority="high"
                 width="500"
                 height="500" />
             </picture>

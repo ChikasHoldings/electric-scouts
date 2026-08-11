@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { MapPin, Zap, Building, Leaf, TrendingDown, Shield, BookOpen, FileText, ChevronDown } from "lucide-react";
@@ -80,7 +80,7 @@ export default function SEOContentSection() {
             </div>
             <div>
               <p className="font-semibold text-gray-900 text-sm sm:text-sm leading-tight">Residential Rates</p>
-              <p className="text-xs text-gray-500 hidden sm:block">40+ providers, instant results</p>
+              <p className="text-xs text-gray-500 hidden sm:block">Competing suppliers, instant results</p>
             </div>
           </Link>
           <Link to={createPageUrl("BusinessCompareRates")} className="flex items-center gap-2.5 sm:gap-3 p-3 sm:p-4 border border-gray-200 rounded-xl hover:border-[#0A5C8C] hover:shadow-md transition-all group">

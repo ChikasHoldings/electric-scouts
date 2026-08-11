@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, MapPin, CheckCircle, Zap, TrendingDown, ArrowRight } from "lucide-react";
-import { getAllDeregulatedStates, validateZipCode, getStateByZip } from "../components/compare/stateData";
+import { Search, MapPin, CheckCircle, Zap, TrendingDown } from "lucide-react";
+import { getAllDeregulatedStates, validateZipCode } from "../components/compare/stateData";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ValidatedZipInput from "../components/ValidatedZipInput";
 
 export default function AllStates() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,8 +57,8 @@ export default function AllStates() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Deregulated Electricity States - Compare Rates in 12 Markets | Electric Scouts"
-        description="Compare electricity rates in 12 deregulated states: Texas (TX), Illinois (IL), Ohio (OH), Pennsylvania (PA), New York (NY), New Jersey (NJ), Maryland (MD), Massachusetts (MA), Maine (ME), New Hampshire (NH), Rhode Island (RI), Connecticut (CT). Choose your electricity supplier, compare 40+ providers, save up to $800/year. Free comparison across all competitive energy markets."
+        title="Deregulated Electricity States | Electric Scouts"
+        description="Compare electricity markets in the 12 US states where households choose their own supplier — plans tracked, suppliers and rate ranges for each market."
         keywords="deregulated electricity states, electricity choice states, competitive energy markets, electricity providers by state, choose electricity supplier, states with energy choice, deregulated energy markets, electricity deregulation by state, energy competition states"
         canonical="/all-states"
         structuredData={breadcrumbData}

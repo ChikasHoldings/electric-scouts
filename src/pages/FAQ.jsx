@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronDown, Phone, Mail, MessageCircle, Search } from "lucide-react";
+import { ChevronDown, Mail, MessageCircle, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import SEOHead, { getFAQSchema, getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -182,7 +182,7 @@ export default function FAQ() {
       
       <SEOHead
         title="Electricity FAQ | Honest Answers from Electric Scouts"
-        description="Get answers to frequently asked questions about electricity deregulation, switching providers, plan types, rates, billing, contracts & saving money. Expert guidance for TX, PA, NY, OH, IL, NJ, MD, MA & more. Learn about fixed vs variable rates, kWh usage, early termination fees, renewable energy, deposits & more."
+        description="Straight answers on switching electricity supplier: how long it takes, what happens to your service, and why the advertised rate is not what you end up paying."
         keywords="electricity FAQ, energy questions, electricity rates FAQ, switching providers FAQ, electricity deregulation questions, how to switch electricity, electricity bill questions, kWh explained, contract length guide, early termination fee, renewable energy FAQ, electricity deposit requirements"
         canonical="/faq"
         structuredData={[faqSchema, breadcrumbData]}

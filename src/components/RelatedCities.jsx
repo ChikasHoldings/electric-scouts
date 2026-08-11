@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { MapPin, ArrowRight } from "lucide-react";
 import { getCityUrl, getStatePageUrl, STATE_DISPLAY_NAMES } from "@/utils/cityUrls";
@@ -7,9 +6,10 @@ import { getCityUrl, getStatePageUrl, STATE_DISPLAY_NAMES } from "@/utils/cityUr
  * RelatedCities - Shows related cities in the same state for internal linking.
  * Used on CityRates pages to improve internal linking and SEO.
  * 
- * @param {string} currentCity - Current city name (e.g., "Houston")
- * @param {string} stateCode - State code (e.g., "TX")
- * @param {Array} allCityKeys - Array of all city keys from cityData (e.g., ["Houston-TX", "Dallas-TX", ...])
+ * @param {object} props
+ * @param {string} props.currentCity - Current city name (e.g., "Houston")
+ * @param {string} props.stateCode - State code (e.g., "TX")
+ * @param {string[]} [props.allCityKeys] - All city keys from cityData (e.g., ["Houston-TX", "Dallas-TX", ...])
  */
 export default function RelatedCities({ currentCity, stateCode, allCityKeys = [] }) {
   // Filter cities in the same state, excluding the current city

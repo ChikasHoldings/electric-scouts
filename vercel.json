@@ -1,62 +1,497 @@
 {
+  "trailingSlash": false,
+  "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/Home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/AboutUs",
+      "destination": "/about-us",
+      "permanent": true
+    },
+    {
+      "source": "/aboutus",
+      "destination": "/about-us",
+      "permanent": true
+    },
+    {
+      "source": "/AllCities",
+      "destination": "/all-cities",
+      "permanent": true
+    },
+    {
+      "source": "/allcities",
+      "destination": "/all-cities",
+      "permanent": true
+    },
+    {
+      "source": "/AllProviders",
+      "destination": "/all-providers",
+      "permanent": true
+    },
+    {
+      "source": "/allproviders",
+      "destination": "/all-providers",
+      "permanent": true
+    },
+    {
+      "source": "/AllStates",
+      "destination": "/all-states",
+      "permanent": true
+    },
+    {
+      "source": "/allstates",
+      "destination": "/all-states",
+      "permanent": true
+    },
+    {
+      "source": "/ArticleDetail",
+      "destination": "/article-detail",
+      "permanent": true
+    },
+    {
+      "source": "/articledetail",
+      "destination": "/article-detail",
+      "permanent": true
+    },
+    {
+      "source": "/BillAnalyzer",
+      "destination": "/bill-analyzer",
+      "permanent": true
+    },
+    {
+      "source": "/billanalyzer",
+      "destination": "/bill-analyzer",
+      "permanent": true
+    },
+    {
+      "source": "/BusinessCompareRates",
+      "destination": "/business-compare-rates",
+      "permanent": true
+    },
+    {
+      "source": "/businesscomparerates",
+      "destination": "/business-compare-rates",
+      "permanent": true
+    },
+    {
+      "source": "/BusinessElectricity",
+      "destination": "/business-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/businesselectricity",
+      "destination": "/business-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/BusinessHub",
+      "destination": "/business-hub",
+      "permanent": true
+    },
+    {
+      "source": "/businesshub",
+      "destination": "/business-hub",
+      "permanent": true
+    },
+    {
+      "source": "/BusinessQuoteDashboard",
+      "destination": "/business-quote-dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/businessquotedashboard",
+      "destination": "/business-quote-dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/CityRates",
+      "destination": "/city-rates",
+      "permanent": true
+    },
+    {
+      "source": "/cityrates",
+      "destination": "/city-rates",
+      "permanent": true
+    },
+    {
+      "source": "/CompareRates",
+      "destination": "/compare-rates",
+      "permanent": true
+    },
+    {
+      "source": "/comparerates",
+      "destination": "/compare-rates",
+      "permanent": true
+    },
+    {
+      "source": "/ConnecticutElectricity",
+      "destination": "/connecticut-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/connecticutelectricity",
+      "destination": "/connecticut-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/FAQ",
+      "destination": "/faq",
+      "permanent": true
+    },
+    {
+      "source": "/HomeConcierge",
+      "destination": "/home-concierge",
+      "permanent": true
+    },
+    {
+      "source": "/homeconcierge",
+      "destination": "/home-concierge",
+      "permanent": true
+    },
+    {
+      "source": "/IllinoisElectricity",
+      "destination": "/illinois-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/illinoiselectricity",
+      "destination": "/illinois-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/Landing",
+      "destination": "/landing",
+      "permanent": true
+    },
+    {
+      "source": "/LearningCenter",
+      "destination": "/learning-center",
+      "permanent": true
+    },
+    {
+      "source": "/learningcenter",
+      "destination": "/learning-center",
+      "permanent": true
+    },
+    {
+      "source": "/MaineElectricity",
+      "destination": "/maine-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/maineelectricity",
+      "destination": "/maine-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/MarylandElectricity",
+      "destination": "/maryland-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/marylandelectricity",
+      "destination": "/maryland-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/MassachusettsElectricity",
+      "destination": "/massachusetts-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/massachusettselectricity",
+      "destination": "/massachusetts-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/NewHampshireElectricity",
+      "destination": "/new-hampshire-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/newhampshireelectricity",
+      "destination": "/new-hampshire-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/NewJerseyElectricity",
+      "destination": "/new-jersey-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/newjerseyelectricity",
+      "destination": "/new-jersey-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/NewYorkElectricity",
+      "destination": "/new-york-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/newyorkelectricity",
+      "destination": "/new-york-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/NotFound",
+      "destination": "/not-found",
+      "permanent": true
+    },
+    {
+      "source": "/notfound",
+      "destination": "/not-found",
+      "permanent": true
+    },
+    {
+      "source": "/OhioElectricity",
+      "destination": "/ohio-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/ohioelectricity",
+      "destination": "/ohio-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/PennsylvaniaElectricity",
+      "destination": "/pennsylvania-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/pennsylvaniaelectricity",
+      "destination": "/pennsylvania-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/PrivacyPolicy",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/privacypolicy",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/ProviderDetails",
+      "destination": "/provider-details",
+      "permanent": true
+    },
+    {
+      "source": "/providerdetails",
+      "destination": "/provider-details",
+      "permanent": true
+    },
+    {
+      "source": "/RenewableCompareRates",
+      "destination": "/renewable-compare-rates",
+      "permanent": true
+    },
+    {
+      "source": "/renewablecomparerates",
+      "destination": "/renewable-compare-rates",
+      "permanent": true
+    },
+    {
+      "source": "/RenewableEnergy",
+      "destination": "/renewable-energy",
+      "permanent": true
+    },
+    {
+      "source": "/renewableenergy",
+      "destination": "/renewable-energy",
+      "permanent": true
+    },
+    {
+      "source": "/RhodeIslandElectricity",
+      "destination": "/rhode-island-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/rhodeislandelectricity",
+      "destination": "/rhode-island-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/Robots",
+      "destination": "/robots",
+      "permanent": true
+    },
+    {
+      "source": "/SavingsCalculator",
+      "destination": "/savings-calculator",
+      "permanent": true
+    },
+    {
+      "source": "/savingscalculator",
+      "destination": "/savings-calculator",
+      "permanent": true
+    },
+    {
+      "source": "/Sitemap",
+      "destination": "/sitemap",
+      "permanent": true
+    },
+    {
+      "source": "/SitemapXML",
+      "destination": "/sitemap-xml",
+      "permanent": true
+    },
+    {
+      "source": "/sitemapxml",
+      "destination": "/sitemap-xml",
+      "permanent": true
+    },
+    {
+      "source": "/TermsOfService",
+      "destination": "/terms-of-service",
+      "permanent": true
+    },
+    {
+      "source": "/termsofservice",
+      "destination": "/terms-of-service",
+      "permanent": true
+    },
+    {
+      "source": "/TexasElectricity",
+      "destination": "/texas-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/texaselectricity",
+      "destination": "/texas-electricity",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/go/:slug", "destination": "/api/go?slug=:slug" },
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
-    { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/go/:slug",
+      "destination": "/api/go?slug=:slug"
+    },
+    {
+      "source": "/admin",
+      "destination": "/app-shell.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/app-shell.html"
+    }
   ],
   "headers": [
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/images/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, stale-while-revalidate=86400"
+        }
       ]
     },
     {
       "source": "/(.*)\\.woff2",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/(favicon.*|apple-touch-icon.*|site\\.webmanifest)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=2592000" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000"
+        }
       ]
     },
     {
       "source": "/go/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
       ]
     },
     {
       "source": "/robots.txt",
       "headers": [
-        { "key": "Content-Type", "value": "text/plain" },
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
-      ]
-    },
-    {
-      "source": "/sitemap.xml",
-      "headers": [
-        { "key": "Content-Type", "value": "application/xml" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=3600" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     }
   ]

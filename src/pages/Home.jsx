@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,7 +56,7 @@ export default function Home() {
     <div className="min-h-screen">
       <SEOHead
         title="Electric Scouts | Stop Overpaying for Electricity — We'll Prove It"
-        description="Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from 40+ providers across 12 states. Free Bill Analyzer included."
+        description="Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available."
         keywords="compare electricity rates, bill analyzer, electricity providers, energy comparison, electricity plans, power companies, cheap electricity, fixed rate electricity, variable rate plans, renewable energy plans, electricity rates by zip code, switch electricity provider, deregulated electricity markets, electricity bill analysis"
         canonical="/"
         structuredData={structuredData}

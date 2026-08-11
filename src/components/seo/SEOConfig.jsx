@@ -1,3 +1,5 @@
+import { absoluteUrl } from "@/seo/site";
+
 /**
  * SEO Configuration & Optimization Utilities
  * Central hub for all SEO-related metadata, keywords, and optimization rules
@@ -187,8 +189,7 @@ export function getInternalLinks(currentPage) {
 
 // Canonical URL generator
 export function generateCanonicalURL(path) {
-  const baseURL = 'https://www.electricscouts.com';
-  return `${baseURL}${path}`;
+  return absoluteUrl(path);
 }
 
 // Breadcrumb generator for SEO

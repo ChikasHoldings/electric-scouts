@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function NewYorkElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("NY");
 
   const stateData = {
     name: "New York",
@@ -26,12 +30,12 @@ export default function NewYorkElectricity() {
       {
         id: 1,
         question: "How does New York's deregulated electricity market work?",
-        answer: "New York has a deregulated electricity market where residents and businesses can choose their electricity supplier (ESCO) from over 42 competing providers. Con Edison, National Grid, NYSEG, or RG&E still deliver your electricity and maintain the infrastructure, but you can shop for competitive supply rates from alternative providers."
+        answer: "New York has a deregulated electricity market where residents and businesses can choose their electricity supplier (ESCO) from competing providers. Con Edison, National Grid, NYSEG, or RG&E still deliver your electricity and maintain the infrastructure, but you can shop for competitive supply rates from alternative providers."
       },
       {
         id: 2,
         question: "How much can I save on electricity in New York?",
-        answer: "New York residents save an average of $740 per year by comparing electricity rates from competitive ESCOs (Energy Service Companies). Savings are particularly significant in NYC, Buffalo, and Rochester where competition is strong. Your actual savings depend on your current Con Edison or utility rate versus competitive offers."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the New York plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -49,8 +53,8 @@ export default function NewYorkElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="New York Electricity Rates - Compare 42+ ESCOs & Save $740/Year | Electric Scouts NY"
-        description="Compare New York electricity rates from Constellation, Direct Energy, Verde Energy & 40+ ESCOs. Serving NYC, Buffalo, Rochester, Albany, Syracuse. Find competitive electricity plans for your home or business. Fixed & variable rates. 100% renewable energy options. Switch from Con Edison, National Grid & save up to $740 annually. Free NY ESCO comparison."
+        title="New York Electricity Rates & Providers | Electric Scouts"
+        description="Compare 27 New York electricity plans from 17 suppliers, 8.5¢/kWh–12.99¢/kWh. Rates by city, renewable options and how switching works."
         keywords="New York electricity rates, NYC electricity providers, ESCO comparison New York, Con Edison alternatives, National Grid alternatives, New York energy service companies, cheap electricity New York, compare electricity rates NY, best ESCOs New York, Buffalo electricity rates, Rochester energy providers, Albany electricity, fixed rate electricity New York, renewable energy New York, green energy plans NY, deregulated electricity New York, New York power suppliers"
         canonical="/new-york-electricity"
         structuredData={[
@@ -81,7 +85,7 @@ export default function NewYorkElectricity() {
               New York Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ ESCOs across New York. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active New York plans. What you save depends on your current rate and usage.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -90,12 +94,12 @@ export default function NewYorkElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
                 <div className="text-sm text-blue-100">ESCOs</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Profile } from "@/api/supabaseEntities";
 import { supabase } from "@/lib/supabaseClient";
@@ -46,7 +46,6 @@ import {
   EyeOff,
   Check,
   X,
-  Key,
   FileEdit,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -144,7 +143,7 @@ export default function AdminUsers() {
       const data = await resp.json();
 
       if (resp.ok && data.success) {
-        queryClient.invalidateQueries(["admin-users"]);
+        queryClient.invalidateQueries({ queryKey: ["admin-users"] });
         toast({ title: "User updated successfully", description: data.message });
         setEditingUser(null);
       } else {
@@ -219,7 +218,7 @@ export default function AdminUsers() {
       const data = await resp.json();
 
       if (resp.ok && data.success) {
-        queryClient.invalidateQueries(["admin-users"]);
+        queryClient.invalidateQueries({ queryKey: ["admin-users"] });
         toast({
           title: "User created successfully",
           description: data.message,

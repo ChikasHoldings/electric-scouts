@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import ContextualLinks from "@/components/ContextualLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, CheckCircle, Zap, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
+import { getStateMarket } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function NewJerseyElectricity() {
   const [zipCode, setZipCode] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Plan counts and supplier counts come from the checked-in market
+  // snapshot, so this page and its prerendered twin quote the same figures.
+  const stateMarket = getStateMarket("NJ");
 
   const stateData = {
     name: "New Jersey",
@@ -26,12 +30,12 @@ export default function NewJerseyElectricity() {
       {
         id: 1,
         question: "How does New Jersey's electricity deregulation work?",
-        answer: "New Jersey has a deregulated electricity market where residents can choose their Third Party Supplier (TPS) from over 35 competing providers. PSE&G, JCP&L, or Atlantic City Electric continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
+        answer: "New Jersey has a deregulated electricity market where residents can choose their Third Party Supplier (TPS) from competing providers. PSE&G, JCP&L, or Atlantic City Electric continues to deliver your electricity and maintain the grid, but you can shop for competitive supply rates from alternative providers."
       },
       {
         id: 2,
         question: "How much can I save on electricity in New Jersey?",
-        answer: "New Jersey residents save an average of $720 per year by comparing electricity rates from Third Party Suppliers. Savings are particularly strong in Northern New Jersey and the Newark/Jersey City area. Your actual savings depend on your current PSE&G or utility rate versus competitive offers."
+        answer: "What you save depends on three things: the rate you are paying now, how much electricity you use, and the plan you switch to. Compare your current rate per kWh against the New Jersey plans listed here — the difference between them, multiplied by your monthly usage, is your actual saving."
       },
       {
         id: 3,
@@ -49,8 +53,8 @@ export default function NewJerseyElectricity() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="New Jersey Electricity Rates - Compare 35+ Third Party Suppliers & Save $720/Year | NJ"
-        description="Compare New Jersey electricity rates from Constellation, Direct Energy, Starion Energy & 33+ Third Party Suppliers. Serving Newark, Jersey City, Paterson, Elizabeth, Trenton. Find competitive electricity plans for your home. Fixed & variable rates. 100% renewable energy options. Switch from PSE&G, JCP&L & save up to $720 annually. Free NJ electricity comparison."
+        title="New Jersey Electricity Rates & Providers | Electric Scouts"
+        description="Compare 28 New Jersey electricity plans from 18 suppliers, 7.9¢/kWh–13.99¢/kWh. Rates by city, renewable options and how switching works."
         keywords="New Jersey electricity rates, Newark electricity providers, Jersey City energy rates, NJ Third Party Suppliers, PSE&G alternatives, JCP&L alternatives, Atlantic City Electric alternatives, compare electricity New Jersey, cheap electricity NJ, best electricity rates New Jersey, New Jersey power companies, deregulated electricity NJ, fixed rate electricity New Jersey, renewable energy NJ, green energy plans New Jersey, competitive electricity suppliers NJ"
         canonical="/new-jersey-electricity"
         structuredData={[
@@ -81,7 +85,7 @@ export default function NewJerseyElectricity() {
               New Jersey Electricity Rates & Providers
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Compare rates from {stateData.providerCount}+ Third Party Suppliers across New Jersey. Average savings of ${stateData.avgSavings}/year.
+              Compare plans from {stateMarket?.providers ?? "the"} suppliers with active New Jersey plans. What you save depends on your current rate and usage.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -90,12 +94,12 @@ export default function NewJerseyElectricity() {
                 <div className="text-sm text-blue-100">Avg. Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.providerCount}+</div>
-                <div className="text-sm text-blue-100">Providers</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
+                <div className="text-sm text-blue-100">Suppliers</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">${stateData.avgSavings}</div>
-                <div className="text-sm text-blue-100">Avg. Savings</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.plans ?? "—"}</div>
+                <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>

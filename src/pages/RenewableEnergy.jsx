@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ElectricityPlan } from "@/api/supabaseEntities";
@@ -11,7 +11,7 @@ import {
   Shield, Heart, MapPin, ArrowRight, ChevronDown, Zap,
   Award, Globe, Sprout
 } from "lucide-react";
-import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
+import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 
 export default function RenewableEnergy() {
@@ -154,8 +154,8 @@ export default function RenewableEnergy() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Renewable Energy Plans | Clean Power Options in 12 States | Electric Scouts"
-        description="Compare 100% renewable energy plans from wind and solar in TX, PA, NY, OH, IL, NJ, MD, MA, ME, NH, RI, CT. Green electricity at competitive rates. 50+ clean energy plans. Reduce carbon footprint. Save money while supporting renewable energy. Fixed & variable green energy rates. Switch to solar and wind power today."
+        title="Renewable Electricity Plans | Electric Scouts"
+        description="How 100% renewable electricity plans actually work, what they cost, and which suppliers offer them in each deregulated state we cover."
         keywords="renewable energy plans, 100% green energy, renewable electricity, solar energy plans, wind energy plans, clean energy, green electricity providers, renewable energy rates, eco-friendly electricity, sustainable energy plans, carbon-free electricity, green power, renewable energy Texas, renewable energy Pennsylvania, renewable energy New York, wind power plans, solar power plans"
         canonical="/renewable-energy"
         structuredData={[breadcrumbData, faqSchema]}

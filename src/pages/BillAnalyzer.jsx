@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { useQuery } from "@tanstack/react-query";
@@ -12,7 +12,6 @@ import {
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
-import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
@@ -1021,14 +1020,14 @@ export default function BillAnalyzer() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SEOHead
-        title="Bill Analyzer | Spot Hidden Savings on Your Electricity Bill | Electric Scouts"
-        description="Upload your electricity bill and get instant AI-powered analysis. Discover better rates, calculate exact savings, find personalized plan recommendations. Free bill analysis for TX, PA, NY, OH, IL & more. Compare your current rate with 40+ providers. See how much you can save."
+        title="Electricity Bill Analyzer | Electric Scouts"
+        description="Upload an electricity bill and see the rate you are actually paying once base charges and usage credits are counted, then compare it against current plans."
         keywords="electricity bill analyzer, analyze electricity bill, electricity savings calculator, bill comparison tool, find cheaper electricity, electricity rate analyzer, power bill analysis, energy bill savings"
         canonical="/bill-analyzer"
         structuredData={[
           breadcrumbData,
           getFAQSchema([
-            { question: "How does the electricity bill analyzer work?", answer: "Upload a photo or PDF of your electricity bill, and our AI-powered analyzer extracts your current rate, usage, and charges. We then compare your rate against 40+ providers to find plans that would save you money." },
+            { question: "How does the electricity bill analyzer work?", answer: "Upload a photo or PDF of your electricity bill, and our AI-powered analyzer extracts your current rate, usage, and charges. We then compare your rate against the plans available in your area." },
             { question: "Is the bill analyzer free to use?", answer: "Yes, the Electric Scouts bill analyzer is completely free. Upload your bill, get instant analysis, and see personalized savings recommendations with no cost or obligation." },
             { question: "What information does the bill analyzer need?", answer: "The analyzer works best with a recent electricity bill showing your monthly kWh usage, current rate per kWh, and total charges. You can also enter your details manually if you prefer not to upload a bill." },
             { question: "How accurate are the savings estimates?", answer: "Our savings estimates are based on your actual usage data and current market rates from providers in your area. Estimates are typically within 5-10% of actual savings, though your final rate may vary based on the specific plan terms." }

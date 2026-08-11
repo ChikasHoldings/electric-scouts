@@ -1,140 +1,102 @@
 /**
- * Dynamic Sitemap Manager
- * Generates XML sitemap and pings Google Search Console
+ * Sitemap helpers used by the in-app /sitemap-xml preview page.
+ *
+ * The authoritative sitemap is generated server-side by api/sitemap.js and
+ * served at /sitemap.xml. This module renders a preview of the same URL set by
+ * delegating to the shared registry in src/seo/, rather than keeping its own
+ * hand-maintained list — the previous list had drifted badly enough to publish
+ * /article/:slug URLs, a route that does not exist.
  */
 
-const SITE_URL = 'https://www.electricscouts.com';
+import { absoluteUrl, SITE_URL } from '@/seo/site';
+import { getIndexableRoutes } from '@/seo/routes';
 
-// Generate dynamic sitemap XML from database content
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+/**
+ * Build the sitemap XML for the public route set.
+ * @param {Array} articles Optional database-backed articles addressed by slug.
+ */
 export async function generateDynamicSitemap(articles = []) {
-  const staticPages = [
-    { url: '/', priority: '1.0', changefreq: 'daily' },
-    { url: '/landing', priority: '1.0', changefreq: 'daily' },
-    { url: '/compare-rates', priority: '1.0', changefreq: 'daily' },
-    { url: '/business-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/business-compare-rates', priority: '0.9', changefreq: 'weekly' },
-    { url: '/renewable-energy', priority: '0.9', changefreq: 'weekly' },
-    { url: '/savings-calculator', priority: '0.9', changefreq: 'weekly' },
-    { url: '/bill-analyzer', priority: '0.9', changefreq: 'weekly' },
-    { url: '/all-providers', priority: '0.9', changefreq: 'weekly' },
-    { url: '/all-states', priority: '0.9', changefreq: 'weekly' },
-    { url: '/all-cities', priority: '0.9', changefreq: 'weekly' },
-    { url: '/learning-center', priority: '0.9', changefreq: 'weekly' },
-    { url: '/faq', priority: '0.9', changefreq: 'monthly' },
-    { url: '/about-us', priority: '0.7', changefreq: 'monthly' },
-    { url: '/home-concierge', priority: '0.7', changefreq: 'monthly' },
-    
-    // State pages
-    { url: '/texas-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/illinois-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/ohio-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/pennsylvania-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/new-york-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/new-jersey-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/maryland-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/massachusetts-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/maine-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/new-hampshire-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/rhode-island-electricity', priority: '0.9', changefreq: 'weekly' },
-    { url: '/connecticut-electricity', priority: '0.9', changefreq: 'weekly' },
-    
-    // Legal
-    { url: '/privacy-policy', priority: '0.5', changefreq: 'yearly' },
-    { url: '/terms-of-service', priority: '0.5', changefreq: 'yearly' }
-  ];
+  const today = new Date().toISOString().split('T')[0];
 
-  // Add dynamic article pages
-  const articlePages = articles.map(article => {
-    const articleData = article.data || article;
-    const slug = articleData.slug || article.slug;
-    const id = article.id;
-    return {
-      url: `/article/${slug || id}`,
-      priority: '0.8',
+  const entries = getIndexableRoutes().map((route) => ({
+    loc: absoluteUrl(route.path),
+    lastmod: today,
+    changefreq: route.changefreq || 'weekly',
+    priority: (route.priority ?? 0.7).toFixed(1),
+  }));
+
+  for (const article of articles) {
+    const data = article.data || article;
+    const identifier = data.slug || article.slug || article.id;
+    if (!identifier) continue;
+    entries.push({
+      loc: absoluteUrl(`/learn/${identifier}`),
+      lastmod: (article.updated_date || article.created_date || today).split('T')[0],
       changefreq: 'weekly',
-      lastmod: article.updated_date || article.created_date
-    };
+      priority: '0.7',
+    });
+  }
+
+  const seen = new Set();
+  const unique = entries.filter((entry) => {
+    if (seen.has(entry.loc)) return false;
+    seen.add(entry.loc);
+    return true;
   });
 
-  const allPages = [...staticPages, ...articlePages];
-  const lastmod = new Date().toISOString().split('T')[0];
-
-  const urls = allPages.map(page => {
-    const pageLastmod = page.lastmod || lastmod;
-    return `
+  const urls = unique
+    .map(
+      (entry) => `
   <url>
-    <loc>${SITE_URL}${page.url}</loc>
-    <lastmod>${pageLastmod}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`;
-  }).join('');
+    <loc>${escapeXml(entry.loc)}</loc>
+    <lastmod>${entry.lastmod}</lastmod>
+    <changefreq>${entry.changefreq}</changefreq>
+    <priority>${entry.priority}</priority>
+  </url>`
+    )
+    .join('');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${urls}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}
 </urlset>`;
 }
 
-// Ping Google Search Console about sitemap update
-export async function pingGoogleSearchConsole(sitemapUrl = `${SITE_URL}/sitemap.xml`) {
-  try {
-    const pingUrl = `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`;
-    
-    // Make the ping request
-    const response = await fetch(pingUrl, {
-      method: 'GET',
-      mode: 'no-cors'
-    });
-    
-    return { success: true, message: 'Sitemap submitted to Google' };
-  } catch (error) {
-    console.error('❌ Failed to ping Google Search Console:', error);
-    return { success: false, error: error.message };
-  }
+/**
+ * Sitemap "ping" endpoints.
+ *
+ * Google retired https://google.com/ping?sitemap= in 2023 and Bing retired its
+ * equivalent; both now return an error for every request. Discovery happens via
+ * robots.txt and Search Console instead. These remain as no-ops so existing
+ * call sites keep working without firing requests that can only fail.
+ */
+const PING_RETIRED = {
+  success: false,
+  message: 'Sitemap ping endpoints were retired; search engines discover the sitemap via robots.txt.',
+};
+
+export async function pingGoogleSearchConsole() {
+  return PING_RETIRED;
 }
 
-// Ping Bing Webmaster Tools
-export async function pingBingWebmaster(sitemapUrl = `${SITE_URL}/sitemap.xml`) {
-  try {
-    const pingUrl = `https://www.bing.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`;
-    
-    const response = await fetch(pingUrl, {
-      method: 'GET',
-      mode: 'no-cors'
-    });
-    
-    return { success: true, message: 'Sitemap submitted to Bing' };
-  } catch (error) {
-    console.error('❌ Failed to ping Bing:', error);
-    return { success: false, error: error.message };
-  }
+export async function pingBingWebmaster() {
+  return PING_RETIRED;
 }
 
-// Ping all search engines
-export async function pingAllSearchEngines(sitemapUrl = `${SITE_URL}/sitemap.xml`) {
-  const results = await Promise.allSettled([
-    pingGoogleSearchConsole(sitemapUrl),
-    pingBingWebmaster(sitemapUrl)
-  ]);
-  
-  return {
-    google: results[0].status === 'fulfilled' ? results[0].value : { success: false },
-    bing: results[1].status === 'fulfilled' ? results[1].value : { success: false }
-  };
+export async function pingAllSearchEngines() {
+  return { google: PING_RETIRED, bing: PING_RETIRED };
 }
 
-// Auto-trigger on content changes (call this after creating/updating articles)
 export async function notifySearchEnginesOfUpdate() {
-  const results = await pingAllSearchEngines();
-  
-  if (results.google.success || results.bing.success) {
-  } else {
-  }
-  
-  return results;
+  return pingAllSearchEngines();
 }
+
+export { SITE_URL };

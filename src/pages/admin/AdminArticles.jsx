@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Article } from "@/api/supabaseEntities";
 import { Button } from "@/components/ui/button";
@@ -100,7 +100,7 @@ export default function AdminArticles() {
   const createMutation = useMutation({
     mutationFn: (data) => Article.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-articles"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-articles"] });
       toast({ title: "Article created successfully" });
       closeDialog();
     },
@@ -110,7 +110,7 @@ export default function AdminArticles() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => Article.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-articles"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-articles"] });
       toast({ title: "Article updated successfully" });
       closeDialog();
     },
@@ -120,7 +120,7 @@ export default function AdminArticles() {
   const deleteMutation = useMutation({
     mutationFn: (id) => Article.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(["admin-articles"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-articles"] });
       toast({ title: "Article deleted" });
       setDeleteConfirm(null);
     },
@@ -183,7 +183,7 @@ export default function AdminArticles() {
   const togglePublish = async (article) => {
     try {
       await Article.update(article.id, { published: !article.published });
-      queryClient.invalidateQueries(["admin-articles"]);
+      queryClient.invalidateQueries({ queryKey: ["admin-articles"] });
       toast({
         title: article.published ? "Article unpublished" : "Article published",
       });

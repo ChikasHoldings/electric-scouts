@@ -1,4 +1,3 @@
-import React from "react";
 import SEOHead, { getOrganizationSchema, getServiceSchema, getBreadcrumbSchema } from "../SEOHead";
 
 /**
