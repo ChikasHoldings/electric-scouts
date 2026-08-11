@@ -314,6 +314,44 @@ function mapComparisonColumns(comparison, attribution) {
   return columns;
 }
 
+/**
+ * The column PostgREST says the table does not have, or null.
+ *
+ * PostgREST reports an unknown column as PGRST204 with the name quoted in the
+ * message: "Could not find the 'entry_context' column of 'leads' in the schema
+ * cache".
+ */
+function missingColumnFrom(error) {
+  if (!error) return null;
+  const match = /Could not find the '([^']+)' column/.exec(error.message || "");
+  return match ? match[1] : null;
+}
+
+/**
+ * Write a lead row, dropping any column the database has not grown yet.
+ *
+ * Deploying the app and running a migration are two separate steps, and in
+ * whichever order they happen there is a window where this code writes a column
+ * the table does not have. Without this, every lead captured in that window is
+ * lost to a 500 — instead of being saved minus one analytics field and enriched
+ * on the next write. Bounded retries, and only for columns this payload
+ * actually carries, so a genuine failure still surfaces as a failure.
+ */
+async function writeLeadRow(payload, run) {
+  let attempt = { ...payload };
+
+  for (let i = 0; i < 4; i += 1) {
+    const result = await run(attempt);
+    const missing = missingColumnFrom(result.error);
+    if (!missing || !(missing in attempt)) return result;
+
+    console.warn(`Lead write: dropping unknown column "${missing}" — migration not applied yet`);
+    delete attempt[missing];
+  }
+
+  return run(attempt);
+}
+
 async function handleCreateLead(req, res) {
   try {
     const {
@@ -358,10 +396,9 @@ async function handleCreateLead(req, res) {
       if (source_page) updateData.source_page = source_page;
       updateData.last_activity_at = new Date().toISOString();
 
-      await supabase
-        .from("leads")
-        .update(updateData)
-        .eq("id", existingLead.id);
+      await writeLeadRow(updateData, (row) =>
+        supabase.from("leads").update(row).eq("id", existingLead.id)
+      );
 
       return res.status(200).json({
         success: true,
@@ -370,9 +407,8 @@ async function handleCreateLead(req, res) {
       });
     }
 
-    const { data: lead, error: insertError } = await supabase
-      .from("leads")
-      .insert({
+    const { data: lead, error: insertError } = await writeLeadRow(
+      {
         ...mapComparisonColumns(comparison, attribution),
         email: email.toLowerCase().trim(),
         zip: zip || null,
@@ -384,9 +420,9 @@ async function handleCreateLead(req, res) {
         source_page: source_page || source,
         status: "new",
         last_activity_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
+      },
+      (row) => supabase.from("leads").insert(row).select().single()
+    );
 
     if (insertError) {
       console.error("Lead insert error:", insertError);
