@@ -5,7 +5,7 @@ import { Building2, Home, Info, Leaf, Plug, ScrollText } from "lucide-react";
 
 import { ElectricityPlan } from "@/api/supabaseEntities";
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "@/components/SEOHead";
-import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import LandingHero from "@/components/landing/LandingHero";
 import ZipHandoffForm from "@/components/landing/ZipHandoffForm";
 import {
   DataTable,
@@ -78,6 +78,13 @@ export default function RenewableEnergy() {
 
   const totalRenewablePlans = rows.reduce((sum, entry) => sum + entry.market.renewablePlans, 0);
 
+  // The cheapest renewable plan we hold anywhere — a tracked figure, not an
+  // offer: what is sold at a given ZIP code is a subset of this.
+  const renewableRates = rows
+    .map(({ market }) => Number(market.minRenewableRate))
+    .filter((rate) => Number.isFinite(rate));
+  const lowestRenewableRate = renewableRates.length ? formatRate(Math.min(...renewableRates)) : null;
+
   const { data: plans = [] } = useQuery({
     queryKey: ["plans"],
     queryFn: () => ElectricityPlan.list(),
@@ -132,45 +139,30 @@ export default function RenewableEnergy() {
       />
 
       {/* ── Hero ── */}
-      <div className="border-b border-green-100 bg-gradient-to-b from-green-50 to-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 pt-8 pb-14 sm:pb-16">
-          <PageBreadcrumbs
-            items={[{ name: "Home", url: "/" }, { name: "Renewable Energy" }]}
-            variant="dark"
-            className="mb-6"
-          />
-
-          <div className="max-w-3xl">
-            <p className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wider text-green-800">
-              <Leaf className="w-4 h-4" aria-hidden="true" />
-              Renewable electricity
-            </p>
-            <h1 className="mt-3 text-[32px] sm:text-[42px] leading-[1.1] font-semibold text-gray-900 tracking-[-0.02em]">
-              Renewable Electricity Plans
-            </h1>
-            <p className="mt-4 text-[17px] leading-relaxed text-gray-600">
-              We track {totalRenewablePlans} electricity plans backed by renewable generation across{" "}
-              {rows.length} deregulated states. Enter your ZIP code and the comparison keeps the
-              renewable preference — it will only ask whether this is for a home or a business.
-            </p>
-
-            <div className="mt-8 max-w-xl">
-              <ZipHandoffForm
-                service="renewable"
-                ctaLabel="Compare Renewable Electricity"
-                label="Your ZIP code"
-                hint="Renewable availability varies by utility territory, so this decides what you can buy."
-              />
-            </div>
-
-            <p className="mt-6 text-[13px] leading-relaxed text-gray-500">
-              Plan counts and rates are from our snapshot of {MARKET_GENERATED_AT}. Where a ZIP code
-              has no renewable plan available, we say so rather than showing a standard plan as a
-              green one.
-            </p>
-          </div>
-        </div>
-      </div>
+      <LandingHero
+        tone="renewable"
+        breadcrumbs={[{ name: "Home", url: "/" }, { name: "Renewable Energy" }]}
+        eyebrow="Renewable electricity"
+        eyebrowIcon={Leaf}
+        title="Renewable Electricity Plans"
+        intro={`We track ${totalRenewablePlans} electricity plans backed by renewable generation across ${rows.length} deregulated states. Enter your ZIP code and the comparison keeps the renewable preference — it only asks whether this is for a home or a business.`}
+        facts={[
+          ["Renewable plans", String(totalRenewablePlans)],
+          ["States with plans", String(rows.length)],
+          ["Lowest tracked", lowestRenewableRate || "—"],
+        ]}
+        factsNote={`From our plan snapshot of ${MARKET_GENERATED_AT}. Where a ZIP code has no renewable plan available we say so, rather than showing a standard plan as a green one.`}
+        formTitle="Compare renewable plans"
+        formSubtitle="One question after this — home or business — then the plans."
+        formNote="Renewable availability varies by utility territory. Comparing is free and carries no obligation."
+      >
+        <ZipHandoffForm
+          service="renewable"
+          ctaLabel="Compare Renewable Electricity"
+          label="Your ZIP code"
+          hint="This decides which renewable plans are sold at your address."
+        />
+      </LandingHero>
 
       {/* ── What a renewable plan is ── */}
       <Section>

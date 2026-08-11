@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Boxes, FileText, Home, Leaf, MapPin, Repeat, Truck } from "lucide-react";
 
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "@/components/SEOHead";
-import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import LandingHero from "@/components/landing/LandingHero";
 import ZipHandoffForm from "@/components/landing/ZipHandoffForm";
 import {
   DataTable,
@@ -126,66 +126,30 @@ export default function ResidentialElectricity() {
       />
 
       {/* ── Hero ── */}
-      <div className="border-b border-gray-100 bg-gradient-to-b from-[#F4F8FB] to-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 pt-8 pb-14 sm:pb-16">
-          <PageBreadcrumbs
-            items={[{ name: "Home", url: "/" }, { name: "Residential Electricity" }]}
-            variant="dark"
-            className="mb-6"
-          />
-
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_360px] gap-10 lg:gap-14 items-start">
-            <div className="max-w-2xl">
-              <p className="text-[13px] font-semibold uppercase tracking-wider text-[#0A5C8C]">
-                Residential electricity
-              </p>
-              <h1 className="mt-3 text-[32px] sm:text-[42px] leading-[1.1] font-semibold text-gray-900 tracking-[-0.02em]">
-                Compare Residential Electricity Options
-              </h1>
-              <p className="mt-4 text-[17px] leading-relaxed text-gray-600">
-                Compare electricity plans available for your home based on your location and energy
-                needs. Enter your ZIP code and you will pick up exactly where you left off — we will
-                not ask you for it again.
-              </p>
-
-              <div className="mt-8 max-w-xl">
-                <ZipHandoffForm
-                  service="residential"
-                  ctaLabel="Compare Home Electricity"
-                  label="Your home ZIP code"
-                  hint="Supply is licensed by utility territory, so this decides which plans you can buy."
-                />
-              </div>
-
-              <p className="mt-6 text-[13px] leading-relaxed text-gray-500">
-                Free to use, no obligation, and no credit check to compare. We are an independent
-                comparison service, not a supplier.
-              </p>
-            </div>
-
-            <aside className="rounded-2xl border border-gray-200 bg-white p-6 shadow-[0_1px_2px_rgba(16,24,40,0.04)] lg:mt-14">
-              <h2 className="text-[15px] font-semibold text-gray-900">What we currently track</h2>
-              <dl className="mt-4 space-y-3.5">
-                {[
-                  ["Plans for homes", totalResidentialPlans.toLocaleString()],
-                  ["Suppliers with plans", String(MARKET_TOTALS.providersWithPlans)],
-                  ["Deregulated states", String(MARKET_TOTALS.states)],
-                  ["Renewable plans", totalRenewablePlans.toLocaleString()],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex items-baseline justify-between gap-4">
-                    <dt className="text-[14px] text-gray-600">{label}</dt>
-                    <dd className="text-[17px] font-semibold text-gray-900">{value}</dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="mt-4 pt-4 border-t border-gray-100 text-[12px] leading-relaxed text-gray-500">
-                Snapshot taken {MARKET_GENERATED_AT}. What is available at your address depends on
-                your utility territory.
-              </p>
-            </aside>
-          </div>
-        </div>
-      </div>
+      <LandingHero
+        tone="residential"
+        breadcrumbs={[{ name: "Home", url: "/" }, { name: "Residential Electricity" }]}
+        eyebrow="Residential electricity"
+        eyebrowIcon={Home}
+        title="Compare Residential Electricity Options"
+        intro="Compare electricity plans available for your home based on your location and energy needs. Enter your ZIP code once and the comparison picks up from there — you will not be asked for it again."
+        facts={[
+          ["Plans for homes", totalResidentialPlans.toLocaleString()],
+          ["Suppliers with plans", String(MARKET_TOTALS.providersWithPlans)],
+          ["Deregulated states", String(MARKET_TOTALS.states)],
+        ]}
+        factsNote={`Tracked as of ${MARKET_GENERATED_AT}. What you can actually buy depends on your utility territory, so the plans at your ZIP code are a subset of these.`}
+        formTitle="Compare plans for your home"
+        formSubtitle="Next question is about the home itself — the ZIP code carries over."
+        formNote="Free to use, no obligation, and no credit check to compare. We are an independent comparison service, not a supplier."
+      >
+        <ZipHandoffForm
+          service="residential"
+          ctaLabel="Compare Home Electricity"
+          label="Your home ZIP code"
+          hint="Supply is licensed by utility territory, so this decides which plans you can buy."
+        />
+      </LandingHero>
 
       {/* ── How it works ── */}
       <Section>

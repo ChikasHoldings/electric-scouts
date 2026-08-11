@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Building2, CalendarClock, FileText, Gauge, Layers, Leaf, LineChart } from "lucide-react";
 
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "@/components/SEOHead";
-import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import LandingHero from "@/components/landing/LandingHero";
 import ZipHandoffForm from "@/components/landing/ZipHandoffForm";
 import {
   DataTable,
@@ -123,69 +123,30 @@ export default function BusinessElectricity() {
       />
 
       {/* ── Hero ── */}
-      <div className="bg-[#0A5C8C] text-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 pt-8 pb-14 sm:pb-16">
-          <PageBreadcrumbs
-            items={[{ name: "Home", url: "/" }, { name: "Business Electricity" }]}
-            variant="light"
-            className="mb-6"
-          />
-
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_400px] gap-10 lg:gap-14 items-start">
-            <div className="min-w-0 max-w-2xl">
-              <p className="text-[13px] font-semibold uppercase tracking-wider text-white/70">
-                Commercial electricity
-              </p>
-              <h1 className="mt-3 text-[32px] sm:text-[42px] leading-[1.1] font-semibold tracking-[-0.02em]">
-                Business Electricity Rates
-              </h1>
-              <p className="mt-4 text-[17px] leading-relaxed text-white/80">
-                Commercial supply is priced against your usage pattern and contract term, not sold
-                from a rate card. Start with your service ZIP code and we will take it from your
-                business type — no re-entering anything.
-              </p>
-
-              <dl className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-6 max-w-lg border-t border-white/15 pt-6">
-                {[
-                  ["Commercial plans", String(totalBusinessPlans)],
-                  ["Markets covered", String(rows.length)],
-                  ["Lowest tracked", lowestBusinessRate || "—"],
-                ].map(([label, value]) => (
-                  <div key={label} className="min-w-0">
-                    <dt className="text-[12px] uppercase tracking-wide text-white/60">{label}</dt>
-                    <dd className="mt-1 text-[20px] font-semibold">{value}</dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="mt-4 text-[12px] text-white/60">
-                From our plan snapshot of {MARKET_GENERATED_AT}. A quote priced against your own
-                load profile can land above or below a listed plan.
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-white p-6 shadow-[0_12px_40px_-12px_rgba(8,74,111,0.6)]">
-              <h2 className="text-[17px] font-semibold text-gray-900">
-                Start a commercial comparison
-              </h2>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-gray-600">
-                We will ask about the business next — the ZIP code carries over.
-              </p>
-              <div className="mt-5">
-                <ZipHandoffForm
-                  service="commercial"
-                  ctaLabel="Compare Business Electricity"
-                  label="Service ZIP code"
-                  hint="Use the ZIP code of the site that takes the supply."
-                />
-              </div>
-              <p className="mt-4 text-[12px] leading-relaxed text-gray-500">
-                No obligation. Multi-site accounts can be aggregated under one contract where the
-                sites share a deregulated market.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <LandingHero
+        tone="commercial"
+        breadcrumbs={[{ name: "Home", url: "/" }, { name: "Business Electricity" }]}
+        eyebrow="Commercial electricity"
+        eyebrowIcon={Building2}
+        title="Business Electricity Rates"
+        intro="Commercial supply is priced against your usage pattern and contract term, not sold from a rate card. Start with your service ZIP code and we take it from your business type — nothing gets re-entered."
+        facts={[
+          ["Commercial plans", String(totalBusinessPlans)],
+          ["Markets covered", String(rows.length)],
+          ["Lowest tracked", lowestBusinessRate || "—"],
+        ]}
+        factsNote={`From our plan snapshot of ${MARKET_GENERATED_AT}. A quote priced against your own load profile can land above or below a listed plan, and demand charges are billed separately.`}
+        formTitle="Start a commercial comparison"
+        formSubtitle="Next question is about the business — the ZIP code carries over."
+        formNote="No obligation. Multi-site accounts can be aggregated under one contract where the sites share a deregulated market."
+      >
+        <ZipHandoffForm
+          service="commercial"
+          ctaLabel="Compare Business Electricity"
+          label="Service ZIP code"
+          hint="Use the ZIP code of the site that takes the supply."
+        />
+      </LandingHero>
 
       {/* ── How commercial pricing differs ── */}
       <Section>

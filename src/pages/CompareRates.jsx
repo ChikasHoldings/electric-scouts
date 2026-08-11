@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { Building2, Home, Leaf, MapPin } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
@@ -154,6 +155,37 @@ export default function CompareRates() {
     () => (view === "question" ? determineNextQuestion(state) : null),
     [state, view]
   );
+
+  // The colour the flow wears. Renewable wins over the audience, because a
+  // visitor who came for green supply should keep seeing that they are on that
+  // path even after they say the property is a business.
+  const accent = state.energyPreference === "renewable"
+    ? "renewable"
+    : state.customerType === CUSTOMER_TYPES.COMMERCIAL
+      ? "commercial"
+      : "residential";
+
+  // What the engine already knows, stated on the band. A visitor handed over
+  // from a landing page should see their ZIP and their service reflected back
+  // rather than wonder whether it made it across — and spot a wrong ZIP early.
+  const context = useMemo(() => {
+    const chips = [];
+    if (state.zip) {
+      chips.push({
+        label: state.city ? `${state.city} · ${state.zip}` : state.zip,
+        icon: MapPin,
+      });
+    }
+    if (state.energyPreference === "renewable") {
+      chips.push({ label: "Renewable", icon: Leaf });
+    }
+    if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
+      chips.push({ label: "Business", icon: Building2 });
+    } else if (state.customerType === CUSTOMER_TYPES.RESIDENTIAL) {
+      chips.push({ label: "Home", icon: Home });
+    }
+    return chips;
+  }, [state.zip, state.city, state.customerType, state.energyPreference]);
 
   // Record each question as it is shown, so Back walks real screens only.
   useEffect(() => {
@@ -323,7 +355,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches">
+        <ComparisonShell activeStage="matches" accent={accent} context={context}>
           <MatchingState />
         </ComparisonShell>
       </>
@@ -336,6 +368,8 @@ export default function CompareRates() {
         {seoBlock}
         <ResultsScreen
           state={state}
+          accent={accent}
+          context={context}
           routing={routing}
           plans={eligiblePlans}
           renewablePlans={renewablePlans}
@@ -356,7 +390,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="usage">
+        <ComparisonShell activeStage="usage" accent={accent} context={context}>
           <QuestionFrame
             questionKey="bill_upload"
             title={
@@ -407,7 +441,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="usage">
+        <ComparisonShell activeStage="usage" accent={accent} context={context}>
           <QuestionFrame
             questionKey="bill_summary"
             title="Here's what we found"
@@ -441,7 +475,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches">
+        <ComparisonShell activeStage="matches" accent={accent} context={context}>
           <MatchingState />
         </ComparisonShell>
       </>
@@ -451,7 +485,7 @@ export default function CompareRates() {
   return (
     <>
       {seoBlock}
-      <ComparisonShell activeStage={stageForQuestion(currentQuestion.id)}>
+      <ComparisonShell activeStage={stageForQuestion(currentQuestion.id)} accent={accent} context={context}>
         <QuestionScreen
           question={currentQuestion}
           state={state}
@@ -836,7 +870,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
 /* ─────────────────────────────────────────────────────────── */
 
 function ResultsScreen({
-  state, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
+  state, accent, context, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
   termFilter, setTermFilter, renewableOnly, setRenewableOnly,
   showAllPlans, setShowAllPlans,
 }) {
@@ -844,7 +878,7 @@ function ResultsScreen({
   // confirmation rather than a price list it cannot honestly produce.
   if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
     return (
-      <ComparisonShell activeStage="matches">
+      <ComparisonShell activeStage="matches" accent={accent} context={context}>
         <CommercialComplete state={state} qualification={routing.qualification} />
       </ComparisonShell>
     );
@@ -869,7 +903,7 @@ function ResultsScreen({
 
   if (plans.length === 0) {
     return (
-      <ComparisonShell activeStage="matches">
+      <ComparisonShell activeStage="matches" accent={accent} context={context}>
         <NoMatchState
           zip={state.zip}
           onConcierge={() => {
@@ -883,7 +917,7 @@ function ResultsScreen({
   }
 
   return (
-    <ComparisonShell activeStage="matches" wide>
+    <ComparisonShell activeStage="matches" accent={accent} context={context} wide>
       <div className="mb-6">
         <h1 className="text-[22px] sm:text-[26px] font-semibold text-gray-900 tracking-[-0.01em]">
           {filtered.length} {filtered.length === 1 ? "plan" : "plans"} for{" "}

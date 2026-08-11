@@ -3,6 +3,7 @@ import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrati
 import { Upload, FileText, Loader2, AlertCircle, Check } from "lucide-react";
 import { promptFor, mapExtractionToState } from "../engine/billAnalysis";
 import { PrimaryAction, SecondaryAction } from "./QuestionInputs";
+import { useAccent } from "./ComparisonShell";
 
 /**
  * Bill Analyzer inside the comparison flow.
@@ -25,15 +26,43 @@ function withTimeout(promise, ms, label) {
   ]);
 }
 
-/** The offer screen: upload, or carry on without one. Never forced. */
+/**
+ * The offer screen: upload, or carry on without one. Never forced.
+ *
+ * The three lines above the buttons are what the bill buys the visitor —
+ * uploading is a trade, and this is the side of it they get.
+ */
 export function BillOffer({ onUpload, onSkip }) {
+  const accent = useAccent();
+
   return (
-    <div className="space-y-3">
-      <PrimaryAction onClick={onUpload}>Upload my bill</PrimaryAction>
-      <SecondaryAction onClick={onSkip}>Continue without a bill</SecondaryAction>
-      <p className="pt-1 text-xs text-gray-500 leading-relaxed">
-        Uploading is optional. We use the bill to read your usage so you answer
-        fewer questions — we don&rsquo;t keep your account number.
+    <div className="space-y-5">
+      <ul className="space-y-2.5">
+        {[
+          "Reads your actual usage instead of an estimate",
+          "Skips the questions the bill already answers",
+          "Shows the rate you are really paying per kWh",
+        ].map((benefit) => (
+          <li key={benefit} className="flex items-start gap-2.5 text-[14.5px] text-gray-700">
+            <span
+              className={`flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full mt-px ${accent.tintBg} ${accent.text}`}
+            >
+              <Check className="w-3 h-3" strokeWidth={3} aria-hidden="true" />
+            </span>
+            {benefit}
+          </li>
+        ))}
+      </ul>
+
+      <div className="space-y-3">
+        <PrimaryAction onClick={onUpload}>Upload my bill</PrimaryAction>
+        <SecondaryAction onClick={onSkip}>Continue without a bill</SecondaryAction>
+      </div>
+
+      <p className="text-xs text-gray-500 leading-relaxed">
+        Uploading is optional, and takes about ten seconds. We read the figures
+        and keep none of your account identity — no account number, no service
+        address.
       </p>
     </div>
   );

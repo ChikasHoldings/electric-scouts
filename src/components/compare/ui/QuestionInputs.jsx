@@ -1,14 +1,43 @@
 import { useState, useRef, useEffect } from "react";
-import { Home, Building2, Leaf, Check } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  Briefcase,
+  Building2,
+  Check,
+  Factory,
+  Home,
+  Hotel,
+  Leaf,
+  MapPin,
+  Stethoscope,
+  Store,
+  UtensilsCrossed,
+} from "lucide-react";
+
+import { useAccent } from "./ComparisonShell";
 
 /**
  * The input types a question can render.
  *
  * Everything here is a real button, radio or labelled input — never a clickable
  * div — so keyboard and screen-reader users get the same flow as everyone else.
+ * Colour comes from the branch accent, so the selected option on the renewable
+ * path is green and on the commercial path navy, without any question in the
+ * registry having to know that.
  */
 
-const ICONS = { home: Home, building: Building2, leaf: Leaf };
+const ICONS = {
+  home: Home,
+  building: Building2,
+  leaf: Leaf,
+  briefcase: Briefcase,
+  store: Store,
+  restaurant: UtensilsCrossed,
+  industrial: Factory,
+  healthcare: Stethoscope,
+  multifamily: Hotel,
+};
 
 /**
  * Selection cards.
@@ -19,6 +48,18 @@ const ICONS = { home: Home, building: Building2, leaf: Leaf };
  */
 export function ChoiceGroup({ options, value, onSelect, name }) {
   const containerRef = useRef(null);
+  const accent = useAccent();
+
+  // Options that are a bare, short label — "House", "Apartment", "$500–$1,499"
+  // — pair up into two columns from sm upwards: four short labels stacked full
+  // width read as a long form, the same four in a grid read as a choice.
+  // Longer labels ("Multifamily / property management") stay full width, where
+  // they have room to sit on one line instead of wrapping into a stack.
+  const hasDescriptions = options.some((option) => option.description);
+  const isCompact =
+    !hasDescriptions &&
+    options.length >= 4 &&
+    options.every((option) => option.label.length <= 16);
 
   const handleKeyDown = (event, index) => {
     const keys = ["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"];
@@ -32,7 +73,12 @@ export function ChoiceGroup({ options, value, onSelect, name }) {
   };
 
   return (
-    <div ref={containerRef} role="radiogroup" aria-label={name} className="space-y-2.5">
+    <div
+      ref={containerRef}
+      role="radiogroup"
+      aria-label={name}
+      className={isCompact ? "grid sm:grid-cols-2 auto-rows-fr gap-2.5" : "space-y-2.5"}
+    >
       {options.map((option, index) => {
         const Icon = option.icon ? ICONS[option.icon] : null;
         const isSelected = value === option.value;
@@ -49,24 +95,30 @@ export function ChoiceGroup({ options, value, onSelect, name }) {
             tabIndex={isSelected || (!value && index === 0) ? 0 : -1}
             onClick={() => onSelect(option.value)}
             onKeyDown={(e) => handleKeyDown(e, index)}
-            className={`w-full text-left flex items-center gap-3.5 rounded-xl border px-4 py-3.5 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5C8C] focus-visible:ring-offset-2 ${
+            className={`group w-full text-left flex items-center gap-3.5 rounded-2xl border px-4 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${accent.focus} ${
+              // A label on its own does not need the height a label plus a
+              // description does, or the row reads as mostly empty space.
+              option.description ? "py-4" : "py-3"
+            } ${
               isSelected
-                ? "border-[#0A5C8C] bg-[#0A5C8C]/[0.04] shadow-[0_0_0_1px_#0A5C8C]"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/60"
+                ? `${accent.border} ${accent.softBg} ring-1 ${accent.ring} shadow-[0_6px_18px_-12px_rgba(2,20,32,0.5)]`
+                : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/70 hover:shadow-[0_6px_18px_-14px_rgba(2,20,32,0.45)]"
             }`}
           >
             {Icon && (
               <span
-                className={`flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-lg transition-colors ${
-                  isSelected ? "bg-[#0A5C8C]/10 text-[#0A5C8C]" : "bg-gray-100 text-gray-500"
+                className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl transition-colors ${
+                  isSelected
+                    ? `${accent.solidBg} text-white`
+                    : `${accent.tintBg} ${accent.text} group-hover:scale-[1.04] transition-transform`
                 }`}
               >
-                <Icon className="w-[18px] h-[18px]" aria-hidden="true" />
+                <Icon className="w-5 h-5" aria-hidden="true" />
               </span>
             )}
 
             <span className="flex-1 min-w-0">
-              <span className="block text-[15px] font-medium text-gray-900">
+              <span className="block text-[15.5px] font-medium text-gray-900">
                 {option.label}
               </span>
               {option.description && (
@@ -78,11 +130,13 @@ export function ChoiceGroup({ options, value, onSelect, name }) {
 
             <span
               aria-hidden="true"
-              className={`flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full border transition-all ${
-                isSelected ? "border-[#0A5C8C] bg-[#0A5C8C]" : "border-gray-300 bg-white"
+              className={`flex-shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded-full border transition-all ${
+                isSelected
+                  ? `${accent.border} ${accent.solidBg}`
+                  : "border-gray-300 bg-white group-hover:border-gray-400"
               }`}
             >
-              {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+              {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
             </span>
           </button>
         );
@@ -113,10 +167,13 @@ export function TextQuestion({
   hint,
   submitLabel = "Continue",
   disabled,
+  icon: Icon,
 }) {
   const inputRef = useRef(null);
+  const accent = useAccent();
   const errorId = `${id}-error`;
   const hintId = `${id}-hint`;
+  const LeadingIcon = Icon || (id === "zip" ? MapPin : null);
 
   useEffect(() => {
     // Focusing the field on mount keeps the flow keyboard-first: the visitor
@@ -132,73 +189,93 @@ export function TextQuestion({
       }}
       noValidate
     >
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1.5">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">
         {label}
       </label>
 
-      <input
-        ref={inputRef}
-        id={id}
-        type={type}
-        inputMode={inputMode}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        value={value}
-        maxLength={maxLength}
-        onChange={(e) => onChange(e.target.value)}
-        aria-invalid={error ? "true" : undefined}
-        aria-describedby={error ? errorId : hint ? hintId : undefined}
-        className={`w-full h-12 px-4 rounded-xl border bg-white text-[16px] text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0 ${
+      <div
+        className={`flex items-center gap-3 h-14 px-4 rounded-2xl border bg-white transition-all focus-within:ring-4 ${
           error
-            ? "border-red-400 focus:border-red-500 focus:ring-red-200"
-            : "border-gray-300 focus:border-[#0A5C8C] focus:ring-[#0A5C8C]/20"
+            ? "border-red-400 focus-within:border-red-500 focus-within:ring-red-100"
+            : `border-gray-300 ${accent.focusBorder} focus-within:ring-gray-900/[0.06]`
         }`}
-      />
+      >
+        {LeadingIcon && (
+          <LeadingIcon className={`w-[18px] h-[18px] flex-shrink-0 ${accent.text}`} aria-hidden="true" />
+        )}
+        <input
+          ref={inputRef}
+          id={id}
+          type={type}
+          inputMode={inputMode}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          value={value}
+          maxLength={maxLength}
+          onChange={(e) => onChange(e.target.value)}
+          aria-invalid={error ? "true" : undefined}
+          aria-describedby={error ? errorId : hint ? hintId : undefined}
+          className="w-full min-w-0 h-full bg-transparent text-[17px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
+        />
+      </div>
 
       {error ? (
-        <p id={errorId} role="alert" className="mt-2 text-[13px] text-red-600">
+        <p id={errorId} role="alert" className="mt-2.5 flex items-start gap-1.5 text-[13px] text-red-600">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-px" aria-hidden="true" />
           {error}
         </p>
       ) : hint ? (
-        <p id={hintId} className="mt-2 text-[13px] text-gray-500">
+        <p id={hintId} className="mt-2.5 text-[13px] text-gray-500">
           {hint}
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={disabled}
-        className="mt-5 w-full h-12 rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] disabled:bg-gray-200 disabled:text-gray-400 text-white text-[15px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2"
-      >
-        {submitLabel}
-      </button>
+      <div className="mt-6">
+        <PrimaryAction type="submit" disabled={disabled}>
+          {submitLabel}
+        </PrimaryAction>
+      </div>
     </form>
   );
 }
 
 /** Secondary action styled to sit below a primary button without competing. */
 export function SecondaryAction({ onClick, children }) {
+  const accent = useAccent();
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="w-full h-12 rounded-xl border border-gray-300 bg-white text-[15px] font-medium text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5C8C] focus-visible:ring-offset-2"
+      className={`w-full h-[52px] rounded-2xl border border-gray-300 bg-white text-[15px] font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${accent.focus}`}
     >
       {children}
     </button>
   );
 }
 
-/** Primary action button, matched to the submit button in TextQuestion. */
+/**
+ * Primary action.
+ *
+ * The brand's orange, on every branch. Context is coloured by the accent; the
+ * thing you press to move forward stays the one colour it is everywhere else on
+ * the site, so it never has to be hunted for.
+ */
 export function PrimaryAction({ onClick, children, disabled, type = "button" }) {
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className="w-full h-12 rounded-xl bg-[#FF6B35] hover:bg-[#e55a2b] disabled:bg-gray-200 disabled:text-gray-400 text-white text-[15px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2"
+      className="group w-full h-[52px] rounded-2xl bg-[#FF6B35] hover:bg-[#e55a2b] disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none text-white text-[15.5px] font-semibold shadow-[0_10px_24px_-12px_rgba(255,107,53,0.9)] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2"
     >
-      {children}
+      <span className="flex items-center justify-center gap-2">
+        {children}
+        <ArrowRight
+          className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-disabled:hidden"
+          aria-hidden="true"
+        />
+      </span>
     </button>
   );
 }
