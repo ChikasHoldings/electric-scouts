@@ -14,6 +14,7 @@ import {
   Shield,
   ExternalLink,
   Link2,
+  TrendingUp,
   Settings,
   User,
   ChevronDown,
@@ -28,6 +29,7 @@ import {
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard, roles: ["admin", "editor", "viewer"] },
   { label: "Leads", path: "/admin/leads", icon: UserCheck, roles: ["admin", "editor"] },
+  { label: "Monetization", path: "/admin/monetization", icon: TrendingUp, roles: ["admin"] },
   { label: "Affiliates", path: "/admin/affiliates", icon: Link2, roles: ["admin"] },
   { label: "Providers", path: "/admin/providers", icon: Building2, roles: ["admin", "editor"] },
   { label: "Plans", path: "/admin/plans", icon: Zap, roles: ["admin", "editor"] },
