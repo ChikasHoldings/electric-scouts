@@ -34,7 +34,19 @@ function buyerPayload(lead, route) {
       zip: lead.zip || null,
       city: lead.city || null,
       state: lead.state || null,
+      // The service address and the ZIP the visitor typed are different facts,
+      // and a retailer enrolls against the service one. Where the bill gave a
+      // service ZIP or city, they travel with it rather than being flattened
+      // into the fields above — those describe where the visitor said they
+      // were, which is not always where the meter is.
       service_address: lead.service_address || null,
+      service_unit: lead.service_unit || null,
+      service_city: lead.service_city || null,
+      service_state: lead.service_state || null,
+      service_zip: lead.service_zip || null,
+      // How much the address can be trusted. A buyer who enrolls on delivery
+      // needs to know they are being handed an unconfirmed OCR read.
+      service_address_confidence: lead.service_address_confidence || null,
     },
     profile: {
       customer_type: lead.customer_type || null,

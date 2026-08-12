@@ -9,6 +9,7 @@ import {
   ADMIN_EMAILS,
 } from "./_lib/email.js";
 import { validateContact } from "../src/lib/contactValidation.js";
+import { serviceAddressColumns } from "../src/lib/serviceAddress.js";
 import { adminRecipients, ADMIN_NOTIFICATIONS } from "./_lib/adminNotifications.js";
 import { routeLead } from "./_lib/leadDelivery.js";
 import { buyerLeadEmail, unsoldLeadEmail } from "./_lib/email.js";
@@ -248,9 +249,13 @@ async function handleFollowUp(req, res) {
  * Only keys that are actually present are returned, so a progressive write
  * early in the flow cannot blank out a value a later write already recorded.
  *
- * The utility account number, customer name and service address read off a bill
- * are deliberately absent: the client never sends them, and nothing here would
- * store them if it did.
+ * The service address IS now stored, and it is the one field here that arrives
+ * from an OCR pass rather than from a person. It goes through the shared
+ * validator, which normalizes it, refuses a PO box, and labels how much of it
+ * survived — so a machine reading is never filed as though the customer had
+ * confirmed it. The utility account number and the customer name printed on
+ * the bill remain deliberately absent: no buyer needs them, and storing an
+ * account number raises the cost of any future breach for no revenue.
  */
 function mapComparisonColumns(comparison, attribution) {
   const columns = {};
@@ -293,6 +298,15 @@ function mapComparisonColumns(comparison, attribution) {
     const value = comparison[key];
     if (value === null || value === undefined || value === "") continue;
     columns[column] = value;
+  }
+
+  if (comparison.service_address || comparison.service_address_parts) {
+    Object.assign(
+      columns,
+      serviceAddressColumns(comparison.service_address_parts || comparison.service_address, {
+        source: comparison.service_address_source,
+      })
+    );
   }
 
   if (comparison.consent_contact) {

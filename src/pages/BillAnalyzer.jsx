@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/api/supabaseIntegrations";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -11,9 +10,11 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import SEOHead, { getBreadcrumbSchema, getFAQSchema } from "../components/SEOHead";
-import { getProvidersForZipCode, getStateFromZip } from "../components/compare/providerAvailability";
-import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import { COMPARE_PATH, ENTRY_CONTEXTS } from "../components/compare/engine/entryContext";
+import { benchmarkBill, readBillRate } from "../components/compare/engine/billBenchmark";
+import { describeResultPrice, pricingCaveatText } from "../components/compare/engine/resultsContract";
+import { validateServiceAddress, ADDRESS_SOURCE } from "@/lib/serviceAddress";
+import ProviderLogo from "../components/compare/ui/ProviderLogo";
 
 /**
  * Carry the analysis into the comparison engine.
@@ -68,7 +69,7 @@ function clearSession() {
 }
 
 // ─── Savings Score Gauge Component ────────────────────────────
-function SavingsScoreGauge({ score }) {
+function SavingsScoreGauge({ score, label }) {
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
@@ -111,9 +112,11 @@ function SavingsScoreGauge({ score }) {
             <span className="text-xs text-gray-500">/100</span>
           </div>
         </div>
-        <p className={`text-sm font-semibold ${colors.text}`}>{colors.label}</p>
+        {/* The band comes from the benchmark, which knows the sample it was
+            measured against; the colour thresholds here are presentation. */}
+        <p className={`text-sm font-semibold ${colors.text}`}>{label || colors.label}</p>
         <p className="text-xs text-gray-500 mt-1 text-center">
-          How competitive your current rate is compared to available plans
+          How your rate compares against the plans available where you live
         </p>
       </CardContent>
     </Card>
@@ -139,7 +142,13 @@ export default function BillAnalyzer() {
     }
   }, [showResults]);
   const [isDragOver, setIsDragOver] = useState(false);
-  const { getAffiliateUrl } = useAffiliateLinks();
+
+  // One id for the whole visit, so the analysis, the lead it produces and any
+  // outbound click are the same session in the funnel rather than three
+  // unconnected events.
+  const [sessionId] = useState(
+    () => sessionData?.sessionId || `ba_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
+  );
   const [manualForm, setManualForm] = useState({
     provider_name: '',
     monthly_usage_kwh: '',
@@ -159,56 +168,107 @@ export default function BillAnalyzer() {
   const [leadSubmitted, setLeadSubmitted] = useState(false);
   const [leadError, setLeadError] = useState(null);
 
-  const handleLeadCapture = async (source) => {
+  // Service address: read off the bill, confirmed by the customer.
+  //
+  // The extraction has always found this and the page has always printed it;
+  // it just never went anywhere. It is the field a retailer needs before they
+  // can price or enrol anyone, so a lead without one is worth materially less.
+  // It is shown for confirmation rather than submitted silently, because an
+  // OCR read of a scanned bill is a guess until a person says otherwise.
+  const [serviceAddress, setServiceAddress] = useState('');
+  const [addressTouched, setAddressTouched] = useState(false);
+
+  useEffect(() => {
+    if (billData?.service_address && !addressTouched) {
+      setServiceAddress(String(billData.service_address));
+    }
+  }, [billData?.service_address, addressTouched]);
+
+  const addressCheck = useMemo(
+    () => (serviceAddress.trim() ? validateServiceAddress(serviceAddress) : null),
+    [serviceAddress]
+  );
+
+  const handleLeadCapture = async () => {
     if (!leadName.trim()) {
       setLeadError('Please enter your first name');
       return;
     }
     if (!leadEmail || leadSubmitting) return;
+
+    if (addressCheck && !addressCheck.valid) {
+      setLeadError(addressCheck.error);
+      return;
+    }
+
     setLeadSubmitting(true);
     setLeadError(null);
+
     try {
-      // Build recommendation data with affiliate URLs for the email
-      const recsWithLinks = (recommendations || []).map(plan => {
-        const planData = plan.data || plan;
-        const providerName = planData.provider_name || plan.provider_name;
-        const provider = providers.find(p => {
-          const pName = p.name || p.data?.name;
-          return pName === providerName;
-        });
-        let affiliateUrl = '#';
-        if (provider) {
-          const pData = provider.data || provider;
-          const fallback = pData.affiliate_url || provider.affiliate_url || pData.website_url || provider.website_url || '#';
-          affiliateUrl = getAffiliateUrl({ providerId: provider.id, offerId: plan.id, fallbackUrl: fallback });
-        }
-        return {
-          provider_name: providerName,
-          plan_name: planData.plan_name || plan.plan_name,
-          rate_per_kwh: planData.rate_per_kwh || plan.rate_per_kwh,
-          contract_length: planData.contract_length || plan.contract_length,
-          renewable_percentage: planData.renewable_percentage || plan.renewable_percentage || 0,
-          estimatedCost: plan.estimatedCost,
-          monthlySavings: plan.monthlySavings,
-          annualSavings: plan.annualSavings,
-          affiliateUrl,
-        };
+      // ── The lead ──
+      //
+      // This page used to email a report and create no lead at all, so every
+      // analyzer visitor was invisible to the pipeline that routes and sells
+      // leads. The same endpoint the comparison engine uses, so an analyzer
+      // visitor who later finishes a comparison enriches one row rather than
+      // producing a second.
+      await fetch('/api/leads?action=create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: leadEmail,
+          first_name: leadName.trim(),
+          zip: billData?.zip_code || null,
+          source: 'bill_analyzer',
+          source_page: 'bill_analyzer',
+          comparison: {
+            session_id: sessionId,
+            entry_context: ENTRY_CONTEXTS.BILL_ANALYZER,
+            customer_type: 'residential',
+            monthly_usage_kwh: Number(billData?.monthly_usage_kwh) || null,
+            monthly_cost: Number(billData?.monthly_cost) || null,
+            current_provider: billData?.provider_name || null,
+            current_plan: billData?.plan_name || null,
+            bill_uploaded: billData?.entry_source !== 'manual',
+            bill_analysis_status: 'complete',
+            bill_analyzed_at: new Date().toISOString(),
+            service_address: addressCheck?.valid ? serviceAddress.trim() : null,
+            // Confirmed only when the customer actually edited or accepted it
+            // in the form; otherwise it stays a machine reading.
+            service_address_source: addressTouched
+              ? ADDRESS_SOURCE.CUSTOMER_CONFIRMED
+              : ADDRESS_SOURCE.BILL_ANALYZER,
+          },
+        }),
+      }).catch(() => {
+        // A lead-write failure must not cost the customer their report.
       });
 
-      // Send the full report email
+      // ── The report ──
+      //
+      // Carries a reference to the comparison, never its numbers. The endpoint
+      // recomputes prices, savings and outbound links server-side, so what
+      // lands in the inbox is what the page showed — and a crafted request
+      // can no longer put its own URL behind a "Switch to this plan" button in
+      // an email we sign.
       const resp = await fetch('/api/send-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: leadEmail,
           name: leadName.trim(),
-          billData: billData,
-          recommendations: recsWithLinks,
-          savingsScore: savingsScore,
-          overpaymentPercent: overpaymentPercent,
+          zip: billData?.zip_code,
+          monthlyUsageKwh: Number(billData?.monthly_usage_kwh) || null,
+          monthlyCost: Number(billData?.monthly_cost) || null,
+          currentProvider: billData?.provider_name || null,
+          billAnalysisStatus: 'complete',
+          billConfidence: comparisonInput?.billConfidence,
+          sessionId,
+          entryContext: ENTRY_CONTEXTS.BILL_ANALYZER,
         }),
       });
-      const data = await resp.json();
+
+      const data = await resp.json().catch(() => ({}));
       if (resp.ok && data.success) {
         setLeadSubmitted(true);
       } else {
@@ -221,17 +281,68 @@ export default function BillAnalyzer() {
     }
   };
 
-  const { data: plans } = useQuery({
-    queryKey: ['plans'],
-    queryFn: () => ElectricityPlan.list(),
-    placeholderData: [],
+  // ── The comparison, from the service that owns it ──
+  //
+  // This page used to fetch every plan row and price them in the browser:
+  // rate x usage + base charge, which is the calculation the pricing engine
+  // was built to replace. It ignored utility delivery charges, bill credits
+  // and their thresholds entirely, so the analyzer quoted a monthly figure
+  // that /compare-rates would not have quoted for the same plan on the same
+  // day. It also had no way to produce a tracked outbound link, so every
+  // "Switch to This Plan" click on this page earned nothing.
+  //
+  // Same endpoint the results board calls. The economics arrive decided.
+  const comparisonInput = useMemo(() => {
+    if (!billData) return null;
+    const zip = String(billData.zip_code || '').replace(/\D/g, '').slice(0, 5);
+    if (zip.length !== 5) return null;
+
+    return {
+      zip,
+      customerType: 'residential',
+      monthlyUsageKwh: Number(billData.monthly_usage_kwh) || null,
+      monthlyCost: Number(billData.monthly_cost) || null,
+      shoppingIntent: 'better_rate',
+      // The bill is the evidence, and how much of it we trust decides whether
+      // the server is willing to publish a savings figure at all.
+      billAnalysisStatus: 'complete',
+      billConfidence: billData.entry_source === 'manual' ? 'high' : 'low',
+      entryContext: ENTRY_CONTEXTS.BILL_ANALYZER,
+      sessionId,
+    };
+  }, [billData, sessionId]);
+
+  const { data: comparison, isLoading: comparisonLoading, isError: comparisonError } = useQuery({
+    queryKey: ['bill-analyzer-comparison', comparisonInput],
+    enabled: Boolean(comparisonInput),
+    queryFn: async () => {
+      const response = await fetch('/api/comparison', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(comparisonInput),
+      });
+      if (!response.ok) throw new Error('catalog_unavailable');
+      return response.json();
+    },
   });
 
-  const { data: providers = [] } = useQuery({
-    queryKey: ['providers'],
-    queryFn: () => ElectricityProvider.filter({ is_active: true }),
-    placeholderData: [],
-  });
+  const results = useMemo(() => comparison?.results || [], [comparison]);
+
+  // The plans worth showing someone who already has service: the ones that
+  // beat what they pay now. `potentialSavings` is populated by the server only
+  // when the difference is genuinely in the customer's favour and both sides
+  // of the comparison are complete, so this cannot print an invented saving.
+  const recommendations = useMemo(
+    () => results.filter((r) => r.potentialSavings > 0).slice(0, 6),
+    [results]
+  );
+
+  // Where their current rate sits in the market they can actually buy in.
+  const benchmark = useMemo(() => {
+    const current = readBillRate(billData || {});
+    if (!current) return { comparable: false, reason: 'no_current_rate' };
+    return benchmarkBill({ rate: current.rate, basis: current.basis, results });
+  }, [billData, results]);
 
   // ─── File validation helper ────────────────────────────────
   const validateAndSetFile = (selectedFile) => {
@@ -535,159 +646,15 @@ export default function BillAnalyzer() {
     setShowManualInput(false);
   };
 
-  // ─── Calculate savings score and overpayment ───────────────
-  const calculateMetrics = useCallback((currentRate, allPlans) => {
-    if (!currentRate || allPlans.length === 0) {
-      return { savingsScore: 50, overpaymentPercent: 0 };
-    }
-
-    const rates = allPlans.map(p => {
-      const pd = p.data || p;
-      return pd.rate_per_kwh || p.rate_per_kwh || 0;
-    }).filter(r => r > 0);
-
-    if (rates.length === 0) {
-      return { savingsScore: 50, overpaymentPercent: 0 };
-    }
-
-    const sortedRates = [...rates].sort((a, b) => a - b);
-    const minRate = sortedRates[0];
-    const maxRate = sortedRates[sortedRates.length - 1];
-    const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
-    const medianRate = sortedRates.length % 2 === 0
-      ? (sortedRates[sortedRates.length / 2 - 1] + sortedRates[sortedRates.length / 2]) / 2
-      : sortedRates[Math.floor(sortedRates.length / 2)];
-
-    // Percentile: what % of plans have a rate >= currentRate (higher = better for user)
-    const betterOrEqualCount = sortedRates.filter(r => r >= currentRate).length;
-    const percentileScore = (betterOrEqualCount / sortedRates.length) * 100;
-
-    // Rate position score: where does current rate fall in the range
-    let rangeScore;
-    if (maxRate === minRate) {
-      rangeScore = currentRate <= minRate ? 100 : 0;
-    } else {
-      rangeScore = Math.max(0, Math.min(100,
-        ((maxRate - currentRate) / (maxRate - minRate)) * 100
-      ));
-    }
-
-    // Average comparison bonus: reward being below average
-    const avgBonus = currentRate <= avgRate
-      ? Math.min(15, ((avgRate - currentRate) / avgRate) * 50)
-      : -Math.min(15, ((currentRate - avgRate) / avgRate) * 50);
-
-    // Weighted composite score: 50% percentile, 35% range position, 15% avg comparison
-    let savingsScore = Math.round(
-      (percentileScore * 0.50) + (rangeScore * 0.35) + (50 + avgBonus) * 0.15
-    );
-    savingsScore = Math.max(0, Math.min(100, savingsScore));
-
-    // Overpayment: how much more you pay vs the best available rate
-    const overpaymentPercent = minRate > 0
-      ? Math.max(0, parseFloat((((currentRate - minRate) / minRate) * 100).toFixed(1)))
-      : 0;
-
-    return { savingsScore, overpaymentPercent };
-  }, []);
-
-  // ─── Calculate recommendations ─────────────────────────────
-  const getRecommendations = useCallback(async () => {
-    if (!billData || !billData.monthly_usage_kwh) return [];
-
-    const currentMonthlyCost = billData.monthly_cost || 0;
-    const zipCode = billData.zip_code;
-    
-    let availableProviders = [];
-    if (zipCode && zipCode.length === 5) {
-      availableProviders = await getProvidersForZipCode(zipCode);
-    }
-    
-    // Get state code for state-level plan filtering
-    const currentStateCode = zipCode ? getStateFromZip(zipCode) : null;
-    
-    const filteredPlans = plans.filter(plan => {
-      const planData = plan.data || plan;
-      const providerName = planData.provider_name || plan.provider_name;
-      const planName = planData.plan_name || plan.plan_name;
-      
-      // Exclude business plans
-      const customerType = (planData.customer_type || plan.customer_type || '').toLowerCase();
-      if (customerType === 'business' || (planName && planName.toLowerCase().includes('business'))) {
-        return false;
-      }
-      
-      // CRITICAL: Filter by state - only show plans for the user's state
-      if (currentStateCode) {
-        const planState = planData.state || plan.state;
-        if (planState && planState !== currentStateCode) {
-          return false;
-        }
-        if (!planState) {
-          return false;
-        }
-      }
-      
-      // If we have ZIP-based availability, filter by it
-      if (zipCode && availableProviders.length > 0) {
-        const provider = availableProviders.find(p => p.name === providerName);
-        if (!provider) return false;
-      }
-      
-      return true;
-    });
-    
-    return filteredPlans
-      .map(plan => {
-        const planData = plan.data || plan;
-        const ratePerKwh = planData.rate_per_kwh || plan.rate_per_kwh;
-        const baseCharge = planData.monthly_base_charge || plan.monthly_base_charge || planData.base_charge || plan.base_charge || 0;
-        
-        const estimatedCost = (ratePerKwh / 100) * billData.monthly_usage_kwh + parseFloat(baseCharge || 0);
-        const monthlySavings = currentMonthlyCost - estimatedCost;
-        const annualSavings = monthlySavings * 12;
-        
-        return {
-          ...plan,
-          estimatedCost,
-          monthlySavings,
-          annualSavings
-        };
-      })
-      .filter(plan => plan.monthlySavings > 0)
-      .sort((a, b) => b.annualSavings - a.annualSavings)
-      .slice(0, 6);
-  }, [billData, plans]);
-
-  const [recommendations, setRecommendations] = useState(sessionData?.recommendations || []);
-  const [savingsScore, setSavingsScore] = useState(sessionData?.savingsScore ?? null);
-  const [overpaymentPercent, setOverpaymentPercent] = useState(sessionData?.overpaymentPercent ?? null);
-  
+  // Persist so a refresh, or a return trip from a provider site, lands back on
+  // the finished analysis rather than an empty upload box. Only the bill and
+  // the session id are stored: the results are re-fetched from the service, so
+  // a cached copy can never outlive the catalog it was priced against.
   useEffect(() => {
-    if (showResults && billData && plans.length > 0) {
-      getRecommendations().then(recs => {
-        setRecommendations(recs);
-
-        // Calculate metrics
-        const currentRate = billData.rate_per_kwh || 
-          (billData.monthly_cost && billData.monthly_usage_kwh 
-            ? parseFloat(((billData.monthly_cost / billData.monthly_usage_kwh) * 100).toFixed(2))
-            : 0);
-        const metrics = calculateMetrics(currentRate, plans);
-        setSavingsScore(metrics.savingsScore);
-        setOverpaymentPercent(metrics.overpaymentPercent);
-
-        // Persist to session
-        saveToSession({
-          billData,
-          showResults: true,
-          recommendations: recs,
-          savingsScore: metrics.savingsScore,
-          overpaymentPercent: metrics.overpaymentPercent,
-        });
-      });
+    if (showResults && billData) {
+      saveToSession({ billData, showResults: true, sessionId });
     }
-  }, [showResults, billData, plans, getRecommendations, calculateMetrics]);
+  }, [showResults, billData, sessionId]);
 
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "/" },
@@ -700,9 +667,8 @@ export default function BillAnalyzer() {
     setBillData(null);
     setFile(null);
     setShowManualInput(false);
-    setRecommendations([]);
-    setSavingsScore(null);
-    setOverpaymentPercent(null);
+    setServiceAddress('');
+    setAddressTouched(false);
     clearSession();
   };
 
@@ -739,7 +705,12 @@ export default function BillAnalyzer() {
 
   // ─── Results Page ──────────────────────────────────────────
   if (showResults && billData) {
-    const totalPotentialSavings = recommendations.length > 0 ? recommendations[0].annualSavings : 0;
+    // The best annual saving the server is willing to stand behind. Nothing
+    // here derives it — `annualDifference` is signed and already decided, and
+    // is only populated when both sides of the comparison are complete.
+    const totalPotentialSavings = recommendations.length > 0
+      ? Math.abs(recommendations[0].annualDifference || 0)
+      : 0;
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -762,8 +733,25 @@ export default function BillAnalyzer() {
           {/* Score + Overpayment + Bill Summary Row */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {/* Savings Score Gauge */}
-            {savingsScore !== null && (
-              <SavingsScoreGauge score={savingsScore} />
+            {benchmark.comparable ? (
+              <SavingsScoreGauge score={benchmark.score} label={benchmark.band?.label} />
+            ) : (
+              <Card className="border-2 border-gray-200">
+                <CardContent className="p-6 flex flex-col items-center justify-center h-full text-center">
+                  <BarChart3 className="w-8 h-8 text-gray-300 mb-3" />
+                  <h2 className="text-lg font-bold text-gray-900 mb-1">Rate Score</h2>
+                  {/* Saying why beats printing a placeholder score. A score
+                      computed from two plans is a number with nothing behind
+                      it, and this page is read as advice. */}
+                  <p className="text-xs text-gray-500">
+                    {benchmark.reason === 'insufficient_complete_pricing'
+                      ? "Not enough plans in your area publish full delivery pricing to score your rate fairly."
+                      : benchmark.reason === 'no_current_rate'
+                        ? "We could not read a rate off this bill."
+                        : "Not enough plans available in your area to score your rate yet."}
+                  </p>
+                </CardContent>
+              </Card>
             )}
 
             {/* Overpayment Card */}
@@ -774,17 +762,31 @@ export default function BillAnalyzer() {
                   <h2 className="text-lg font-bold text-gray-900">Overpayment</h2>
                 </div>
                 <div className={`text-4xl font-bold mb-2 ${
-                  overpaymentPercent > 20 ? "text-red-600" : 
-                  overpaymentPercent > 10 ? "text-amber-600" : 
-                  overpaymentPercent > 0 ? "text-blue-600" : "text-green-600"
+                  !benchmark.comparable ? "text-gray-400" :
+                  benchmark.overpaymentPercent > 20 ? "text-red-600" :
+                  benchmark.overpaymentPercent > 10 ? "text-amber-600" :
+                  benchmark.overpaymentPercent > 0 ? "text-blue-600" : "text-green-600"
                 }`}>
-                  {overpaymentPercent !== null ? `${overpaymentPercent}%` : "—"}
+                  {benchmark.comparable ? `${benchmark.overpaymentPercent}%` : "—"}
                 </div>
                 <p className="text-xs text-gray-500 text-center">
-                  {overpaymentPercent > 0
-                    ? "Above the best available rate in your area"
-                    : "You have a competitive rate"}
+                  {!benchmark.comparable
+                    ? "Not enough comparable plans to measure this"
+                    : benchmark.overpaymentPercent > 0
+                      ? `Above the cheapest of ${benchmark.sampleSize} plans available to you`
+                      : `You are at or below the cheapest of ${benchmark.sampleSize} plans available to you`}
                 </p>
+                {/* What the score was measured against. A rate derived from the
+                    bill total includes delivery and taxes, so it is compared
+                    against full modelled costs, not advertised supply rates —
+                    and the customer is told which. */}
+                {benchmark.comparable && (
+                  <p className="text-[11px] text-gray-400 text-center mt-2">
+                    {benchmark.basis === 'effective'
+                      ? "Measured on your all-in cost per kWh"
+                      : "Measured on your energy charge per kWh"}
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -873,88 +875,107 @@ export default function BillAnalyzer() {
               </div>
               
               <div className="grid md:grid-cols-2 gap-4">
-                {recommendations.map((plan, index) => (
-                  <Card 
-                    key={plan.id} 
-                    className={`border-2 hover:shadow-lg transition-all ${
-                      index === 0 ? 'border-[#FF6B35] bg-gradient-to-br from-orange-50 to-white' : 'border-gray-200'
-                    }`}
-                  >
-                    <CardContent className="p-4">
-                      {index === 0 && (
-                        <div className="mb-3">
-                          <span className="bg-[#FF6B35] text-white text-xs font-bold px-2 py-1 rounded">
-                            BEST SAVINGS
-                          </span>
-                        </div>
-                      )}
-                      
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <span className="text-xs font-bold text-[#0A5C8C]">
-                            {(plan.provider_name || "").substring(0, 3).toUpperCase()}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-gray-900 text-sm mb-1">{plan.provider_name}</h3>
-                          <p className="text-xs text-gray-600 truncate">{plan.plan_name}</p>
-                        </div>
-                      </div>
+                {recommendations.map((result, index) => {
+                  // Which figure to show and what to call it is the shared
+                  // contract's decision, so a plan cannot read "$105/mo" here
+                  // and "$105/mo supply" on the results board.
+                  const price = describeResultPrice(result);
+                  const caveat = pricingCaveatText(result);
 
-                      <div className="grid grid-cols-2 gap-3 mb-4">
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">Rate</p>
-                          <p className="text-base font-bold text-[#0A5C8C]">{plan.rate_per_kwh}¢/kWh</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">Est. Monthly</p>
-                          <p className="text-base font-bold text-gray-900">${plan.estimatedCost.toFixed(0)}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">Term</p>
-                          <p className="text-sm font-semibold text-gray-700">{plan.contract_length || 'Variable'} mo</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">Annual Savings</p>
-                          <p className="text-base font-bold text-green-600">${plan.annualSavings.toFixed(0)}</p>
-                        </div>
-                      </div>
+                  return (
+                    <Card
+                      key={result.planId}
+                      className={`border-2 hover:shadow-lg transition-all ${
+                        index === 0 ? 'border-[#FF6B35] bg-gradient-to-br from-orange-50 to-white' : 'border-gray-200'
+                      }`}
+                    >
+                      <CardContent className="p-4">
+                        {index === 0 && (
+                          <div className="mb-3">
+                            <span className="bg-[#FF6B35] text-white text-xs font-bold px-2 py-1 rounded">
+                              BEST SAVINGS
+                            </span>
+                          </div>
+                        )}
 
-                      {plan.renewable_percentage >= 50 && (
-                        <div className="flex items-center gap-1 text-xs text-green-600 font-medium mb-3">
-                          <Leaf className="w-3 h-3" />
-                          {plan.renewable_percentage}% Renewable
+                        <div className="flex items-start gap-3 mb-4">
+                          <ProviderLogo
+                            provider={{ name: result.providerName, logo_url: result.providerLogoUrl }}
+                            className="w-12 h-12 flex-shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-gray-900 text-sm mb-1">{result.providerName}</h3>
+                            <p className="text-xs text-gray-600 truncate">{result.planName}</p>
+                          </div>
+                          {result.matchScore !== null && (
+                            <span className="text-xs font-semibold text-[#0A5C8C] whitespace-nowrap">
+                              {result.matchScore}% match
+                            </span>
+                          )}
                         </div>
-                      )}
 
-                      <a 
-                        href={(() => {
-                          const planData = plan.data || plan;
-                          const providerName = planData.provider_name || plan.provider_name;
-                          const provider = providers.find(p => {
-                            const pName = p.name || p.data?.name;
-                            return pName === providerName;
-                          });
-                          if (!provider) {
-                            // Fallback: use plan_details_url or "#"
-                            return planData.plan_details_url || plan.plan_details_url || "#";
-                          }
-                          const pData = provider.data || provider;
-                          const fallback = pData.affiliate_url || provider.affiliate_url || pData.website_url || provider.website_url || "#";
-                          return getAffiliateUrl({ providerId: provider.id, offerId: plan.id, fallbackUrl: fallback });
-                        })()}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                      >
-                        <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm">
-                          Switch to This Plan
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </a>
-                    </CardContent>
-                  </Card>
-                ))}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">Rate</p>
+                            <p className="text-base font-bold text-[#0A5C8C]">{result.ratePerKwh}¢/kWh</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">{price ? price.label : 'Est. Monthly'}</p>
+                            <p className="text-base font-bold text-gray-900">
+                              {price ? `$${Math.round(price.amount)}` : '—'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">Term</p>
+                            <p className="text-sm font-semibold text-gray-700">
+                              {result.termMonths ? `${result.termMonths} mo` : 'Month to month'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600 mb-1">Annual Savings</p>
+                            <p className="text-base font-bold text-green-600">
+                              ${Math.round(Math.abs(result.annualDifference || 0))}
+                            </p>
+                          </div>
+                        </div>
+
+                        {caveat && <p className="text-[11.5px] text-amber-700 mb-3">{caveat}</p>}
+
+                        {result.isRenewable && (
+                          <div className="flex items-center gap-1 text-xs text-green-600 font-medium mb-3">
+                            <Leaf className="w-3 h-3" />
+                            {result.renewablePercentage ? `${result.renewablePercentage}% Renewable` : 'Renewable'}
+                          </div>
+                        )}
+
+                        {/* The route is built server-side and points at /api/go,
+                            which resolves the destination at click time. The
+                            browser never receives a provider URL, so nothing
+                            here can redirect the revenue — and a plan with no
+                            configured destination gets the concierge rather
+                            than a button that goes nowhere. */}
+                        {result.trackedOutboundRoute ? (
+                          <a href={result.trackedOutboundRoute} target="_blank" rel="noopener noreferrer" className="block">
+                            <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-sm">
+                              Switch to This Plan
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </a>
+                        ) : (
+                          <Link
+                            to={`/home-concierge?plan=${encodeURIComponent(result.planName || '')}&provider=${encodeURIComponent(result.providerName || '')}${billData.zip_code ? `&zip=${billData.zip_code}` : ''}`}
+                            className="block"
+                          >
+                            <Button variant="outline" className="w-full text-sm">
+                              Request This Plan
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </Link>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           ) : (
