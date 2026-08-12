@@ -569,9 +569,21 @@ function QuestionScreen({ question, state, update, setState, setView, onBack, on
     footer: onChangeService ? <ChangeServiceButton onClick={onChangeService} /> : null,
   };
 
+  // Every question that holds a draft is keyed on the question id.
+  //
+  // These components seed their input from `state` with useState, which only
+  // runs its initialiser on mount. One ContactQuestion serves the name, email
+  // and phone questions, so without a key React saw the same component type in
+  // the same position, kept the mounted instance across the transition, and
+  // carried the draft with it — the name the visitor had just typed reappeared
+  // as the prefilled email, then as the phone number.
+  //
+  // QuestionFrame's own `key` cannot do this job: it sits on the div that frame
+  // returns, so it restarts the entrance animation but has no bearing on the
+  // reconciliation of the stateful component rendered above it.
   switch (question.type) {
     case "zip":
-      return <ZipQuestion {...frameProps} state={state} update={update} />;
+      return <ZipQuestion key={question.id} {...frameProps} state={state} update={update} />;
 
     case "choice":
       return (
@@ -602,13 +614,14 @@ function QuestionScreen({ question, state, update, setState, setView, onBack, on
       );
 
     case "verify":
-      return <VerifyQuestion {...frameProps} state={state} update={update} />;
+      return <VerifyQuestion key={question.id} {...frameProps} state={state} update={update} />;
 
     case "text":
     case "email":
     case "phone":
       return (
         <ContactQuestion
+          key={question.id}
           {...frameProps}
           question={question}
           state={state}
