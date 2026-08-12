@@ -20,6 +20,7 @@ import {
   Plus, Pencil, Trash2, Search, Loader2, Zap, Leaf,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { validatePlan } from "@/lib/planValidation";
 
 const emptyPlan = {
   provider_name: "", plan_name: "", plan_type: "fixed", customer_type: "residential",
@@ -38,6 +39,7 @@ export default function AdminPlans() {
   const [filterType, setFilterType] = useState("all");
   const [filterState, setFilterState] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [editingPlan, setEditingPlan] = useState(null);
   const [form, setForm] = useState(emptyPlan);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -89,19 +91,25 @@ export default function AdminPlans() {
   };
 
   const handleSubmit = () => {
-    const data = {
-      ...form,
-      rate_per_kwh: parseFloat(form.rate_per_kwh) || 0,
-      contract_length: parseInt(form.contract_length) || 0,
-      early_termination_fee: parseFloat(form.early_termination_fee) || 0,
-      base_charge: parseFloat(form.base_charge) || 0,
-      renewable_percentage: parseInt(form.renewable_percentage) || 0,
-      tdsp_charges: parseFloat(form.tdsp_charges) || 0,
-      usage_credit: parseFloat(form.usage_credit) || 0,
-      usage_credit_threshold: parseInt(form.usage_credit_threshold) || 0,
-      customer_type: "residential",
-    };
+    // One shared validation layer across all three plan screens. It resolves
+    // the canonical provider_id from the selected provider — the forms select
+    // by name, and writing name alone is what left hundreds of rows needing
+    // the migration-014 backfill — and it refuses to coerce blank or invalid
+    // pricing into a number a customer would be charged against.
+    const { valid, values, errors } = validatePlan(
+      { ...form, customer_type: "residential" },
+      providers
+    );
+
+    if (!valid) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
+    const data = { ...form, ...values };
     delete data.id; delete data.created_at; delete data.updated_at;
+
     if (editingPlan) {
       updateMutation.mutate({ id: editingPlan.id, data });
     } else {

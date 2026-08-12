@@ -49,7 +49,7 @@ export default async function handler(req, res) {
 
     // Bill uploads (quotes with bill_file_url)
     const { count: billUploads } = await supabase
-      .from("custom_quotes")
+      .from("custom_business_quotes")
       .select("id", { count: "exact", head: true })
       .not("bill_file_url", "is", null)
       .gte("created_at", weekAgo.toISOString());
