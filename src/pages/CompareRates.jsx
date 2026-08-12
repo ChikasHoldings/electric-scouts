@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Building2, Home, Leaf, MapPin } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { ElectricityPlan } from "@/api/supabaseEntities";
+import { ElectricityPlan, ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import SEOHead, {
   getOrganizationSchema,
@@ -270,6 +270,33 @@ export default function CompareRates() {
   });
   const plansLoading = plansQueryLoading && !plansError;
 
+  // Provider records carry the logo. Failing to load them is not fatal: the
+  // cards fall back to the designed initials mark rather than blocking results.
+  const { data: allProviders = [] } = useQuery({
+    queryKey: ["providers"],
+    queryFn: () => ElectricityProvider.list(),
+    placeholderData: [],
+  });
+  const providersById = useMemo(() => {
+    const byId = {};
+    const byName = {};
+    for (const provider of allProviders) {
+      if (provider.id) byId[provider.id] = provider;
+      if (provider.name) byName[provider.name.trim().toLowerCase()] = provider;
+    }
+    return { byId, byName };
+  }, [allProviders]);
+
+  // Plans carry provider_id, but resolve by name too so a plan whose id is
+  // missing still shows its brand instead of dropping to initials.
+  const providerFor = useCallback(
+    (plan) =>
+      providersById.byId[plan?.provider_id] ||
+      providersById.byName[String(plan?.provider_name || "").trim().toLowerCase()] ||
+      null,
+    [providersById]
+  );
+
   // Hold the analysis screen for its minimum presentation period.
   //
   // Kept in its own effect keyed on `view` alone: when the timer lived in the
@@ -455,6 +482,7 @@ export default function CompareRates() {
           renewablePlans={renewablePlans}
           usageKwh={usageKwh}
           getAffiliateUrl={getAffiliateUrl}
+          providerFor={providerFor}
           affiliateIds={affiliateIds}
           filters={filters}
           setFilters={setFilters}
@@ -973,7 +1001,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
 function ResultsScreen({
   state, accent, context, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
   affiliateIds, filters, setFilters, sort, setSort, visibleCount, setVisibleCount,
-  showAllPlans, setShowAllPlans,
+  showAllPlans, setShowAllPlans, providerFor,
 }) {
   const [openDetails, setOpenDetails] = useState(null);
 
@@ -1129,6 +1157,8 @@ function ResultsScreen({
                   <div key={entry.plan.id} className="flex flex-col">
                     <BestMatchCard
                       entry={entry}
+                      state={state}
+                      provider={providerFor(entry.plan)}
                       usageKwh={usageKwh}
                       onSelect={openAffiliate}
                       onDetails={showDetails}
@@ -1160,6 +1190,8 @@ function ResultsScreen({
                   <div key={entry.plan.id}>
                     <PlanRow
                       entry={entry}
+                      state={state}
+                      provider={providerFor(entry.plan)}
                       onSelect={openAffiliate}
                       onDetails={showDetails}
                       isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}

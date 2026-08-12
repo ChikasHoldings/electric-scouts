@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
-import { Leaf, Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { Leaf, Check, ChevronDown, SlidersHorizontal, X, TrendingDown, TrendingUp } from "lucide-react";
 import { useAccent } from "./ComparisonShell";
 import { COST_CONFIDENCE } from "../engine/planPricing";
 import { RANK_LABELS } from "../engine/ranking";
+import { compareToCurrentBill, describeComparison } from "../engine/savings";
+import ProviderLogo from "./ProviderLogo";
 
 /**
  * The results board: three best matches, then a paginated list.
@@ -29,16 +31,92 @@ function formatCost(estimate) {
  * Carries its rank in text as well as colour, so the ordering survives for
  * anyone who can't distinguish the tints.
  */
-function RankBadge({ rank, accent }) {
+function RankBadge({ rank, accent, match }) {
   const isTop = rank === 1;
+  // The label comes from the score band, not from the rank position. Those two
+  // can contradict each other: when one unusually cheap plan is available every
+  // other plan scores near the floor, and a badge reading "#1 Best match" beside
+  // "38% match" tells the customer two different things. Rank says where it
+  // placed; the label says how well it actually fits.
+  const label = match?.label || RANK_LABELS[rank];
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide ${
         isTop ? `${accent.solidBg} text-white` : `${accent.tintBg} ${accent.text}`
       }`}
     >
-      #{rank} {RANK_LABELS[rank]}
+      #{rank} {label}
     </span>
+  );
+}
+
+/**
+ * Match score.
+ *
+ * The number is carried in text, and the band label beside it repeats the
+ * meaning in words — the score is never conveyed by colour alone.
+ */
+function MatchScore({ match, accent }) {
+  if (!match || !match.score) return null;
+  return (
+    <span className="inline-flex items-baseline gap-1.5">
+      <span className={`text-[15px] font-semibold tabular-nums ${accent.text}`}>
+        {match.score}%
+      </span>
+      <span className="text-[11.5px] text-gray-500">match</span>
+    </span>
+  );
+}
+
+/**
+ * Current bill vs this plan.
+ *
+ * Renders nothing at all unless `compareToCurrentBill` says both sides are
+ * trustworthy, and states an unfavourable difference as plainly as a saving.
+ */
+function SavingsBlock({ entry, state, compact = false }) {
+  const comparison = compareToCurrentBill(entry.estimate, state);
+  const described = describeComparison(comparison);
+  if (!described) return null;
+
+  const positive = described.tone === "positive";
+  const Icon = positive ? TrendingDown : described.tone === "negative" ? TrendingUp : null;
+
+  return (
+    <div
+      className={`mt-3 rounded-xl px-3 py-2.5 ${
+        positive
+          ? "bg-[#0A7C52]/[0.06] ring-1 ring-inset ring-[#0A7C52]/15"
+          : described.tone === "negative"
+            ? "bg-amber-50/70 ring-1 ring-inset ring-amber-200/60"
+            : "bg-gray-50 ring-1 ring-inset ring-gray-200/70"
+      }`}
+    >
+      <p
+        className={`flex items-center gap-1.5 text-[13.5px] font-semibold ${
+          positive ? "text-[#0A7C52]" : described.tone === "negative" ? "text-amber-800" : "text-gray-700"
+        }`}
+      >
+        {Icon && <Icon className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />}
+        {described.headline}
+        <span className="sr-only">. {described.srText}</span>
+      </p>
+      {described.annual && (
+        <p className="mt-0.5 text-[12px] text-gray-600">{described.annual}</p>
+      )}
+      {!compact && (
+        <dl className="mt-2 pt-2 border-t border-black/[0.06] grid grid-cols-2 gap-x-3 text-[11.5px]">
+          <dt className="text-gray-500">Current bill</dt>
+          <dd className="text-right text-gray-700 tabular-nums">
+            {CURRENCY.format(comparison.currentMonthly)}/mo
+          </dd>
+          <dt className="text-gray-500 mt-0.5">With this plan</dt>
+          <dd className="text-right text-gray-700 tabular-nums mt-0.5">
+            {CURRENCY.format(comparison.estimatedMonthly)}/mo
+          </dd>
+        </dl>
+      )}
+    </div>
   );
 }
 
@@ -48,7 +126,7 @@ function RankBadge({ rank, accent }) {
  * Squarer and taller than a list row so the three sit as a set on desktop, with
  * the reasons — which are the whole point of a "best match" — given real space.
  */
-export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsored }) {
+export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsored, state, provider }) {
   const accent = useAccent();
   const { plan, estimate, rank, reasons } = entry;
   const cost = formatCost(estimate);
@@ -67,7 +145,7 @@ export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsore
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <RankBadge rank={rank} accent={accent} />
+        <RankBadge rank={rank} accent={accent} match={entry.match} />
         {isSponsored && (
           <span className="text-[10px] font-medium text-gray-500 border border-gray-200 rounded-full px-2 py-0.5">
             Sponsored
@@ -75,11 +153,18 @@ export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsore
         )}
       </div>
 
-      <div className="mt-4">
-        <p className="text-[12.5px] text-gray-500">{plan.provider_name}</p>
-        <h3 className="mt-0.5 text-[15.5px] font-semibold text-gray-900 leading-snug">
-          {plan.plan_name}
-        </h3>
+      <div className="mt-4 flex items-start gap-3">
+        <ProviderLogo provider={provider} name={plan.provider_name} eager />
+        <div className="min-w-0 flex-1">
+          <p className="text-[12.5px] text-gray-500 truncate">{plan.provider_name}</p>
+          <h3 className="mt-0.5 text-[15.5px] font-semibold text-gray-900 leading-snug">
+            {plan.plan_name}
+          </h3>
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <MatchScore match={entry.match} accent={accent} />
       </div>
 
       <div className="mt-4">
@@ -101,6 +186,8 @@ export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsore
           </p>
         )}
       </div>
+
+      <SavingsBlock entry={entry} state={state} />
 
       {reasons.length > 0 && (
         <ul className="mt-4 space-y-1.5">
@@ -150,7 +237,7 @@ export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsore
 }
 
 /** A row in the "more options" list. */
-export function PlanRow({ entry, onSelect, onDetails, isSponsored }) {
+export function PlanRow({ entry, onSelect, onDetails, isSponsored, state, provider }) {
   const accent = useAccent();
   const { plan, estimate } = entry;
   const cost = formatCost(estimate);
@@ -159,9 +246,12 @@ export function PlanRow({ entry, onSelect, onDetails, isSponsored }) {
   return (
     <article className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 transition-shadow hover:shadow-[0_1px_2px_rgba(16,24,40,0.04),0_8px_20px_-12px_rgba(16,24,40,0.16)]">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <ProviderLogo provider={provider} name={plan.provider_name} size="sm" />
+
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-[12.5px] text-gray-500">{plan.provider_name}</p>
+            <MatchScore match={entry.match} accent={accent} />
             {isSponsored && (
               <span className="text-[10px] font-medium text-gray-500 border border-gray-200 rounded-full px-1.5 py-0.5">
                 Sponsored
