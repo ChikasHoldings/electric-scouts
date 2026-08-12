@@ -112,3 +112,30 @@ describe('the two states are genuinely independent', () => {
     assert.equal(isCommissionCapable(url), true);
   });
 });
+
+describe('a plan with no configured referral route', () => {
+  // This is a normal state, not an error: it happens the moment an admin adds
+  // a provider before its affiliate link exists. The plan is real and the
+  // customer is eligible, so stranding them on a disabled control would throw
+  // away a qualified lead we can still route to a person.
+  //
+  // The CTA is a React component, so what is pinned here is the contract it
+  // depends on — that resolution reports "no destination" distinctly rather
+  // than inventing one.
+  test('resolution reports unresolved rather than guessing a destination', () => {
+    assert.equal(resolutionOf({ provider: { name: 'New Provider' } }, null), 'unresolved');
+  });
+
+  test('an unresolved destination is never commission-capable', () => {
+    assert.equal(isCommissionCapable(null), false);
+    assert.equal(isCommissionCapable(undefined), false);
+    assert.equal(isCommissionCapable(''), false);
+  });
+
+  test('a provider added with no link yet resolves to nothing, not to a wrong link', () => {
+    // The failure that must not happen: falling back to some OTHER provider's
+    // configured link because this one has none.
+    const noLink = { offer_id: null, target_url: null, provider: { name: 'Brand New Energy' } };
+    assert.equal(resolutionOf(noLink, null), 'unresolved');
+  });
+});
