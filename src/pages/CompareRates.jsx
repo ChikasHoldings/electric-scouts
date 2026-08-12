@@ -73,9 +73,10 @@ import {
   ViewMoreButton,
 } from "../components/compare/ui/ResultsBoard";
 import { rankPlans } from "../components/compare/engine/ranking";
+import { resolveAnalysisPhase } from "../components/compare/engine/analysisTimeline";
+import AnalysisLoader, { AnalysisFailed } from "../components/compare/ui/AnalysisLoader";
 import { costSortKey } from "../components/compare/engine/planPricing";
 import {
-  MatchingState,
   NoMatchState,
   CommercialComplete,
   RenewableFallback,
@@ -102,6 +103,7 @@ export default function CompareRates() {
     provider: "all", term: "all", planType: "all", renewableOnly: false,
   });
   const [sort, setSort] = useState("best");
+  const [matchingFailed, setMatchingFailed] = useState(false);
   const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
   const { getAffiliateUrl, affiliateOfferIds, affiliateProviderIds } = useAffiliateLinks();
 
@@ -217,19 +219,9 @@ export default function CompareRates() {
     if (view !== "question" || currentQuestion || !state.email) return;
     setView("matching");
     track(EVENTS.MATCHING_STARTED);
+    track(EVENTS.COMPARISON_ANALYSIS_STARTED);
   }, [currentQuestion, view, state.email]);
 
-  // Hold matching briefly, then show results.
-  //
-  // Kept in its own effect keyed on `view` alone: when the timer lived in the
-  // effect above, setting the view re-ran that effect, and its cleanup cancelled
-  // the very timeout it had just scheduled — leaving the page stuck on
-  // "Finding your electricity options…" forever.
-  useEffect(() => {
-    if (view !== "matching") return;
-    const timer = setTimeout(() => setView("results"), 900);
-    return () => clearTimeout(timer);
-  }, [view]);
 
   const update = useCallback((patch) => {
     setState((prev) => ({ ...prev, ...patch }));
@@ -271,11 +263,48 @@ export default function CompareRates() {
   }, [state.customerType, state.energyPreference, state.entryContext]);
 
   // ── Plans ──
-  const { data: allPlans = [] } = useQuery({
+  const { data: allPlans = [], isLoading: plansQueryLoading, isError: plansError } = useQuery({
     queryKey: ["plans"],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
   });
+  const plansLoading = plansQueryLoading && !plansError;
+
+  // Hold the analysis screen for its minimum presentation period.
+  //
+  // Kept in its own effect keyed on `view` alone: when the timer lived in the
+  // effect above, setting the view re-ran that effect, and its cleanup cancelled
+  // the very timeout it had just scheduled — leaving the page stuck on the
+  // analysis screen forever.
+  //
+  // The plans query is what "ready" means here. If it has not settled by the
+  // time the minimum elapses, the screen stays up rather than revealing a
+  // half-populated board — real work is never cut off by the clock.
+  useEffect(() => {
+    if (view !== "matching") return undefined;
+
+    const startedAt = Date.now();
+    let timer;
+
+    const check = () => {
+      const elapsed = Date.now() - startedAt;
+      const { phase } = resolveAnalysisPhase({ elapsedMs: elapsed, ready: !plansLoading });
+
+      if (phase === "complete") {
+        setView("results");
+        return;
+      }
+      if (phase === "failed") {
+        setMatchingFailed(true);
+        track(EVENTS.COMPARISON_MATCHING_FAILED, { elapsed_ms: elapsed });
+        return;
+      }
+      timer = setTimeout(check, 250);
+    };
+
+    check();
+    return () => clearTimeout(timer);
+  }, [view, plansLoading]);
 
   // Plan ids that resolve to a monetized outbound link, by offer OR by
   // provider. Provider is the one that actually matters — links are registered
@@ -352,6 +381,10 @@ export default function CompareRates() {
       route: routing.route,
     });
     track(EVENTS.COMPARISON_COMPLETED, { route: routing.route });
+    track(EVENTS.COMPARISON_RESULTS_LOADED, {
+      match_count: eligiblePlans.length,
+      route: routing.route,
+    });
   }, [view]);  
 
   const seoBlock = (
@@ -384,8 +417,26 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches" accent={accent} context={context}>
-          <MatchingState />
+        {/* No activeStage from here on. The questionnaire is finished, so the
+            stage indicator must not follow the customer into the analysis and
+            results — those are a destination, not another form step. */}
+        <ComparisonShell accent={accent} context={context}>
+          {matchingFailed ? (
+            <AnalysisFailed
+              onRetry={() => {
+                setMatchingFailed(false);
+                setView("question");
+                setView("matching");
+                track(EVENTS.COMPARISON_ANALYSIS_STARTED, { retry: true });
+              }}
+              onConcierge={() => {
+                track(EVENTS.CONCIERGE_REQUESTED, { route: ROUTES.CONCIERGE });
+                window.location.href = "/home-concierge";
+              }}
+            />
+          ) : (
+            <AnalysisLoader name={state.firstName || null} />
+          )}
         </ComparisonShell>
       </>
     );
@@ -507,8 +558,8 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches" accent={accent} context={context}>
-          <MatchingState />
+        <ComparisonShell accent={accent} context={context}>
+          <AnalysisLoader name={state.firstName || null} />
         </ComparisonShell>
       </>
     );
@@ -930,7 +981,7 @@ function ResultsScreen({
   // confirmation rather than a price list it cannot honestly produce.
   if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
     return (
-      <ComparisonShell activeStage="matches" accent={accent} context={context}>
+      <ComparisonShell accent={accent} context={context}>
         <CommercialComplete state={state} qualification={routing.qualification} />
       </ComparisonShell>
     );
@@ -938,7 +989,7 @@ function ResultsScreen({
 
   if (plans.length === 0) {
     return (
-      <ComparisonShell activeStage="matches" accent={accent} context={context}>
+      <ComparisonShell accent={accent} context={context}>
         <NoMatchState
           zip={state.zip}
           onConcierge={() => {
@@ -985,7 +1036,7 @@ function ResultsScreen({
     monetizedCount > 0 && monetizedCount < filteredPool.length;
 
   const openAffiliate = (plan) => {
-    track(EVENTS.PLAN_CLICKED, {
+    track(EVENTS.VIEW_PLAN_CLICKED, {
       provider: plan.provider_name,
       plan_id: plan.id,
       route: routing.route,
@@ -1009,11 +1060,11 @@ function ResultsScreen({
 
   const showDetails = (entry) => {
     setOpenDetails((current) => (current === entry.plan.id ? null : entry.plan.id));
-    track(EVENTS.PLAN_DETAILS_VIEWED, { plan_id: entry.plan.id, provider: entry.plan.provider_name });
+    track(EVENTS.PLAN_DETAILS_OPENED, { plan_id: entry.plan.id, provider: entry.plan.provider_name });
   };
 
   return (
-    <ComparisonShell activeStage="matches" accent={accent} context={context} wide>
+    <ComparisonShell accent={accent} context={context} wide>
       <div className="mb-6">
         <h1 className="text-[22px] sm:text-[26px] font-semibold text-gray-900 tracking-[-0.01em]">
           Electricity options for {state.city || state.zip}
@@ -1129,7 +1180,7 @@ function ResultsScreen({
                   remaining={remaining}
                   onClick={() => {
                     setVisibleCount((n) => n + RESULTS_PAGE_SIZE);
-                    track(EVENTS.RESULTS_VIEW_MORE, {
+                    track(EVENTS.RESULTS_SHOW_MORE, {
                       shown: visible.length + RESULTS_PAGE_SIZE,
                       session_id: state.sessionId,
                     });

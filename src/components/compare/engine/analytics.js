@@ -53,6 +53,20 @@ export const EVENTS = {
   CONCIERGE_CREATED: 'concierge_created',
   COMPARISON_COMPLETED: 'comparison_completed',
 
+  // ── Analysis and results (non-PII by construction: ids, counts and
+  //    enumerated values only — never a name, email, phone or address) ──
+  COMPARISON_ANALYSIS_STARTED: 'comparison_analysis_started',
+  COMPARISON_ANALYSIS_STAGE: 'comparison_analysis_stage',
+  COMPARISON_RESULTS_LOADED: 'comparison_results_loaded',
+  MATCH_SCORE_PRESENTED: 'match_score_presented',
+  ESTIMATED_SAVINGS_PRESENTED: 'estimated_savings_presented',
+  PLAN_DETAILS_OPENED: 'plan_details_opened',
+  VIEW_PLAN_CLICKED: 'view_plan_clicked',
+  REFERRAL_LINK_OPENED: 'referral_link_opened',
+  RESULTS_SHOW_MORE: 'results_show_more',
+  COMPARISON_NO_MATCH: 'comparison_no_match',
+  COMPARISON_MATCHING_FAILED: 'comparison_matching_failed',
+
   // ── Results board ──
   RESULTS_MATCHING_STARTED: 'results_matching_started',
   RESULTS_LOADED: 'results_loaded',
