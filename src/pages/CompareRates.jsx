@@ -11,6 +11,13 @@ import SEOHead, {
 } from "@/components/SEOHead";
 
 import { getCityFromZip } from "../components/compare/providerAvailability";
+import {
+  validateFirstName,
+  validateLastName,
+  validateEmail,
+  validatePhone,
+  formatPhone,
+} from "@/lib/contactValidation";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
 import {
@@ -85,8 +92,6 @@ import {
  */
 
 const RESULTS_PAGE_SIZE = 10;
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function CompareRates() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -551,6 +556,7 @@ function clearAnswerFor(questionId, prev) {
     case "commercial_timing": return { timing: "" };
     case "business_name": return { businessName: "" };
     case "name": return { firstName: "" };
+    case "last_name": return { lastName: "" };
     case "email": return { email: "" };
     case "phone": return { phone: "" };
     default: return prev;
@@ -824,50 +830,53 @@ function VerifyQuestion({ questionKey, onBack, footer, state, update }) {
 }
 
 function ContactQuestion({ questionKey, title, subtitle, onBack, footer, question, state, update }) {
-  const initial =
-    question.id === "business_name" ? state.businessName
-      : question.id === "name" ? state.firstName
-        : question.id === "email" ? state.email
-          : state.phone;
+  // Explicit per-question wiring. The previous chained ternary fell through to
+  // state.phone for anything it did not name, so adding a question silently
+  // pre-filled it with the phone number — the carryover class of bug.
+  const FIELDS = {
+    business_name: {
+      stateKey: "businessName",
+      validate: (v) => {
+        const value = String(v ?? "").trim().slice(0, 160);
+        return value
+          ? { valid: true, value, error: null }
+          : { valid: false, value: null, error: "Enter a business name." };
+      },
+      event: null,
+    },
+    name: { stateKey: "firstName", validate: validateFirstName, event: EVENTS.NAME_COMPLETED },
+    last_name: { stateKey: "lastName", validate: validateLastName, event: EVENTS.LAST_NAME_COMPLETED },
+    email: { stateKey: "email", validate: validateEmail, event: EVENTS.EMAIL_COMPLETED },
+    phone: { stateKey: "phone", validate: validatePhone, event: EVENTS.PHONE_COMPLETED },
+  };
 
-  const [draft, setDraft] = useState(initial || "");
+  const field = FIELDS[question.id] || FIELDS.name;
+  const stored = state[field.stateKey];
+
+  // Phone is stored E.164 but shown in the readable form the customer typed.
+  const [draft, setDraft] = useState(
+    question.id === "phone" && stored ? formatPhone(stored) : stored || ""
+  );
   const [error, setError] = useState("");
+  const [focusSignal, setFocusSignal] = useState(0);
 
   const submit = () => {
-    const value = draft.trim();
+    const result = field.validate(draft);
 
-    if (question.id === "email") {
-      if (!EMAIL_RE.test(value)) {
-        setError("Enter a valid email address so we can send your matches.");
-        return;
-      }
-      update({ email: value, consentContact: true });
-      track(EVENTS.EMAIL_COMPLETED);
+    if (!result.valid) {
+      // The entered value is deliberately left in the field: clearing it makes
+      // the customer retype a near-correct value to fix a typo.
+      setError(result.error);
+      setFocusSignal((n) => n + 1);
       return;
     }
 
-    if (question.id === "phone") {
-      const digits = value.replace(/\D/g, "");
-      if (digits.length < 10) {
-        setError("Enter a 10-digit phone number.");
-        return;
-      }
-      update({ phone: digits.slice(0, 15) });
-      track(EVENTS.PHONE_COMPLETED);
-      return;
-    }
-
-    if (!value) {
-      setError("This one's required.");
-      return;
-    }
-
-    if (question.id === "business_name") {
-      update({ businessName: value.slice(0, 160) });
-    } else {
-      update({ firstName: value.slice(0, 80) });
-      track(EVENTS.NAME_COMPLETED);
-    }
+    setError("");
+    const patch = { [field.stateKey]: result.value };
+    // Consent is recorded with the email that it attaches to.
+    if (question.id === "email") patch.consentContact = true;
+    update(patch);
+    if (field.event) track(field.event);
   };
 
   const inputProps = {
@@ -878,6 +887,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
   return (
     <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack} footer={footer}>
       <TextQuestion
+        focusSignal={focusSignal}
         id={question.id}
         label={question.inputLabel}
         autoComplete={question.autoComplete}

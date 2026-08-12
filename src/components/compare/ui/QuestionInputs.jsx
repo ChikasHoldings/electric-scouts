@@ -168,6 +168,7 @@ export function TextQuestion({
   submitLabel = "Continue",
   disabled,
   icon: Icon,
+  focusSignal,
 }) {
   const inputRef = useRef(null);
   const accent = useAccent();
@@ -180,6 +181,17 @@ export function TextQuestion({
     // can type and press Enter without reaching for the mouse.
     inputRef.current?.focus();
   }, [id]);
+
+  // Return focus to the field after a rejected submit — the click that failed
+  // left focus on the Continue button, so without this a keyboard or screen
+  // reader user lands nowhere near the input they need to correct.
+  //
+  // Keyed on a caller-incremented signal rather than on `error`, because
+  // submitting the same bad value twice produces an identical message and an
+  // effect watching the string alone would not re-run.
+  useEffect(() => {
+    if (focusSignal) inputRef.current?.focus();
+  }, [focusSignal]);
 
   return (
     <form

@@ -213,6 +213,18 @@ export const QUESTIONS = [
   },
 
   {
+    id: 'last_name',
+    type: 'text',
+    title: (s) => isCommercial(s)
+      ? 'And their last name?'
+      : "And your last name?",
+    inputLabel: 'Last name',
+    autoComplete: 'family-name',
+    appliesWhen: (s) => isKnown(s, 'customerType'),
+    satisfiedBy: (s) => isKnown(s, 'lastName'),
+  },
+
+  {
     id: 'email',
     type: 'email',
     title: 'Where should we send your electricity matches?',

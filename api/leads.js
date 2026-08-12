@@ -8,6 +8,7 @@ import {
   LOGO_EMAIL_HEADER_URL,
   ADMIN_EMAILS,
 } from "./_lib/email.js";
+import { validateContact } from "../src/lib/contactValidation.js";
 
 // ZIP prefix to state mapping for server-side resolution
 const ZIP_TO_STATE = {
@@ -356,16 +357,23 @@ async function handleCreateLead(req, res) {
   try {
     const {
       email, zip, name, source, source_page, city,
-      phone, comparison, attribution,
+      phone, first_name, last_name, comparison, attribution,
     } = req.body;
 
-    if (!email || !source) {
-      return res.status(400).json({ error: "Email and source are required" });
+    // Server-side validation is authoritative. The browser runs the same
+    // module for inline UX, but nothing it sends is trusted: a lead reaching
+    // this endpoint with a malformed phone number or an unnormalized email
+    // would otherwise be persisted exactly as posted.
+    const contact = validateContact(
+      { firstName: first_name, lastName: last_name, email, phone },
+      { require: ["email"] }
+    );
+    if (!contact.valid) {
+      return res.status(400).json({ error: "Invalid contact details", fields: contact.errors });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
+    if (!source) {
+      return res.status(400).json({ error: "Email and source are required" });
     }
 
     const resolvedState = resolveState(zip);
@@ -373,7 +381,7 @@ async function handleCreateLead(req, res) {
     const { data: existingLead } = await supabase
       .from("leads")
       .select("id, status")
-      .eq("email", email.toLowerCase().trim())
+      .eq("email", contact.values.email)
       .maybeSingle();
 
     if (existingLead) {
@@ -389,8 +397,11 @@ async function handleCreateLead(req, res) {
       // instead of a second row appearing.
       const updateData = mapComparisonColumns(comparison, attribution);
       if (zip) updateData.zip = zip;
-      if (name) updateData.name = name;
-      if (phone) updateData.phone = phone;
+      const displayName = contact.fullName || name || null;
+      if (displayName) updateData.name = displayName;
+      if (contact.values.firstName) updateData.first_name = contact.values.firstName;
+      if (contact.values.lastName) updateData.last_name = contact.values.lastName;
+      if (contact.values.phone) updateData.phone = contact.values.phone;
       if (city) updateData.city = city;
       if (resolvedState) updateData.state = resolvedState;
       if (source_page) updateData.source_page = source_page;
@@ -410,10 +421,12 @@ async function handleCreateLead(req, res) {
     const { data: lead, error: insertError } = await writeLeadRow(
       {
         ...mapComparisonColumns(comparison, attribution),
-        email: email.toLowerCase().trim(),
+        email: contact.values.email,
         zip: zip || null,
-        name: name || null,
-        phone: phone || null,
+        name: contact.fullName || name || null,
+        first_name: contact.values.firstName,
+        last_name: contact.values.lastName,
+        phone: contact.values.phone,
         city: city || null,
         state: resolvedState || null,
         source,

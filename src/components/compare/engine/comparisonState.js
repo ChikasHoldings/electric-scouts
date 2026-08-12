@@ -78,6 +78,7 @@ export function createInitialState(attribution = {}) {
 
     // ── Contact ──
     firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     consentContact: false,

@@ -97,7 +97,7 @@ describe('question flow ordering', () => {
     assert.equal(state.energyPreference, 'renewable');
   });
 
-  test('contact questions are asked one at a time, name then email then phone', () => {
+  test('contact questions are asked one at a time: first, last, email, phone', () => {
     const base = {
       ...atZipDone,
       customerType: CUSTOMER_TYPES.RESIDENTIAL,
@@ -106,10 +106,18 @@ describe('question flow ordering', () => {
       usageRange: '1000_1999',
       shoppingIntent: 'switching',
     };
+    // One question per screen, in the order the brief specifies. Last name is
+    // its own screen — never merged into a single full-name field.
     assert.equal(determineNextQuestion(stateWith(base)).id, 'name');
-    assert.equal(determineNextQuestion(stateWith({ ...base, firstName: 'Sam' })).id, 'email');
+    assert.equal(determineNextQuestion(stateWith({ ...base, firstName: 'Sam' })).id, 'last_name');
     assert.equal(
-      determineNextQuestion(stateWith({ ...base, firstName: 'Sam', email: 'a@b.com' })).id,
+      determineNextQuestion(stateWith({ ...base, firstName: 'Sam', lastName: 'Reed' })).id,
+      'email'
+    );
+    assert.equal(
+      determineNextQuestion(stateWith({
+        ...base, firstName: 'Sam', lastName: 'Reed', email: 'a@b.com',
+      })).id,
       'phone'
     );
   });
@@ -123,8 +131,9 @@ describe('question flow ordering', () => {
       usageRange: '1000_1999',
       shoppingIntent: 'switching',
       firstName: 'Sam',
+      lastName: 'Reed',
       email: 'a@b.com',
-      phone: '5551234567',
+      phone: '+15551234567',
     }));
     assert.equal(next, null);
   });

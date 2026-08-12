@@ -42,6 +42,7 @@ export const EVENTS = {
   COMMERCIAL_SPEND_SELECTED: 'commercial_spend_selected',
   COMMERCIAL_TIMING_SELECTED: 'commercial_timing_selected',
   NAME_COMPLETED: 'name_completed',
+  LAST_NAME_COMPLETED: 'last_name_completed',
   EMAIL_COMPLETED: 'email_completed',
   PHONE_COMPLETED: 'phone_completed',
   MATCHING_STARTED: 'matching_started',
