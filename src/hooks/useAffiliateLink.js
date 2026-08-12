@@ -83,6 +83,10 @@ export function useAffiliateLinks() {
   return {
     affiliateReady: ready,
     getAffiliateUrl,
+    // Which offers carry a commercial relationship. The comparison engine uses
+    // this only as a tie-breaker between otherwise-equal plans, and to disclose
+    // sponsorship on the card — never to rank.
+    affiliateOfferIds: new Set(Object.keys(linkCache.byOffer)),
   };
 }
 

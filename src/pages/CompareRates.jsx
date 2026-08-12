@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { Building2, Home, Leaf, MapPin } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { ElectricityPlan } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
@@ -9,18 +10,23 @@ import SEOHead, {
   getBreadcrumbSchema,
 } from "@/components/SEOHead";
 
-import { validateZipCode } from "../components/compare/stateData";
 import { getCityFromZip } from "../components/compare/providerAvailability";
-import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
 import {
   createInitialState,
   invalidateBranchState,
+  resetServiceSelection,
   resolveUsageKwh,
   stageForQuestion,
   CUSTOMER_TYPES,
 } from "../components/compare/engine/comparisonState";
+import {
+  ENTRY_PARAM_KEYS,
+  parseEntryParams,
+  resolveEntryContext,
+  checkServiceZip,
+} from "../components/compare/engine/entryContext";
 import {
   determineNextQuestion,
   stepBack,
@@ -53,9 +59,16 @@ import {
   BillSummary,
 } from "../components/compare/ui/BillPanel";
 import {
+  BestMatchCard,
+  PlanRow,
+  PlanDetails,
+  ResultsToolbar,
+  ViewMoreButton,
+} from "../components/compare/ui/ResultsBoard";
+import { rankPlans } from "../components/compare/engine/ranking";
+import { costSortKey } from "../components/compare/engine/planPricing";
+import {
   MatchingState,
-  PlanCard,
-  ResultsFilters,
   NoMatchState,
   CommercialComplete,
   RenewableFallback,
@@ -71,39 +84,77 @@ import {
  * 1,500-line conditional tree it replaced.
  */
 
+const RESULTS_PAGE_SIZE = 10;
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function CompareRates() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [state, setState] = useState(() => createInitialState());
   const [view, setView] = useState("question"); // question | bill_upload | bill_summary | matching | results
   const [showAllPlans, setShowAllPlans] = useState(false);
-  const [termFilter, setTermFilter] = useState("all");
-  const [renewableOnly, setRenewableOnly] = useState(false);
-  const { getAffiliateUrl } = useAffiliateLinks();
+  const [filters, setFilters] = useState({
+    provider: "all", term: "all", planType: "all", renewableOnly: false,
+  });
+  const [sort, setSort] = useState("best");
+  const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
+  const { getAffiliateUrl, affiliateOfferIds } = useAffiliateLinks();
 
   // ── Session bootstrap ──
+  //
+  // Three entry points converge here: a service landing page that already
+  // established the ZIP and the audience, the standalone Bill Analyzer, and a
+  // visitor who came straight to /compare-rates. All three end up as one
+  // comparison session, and `determineNextQuestion` decides what is still
+  // unanswered — so a prequalified session simply starts further in.
   useEffect(() => {
     const attribution = captureAttributionFromWindow();
     const sessionId = getOrCreateSessionId();
     const restored = loadLocalSession();
+    // Nothing off the URL is trusted: the ZIP is re-validated and the intent
+    // values are matched against allowlists before they reach state.
+    const { seed, hasEntryParams } = parseEntryParams(searchParams);
+    const entryContext = resolveEntryContext({
+      entryContext: seed.entryContext || restored?.entryContext,
+    });
 
-    setState((prev) => ({
-      ...prev,
-      ...(restored || {}),
-      sessionId,
-      // Attribution from the original landing always wins over a restored copy,
-      // so a resumed session keeps the campaign that produced it.
-      attribution: { ...(restored?.attribution || {}), ...attribution },
-      // A ZIP handed over from the standalone Bill Analyzer or a deep link
-      // seeds the flow so the visitor doesn't retype what we already know.
-      ...seedFromQuery(searchParams),
-    }));
+    setState((prev) => {
+      const merged = {
+        ...prev,
+        ...(restored || {}),
+        sessionId,
+        // Attribution from the original landing always wins over a restored
+        // copy, so a resumed session keeps the campaign that produced it.
+        attribution: { ...(restored?.attribution || {}), ...attribution },
+        ...seed,
+        entryContext,
+      };
 
-    track(EVENTS.COMPARE_RATES_VIEWED);
-    track(EVENTS.COMPARISON_STARTED);
+      // Arriving from a different service than the stored session was for must
+      // not leave the abandoned branch's answers attached to the lead.
+      const next =
+        seed.customerType && restored?.customerType && restored.customerType !== seed.customerType
+          ? invalidateBranchState(merged, seed.customerType)
+          : merged;
+
+      return { ...next, city: next.city || (next.zip ? getCityFromZip(next.zip) || "" : "") };
+    });
+
+    track(EVENTS.COMPARE_RATES_VIEWED, { entry_context: entryContext });
+    track(EVENTS.COMPARISON_STARTED, { entry_context: entryContext });
+
+    // The routing parameters have done their job, so they come out of the
+    // address bar: /compare-rates is the canonical URL, and a shared or
+    // bookmarked link should not carry someone else's ZIP code. Replacing
+    // rather than pushing keeps Back pointing at the landing page they came
+    // from, and only the keys this handoff owns are removed.
+    if (hasEntryParams) {
+      const remaining = new URLSearchParams(searchParams);
+      for (const key of ENTRY_PARAM_KEYS) remaining.delete(key);
+      setSearchParams(remaining, { replace: true });
+    }
     // Bootstrap runs once; searchParams is read only for the initial seed.
-     
+
   }, []);
 
   // Persist in-progress answers so a reload resumes rather than restarts.
@@ -115,6 +166,37 @@ export default function CompareRates() {
     () => (view === "question" ? determineNextQuestion(state) : null),
     [state, view]
   );
+
+  // The colour the flow wears. Renewable wins over the audience, because a
+  // visitor who came for green supply should keep seeing that they are on that
+  // path even after they say the property is a business.
+  const accent = state.energyPreference === "renewable"
+    ? "renewable"
+    : state.customerType === CUSTOMER_TYPES.COMMERCIAL
+      ? "commercial"
+      : "residential";
+
+  // What the engine already knows, stated on the band. A visitor handed over
+  // from a landing page should see their ZIP and their service reflected back
+  // rather than wonder whether it made it across — and spot a wrong ZIP early.
+  const context = useMemo(() => {
+    const chips = [];
+    if (state.zip) {
+      chips.push({
+        label: state.city ? `${state.city} · ${state.zip}` : state.zip,
+        icon: MapPin,
+      });
+    }
+    if (state.energyPreference === "renewable") {
+      chips.push({ label: "Renewable", icon: Leaf });
+    }
+    if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
+      chips.push({ label: "Business", icon: Building2 });
+    } else if (state.customerType === CUSTOMER_TYPES.RESIDENTIAL) {
+      chips.push({ label: "Home", icon: Home });
+    }
+    return chips;
+  }, [state.zip, state.city, state.customerType, state.energyPreference]);
 
   // Record each question as it is shown, so Back walks real screens only.
   useEffect(() => {
@@ -163,12 +245,39 @@ export default function CompareRates() {
     setView("question");
   }, [state, currentQuestion]);
 
+  /**
+   * Let a visitor out of the branch they arrived in.
+   *
+   * Somebody who came through the Commercial landing page and realises they
+   * actually need residential supply must not be stuck there, and must not lose
+   * their ZIP code, their bill figures or their place in the flow for changing
+   * their mind. This puts "What are you shopping for?" back in front of them
+   * and keeps everything that is still true.
+   */
+  const handleChangeService = useCallback(() => {
+    track(EVENTS.SERVICE_TYPE_CHANGED, {
+      from: state.energyPreference === "renewable" && !state.customerType
+        ? "renewable"
+        : state.customerType,
+      entry_context: state.entryContext,
+    });
+    setState((prev) => resetServiceSelection(prev));
+    setView("question");
+  }, [state.customerType, state.energyPreference, state.entryContext]);
+
   // ── Plans ──
   const { data: allPlans = [] } = useQuery({
     queryKey: ["plans"],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
   });
+
+  // Affiliate membership is looked up once and passed down, so ranking and the
+  // sponsorship disclosure read the same set.
+  const affiliateIds = useMemo(
+    () => affiliateOfferIds || new Set(),
+    [affiliateOfferIds]
+  );
 
   const usageKwh = resolveUsageKwh(state);
 
@@ -264,7 +373,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches">
+        <ComparisonShell activeStage="matches" accent={accent} context={context}>
           <MatchingState />
         </ComparisonShell>
       </>
@@ -277,15 +386,20 @@ export default function CompareRates() {
         {seoBlock}
         <ResultsScreen
           state={state}
+          accent={accent}
+          context={context}
           routing={routing}
           plans={eligiblePlans}
           renewablePlans={renewablePlans}
           usageKwh={usageKwh}
           getAffiliateUrl={getAffiliateUrl}
-          termFilter={termFilter}
-          setTermFilter={setTermFilter}
-          renewableOnly={renewableOnly}
-          setRenewableOnly={setRenewableOnly}
+          affiliateIds={affiliateIds}
+          filters={filters}
+          setFilters={setFilters}
+          sort={sort}
+          setSort={setSort}
+          visibleCount={visibleCount}
+          setVisibleCount={setVisibleCount}
           showAllPlans={showAllPlans}
           setShowAllPlans={setShowAllPlans}
         />
@@ -297,7 +411,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="usage">
+        <ComparisonShell activeStage="usage" accent={accent} context={context}>
           <QuestionFrame
             questionKey="bill_upload"
             title={
@@ -348,7 +462,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="usage">
+        <ComparisonShell activeStage="usage" accent={accent} context={context}>
           <QuestionFrame
             questionKey="bill_summary"
             title="Here's what we found"
@@ -382,7 +496,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches">
+        <ComparisonShell activeStage="matches" accent={accent} context={context}>
           <MatchingState />
         </ComparisonShell>
       </>
@@ -392,7 +506,7 @@ export default function CompareRates() {
   return (
     <>
       {seoBlock}
-      <ComparisonShell activeStage={stageForQuestion(currentQuestion.id)}>
+      <ComparisonShell activeStage={stageForQuestion(currentQuestion.id)} accent={accent} context={context}>
         <QuestionScreen
           question={currentQuestion}
           state={state}
@@ -400,6 +514,14 @@ export default function CompareRates() {
           setState={setState}
           setView={setView}
           onBack={state.history.length > 1 ? handleBack : null}
+          // Offered from the moment a service is known — including when it came
+          // from a landing page rather than from an answer on this screen.
+          onChangeService={
+            currentQuestion.id !== "customer_type" &&
+            (state.customerType || state.energyPreference)
+              ? handleChangeService
+              : null
+          }
         />
       </ComparisonShell>
     </>
@@ -407,42 +529,6 @@ export default function CompareRates() {
 }
 
 /* ─────────────────────────────────────────────────────────── */
-
-function seedFromQuery(searchParams) {
-  const seed = {};
-  const zip = (searchParams.get("zip") || "").replace(/\D/g, "").slice(0, 5);
-
-  if (zip.length === 5) {
-    const validation = validateZipCode(zip);
-    if (validation.valid) {
-      seed.zip = zip;
-      seed.state = validation.state;
-      seed.city = getCityFromZip(zip) || "";
-    }
-  }
-
-  // Handoff from the standalone Bill Analyzer: usage already measured there
-  // must not be asked for again.
-  const usage = parseFloat(searchParams.get("usage"));
-  if (Number.isFinite(usage) && usage > 0) {
-    seed.monthlyUsageKwh = usage;
-    seed.billAnalysisStatus = "complete";
-    seed.billConfidence = "high";
-    seed.billOffered = true;
-  }
-
-  const provider = (searchParams.get("provider") || "").trim();
-  if (provider) seed.currentProvider = provider.slice(0, 120);
-
-  if (searchParams.get("type") === "business") {
-    seed.customerType = CUSTOMER_TYPES.COMMERCIAL;
-  } else if (searchParams.get("type") === "home") {
-    seed.customerType = CUSTOMER_TYPES.RESIDENTIAL;
-  }
-  if (searchParams.get("renewable") === "1") seed.energyPreference = "renewable";
-
-  return seed;
-}
 
 /** Reset the field a Back navigation is returning to. */
 function clearAnswerFor(questionId, prev) {
@@ -465,11 +551,17 @@ function clearAnswerFor(questionId, prev) {
   }
 }
 
-function QuestionScreen({ question, state, update, setState, setView, onBack }) {
+function QuestionScreen({ question, state, update, setState, setView, onBack, onChangeService }) {
   const title = resolveCopy(question.title, state);
   const subtitle = resolveCopy(question.subtitle, state);
 
-  const frameProps = { questionKey: question.id, title, subtitle, onBack };
+  const frameProps = {
+    questionKey: question.id,
+    title,
+    subtitle,
+    onBack,
+    footer: onChangeService ? <ChangeServiceButton onClick={onChangeService} /> : null,
+  };
 
   switch (question.type) {
     case "zip":
@@ -521,6 +613,24 @@ function QuestionScreen({ question, state, update, setState, setView, onBack }) 
     default:
       return null;
   }
+}
+
+/**
+ * The escape hatch out of a branch.
+ *
+ * Deliberately quiet — it sits opposite Back as a text link rather than a
+ * button, because it is a correction, not a step in the flow.
+ */
+function ChangeServiceButton({ onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-sm text-gray-500 hover:text-gray-900 transition-colors rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0A5C8C] focus-visible:ring-offset-2 px-1 py-1 -mr-1"
+    >
+      Change electricity type
+    </button>
+  );
 }
 
 function valueForChoice(questionId, state) {
@@ -591,30 +701,27 @@ function applyChoice(questionId, value, state, setState, update) {
   }
 }
 
-function ZipQuestion({ questionKey, title, subtitle, onBack, state, update }) {
+function ZipQuestion({ questionKey, title, subtitle, onBack, footer, state, update }) {
   const [draft, setDraft] = useState(state.zip || "");
   const [error, setError] = useState("");
 
   const submit = () => {
-    const zip = draft.replace(/\D/g, "").slice(0, 5);
-    const result = validateZipCode(zip);
+    // The same serviceability check the landing pages run, so a ZIP is accepted
+    // or refused identically whichever door the visitor came through.
+    const result = checkServiceZip(draft);
 
     if (!result.valid) {
-      setError(
-        result.waitlist
-          ? "We don't cover this ZIP code yet — electricity there isn't sold on a competitive market."
-          : result.error
-      );
+      setError(result.message);
       return;
     }
 
     setError("");
-    update({ zip, state: result.state, city: getCityFromZip(zip) || "" });
+    update({ zip: result.zip, state: result.state, city: getCityFromZip(result.zip) || "" });
     track(EVENTS.ZIP_COMPLETED, { state: result.state });
   };
 
   return (
-    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack}>
+    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack} footer={footer}>
       <TextQuestion
         id="zip"
         label="ZIP code"
@@ -644,7 +751,7 @@ function ZipQuestion({ questionKey, title, subtitle, onBack, state, update }) {
  * Asks about the single value we're unsure of, rather than re-running the whole
  * questionnaire because one number looked odd.
  */
-function VerifyQuestion({ questionKey, onBack, state, update }) {
+function VerifyQuestion({ questionKey, onBack, footer, state, update }) {
   const field = state.unverifiedFields[0];
   const [draft, setDraft] = useState(
     field === "monthlyUsageKwh" && state.monthlyUsageKwh
@@ -675,6 +782,7 @@ function VerifyQuestion({ questionKey, onBack, state, update }) {
       title={`We found about ${shown}. Does that look right?`}
       subtitle="We want to get your estimate right before we match plans."
       onBack={onBack}
+      footer={footer}
     >
       <div className="space-y-3">
         <PrimaryAction onClick={accept}>Yes, that&rsquo;s right</PrimaryAction>
@@ -696,7 +804,7 @@ function VerifyQuestion({ questionKey, onBack, state, update }) {
   );
 }
 
-function ContactQuestion({ questionKey, title, subtitle, onBack, question, state, update }) {
+function ContactQuestion({ questionKey, title, subtitle, onBack, footer, question, state, update }) {
   const initial =
     question.id === "business_name" ? state.businessName
       : question.id === "name" ? state.firstName
@@ -749,7 +857,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, question, state
   }[question.id] || { type: "text" };
 
   return (
-    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack}>
+    <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack} footer={footer}>
       <TextQuestion
         id={question.id}
         label={question.inputLabel}
@@ -783,44 +891,29 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, question, state
 /* ─────────────────────────────────────────────────────────── */
 
 function ResultsScreen({
-  state, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
-  termFilter, setTermFilter, renewableOnly, setRenewableOnly,
+  state, accent, context, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
+  affiliateIds, filters, setFilters, sort, setSort, visibleCount, setVisibleCount,
   showAllPlans, setShowAllPlans,
 }) {
+  const [openDetails, setOpenDetails] = useState(null);
+
   // Business supply is quoted, not listed — so the commercial branch ends in a
   // confirmation rather than a price list it cannot honestly produce.
   if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
     return (
-      <ComparisonShell activeStage="matches">
+      <ComparisonShell activeStage="matches" accent={accent} context={context}>
         <CommercialComplete state={state} qualification={routing.qualification} />
       </ComparisonShell>
     );
   }
 
-  const wantsRenewable = state.energyPreference === "renewable";
-  const noRenewableInventory = wantsRenewable && renewablePlans.length === 0;
-
-  const source = wantsRenewable && !showAllPlans && renewablePlans.length > 0
-    ? renewablePlans
-    : plans;
-
-  const filtered = source
-    .filter((plan) => {
-      if (renewableOnly && Number(plan.renewable_percentage) < 50) return false;
-      if (termFilter === "12" && Number(plan.contract_length) !== 12) return false;
-      if (termFilter === "24" && Number(plan.contract_length) !== 24) return false;
-      if (termFilter === "month" && Number(plan.contract_length) > 1) return false;
-      return true;
-    })
-    .sort((a, b) => Number(a.rate_per_kwh) - Number(b.rate_per_kwh));
-
   if (plans.length === 0) {
     return (
-      <ComparisonShell activeStage="matches">
+      <ComparisonShell activeStage="matches" accent={accent} context={context}>
         <NoMatchState
           zip={state.zip}
           onConcierge={() => {
-            track(EVENTS.CONCIERGE_CREATED, { route: ROUTES.CONCIERGE });
+            track(EVENTS.CONCIERGE_REQUESTED, { route: ROUTES.CONCIERGE });
             window.location.href = "/home-concierge";
           }}
           onBroaden={() => { window.location.href = "/all-providers"; }}
@@ -829,15 +922,64 @@ function ResultsScreen({
     );
   }
 
+  const wantsRenewable = state.energyPreference === "renewable";
+  const noRenewableInventory = wantsRenewable && renewablePlans.length === 0;
+
+  // A renewable request narrows the pool to renewable plans while any exist;
+  // "show all" is the customer's own escape hatch from that.
+  const pool = wantsRenewable && !showAllPlans && renewablePlans.length > 0
+    ? renewablePlans
+    : plans;
+
+  const filteredPool = pool.filter((plan) => {
+    if (filters.provider !== "all" && plan.provider_name !== filters.provider) return false;
+    if (filters.term !== "all" && Number(plan.contract_length) !== Number(filters.term)) return false;
+    if (filters.planType !== "all" && plan.plan_type !== filters.planType) return false;
+    if (filters.renewableOnly && Number(plan.renewable_percentage) < 50) return false;
+    return true;
+  });
+
+  // Ranking runs on the filtered set, so the three best matches are the best of
+  // what the customer is actually looking at rather than a fixed trio that
+  // ignores their filters.
+  const { top, rest } = rankPlans(filteredPool, state, { usageKwh, affiliateIds });
+  const sortedRest = sortEntries(rest, sort);
+  const visible = sortedRest.slice(0, visibleCount);
+  const remaining = sortedRest.length - visible.length;
+
+  const openAffiliate = (plan) => {
+    track(EVENTS.PLAN_CLICKED, {
+      provider: plan.provider_name,
+      plan_id: plan.id,
+      route: routing.route,
+      session_id: state.sessionId,
+      sort,
+    });
+    const url = getAffiliateUrl({
+      offerId: plan.id,
+      fallbackUrl: plan.plan_details_url || "",
+    });
+    if (url && url !== "#") {
+      if (affiliateIds.has(plan.id)) {
+        track(EVENTS.AFFILIATE_CLICKED, { plan_id: plan.id, provider: plan.provider_name });
+      }
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const showDetails = (entry) => {
+    setOpenDetails((current) => (current === entry.plan.id ? null : entry.plan.id));
+    track(EVENTS.PLAN_DETAILS_VIEWED, { plan_id: entry.plan.id, provider: entry.plan.provider_name });
+  };
+
   return (
-    <ComparisonShell activeStage="matches" wide>
+    <ComparisonShell activeStage="matches" accent={accent} context={context} wide>
       <div className="mb-6">
         <h1 className="text-[22px] sm:text-[26px] font-semibold text-gray-900 tracking-[-0.01em]">
-          {filtered.length} {filtered.length === 1 ? "plan" : "plans"} for{" "}
-          {state.city || state.zip}
+          Electricity options for {state.city || state.zip}
         </h1>
         <p className="mt-1.5 text-[15px] text-gray-600">
-          Estimated on {Math.round(usageKwh).toLocaleString()} kWh a month
+          Estimated at {Math.round(usageKwh).toLocaleString()} kWh a month
           {state.billAnalysisStatus === "complete" ? " from your bill" : ""}.
         </p>
       </div>
@@ -845,70 +987,149 @@ function ResultsScreen({
       {noRenewableInventory && (
         <RenewableFallback
           onConcierge={() => {
-            track(EVENTS.CONCIERGE_CREATED, { route: ROUTES.RENEWABLE_PARTNER });
+            track(EVENTS.CONCIERGE_REQUESTED, { route: ROUTES.RENEWABLE_PARTNER });
             window.location.href = "/home-concierge";
           }}
           onShowAll={() => setShowAllPlans(true)}
         />
       )}
 
-      <ResultsFilters
-        termFilter={termFilter}
-        onTermChange={setTermFilter}
-        renewableOnly={renewableOnly}
-        onRenewableChange={setRenewableOnly}
+      <ResultsToolbar
+        plans={pool}
+        filters={filters}
+        onFilterChange={(next) => {
+          setFilters(next);
+          setVisibleCount(RESULTS_PAGE_SIZE);
+          track(EVENTS.RESULTS_FILTER_APPLIED, { session_id: state.sessionId });
+        }}
+        sort={sort}
+        onSortChange={(next) => {
+          setSort(next);
+          track(EVENTS.RESULTS_SORT_CHANGED, { sort: next, session_id: state.sessionId });
+        }}
+        resultCount={filteredPool.length}
       />
 
-      {filtered.length === 0 ? (
+      {filteredPool.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-6 text-center">
-          <p className="text-[15px] text-gray-700">
-            No plans match those filters.
-          </p>
+          <p className="text-[15px] text-gray-700">No plans match those filters.</p>
           <div className="mt-4 max-w-xs mx-auto">
             <SecondaryAction
-              onClick={() => {
-                setTermFilter("all");
-                setRenewableOnly(false);
-              }}
+              onClick={() =>
+                setFilters({ provider: "all", term: "all", planType: "all", renewableOnly: false })
+              }
             >
               Clear filters
             </SecondaryAction>
           </div>
         </div>
       ) : (
-        <div className="space-y-3">
-          {filtered.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              estimatedMonthly={calculateMonthlyBill(plan, usageKwh)}
-              onSelect={(selected) => {
-                track(EVENTS.AFFILIATE_CLICKED, {
-                  provider: selected.provider_name,
-                  plan_id: selected.id,
-                  route: routing.route,
-                });
-                // Routes through /api/go when an affiliate link exists for the
-                // plan, and falls back to the provider's own plan page when it
-                // doesn't — so a plan without a commercial relationship is
-                // still usable rather than a dead button.
-                const url = getAffiliateUrl({
-                  offerId: selected.id,
-                  fallbackUrl: selected.plan_details_url || "",
-                });
-                if (url && url !== "#") window.open(url, "_blank", "noopener,noreferrer");
-              }}
-            />
-          ))}
-        </div>
+        <>
+          {top.length > 0 && (
+            <section aria-labelledby="best-matches-heading" className="mb-10">
+              <h2
+                id="best-matches-heading"
+                className="text-[15px] font-semibold text-gray-900 mb-3"
+              >
+                Top {top.length === 1 ? "match" : `${top.length} matches`} for you
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {top.map((entry) => (
+                  <div key={entry.plan.id} className="flex flex-col">
+                    <BestMatchCard
+                      entry={entry}
+                      usageKwh={usageKwh}
+                      onSelect={openAffiliate}
+                      onDetails={showDetails}
+                      isSponsored={affiliateIds.has(entry.plan.id)}
+                    />
+                    {openDetails === entry.plan.id && (
+                      <PlanDetails
+                        entry={entry}
+                        usageKwh={usageKwh}
+                        onClose={() => setOpenDetails(null)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {sortedRest.length > 0 && (
+            <section aria-labelledby="more-options-heading">
+              <h2
+                id="more-options-heading"
+                className="text-[15px] font-semibold text-gray-900 mb-3"
+              >
+                More electricity options
+              </h2>
+              <div className="space-y-3">
+                {visible.map((entry) => (
+                  <div key={entry.plan.id}>
+                    <PlanRow
+                      entry={entry}
+                      onSelect={openAffiliate}
+                      onDetails={showDetails}
+                      isSponsored={affiliateIds.has(entry.plan.id)}
+                    />
+                    {openDetails === entry.plan.id && (
+                      <PlanDetails
+                        entry={entry}
+                        usageKwh={usageKwh}
+                        onClose={() => setOpenDetails(null)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {remaining > 0 && (
+                <ViewMoreButton
+                  remaining={remaining}
+                  onClick={() => {
+                    setVisibleCount((n) => n + RESULTS_PAGE_SIZE);
+                    track(EVENTS.RESULTS_VIEW_MORE, {
+                      shown: visible.length + RESULTS_PAGE_SIZE,
+                      session_id: state.sessionId,
+                    });
+                  }}
+                />
+              )}
+            </section>
+          )}
+        </>
       )}
 
       <p className="mt-8 text-[12px] text-gray-500 leading-relaxed">
-        Rates, plan details and availability vary by ZIP code, usage and credit,
-        and change over time. Verify all details with the provider before
-        enrolling. Electric Scouts is a comparison service and may earn a
-        commission when you enroll through a listed plan.
+        Estimates use your stated usage and the plan components we hold — energy
+        charge, base charge, delivery and bill credits where available. Your
+        actual bill depends on your utility, taxes and real usage. Verify all
+        details with the provider before enrolling. Electric Scouts is a
+        comparison service and may earn a commission when you enroll through a
+        listed plan; that relationship never changes how plans are ranked.
       </p>
     </ComparisonShell>
   );
+}
+
+/** Sorts already-scored entries. "Best match" keeps the ranking engine order. */
+function sortEntries(entries, sort) {
+  const list = [...entries];
+  switch (sort) {
+    case "cost":
+      return list.sort((a, b) => costSortKey(a.estimate) - costSortKey(b.estimate));
+    case "rate":
+      return list.sort((a, b) => Number(a.plan.rate_per_kwh) - Number(b.plan.rate_per_kwh));
+    case "term_short":
+      return list.sort((a, b) => Number(a.plan.contract_length) - Number(b.plan.contract_length));
+    case "term_long":
+      return list.sort((a, b) => Number(b.plan.contract_length) - Number(a.plan.contract_length));
+    case "renewable":
+      return list.sort(
+        (a, b) => Number(b.plan.renewable_percentage) - Number(a.plan.renewable_percentage)
+      );
+    default:
+      return list;
+  }
 }

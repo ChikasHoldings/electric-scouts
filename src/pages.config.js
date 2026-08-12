@@ -41,6 +41,7 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const ProviderDetails = lazy(() => import('./pages/ProviderDetails'));
 const RenewableCompareRates = lazy(() => import('./pages/RenewableCompareRates'));
 const RenewableEnergy = lazy(() => import('./pages/RenewableEnergy'));
+const ResidentialElectricity = lazy(() => import('./pages/ResidentialElectricity'));
 const RhodeIslandElectricity = lazy(() => import('./pages/RhodeIslandElectricity'));
 const Robots = lazy(() => import('./pages/Robots'));
 const SavingsCalculator = lazy(() => import('./pages/SavingsCalculator'));
@@ -82,6 +83,7 @@ export const PAGES = {
     "ProviderDetails": ProviderDetails,
     "RenewableCompareRates": RenewableCompareRates,
     "RenewableEnergy": RenewableEnergy,
+    "ResidentialElectricity": ResidentialElectricity,
     "RhodeIslandElectricity": RhodeIslandElectricity,
     "Robots": Robots,
     "SavingsCalculator": SavingsCalculator,

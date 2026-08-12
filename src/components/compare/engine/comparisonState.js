@@ -28,6 +28,11 @@ export function createInitialState(attribution = {}) {
     sessionId: null,
     status: 'started',
 
+    // Where this comparison began: a service landing page, the Bill Analyzer or
+    // /compare-rates itself. Non-PII, and what makes the funnel attributable
+    // per landing page rather than as one undifferentiated total.
+    entryContext: '',
+
     // Question ids actually shown, in order. Back navigation walks this rather
     // than the registry: a question satisfied by bill data was never displayed,
     // so stepping back onto it would show the visitor a screen they never saw.
@@ -106,6 +111,33 @@ export function invalidateBranchState(state, nextCustomerType) {
   for (const field of stale) cleared[field] = blank[field];
 
   return cleared;
+}
+
+/**
+ * Undo the service selection without discarding the session.
+ *
+ * A visitor who arrives from the Commercial landing page and realises they
+ * actually need residential supply must not be trapped in that branch, and must
+ * not be punished for changing their mind by losing everything they have
+ * already entered. So the audience and both branches' answers are cleared —
+ * which puts "What are you shopping for?" back in front of them — while the
+ * ZIP, the bill figures, the attribution and the contact details they may have
+ * already given all survive.
+ *
+ * History is reduced to the ZIP step for the same reason `invalidateBranchState`
+ * clears stale answers: leaving abandoned branch screens in the stack lets a
+ * later Back land on a question that no longer applies.
+ */
+export function resetServiceSelection(state) {
+  const blank = createInitialState();
+  const reset = { ...state, customerType: '', energyPreference: '' };
+
+  for (const field of [...RESIDENTIAL_ONLY, ...COMMERCIAL_ONLY]) {
+    reset[field] = blank[field];
+  }
+
+  reset.history = (Array.isArray(state.history) ? state.history : []).filter((id) => id === 'zip');
+  return reset;
 }
 
 /** True when the bill analyzer produced a usable figure for `field`. */

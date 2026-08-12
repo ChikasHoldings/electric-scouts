@@ -13,7 +13,11 @@ import ExitIntentPopup from "./components/ExitIntentPopup";
 // dropdown, rendered separately below. Shared by the desktop nav and the mobile
 // slide-in menu so the two never drift.
 const navItems = [
-  { label: "Residential", page: "CompareRates", icon: HomeIcon, iconColor: "text-[#0A5C8C]" },
+  // Residential points at its own landing page rather than straight at the
+  // comparison engine: all three service entries now behave the same way —
+  // qualify intent on a page built for that audience, then hand over to
+  // /compare-rates with the ZIP and the audience already answered.
+  { label: "Residential", page: "ResidentialElectricity", icon: HomeIcon, iconColor: "text-[#0A5C8C]" },
   { label: "Commercial", page: "BusinessElectricity", icon: Building2, iconColor: "text-indigo-600" },
   { label: "Renewable Energy", page: "RenewableEnergy", icon: Leaf, iconColor: "text-green-600" },
   { label: "Bill Analyzer", page: "BillAnalyzer", icon: FileText, iconColor: "text-orange-600" }
@@ -478,6 +482,9 @@ export default function Layout({ children, currentPageName }) {
               <div className="space-y-2">
                 <Link to={createPageUrl("CompareRates")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Compare Rates
+                </Link>
+                <Link to={createPageUrl("ResidentialElectricity")} className="block text-gray-400 hover:text-white text-sm transition-colors">
+                  Residential Electricity
                 </Link>
                 <Link to={createPageUrl("BusinessElectricity")} className="block text-gray-400 hover:text-white text-sm transition-colors">
                   Business Rates

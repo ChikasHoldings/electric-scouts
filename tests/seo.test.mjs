@@ -420,9 +420,10 @@ describe('prerendered output in dist/', () => {
     ['homepage', '/'],
     ['state page', '/texas-electricity'],
     ['city page', '/electricity-rates/texas/dallas'],
-    ['residential comparison', '/compare-rates'],
-    ['commercial page', '/business-electricity'],
-    ['renewable page', '/renewable-energy'],
+    ['comparison engine', '/compare-rates'],
+    ['residential landing', '/residential-electricity'],
+    ['commercial landing', '/business-electricity'],
+    ['renewable landing', '/renewable-energy'],
     ['article page', '/learn/1'],
     ['provider directory', '/all-providers'],
   ];
@@ -467,6 +468,68 @@ describe('prerendered output in dist/', () => {
     const texasCities = getCityRoutes().filter((route) => route.city.stateCode === 'TX');
     for (const city of texasCities) {
       assert.ok(links.has(city.path), `Texas page does not link to ${city.path}`);
+    }
+  });
+
+  /* ---------------------------------------------------------------- *
+   * The three service landing pages
+   *
+   * They share a layout and a design system on purpose. What they must not
+   * share is their content: three near-identical pages differing by one
+   * keyword compete with each other and give a crawler no reason to keep any
+   * of them.
+   * ---------------------------------------------------------------- */
+
+  const LANDING_PAGES = ['/residential-electricity', '/business-electricity', '/renewable-energy'];
+
+  test('each service landing page targets its own intent', () => {
+    const seen = { title: new Map(), description: new Map(), h1: new Map() };
+
+    for (const routePath of LANDING_PAGES) {
+      const html = readDist(distFileFor(routePath));
+      for (const field of ['title', 'description', 'h1']) {
+        const value = tag[field](html);
+        assert.ok(value, `${routePath} has no ${field}`);
+        const previous = seen[field].get(value);
+        assert.equal(previous, undefined, `${routePath} shares its ${field} with ${previous}`);
+        seen[field].set(value, routePath);
+      }
+      assert.equal(
+        (html.match(/<h1[^>]*>/g) || []).length,
+        1,
+        `${routePath} does not have exactly one H1`
+      );
+    }
+  });
+
+  test('each landing page routes into the shared comparison engine', () => {
+    for (const routePath of LANDING_PAGES) {
+      const links = internalLinks(readDist(distFileFor(routePath)));
+      assert.ok(links.includes('/compare-rates'), `${routePath} does not link to /compare-rates`);
+    }
+  });
+
+  test('no page publishes a parameterised comparison URL for crawlers', () => {
+    // ZIP and intent travel in the URL during the handoff, and are stripped once
+    // read. None of that may appear in crawlable markup, or every ZIP/type
+    // combination becomes a competing duplicate of /compare-rates.
+    for (const route of getAllRoutes()) {
+      const html = readDist(distFileFor(route.path));
+      const parameterised = internalLinks(html).filter(
+        (href) => href.startsWith('/compare-rates?') && /zip=|entry=|type=/.test(href)
+      );
+      assert.deepEqual(parameterised, [], `${route.path} links to a parameterised comparison URL`);
+    }
+  });
+
+  test('the landing pages are reachable from every prerendered page', () => {
+    // The site nav is rendered into every prerendered page, so a new landing
+    // page is one hop from anywhere rather than orphaned behind the header.
+    for (const routePath of ['/', '/compare-rates', '/texas-electricity', '/learn/1']) {
+      const links = new Set(internalLinks(readDist(distFileFor(routePath))));
+      for (const landing of LANDING_PAGES) {
+        assert.ok(links.has(landing), `${routePath} does not link to ${landing}`);
+      }
     }
   });
 

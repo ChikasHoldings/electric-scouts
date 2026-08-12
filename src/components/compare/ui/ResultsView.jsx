@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loader2, Leaf, ChevronDown, ArrowRight, Headset } from "lucide-react";
 import { PrimaryAction, SecondaryAction } from "./QuestionInputs";
+import { useAccent } from "./ComparisonShell";
 
 /**
  * Results, and the states that stand in for results when there aren't any.
@@ -21,15 +22,25 @@ const NUMBER = new Intl.NumberFormat("en-US");
 
 /** Brief transition so results don't appear without warning. */
 export function MatchingState() {
+  const accent = useAccent();
+
   return (
-    <div className="py-10 text-center" role="status" aria-live="polite">
-      <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#0A5C8C]/10 mb-4">
-        <Loader2 className="w-5 h-5 text-[#0A5C8C] animate-spin" aria-hidden="true" />
+    <div className="py-12 text-center" role="status" aria-live="polite">
+      <span className="relative inline-flex items-center justify-center w-16 h-16 mb-5">
+        <span
+          className={`absolute inset-0 rounded-full ${accent.tintBg} animate-ping opacity-60`}
+          aria-hidden="true"
+        />
+        <span
+          className={`relative inline-flex items-center justify-center w-14 h-14 rounded-full ${accent.tintBg}`}
+        >
+          <Loader2 className={`w-6 h-6 ${accent.text} animate-spin`} aria-hidden="true" />
+        </span>
       </span>
-      <p className="text-[17px] font-semibold text-gray-900">
+      <p className="text-[18px] font-semibold text-gray-900">
         Finding your electricity options…
       </p>
-      <p className="mt-1.5 text-[14px] text-gray-600">
+      <p className="mt-2 text-[14.5px] text-gray-600">
         Matching your usage against plans available in your area.
       </p>
     </div>

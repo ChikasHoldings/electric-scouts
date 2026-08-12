@@ -313,6 +313,16 @@
       "permanent": true
     },
     {
+      "source": "/ResidentialElectricity",
+      "destination": "/residential-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/residentialelectricity",
+      "destination": "/residential-electricity",
+      "permanent": true
+    },
+    {
       "source": "/RhodeIslandElectricity",
       "destination": "/rhode-island-electricity",
       "permanent": true
