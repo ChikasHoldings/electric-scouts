@@ -775,7 +775,6 @@ export default function BusinessCompareRates() {
                   monthlyUsage={monthlyUsage}
                   comparisonType="business"
                   accentColor="#0A5C8C"
-                  getAffiliateUrl={getProviderAffiliateUrl}
                 />
               </div>
             )}

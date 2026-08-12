@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
-import { isCommissionCapable, resolutionOf } from "./_lib/referral.js";
+import { isCommissionCapable, resolutionOf, resolveRedirectUrl } from "./_lib/referral.js";
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL,
@@ -123,61 +123,6 @@ export default async function handler(req, res) {
       "Something Went Wrong",
       "We encountered an error processing this link. Please try again later."
     ));
-  }
-}
-
-/**
- * Resolve the best redirect URL from the affiliate link and provider data.
- * Priority: valid target_url > provider affiliate_url > provider website_url
- */
-function resolveRedirectUrl(link) {
-  // 1. Try the affiliate link's target_url
-  if (link.target_url && isValidRedirectUrl(link.target_url)) {
-    return link.target_url;
-  }
-
-  // 2. Try the provider's affiliate_url
-  if (link.provider?.affiliate_url && isValidRedirectUrl(link.provider.affiliate_url)) {
-    return link.provider.affiliate_url;
-  }
-
-  // 3. Try the provider's website_url
-  if (link.provider?.website_url && isValidRedirectUrl(link.provider.website_url)) {
-    return link.provider.website_url;
-  }
-
-  return null;
-}
-
-/**
- * Validate that a URL is a proper, non-placeholder redirect target.
- * Rejects malformed CJ links, placeholder URLs, and invalid formats.
- */
-function isValidRedirectUrl(url) {
-  if (!url || typeof url !== "string") return false;
-  
-  // Must start with http:// or https://
-  if (!url.startsWith("http://") && !url.startsWith("https://")) return false;
-  
-  // Reject known placeholder/malformed patterns
-  const invalidPatterns = [
-    /sjv\.io\/c\/[^/]+\/[^/]+$/, // CJ Affiliate links without proper article/deal ID
-    /example\.com/,
-    /placeholder/i,
-    /your-affiliate/i,
-    /partner\.example/i,
-  ];
-  
-  for (const pattern of invalidPatterns) {
-    if (pattern.test(url)) return false;
-  }
-  
-  // Try to parse as URL
-  try {
-    new URL(url);
-    return true;
-  } catch {
-    return false;
   }
 }
 

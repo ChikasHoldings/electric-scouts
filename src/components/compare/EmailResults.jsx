@@ -6,18 +6,28 @@ import { Mail, CheckCircle, AlertCircle, Loader2, Shield, Send } from "lucide-re
 
 /**
  * Reusable Email Results Component
- * 
- * Allows users to email themselves comparison results with affiliate links.
- * Works for Residential, Business, and Renewable comparison flows.
+ *
+ * Emails the customer their comparison. What it sends is a reference to that
+ * comparison — where, what for, how much they use, and which plans they were
+ * looking at — not the plan economics rendered on screen.
+ *
+ * It used to post the plan objects themselves, each with an `affiliateUrl`
+ * attached, and the endpoint rendered those figures and links into the email
+ * directly. The server now recomputes the whole comparison from the catalog and
+ * ignores anything of that shape in the request, so posting prices here would
+ * achieve nothing except to imply they were trusted.
+ *
+ * `plans` is still accepted because the calling pages hold the list the
+ * customer was looking at; only the ids are sent, and they can narrow the
+ * server's authoritative result set, never add to it.
  */
-export default function EmailResults({ 
-  plans = [], 
-  zipCode, 
-  cityName, 
-  monthlyUsage, 
+export default function EmailResults({
+  plans = [],
+  zipCode,
+  cityName,
+  monthlyUsage,
   comparisonType = 'residential',
   accentColor = '#0A5C8C',
-  getAffiliateUrl
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -51,18 +61,14 @@ export default function EmailResults({
     setError("");
 
     try {
-      const plansWithLinks = plans.slice(0, 6).map(plan => ({
-        ...plan,
-        affiliateUrl: getAffiliateUrl ? getAffiliateUrl(plan) : undefined,
-      }));
-
       const response = await fetch("/api/send-comparison-results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
           name: name.trim(),
-          plans: plansWithLinks,
+          // Identifiers only. The server prices and ranks these itself.
+          planIds: plans.map((plan) => plan.id).filter(Boolean),
           zipCode,
           cityName,
           monthlyUsage,

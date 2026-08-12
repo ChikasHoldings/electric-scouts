@@ -116,16 +116,22 @@ export function scorePlan(plan, state, { usageKwh, costRange, hasAffiliate }) {
  * Anything that cannot be supported is simply not returned — there is no
  * fallback copy, because a generic reason on every card is noise.
  */
-export function matchReasons(scored, state, { ranked, usageKwh }) {
+export function matchReasons(scored, state, { ranked, usageKwh, cheapestId }) {
   const reasons = [];
   const { plan, estimate } = scored;
 
-  // Cheapest of the eligible set, at this customer's usage.
-  const cheapest = ranked.reduce(
-    (best, r) => (costSortKey(r.estimate) < costSortKey(best.estimate) ? r : best),
-    ranked[0]
-  );
-  if (cheapest?.plan?.id === plan.id && estimate.amount !== null) {
+  // Cheapest of the eligible set, at this customer's usage. The caller may pass
+  // it in: reasons are now produced for every result rather than only the top
+  // three, and rediscovering the cheapest plan inside each call would make that
+  // quadratic for no benefit.
+  const cheapest = cheapestId !== undefined
+    ? cheapestId
+    : ranked.reduce(
+      (best, r) => (costSortKey(r.estimate) < costSortKey(best.estimate) ? r : best),
+      ranked[0]
+    )?.plan?.id;
+
+  if (cheapest === plan.id && estimate.amount !== null) {
     reasons.push(
       usageKwh
         ? `Lowest estimated cost at ${Math.round(usageKwh).toLocaleString()} kWh`
@@ -197,6 +203,18 @@ export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set() } =
   // three, so a plan shows the same number wherever it appears.
   for (const entry of scored) entry.match = matchScore(entry, state, WEIGHTS);
 
+  // Reasons, likewise, for every entry. The results board needs them on any
+  // plan that can reach a headline slot, and a customer's filter can promote
+  // any plan in the set into one — so producing them only for the current top
+  // three would leave a filtered headline card with nothing to say.
+  const cheapestId = scored.reduce(
+    (best, r) => (costSortKey(r.estimate) < costSortKey(best.estimate) ? r : best),
+    scored[0]
+  )?.plan?.id;
+  for (const entry of scored) {
+    entry.reasons = matchReasons(entry, state, { ranked: scored, usageKwh, cheapestId });
+  }
+
   // ── Completeness gate on the Top 3 ──
   //
   // A plan we cannot fully price must not occupy a headline slot while plans
@@ -211,12 +229,27 @@ export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set() } =
   // the full list, correctly ordered and clearly disclosed.
   const complete = scored.filter((e) => e.estimate.confidence === COST_CONFIDENCE.COMPLETE);
   const headline = complete.length >= 3 ? complete : scored;
-  const rest = scored.filter((e) => !headline.slice(0, 3).includes(e));
+  const headlineSet = new Set(headline.slice(0, 3));
 
-  const top = headline.slice(0, 3).map((entry, index) => ({
+  // Authoritative position in the full ranked set, and headline membership.
+  // Both are settled here, server-side, so no consumer has to sort the results
+  // again to work out which plan won.
+  scored.forEach((entry, index) => {
+    entry.rank = index + 1;
+    entry.isTopMatch = headlineSet.has(entry);
+  });
+
+  const rest = scored.filter((e) => !headlineSet.has(e));
+
+  // `top` carries its position within the headline set — the 1-2-3 the board
+  // badges — while `all` keeps each plan's position in the full ranking. The
+  // two differ whenever the completeness gate lifts a plan over one we cannot
+  // fully price, and both numbers are true statements about different things.
+  const top = [...headlineSet].map((entry, index) => ({
     ...entry,
     rank: index + 1,
-    reasons: matchReasons(entry, state, { ranked: scored, usageKwh }),
+    headlinePosition: index + 1,
+    isTopMatch: true,
   }));
 
   return { top, rest, all: scored };
