@@ -51,6 +51,18 @@ export const EVENTS = {
   PARTNER_ROUTE_CREATED: 'partner_route_created',
   CONCIERGE_CREATED: 'concierge_created',
   COMPARISON_COMPLETED: 'comparison_completed',
+
+  // ── Results board ──
+  RESULTS_MATCHING_STARTED: 'results_matching_started',
+  RESULTS_LOADED: 'results_loaded',
+  BEST_MATCH_VIEWED: 'best_match_viewed',
+  PLAN_DETAILS_VIEWED: 'plan_details_viewed',
+  RESULTS_FILTER_APPLIED: 'results_filter_applied',
+  RESULTS_SORT_CHANGED: 'results_sort_changed',
+  RESULTS_VIEW_MORE: 'results_view_more',
+  PLAN_CLICKED: 'plan_clicked',
+  COMMERCIAL_QUOTE_REQUESTED: 'commercial_quote_requested',
+  CONCIERGE_REQUESTED: 'concierge_requested',
 };
 
 /**

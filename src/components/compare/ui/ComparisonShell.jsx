@@ -105,7 +105,20 @@ export function StageProgress({ activeStage }) {
                         : "w-6 h-6 bg-white/[0.14] text-white/60 text-[11px] ring-1 ring-inset ring-white/20"
                   }`}
                 >
-                  {isComplete ? <Check className="w-3.5 h-3.5" strokeWidth={3} /> : index + 1}
+                  {/* Completed stages carry a check; the active and upcoming
+                      ones carry a dot rather than a number. A numeral here read
+                      as "step 5 of 5", which is exactly the fixed step counter
+                      this flow must not imply — the number of questions varies
+                      with the branch and with what the bill supplied. */}
+                  {isComplete ? (
+                    <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                  ) : (
+                    <span
+                      className={`rounded-full ${
+                        isActive ? "w-2.5 h-2.5 bg-gray-900" : "w-1.5 h-1.5 bg-white/50"
+                      }`}
+                    />
+                  )}
                 </span>
                 <span
                   aria-hidden="true"
@@ -254,7 +267,9 @@ export default function ComparisonShell({
 }) {
   const palette = ACCENTS[accent] || ACCENTS.residential;
 
-  const column = wide ? "max-w-5xl" : "max-w-xl";
+  // Results need real room for three side-by-side match cards plus a list;
+  // the questionnaire stays narrow so a single question keeps the focus.
+  const column = wide ? "max-w-6xl" : "max-w-xl";
 
   return (
     <AccentContext.Provider value={palette}>

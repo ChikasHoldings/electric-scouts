@@ -11,7 +11,6 @@ import SEOHead, {
 } from "@/components/SEOHead";
 
 import { getCityFromZip } from "../components/compare/providerAvailability";
-import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
 import {
@@ -60,9 +59,16 @@ import {
   BillSummary,
 } from "../components/compare/ui/BillPanel";
 import {
+  BestMatchCard,
+  PlanRow,
+  PlanDetails,
+  ResultsToolbar,
+  ViewMoreButton,
+} from "../components/compare/ui/ResultsBoard";
+import { rankPlans } from "../components/compare/engine/ranking";
+import { costSortKey } from "../components/compare/engine/planPricing";
+import {
   MatchingState,
-  PlanCard,
-  ResultsFilters,
   NoMatchState,
   CommercialComplete,
   RenewableFallback,
@@ -78,6 +84,8 @@ import {
  * 1,500-line conditional tree it replaced.
  */
 
+const RESULTS_PAGE_SIZE = 10;
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function CompareRates() {
@@ -85,9 +93,12 @@ export default function CompareRates() {
   const [state, setState] = useState(() => createInitialState());
   const [view, setView] = useState("question"); // question | bill_upload | bill_summary | matching | results
   const [showAllPlans, setShowAllPlans] = useState(false);
-  const [termFilter, setTermFilter] = useState("all");
-  const [renewableOnly, setRenewableOnly] = useState(false);
-  const { getAffiliateUrl } = useAffiliateLinks();
+  const [filters, setFilters] = useState({
+    provider: "all", term: "all", planType: "all", renewableOnly: false,
+  });
+  const [sort, setSort] = useState("best");
+  const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
+  const { getAffiliateUrl, affiliateOfferIds } = useAffiliateLinks();
 
   // ── Session bootstrap ──
   //
@@ -261,6 +272,13 @@ export default function CompareRates() {
     placeholderData: [],
   });
 
+  // Affiliate membership is looked up once and passed down, so ranking and the
+  // sponsorship disclosure read the same set.
+  const affiliateIds = useMemo(
+    () => affiliateOfferIds || new Set(),
+    [affiliateOfferIds]
+  );
+
   const usageKwh = resolveUsageKwh(state);
 
   const eligiblePlans = useMemo(() => {
@@ -375,10 +393,13 @@ export default function CompareRates() {
           renewablePlans={renewablePlans}
           usageKwh={usageKwh}
           getAffiliateUrl={getAffiliateUrl}
-          termFilter={termFilter}
-          setTermFilter={setTermFilter}
-          renewableOnly={renewableOnly}
-          setRenewableOnly={setRenewableOnly}
+          affiliateIds={affiliateIds}
+          filters={filters}
+          setFilters={setFilters}
+          sort={sort}
+          setSort={setSort}
+          visibleCount={visibleCount}
+          setVisibleCount={setVisibleCount}
           showAllPlans={showAllPlans}
           setShowAllPlans={setShowAllPlans}
         />
@@ -871,9 +892,11 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
 
 function ResultsScreen({
   state, accent, context, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
-  termFilter, setTermFilter, renewableOnly, setRenewableOnly,
+  affiliateIds, filters, setFilters, sort, setSort, visibleCount, setVisibleCount,
   showAllPlans, setShowAllPlans,
 }) {
+  const [openDetails, setOpenDetails] = useState(null);
+
   // Business supply is quoted, not listed — so the commercial branch ends in a
   // confirmation rather than a price list it cannot honestly produce.
   if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
@@ -884,30 +907,13 @@ function ResultsScreen({
     );
   }
 
-  const wantsRenewable = state.energyPreference === "renewable";
-  const noRenewableInventory = wantsRenewable && renewablePlans.length === 0;
-
-  const source = wantsRenewable && !showAllPlans && renewablePlans.length > 0
-    ? renewablePlans
-    : plans;
-
-  const filtered = source
-    .filter((plan) => {
-      if (renewableOnly && Number(plan.renewable_percentage) < 50) return false;
-      if (termFilter === "12" && Number(plan.contract_length) !== 12) return false;
-      if (termFilter === "24" && Number(plan.contract_length) !== 24) return false;
-      if (termFilter === "month" && Number(plan.contract_length) > 1) return false;
-      return true;
-    })
-    .sort((a, b) => Number(a.rate_per_kwh) - Number(b.rate_per_kwh));
-
   if (plans.length === 0) {
     return (
       <ComparisonShell activeStage="matches" accent={accent} context={context}>
         <NoMatchState
           zip={state.zip}
           onConcierge={() => {
-            track(EVENTS.CONCIERGE_CREATED, { route: ROUTES.CONCIERGE });
+            track(EVENTS.CONCIERGE_REQUESTED, { route: ROUTES.CONCIERGE });
             window.location.href = "/home-concierge";
           }}
           onBroaden={() => { window.location.href = "/all-providers"; }}
@@ -916,15 +922,64 @@ function ResultsScreen({
     );
   }
 
+  const wantsRenewable = state.energyPreference === "renewable";
+  const noRenewableInventory = wantsRenewable && renewablePlans.length === 0;
+
+  // A renewable request narrows the pool to renewable plans while any exist;
+  // "show all" is the customer's own escape hatch from that.
+  const pool = wantsRenewable && !showAllPlans && renewablePlans.length > 0
+    ? renewablePlans
+    : plans;
+
+  const filteredPool = pool.filter((plan) => {
+    if (filters.provider !== "all" && plan.provider_name !== filters.provider) return false;
+    if (filters.term !== "all" && Number(plan.contract_length) !== Number(filters.term)) return false;
+    if (filters.planType !== "all" && plan.plan_type !== filters.planType) return false;
+    if (filters.renewableOnly && Number(plan.renewable_percentage) < 50) return false;
+    return true;
+  });
+
+  // Ranking runs on the filtered set, so the three best matches are the best of
+  // what the customer is actually looking at rather than a fixed trio that
+  // ignores their filters.
+  const { top, rest } = rankPlans(filteredPool, state, { usageKwh, affiliateIds });
+  const sortedRest = sortEntries(rest, sort);
+  const visible = sortedRest.slice(0, visibleCount);
+  const remaining = sortedRest.length - visible.length;
+
+  const openAffiliate = (plan) => {
+    track(EVENTS.PLAN_CLICKED, {
+      provider: plan.provider_name,
+      plan_id: plan.id,
+      route: routing.route,
+      session_id: state.sessionId,
+      sort,
+    });
+    const url = getAffiliateUrl({
+      offerId: plan.id,
+      fallbackUrl: plan.plan_details_url || "",
+    });
+    if (url && url !== "#") {
+      if (affiliateIds.has(plan.id)) {
+        track(EVENTS.AFFILIATE_CLICKED, { plan_id: plan.id, provider: plan.provider_name });
+      }
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const showDetails = (entry) => {
+    setOpenDetails((current) => (current === entry.plan.id ? null : entry.plan.id));
+    track(EVENTS.PLAN_DETAILS_VIEWED, { plan_id: entry.plan.id, provider: entry.plan.provider_name });
+  };
+
   return (
     <ComparisonShell activeStage="matches" accent={accent} context={context} wide>
       <div className="mb-6">
         <h1 className="text-[22px] sm:text-[26px] font-semibold text-gray-900 tracking-[-0.01em]">
-          {filtered.length} {filtered.length === 1 ? "plan" : "plans"} for{" "}
-          {state.city || state.zip}
+          Electricity options for {state.city || state.zip}
         </h1>
         <p className="mt-1.5 text-[15px] text-gray-600">
-          Estimated on {Math.round(usageKwh).toLocaleString()} kWh a month
+          Estimated at {Math.round(usageKwh).toLocaleString()} kWh a month
           {state.billAnalysisStatus === "complete" ? " from your bill" : ""}.
         </p>
       </div>
@@ -932,70 +987,149 @@ function ResultsScreen({
       {noRenewableInventory && (
         <RenewableFallback
           onConcierge={() => {
-            track(EVENTS.CONCIERGE_CREATED, { route: ROUTES.RENEWABLE_PARTNER });
+            track(EVENTS.CONCIERGE_REQUESTED, { route: ROUTES.RENEWABLE_PARTNER });
             window.location.href = "/home-concierge";
           }}
           onShowAll={() => setShowAllPlans(true)}
         />
       )}
 
-      <ResultsFilters
-        termFilter={termFilter}
-        onTermChange={setTermFilter}
-        renewableOnly={renewableOnly}
-        onRenewableChange={setRenewableOnly}
+      <ResultsToolbar
+        plans={pool}
+        filters={filters}
+        onFilterChange={(next) => {
+          setFilters(next);
+          setVisibleCount(RESULTS_PAGE_SIZE);
+          track(EVENTS.RESULTS_FILTER_APPLIED, { session_id: state.sessionId });
+        }}
+        sort={sort}
+        onSortChange={(next) => {
+          setSort(next);
+          track(EVENTS.RESULTS_SORT_CHANGED, { sort: next, session_id: state.sessionId });
+        }}
+        resultCount={filteredPool.length}
       />
 
-      {filtered.length === 0 ? (
+      {filteredPool.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-6 text-center">
-          <p className="text-[15px] text-gray-700">
-            No plans match those filters.
-          </p>
+          <p className="text-[15px] text-gray-700">No plans match those filters.</p>
           <div className="mt-4 max-w-xs mx-auto">
             <SecondaryAction
-              onClick={() => {
-                setTermFilter("all");
-                setRenewableOnly(false);
-              }}
+              onClick={() =>
+                setFilters({ provider: "all", term: "all", planType: "all", renewableOnly: false })
+              }
             >
               Clear filters
             </SecondaryAction>
           </div>
         </div>
       ) : (
-        <div className="space-y-3">
-          {filtered.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              estimatedMonthly={calculateMonthlyBill(plan, usageKwh)}
-              onSelect={(selected) => {
-                track(EVENTS.AFFILIATE_CLICKED, {
-                  provider: selected.provider_name,
-                  plan_id: selected.id,
-                  route: routing.route,
-                });
-                // Routes through /api/go when an affiliate link exists for the
-                // plan, and falls back to the provider's own plan page when it
-                // doesn't — so a plan without a commercial relationship is
-                // still usable rather than a dead button.
-                const url = getAffiliateUrl({
-                  offerId: selected.id,
-                  fallbackUrl: selected.plan_details_url || "",
-                });
-                if (url && url !== "#") window.open(url, "_blank", "noopener,noreferrer");
-              }}
-            />
-          ))}
-        </div>
+        <>
+          {top.length > 0 && (
+            <section aria-labelledby="best-matches-heading" className="mb-10">
+              <h2
+                id="best-matches-heading"
+                className="text-[15px] font-semibold text-gray-900 mb-3"
+              >
+                Top {top.length === 1 ? "match" : `${top.length} matches`} for you
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {top.map((entry) => (
+                  <div key={entry.plan.id} className="flex flex-col">
+                    <BestMatchCard
+                      entry={entry}
+                      usageKwh={usageKwh}
+                      onSelect={openAffiliate}
+                      onDetails={showDetails}
+                      isSponsored={affiliateIds.has(entry.plan.id)}
+                    />
+                    {openDetails === entry.plan.id && (
+                      <PlanDetails
+                        entry={entry}
+                        usageKwh={usageKwh}
+                        onClose={() => setOpenDetails(null)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {sortedRest.length > 0 && (
+            <section aria-labelledby="more-options-heading">
+              <h2
+                id="more-options-heading"
+                className="text-[15px] font-semibold text-gray-900 mb-3"
+              >
+                More electricity options
+              </h2>
+              <div className="space-y-3">
+                {visible.map((entry) => (
+                  <div key={entry.plan.id}>
+                    <PlanRow
+                      entry={entry}
+                      onSelect={openAffiliate}
+                      onDetails={showDetails}
+                      isSponsored={affiliateIds.has(entry.plan.id)}
+                    />
+                    {openDetails === entry.plan.id && (
+                      <PlanDetails
+                        entry={entry}
+                        usageKwh={usageKwh}
+                        onClose={() => setOpenDetails(null)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {remaining > 0 && (
+                <ViewMoreButton
+                  remaining={remaining}
+                  onClick={() => {
+                    setVisibleCount((n) => n + RESULTS_PAGE_SIZE);
+                    track(EVENTS.RESULTS_VIEW_MORE, {
+                      shown: visible.length + RESULTS_PAGE_SIZE,
+                      session_id: state.sessionId,
+                    });
+                  }}
+                />
+              )}
+            </section>
+          )}
+        </>
       )}
 
       <p className="mt-8 text-[12px] text-gray-500 leading-relaxed">
-        Rates, plan details and availability vary by ZIP code, usage and credit,
-        and change over time. Verify all details with the provider before
-        enrolling. Electric Scouts is a comparison service and may earn a
-        commission when you enroll through a listed plan.
+        Estimates use your stated usage and the plan components we hold — energy
+        charge, base charge, delivery and bill credits where available. Your
+        actual bill depends on your utility, taxes and real usage. Verify all
+        details with the provider before enrolling. Electric Scouts is a
+        comparison service and may earn a commission when you enroll through a
+        listed plan; that relationship never changes how plans are ranked.
       </p>
     </ComparisonShell>
   );
+}
+
+/** Sorts already-scored entries. "Best match" keeps the ranking engine order. */
+function sortEntries(entries, sort) {
+  const list = [...entries];
+  switch (sort) {
+    case "cost":
+      return list.sort((a, b) => costSortKey(a.estimate) - costSortKey(b.estimate));
+    case "rate":
+      return list.sort((a, b) => Number(a.plan.rate_per_kwh) - Number(b.plan.rate_per_kwh));
+    case "term_short":
+      return list.sort((a, b) => Number(a.plan.contract_length) - Number(b.plan.contract_length));
+    case "term_long":
+      return list.sort((a, b) => Number(b.plan.contract_length) - Number(a.plan.contract_length));
+    case "renewable":
+      return list.sort(
+        (a, b) => Number(b.plan.renewable_percentage) - Number(a.plan.renewable_percentage)
+      );
+    default:
+      return list;
+  }
 }

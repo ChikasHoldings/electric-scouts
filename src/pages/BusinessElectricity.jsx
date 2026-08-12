@@ -278,7 +278,7 @@ export default function BusinessElectricity() {
             String(market.providers),
             formatRate(market.minBusinessRate) || "—",
           ])}
-          footnote={`Tracked as of ${MARKET_GENERATED_AT}. These are listed commercial plans; a quote priced against your own load profile can land above or below them, and demand charges are billed separately.`}
+          footnote="These are listed commercial plans; a quote priced against your own load profile can land above or below them, and demand charges are billed separately."
         />
       </Section>
 

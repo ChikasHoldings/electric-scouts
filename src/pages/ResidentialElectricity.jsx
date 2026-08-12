@@ -138,7 +138,6 @@ export default function ResidentialElectricity() {
           ["Suppliers with plans", String(MARKET_TOTALS.providersWithPlans)],
           ["Deregulated states", String(MARKET_TOTALS.states)],
         ]}
-        factsNote={`Tracked as of ${MARKET_GENERATED_AT}. What you can actually buy depends on your utility territory, so the plans at your ZIP code are a subset of these.`}
         formTitle="Compare plans for your home"
         formSubtitle="Next question is about the home itself — the ZIP code carries over."
         formNote="Free to use, no obligation, and no credit check to compare. We are an independent comparison service, not a supplier."

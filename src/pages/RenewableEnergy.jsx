@@ -267,7 +267,7 @@ export default function RenewableEnergy() {
             String(market.renewableProviders),
             formatRate(market.minRenewableRate) || "—",
           ])}
-          footnote={`Tracked as of ${MARKET_GENERATED_AT}. Rates change often, and what is sold at a given ZIP code is a subset of the state total.`}
+          footnote="Rates change often, and what is sold at a given ZIP code is a subset of the state total."
         />
       </Section>
 
