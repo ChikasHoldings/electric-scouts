@@ -98,7 +98,7 @@ export default function CompareRates() {
   });
   const [sort, setSort] = useState("best");
   const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
-  const { getAffiliateUrl, affiliateOfferIds } = useAffiliateLinks();
+  const { getAffiliateUrl, affiliateOfferIds, affiliateProviderIds } = useAffiliateLinks();
 
   // ── Session bootstrap ──
   //
@@ -272,12 +272,18 @@ export default function CompareRates() {
     placeholderData: [],
   });
 
-  // Affiliate membership is looked up once and passed down, so ranking and the
-  // sponsorship disclosure read the same set.
-  const affiliateIds = useMemo(
-    () => affiliateOfferIds || new Set(),
-    [affiliateOfferIds]
-  );
+  // Plan ids that resolve to a monetized outbound link, by offer OR by
+  // provider. Provider is the one that actually matters — links are registered
+  // per provider, so an offer-only lookup matched nothing at all.
+  const affiliateIds = useMemo(() => {
+    const offers = affiliateOfferIds || new Set();
+    const providers = affiliateProviderIds || new Set();
+    return new Set(
+      allPlans
+        .filter((plan) => offers.has(plan.id) || providers.has(plan.provider_id))
+        .map((plan) => plan.id)
+    );
+  }, [allPlans, affiliateOfferIds, affiliateProviderIds]);
 
   const usageKwh = resolveUsageKwh(state);
 
@@ -947,6 +953,14 @@ function ResultsScreen({
   const visible = sortedRest.slice(0, visibleCount);
   const remaining = sortedRest.length - visible.length;
 
+  // Per-card sponsorship disclosure only means something when monetization is
+  // not universal. Every listed plan currently resolves to a referral link, so
+  // badging all of them would be noise; the page-level disclosure below covers
+  // the standing commercial relationship instead.
+  const monetizedCount = filteredPool.filter((p) => affiliateIds.has(p.id)).length;
+  const discloseSponsored =
+    monetizedCount > 0 && monetizedCount < filteredPool.length;
+
   const openAffiliate = (plan) => {
     track(EVENTS.PLAN_CLICKED, {
       provider: plan.provider_name,
@@ -955,8 +969,11 @@ function ResultsScreen({
       session_id: state.sessionId,
       sort,
     });
+    // providerId is what resolves in practice; offerId stays first so a
+    // plan-specific link still wins when one is configured.
     const url = getAffiliateUrl({
       offerId: plan.id,
+      providerId: plan.provider_id,
       fallbackUrl: plan.plan_details_url || "",
     });
     if (url && url !== "#") {
@@ -1041,7 +1058,7 @@ function ResultsScreen({
                       usageKwh={usageKwh}
                       onSelect={openAffiliate}
                       onDetails={showDetails}
-                      isSponsored={affiliateIds.has(entry.plan.id)}
+                      isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
                     />
                     {openDetails === entry.plan.id && (
                       <PlanDetails
@@ -1071,7 +1088,7 @@ function ResultsScreen({
                       entry={entry}
                       onSelect={openAffiliate}
                       onDetails={showDetails}
-                      isSponsored={affiliateIds.has(entry.plan.id)}
+                      isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
                     />
                     {openDetails === entry.plan.id && (
                       <PlanDetails

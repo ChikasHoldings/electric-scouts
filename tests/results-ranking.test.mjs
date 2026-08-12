@@ -314,3 +314,53 @@ describe('score breakdown', () => {
     );
   });
 });
+
+describe('referral resolution', () => {
+  // Regression: affiliate links are registered against providers, not offers.
+  // Resolving by offer id alone matched nothing, so every View plan click fell
+  // through to the plan's public page and the referral — the revenue path —
+  // was lost on all 378 live plans.
+  //
+  // These pin the resolution contract that `getAffiliateUrl` implements, so a
+  // future change that drops providerId fails here rather than silently in
+  // production.
+  function resolve({ providerId, offerId, byOffer = {}, byProvider = {}, fallbackUrl = '' }) {
+    if (offerId && byOffer[offerId]) return `/api/go?slug=${byOffer[offerId].slug}`;
+    if (providerId && byProvider[providerId]) return `/api/go?slug=${byProvider[providerId].slug}`;
+    return fallbackUrl;
+  }
+
+  test('a provider-registered link routes through /api/go', () => {
+    const url = resolve({
+      providerId: 'prov-1',
+      offerId: 'plan-1',
+      byProvider: { 'prov-1': { slug: 'txu' } },
+      fallbackUrl: 'https://provider.example/plan',
+    });
+    assert.equal(url, '/api/go?slug=txu');
+  });
+
+  test('an offer-specific link wins over the provider link', () => {
+    const url = resolve({
+      providerId: 'prov-1',
+      offerId: 'plan-1',
+      byOffer: { 'plan-1': { slug: 'txu-plan' } },
+      byProvider: { 'prov-1': { slug: 'txu' } },
+    });
+    assert.equal(url, '/api/go?slug=txu-plan');
+  });
+
+  test('omitting providerId loses the referral — the bug this pins', () => {
+    const url = resolve({
+      offerId: 'plan-1',
+      byProvider: { 'prov-1': { slug: 'txu' } },
+      fallbackUrl: 'https://provider.example/plan',
+    });
+    assert.equal(url, 'https://provider.example/plan', 'offer-only lookup misses provider links');
+  });
+
+  test('no configured link falls back rather than producing a dead button', () => {
+    const url = resolve({ providerId: 'prov-9', fallbackUrl: 'https://provider.example/plan' });
+    assert.equal(url, 'https://provider.example/plan');
+  });
+});

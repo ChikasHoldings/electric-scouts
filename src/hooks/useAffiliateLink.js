@@ -83,10 +83,14 @@ export function useAffiliateLinks() {
   return {
     affiliateReady: ready,
     getAffiliateUrl,
-    // Which offers carry a commercial relationship. The comparison engine uses
-    // this only as a tie-breaker between otherwise-equal plans, and to disclose
-    // sponsorship on the card — never to rank.
+    // Which offers and providers carry a commercial relationship.
+    //
+    // Both are exposed because links are registered against providers in
+    // practice, not offers: resolving by offer id alone silently matched
+    // nothing and sent every click to the plan's public page instead of
+    // through /api/go, losing the referral.
     affiliateOfferIds: new Set(Object.keys(linkCache.byOffer)),
+    affiliateProviderIds: new Set(Object.keys(linkCache.byProvider)),
   };
 }
 
