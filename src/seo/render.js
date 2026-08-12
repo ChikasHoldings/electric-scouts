@@ -54,6 +54,31 @@ export function ogImageFor(route) {
 const ROBOTS_INDEXABLE = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 const ROBOTS_NOINDEX = 'noindex, follow';
 
+/**
+ * Keeps the crawler payload out of the browser's first paint.
+ *
+ * The prerendered summary lives inside #root, and React mounts with
+ * `createRoot().render()` — which empties the container. Left visible, that
+ * produces a guaranteed three-frame flash on every public page: the plain
+ * summary paints from the initial HTML, React clears it, then the real app
+ * appears. It is the "unstyled old-looking page" visitors were seeing.
+ *
+ * The fix separates the two audiences instead of hiding a symptom. The markup
+ * is still in the served HTML, unhidden by any attribute, so a crawler that
+ * reads the document — which is exactly the agent this payload exists for —
+ * sees every heading, link and FAQ answer as before. A browser applies this
+ * render-blocking rule and never paints it, so the page goes straight from the
+ * background colour to the mounted app with nothing unrelated in between.
+ *
+ * The `<noscript>` half is the reason `display:none` is safe here: with
+ * scripting off, React never mounts, so the rule is reversed and the summary is
+ * the page. Nothing is hidden from an agent that would otherwise have had it.
+ */
+const PRERENDER_VISIBILITY_TAGS = [
+  '<style>[data-seo-prerender]{display:none}</style>',
+  '<noscript><style>[data-seo-prerender]{display:block}</style></noscript>',
+];
+
 /* ------------------------------------------------------------------ *
  * Structured data
  * ------------------------------------------------------------------ */
@@ -228,6 +253,7 @@ export function renderHead(route, content) {
     `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
     `<meta name="twitter:image" content="${escapeHtml(image)}" />`,
     `<script type="application/ld+json">${escapeJsonLd(JSON.stringify(structuredDataFor(route, content)))}</script>`,
+    ...PRERENDER_VISIBILITY_TAGS,
   ];
 
   return tags.map((tag) => `    ${tag}`).join('\n');
