@@ -1,100 +1,122 @@
 /**
  * pages.config.js
- * 
+ *
  * Lazy-loaded page registry for optimal code splitting and fast initial load.
  * Only the Home page is eagerly loaded; all other pages are lazy-loaded.
+ *
+ * Each page is registered as an importer function rather than as a bare
+ * `lazy()` call, because the same importer is needed twice: once to build the
+ * React.lazy component, and once to start the chunk download before the router
+ * ever renders. See `preloadPageForPath` at the bottom of this file.
  */
 
 import { lazy } from 'react';
 import Home from './pages/Home';
 import __Layout from './Layout.jsx';
+import { createPageUrl } from '@/utils';
 
 // Lazy-loaded pages — each gets its own chunk for faster initial load
-const AboutUs = lazy(() => import('./pages/AboutUs'));
-const AllCities = lazy(() => import('./pages/AllCities'));
-const AllProviders = lazy(() => import('./pages/AllProviders'));
-const AllStates = lazy(() => import('./pages/AllStates'));
-const ArticleDetail = lazy(() => import('./pages/ArticleDetail'));
-const BillAnalyzer = lazy(() => import('./pages/BillAnalyzer'));
-const BusinessCompareRates = lazy(() => import('./pages/BusinessCompareRates'));
-const BusinessElectricity = lazy(() => import('./pages/BusinessElectricity'));
-const BusinessHub = lazy(() => import('./pages/BusinessHub'));
-const BusinessQuoteDashboard = lazy(() => import('./pages/BusinessQuoteDashboard'));
-const CityRates = lazy(() => import('./pages/CityRates'));
-const CompareRates = lazy(() => import('./pages/CompareRates'));
-const ConnecticutElectricity = lazy(() => import('./pages/ConnecticutElectricity'));
-const FAQ = lazy(() => import('./pages/FAQ'));
-const HomeConcierge = lazy(() => import('./pages/HomeConcierge'));
-const IllinoisElectricity = lazy(() => import('./pages/IllinoisElectricity'));
-const Landing = lazy(() => import('./pages/Landing'));
-const LearningCenter = lazy(() => import('./pages/LearningCenter'));
-const MaineElectricity = lazy(() => import('./pages/MaineElectricity'));
-const MarylandElectricity = lazy(() => import('./pages/MarylandElectricity'));
-const MassachusettsElectricity = lazy(() => import('./pages/MassachusettsElectricity'));
-const NewHampshireElectricity = lazy(() => import('./pages/NewHampshireElectricity'));
-const NewJerseyElectricity = lazy(() => import('./pages/NewJerseyElectricity'));
-const NewYorkElectricity = lazy(() => import('./pages/NewYorkElectricity'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-const OhioElectricity = lazy(() => import('./pages/OhioElectricity'));
-const PennsylvaniaElectricity = lazy(() => import('./pages/PennsylvaniaElectricity'));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
-const ProviderDetails = lazy(() => import('./pages/ProviderDetails'));
-const RenewableCompareRates = lazy(() => import('./pages/RenewableCompareRates'));
-const RenewableEnergy = lazy(() => import('./pages/RenewableEnergy'));
-const ResidentialElectricity = lazy(() => import('./pages/ResidentialElectricity'));
-const RhodeIslandElectricity = lazy(() => import('./pages/RhodeIslandElectricity'));
-const Robots = lazy(() => import('./pages/Robots'));
-const SavingsCalculator = lazy(() => import('./pages/SavingsCalculator'));
-const Sitemap = lazy(() => import('./pages/Sitemap'));
-const SitemapXML = lazy(() => import('./pages/SitemapXML'));
-const TermsOfService = lazy(() => import('./pages/TermsOfService'));
-const TexasElectricity = lazy(() => import('./pages/TexasElectricity'));
+const PAGE_LOADERS = {
+  AboutUs: () => import('./pages/AboutUs'),
+  AllCities: () => import('./pages/AllCities'),
+  AllProviders: () => import('./pages/AllProviders'),
+  AllStates: () => import('./pages/AllStates'),
+  ArticleDetail: () => import('./pages/ArticleDetail'),
+  BillAnalyzer: () => import('./pages/BillAnalyzer'),
+  BusinessCompareRates: () => import('./pages/BusinessCompareRates'),
+  BusinessElectricity: () => import('./pages/BusinessElectricity'),
+  BusinessHub: () => import('./pages/BusinessHub'),
+  BusinessQuoteDashboard: () => import('./pages/BusinessQuoteDashboard'),
+  CityRates: () => import('./pages/CityRates'),
+  CompareRates: () => import('./pages/CompareRates'),
+  ConnecticutElectricity: () => import('./pages/ConnecticutElectricity'),
+  FAQ: () => import('./pages/FAQ'),
+  HomeConcierge: () => import('./pages/HomeConcierge'),
+  IllinoisElectricity: () => import('./pages/IllinoisElectricity'),
+  Landing: () => import('./pages/Landing'),
+  LearningCenter: () => import('./pages/LearningCenter'),
+  MaineElectricity: () => import('./pages/MaineElectricity'),
+  MarylandElectricity: () => import('./pages/MarylandElectricity'),
+  MassachusettsElectricity: () => import('./pages/MassachusettsElectricity'),
+  NewHampshireElectricity: () => import('./pages/NewHampshireElectricity'),
+  NewJerseyElectricity: () => import('./pages/NewJerseyElectricity'),
+  NewYorkElectricity: () => import('./pages/NewYorkElectricity'),
+  NotFound: () => import('./pages/NotFound'),
+  OhioElectricity: () => import('./pages/OhioElectricity'),
+  PennsylvaniaElectricity: () => import('./pages/PennsylvaniaElectricity'),
+  PrivacyPolicy: () => import('./pages/PrivacyPolicy'),
+  ProviderDetails: () => import('./pages/ProviderDetails'),
+  RenewableCompareRates: () => import('./pages/RenewableCompareRates'),
+  RenewableEnergy: () => import('./pages/RenewableEnergy'),
+  ResidentialElectricity: () => import('./pages/ResidentialElectricity'),
+  RhodeIslandElectricity: () => import('./pages/RhodeIslandElectricity'),
+  Robots: () => import('./pages/Robots'),
+  SavingsCalculator: () => import('./pages/SavingsCalculator'),
+  Sitemap: () => import('./pages/Sitemap'),
+  SitemapXML: () => import('./pages/SitemapXML'),
+  TermsOfService: () => import('./pages/TermsOfService'),
+  TexasElectricity: () => import('./pages/TexasElectricity'),
+};
 
 export const PAGES = {
-    "AboutUs": AboutUs,
-    "AllCities": AllCities,
-    "AllProviders": AllProviders,
-    "AllStates": AllStates,
-    "ArticleDetail": ArticleDetail,
-    "BillAnalyzer": BillAnalyzer,
-    "BusinessCompareRates": BusinessCompareRates,
-    "BusinessElectricity": BusinessElectricity,
-    "BusinessHub": BusinessHub,
-    "BusinessQuoteDashboard": BusinessQuoteDashboard,
-    "CityRates": CityRates,
-    "CompareRates": CompareRates,
-    "ConnecticutElectricity": ConnecticutElectricity,
-    "FAQ": FAQ,
-    "Home": Home,
-    "HomeConcierge": HomeConcierge,
-    "IllinoisElectricity": IllinoisElectricity,
-    "Landing": Landing,
-    "LearningCenter": LearningCenter,
-    "MaineElectricity": MaineElectricity,
-    "MarylandElectricity": MarylandElectricity,
-    "MassachusettsElectricity": MassachusettsElectricity,
-    "NewHampshireElectricity": NewHampshireElectricity,
-    "NewJerseyElectricity": NewJerseyElectricity,
-    "NewYorkElectricity": NewYorkElectricity,
-    "NotFound": NotFound,
-    "OhioElectricity": OhioElectricity,
-    "PennsylvaniaElectricity": PennsylvaniaElectricity,
-    "PrivacyPolicy": PrivacyPolicy,
-    "ProviderDetails": ProviderDetails,
-    "RenewableCompareRates": RenewableCompareRates,
-    "RenewableEnergy": RenewableEnergy,
-    "ResidentialElectricity": ResidentialElectricity,
-    "RhodeIslandElectricity": RhodeIslandElectricity,
-    "Robots": Robots,
-    "SavingsCalculator": SavingsCalculator,
-    "Sitemap": Sitemap,
-    "SitemapXML": SitemapXML,
-    "TermsOfService": TermsOfService,
-    "TexasElectricity": TexasElectricity,
-}
+  // Home is eager: it is the most-landed-on route, and bundling it with the
+  // entry chunk removes a round trip from the site's most common first paint.
+  Home,
+  ...Object.fromEntries(
+    Object.entries(PAGE_LOADERS).map(([name, loader]) => [name, lazy(loader)])
+  ),
+};
 
 export const pagesConfig = {
-    mainPage: "Home",
-    Pages: PAGES,
-    Layout: __Layout,
+  mainPage: 'Home',
+  Pages: PAGES,
+  Layout: __Layout,
 };
+
+/**
+ * URL prefixes for the routes App.jsx defines by hand rather than from the
+ * registry. Longest-prefix-first is not needed — none of these nest.
+ */
+const DYNAMIC_ROUTE_PAGES = [
+  ['/electricity-rates/', 'CityRates'],
+  ['/learn/', 'ArticleDetail'],
+  ['/providers/', 'ProviderDetails'],
+];
+
+/** Which registry page renders `pathname`, or null for the eager homepage. */
+export function pageNameForPath(pathname) {
+  const path = (pathname || '/').replace(/\/+$/, '') || '/';
+  if (path === '/') return null;
+
+  for (const [prefix, name] of DYNAMIC_ROUTE_PAGES) {
+    if (path.startsWith(prefix)) return name;
+  }
+
+  const match = Object.keys(PAGE_LOADERS).find((name) => createPageUrl(name) === path);
+  return match || null;
+}
+
+/**
+ * Start the current route's chunk before React renders.
+ *
+ * Without this, a visitor landing directly on any page other than the homepage
+ * gets a guaranteed intermediate screen: the router renders, the lazy page has
+ * not resolved, and the Suspense boundary paints a centred spinner over half
+ * the viewport before the real page replaces it. Preloading and awaiting the
+ * chunk in `main.jsx` collapses that to a single paint of the finished page.
+ *
+ * Resolves (never rejects) so a chunk that fails to load falls through to the
+ * Suspense boundary and its retry rather than blocking the mount.
+ *
+ * @param {string} pathname
+ * @returns {Promise<void>}
+ */
+export function preloadPageForPath(pathname) {
+  const name = pageNameForPath(pathname);
+  const loader = name && PAGE_LOADERS[name];
+  if (!loader) return Promise.resolve();
+  return loader().then(
+    () => undefined,
+    () => undefined
+  );
+}

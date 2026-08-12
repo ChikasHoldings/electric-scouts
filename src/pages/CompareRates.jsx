@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Building2, Home, Leaf, MapPin } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { ElectricityPlan } from "@/api/supabaseEntities";
+import { ElectricityPlan, ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import SEOHead, {
   getOrganizationSchema,
@@ -11,6 +11,13 @@ import SEOHead, {
 } from "@/components/SEOHead";
 
 import { getCityFromZip } from "../components/compare/providerAvailability";
+import {
+  validateFirstName,
+  validateLastName,
+  validateEmail,
+  validatePhone,
+  formatPhone,
+} from "@/lib/contactValidation";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
 import {
@@ -66,9 +73,10 @@ import {
   ViewMoreButton,
 } from "../components/compare/ui/ResultsBoard";
 import { rankPlans } from "../components/compare/engine/ranking";
+import { resolveAnalysisPhase } from "../components/compare/engine/analysisTimeline";
+import AnalysisLoader, { AnalysisFailed } from "../components/compare/ui/AnalysisLoader";
 import { costSortKey } from "../components/compare/engine/planPricing";
 import {
-  MatchingState,
   NoMatchState,
   CommercialComplete,
   RenewableFallback,
@@ -86,8 +94,6 @@ import {
 
 const RESULTS_PAGE_SIZE = 10;
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export default function CompareRates() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [state, setState] = useState(() => createInitialState());
@@ -97,6 +103,7 @@ export default function CompareRates() {
     provider: "all", term: "all", planType: "all", renewableOnly: false,
   });
   const [sort, setSort] = useState("best");
+  const [matchingFailed, setMatchingFailed] = useState(false);
   const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
   const { getAffiliateUrl, affiliateOfferIds, affiliateProviderIds } = useAffiliateLinks();
 
@@ -212,19 +219,9 @@ export default function CompareRates() {
     if (view !== "question" || currentQuestion || !state.email) return;
     setView("matching");
     track(EVENTS.MATCHING_STARTED);
+    track(EVENTS.COMPARISON_ANALYSIS_STARTED);
   }, [currentQuestion, view, state.email]);
 
-  // Hold matching briefly, then show results.
-  //
-  // Kept in its own effect keyed on `view` alone: when the timer lived in the
-  // effect above, setting the view re-ran that effect, and its cleanup cancelled
-  // the very timeout it had just scheduled — leaving the page stuck on
-  // "Finding your electricity options…" forever.
-  useEffect(() => {
-    if (view !== "matching") return;
-    const timer = setTimeout(() => setView("results"), 900);
-    return () => clearTimeout(timer);
-  }, [view]);
 
   const update = useCallback((patch) => {
     setState((prev) => ({ ...prev, ...patch }));
@@ -266,11 +263,75 @@ export default function CompareRates() {
   }, [state.customerType, state.energyPreference, state.entryContext]);
 
   // ── Plans ──
-  const { data: allPlans = [] } = useQuery({
+  const { data: allPlans = [], isLoading: plansQueryLoading, isError: plansError } = useQuery({
     queryKey: ["plans"],
     queryFn: () => ElectricityPlan.list(),
     placeholderData: [],
   });
+  const plansLoading = plansQueryLoading && !plansError;
+
+  // Provider records carry the logo. Failing to load them is not fatal: the
+  // cards fall back to the designed initials mark rather than blocking results.
+  const { data: allProviders = [] } = useQuery({
+    queryKey: ["providers"],
+    queryFn: () => ElectricityProvider.list(),
+    placeholderData: [],
+  });
+  const providersById = useMemo(() => {
+    const byId = {};
+    const byName = {};
+    for (const provider of allProviders) {
+      if (provider.id) byId[provider.id] = provider;
+      if (provider.name) byName[provider.name.trim().toLowerCase()] = provider;
+    }
+    return { byId, byName };
+  }, [allProviders]);
+
+  // Plans carry provider_id, but resolve by name too so a plan whose id is
+  // missing still shows its brand instead of dropping to initials.
+  const providerFor = useCallback(
+    (plan) =>
+      providersById.byId[plan?.provider_id] ||
+      providersById.byName[String(plan?.provider_name || "").trim().toLowerCase()] ||
+      null,
+    [providersById]
+  );
+
+  // Hold the analysis screen for its minimum presentation period.
+  //
+  // Kept in its own effect keyed on `view` alone: when the timer lived in the
+  // effect above, setting the view re-ran that effect, and its cleanup cancelled
+  // the very timeout it had just scheduled — leaving the page stuck on the
+  // analysis screen forever.
+  //
+  // The plans query is what "ready" means here. If it has not settled by the
+  // time the minimum elapses, the screen stays up rather than revealing a
+  // half-populated board — real work is never cut off by the clock.
+  useEffect(() => {
+    if (view !== "matching") return undefined;
+
+    const startedAt = Date.now();
+    let timer;
+
+    const check = () => {
+      const elapsed = Date.now() - startedAt;
+      const { phase } = resolveAnalysisPhase({ elapsedMs: elapsed, ready: !plansLoading });
+
+      if (phase === "complete") {
+        setView("results");
+        return;
+      }
+      if (phase === "failed") {
+        setMatchingFailed(true);
+        track(EVENTS.COMPARISON_MATCHING_FAILED, { elapsed_ms: elapsed });
+        return;
+      }
+      timer = setTimeout(check, 250);
+    };
+
+    check();
+    return () => clearTimeout(timer);
+  }, [view, plansLoading]);
 
   // Plan ids that resolve to a monetized outbound link, by offer OR by
   // provider. Provider is the one that actually matters — links are registered
@@ -347,6 +408,10 @@ export default function CompareRates() {
       route: routing.route,
     });
     track(EVENTS.COMPARISON_COMPLETED, { route: routing.route });
+    track(EVENTS.COMPARISON_RESULTS_LOADED, {
+      match_count: eligiblePlans.length,
+      route: routing.route,
+    });
   }, [view]);  
 
   const seoBlock = (
@@ -379,8 +444,26 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches" accent={accent} context={context}>
-          <MatchingState />
+        {/* No activeStage from here on. The questionnaire is finished, so the
+            stage indicator must not follow the customer into the analysis and
+            results — those are a destination, not another form step. */}
+        <ComparisonShell accent={accent} context={context}>
+          {matchingFailed ? (
+            <AnalysisFailed
+              onRetry={() => {
+                setMatchingFailed(false);
+                setView("question");
+                setView("matching");
+                track(EVENTS.COMPARISON_ANALYSIS_STARTED, { retry: true });
+              }}
+              onConcierge={() => {
+                track(EVENTS.CONCIERGE_REQUESTED, { route: ROUTES.CONCIERGE });
+                window.location.href = "/home-concierge";
+              }}
+            />
+          ) : (
+            <AnalysisLoader name={state.firstName || null} />
+          )}
         </ComparisonShell>
       </>
     );
@@ -399,6 +482,7 @@ export default function CompareRates() {
           renewablePlans={renewablePlans}
           usageKwh={usageKwh}
           getAffiliateUrl={getAffiliateUrl}
+          providerFor={providerFor}
           affiliateIds={affiliateIds}
           filters={filters}
           setFilters={setFilters}
@@ -502,8 +586,8 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="matches" accent={accent} context={context}>
-          <MatchingState />
+        <ComparisonShell accent={accent} context={context}>
+          <AnalysisLoader name={state.firstName || null} />
         </ComparisonShell>
       </>
     );
@@ -551,6 +635,7 @@ function clearAnswerFor(questionId, prev) {
     case "commercial_timing": return { timing: "" };
     case "business_name": return { businessName: "" };
     case "name": return { firstName: "" };
+    case "last_name": return { lastName: "" };
     case "email": return { email: "" };
     case "phone": return { phone: "" };
     default: return prev;
@@ -569,9 +654,21 @@ function QuestionScreen({ question, state, update, setState, setView, onBack, on
     footer: onChangeService ? <ChangeServiceButton onClick={onChangeService} /> : null,
   };
 
+  // Every question that holds a draft is keyed on the question id.
+  //
+  // These components seed their input from `state` with useState, which only
+  // runs its initialiser on mount. One ContactQuestion serves the name, email
+  // and phone questions, so without a key React saw the same component type in
+  // the same position, kept the mounted instance across the transition, and
+  // carried the draft with it — the name the visitor had just typed reappeared
+  // as the prefilled email, then as the phone number.
+  //
+  // QuestionFrame's own `key` cannot do this job: it sits on the div that frame
+  // returns, so it restarts the entrance animation but has no bearing on the
+  // reconciliation of the stateful component rendered above it.
   switch (question.type) {
     case "zip":
-      return <ZipQuestion {...frameProps} state={state} update={update} />;
+      return <ZipQuestion key={question.id} {...frameProps} state={state} update={update} />;
 
     case "choice":
       return (
@@ -602,13 +699,14 @@ function QuestionScreen({ question, state, update, setState, setView, onBack, on
       );
 
     case "verify":
-      return <VerifyQuestion {...frameProps} state={state} update={update} />;
+      return <VerifyQuestion key={question.id} {...frameProps} state={state} update={update} />;
 
     case "text":
     case "email":
     case "phone":
       return (
         <ContactQuestion
+          key={question.id}
           {...frameProps}
           question={question}
           state={state}
@@ -811,50 +909,53 @@ function VerifyQuestion({ questionKey, onBack, footer, state, update }) {
 }
 
 function ContactQuestion({ questionKey, title, subtitle, onBack, footer, question, state, update }) {
-  const initial =
-    question.id === "business_name" ? state.businessName
-      : question.id === "name" ? state.firstName
-        : question.id === "email" ? state.email
-          : state.phone;
+  // Explicit per-question wiring. The previous chained ternary fell through to
+  // state.phone for anything it did not name, so adding a question silently
+  // pre-filled it with the phone number — the carryover class of bug.
+  const FIELDS = {
+    business_name: {
+      stateKey: "businessName",
+      validate: (v) => {
+        const value = String(v ?? "").trim().slice(0, 160);
+        return value
+          ? { valid: true, value, error: null }
+          : { valid: false, value: null, error: "Enter a business name." };
+      },
+      event: null,
+    },
+    name: { stateKey: "firstName", validate: validateFirstName, event: EVENTS.NAME_COMPLETED },
+    last_name: { stateKey: "lastName", validate: validateLastName, event: EVENTS.LAST_NAME_COMPLETED },
+    email: { stateKey: "email", validate: validateEmail, event: EVENTS.EMAIL_COMPLETED },
+    phone: { stateKey: "phone", validate: validatePhone, event: EVENTS.PHONE_COMPLETED },
+  };
 
-  const [draft, setDraft] = useState(initial || "");
+  const field = FIELDS[question.id] || FIELDS.name;
+  const stored = state[field.stateKey];
+
+  // Phone is stored E.164 but shown in the readable form the customer typed.
+  const [draft, setDraft] = useState(
+    question.id === "phone" && stored ? formatPhone(stored) : stored || ""
+  );
   const [error, setError] = useState("");
+  const [focusSignal, setFocusSignal] = useState(0);
 
   const submit = () => {
-    const value = draft.trim();
+    const result = field.validate(draft);
 
-    if (question.id === "email") {
-      if (!EMAIL_RE.test(value)) {
-        setError("Enter a valid email address so we can send your matches.");
-        return;
-      }
-      update({ email: value, consentContact: true });
-      track(EVENTS.EMAIL_COMPLETED);
+    if (!result.valid) {
+      // The entered value is deliberately left in the field: clearing it makes
+      // the customer retype a near-correct value to fix a typo.
+      setError(result.error);
+      setFocusSignal((n) => n + 1);
       return;
     }
 
-    if (question.id === "phone") {
-      const digits = value.replace(/\D/g, "");
-      if (digits.length < 10) {
-        setError("Enter a 10-digit phone number.");
-        return;
-      }
-      update({ phone: digits.slice(0, 15) });
-      track(EVENTS.PHONE_COMPLETED);
-      return;
-    }
-
-    if (!value) {
-      setError("This one's required.");
-      return;
-    }
-
-    if (question.id === "business_name") {
-      update({ businessName: value.slice(0, 160) });
-    } else {
-      update({ firstName: value.slice(0, 80) });
-      track(EVENTS.NAME_COMPLETED);
-    }
+    setError("");
+    const patch = { [field.stateKey]: result.value };
+    // Consent is recorded with the email that it attaches to.
+    if (question.id === "email") patch.consentContact = true;
+    update(patch);
+    if (field.event) track(field.event);
   };
 
   const inputProps = {
@@ -865,6 +966,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
   return (
     <QuestionFrame questionKey={questionKey} title={title} subtitle={subtitle} onBack={onBack} footer={footer}>
       <TextQuestion
+        focusSignal={focusSignal}
         id={question.id}
         label={question.inputLabel}
         autoComplete={question.autoComplete}
@@ -899,7 +1001,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
 function ResultsScreen({
   state, accent, context, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
   affiliateIds, filters, setFilters, sort, setSort, visibleCount, setVisibleCount,
-  showAllPlans, setShowAllPlans,
+  showAllPlans, setShowAllPlans, providerFor,
 }) {
   const [openDetails, setOpenDetails] = useState(null);
 
@@ -907,7 +1009,7 @@ function ResultsScreen({
   // confirmation rather than a price list it cannot honestly produce.
   if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
     return (
-      <ComparisonShell activeStage="matches" accent={accent} context={context}>
+      <ComparisonShell accent={accent} context={context}>
         <CommercialComplete state={state} qualification={routing.qualification} />
       </ComparisonShell>
     );
@@ -915,7 +1017,7 @@ function ResultsScreen({
 
   if (plans.length === 0) {
     return (
-      <ComparisonShell activeStage="matches" accent={accent} context={context}>
+      <ComparisonShell accent={accent} context={context}>
         <NoMatchState
           zip={state.zip}
           onConcierge={() => {
@@ -961,36 +1063,67 @@ function ResultsScreen({
   const discloseSponsored =
     monetizedCount > 0 && monetizedCount < filteredPool.length;
 
-  const openAffiliate = (plan) => {
-    track(EVENTS.PLAN_CLICKED, {
-      provider: plan.provider_name,
-      plan_id: plan.id,
-      route: routing.route,
-      session_id: state.sessionId,
-      sort,
-    });
-    // providerId is what resolves in practice; offerId stays first so a
-    // plan-specific link still wins when one is configured.
-    const url = getAffiliateUrl({
+  /**
+   * The outbound URL for a plan, carrying attribution.
+   *
+   * Resolution is server-side: /api/go looks the destination up from the slug
+   * and records the click, so nothing the browser sends can change where the
+   * revenue is credited. The query carries identifiers and enumerated values
+   * only — never a name, email, phone or address.
+   */
+  const referralUrlFor = (entry, section, position) => {
+    const plan = entry.plan;
+    const base = getAffiliateUrl({
       offerId: plan.id,
       providerId: plan.provider_id,
       fallbackUrl: plan.plan_details_url || "",
     });
-    if (url && url !== "#") {
-      if (affiliateIds.has(plan.id)) {
-        track(EVENTS.AFFILIATE_CLICKED, { plan_id: plan.id, provider: plan.provider_name });
-      }
-      window.open(url, "_blank", "noopener,noreferrer");
+    if (!base || base === "#") return null;
+    if (!base.startsWith("/api/go")) return base;
+
+    const params = new URLSearchParams({
+      s: state.sessionId || "",
+      p: plan.id || "",
+      pn: plan.plan_name || "",
+      rs: section,
+      rp: String(position),
+      ec: state.entryContext || "",
+    });
+    if (entry.match?.score) params.set("ms", String(entry.match.score));
+    const attribution = state.attribution || {};
+    if (attribution.utm_source) params.set("utm_source", attribution.utm_source);
+    if (attribution.utm_campaign) params.set("utm_campaign", attribution.utm_campaign);
+
+    return `${base}&${params.toString()}`;
+  };
+
+  /** Fire-and-forget analytics; navigation is the anchor's job, not ours. */
+  const onReferralClick = (entry, section, position) => {
+    track(EVENTS.VIEW_PLAN_CLICKED, {
+      provider: entry.plan.provider_name,
+      plan_id: entry.plan.id,
+      route: routing.route,
+      session_id: state.sessionId,
+      result_section: section,
+      result_position: position,
+      match_score: entry.match?.score ?? null,
+      sort,
+    });
+    if (affiliateIds.has(entry.plan.id)) {
+      track(EVENTS.REFERRAL_LINK_OPENED, {
+        plan_id: entry.plan.id,
+        provider: entry.plan.provider_name,
+      });
     }
   };
 
   const showDetails = (entry) => {
     setOpenDetails((current) => (current === entry.plan.id ? null : entry.plan.id));
-    track(EVENTS.PLAN_DETAILS_VIEWED, { plan_id: entry.plan.id, provider: entry.plan.provider_name });
+    track(EVENTS.PLAN_DETAILS_OPENED, { plan_id: entry.plan.id, provider: entry.plan.provider_name });
   };
 
   return (
-    <ComparisonShell activeStage="matches" accent={accent} context={context} wide>
+    <ComparisonShell accent={accent} context={context} wide>
       <div className="mb-6">
         <h1 className="text-[22px] sm:text-[26px] font-semibold text-gray-900 tracking-[-0.01em]">
           Electricity options for {state.city || state.zip}
@@ -1055,8 +1188,11 @@ function ResultsScreen({
                   <div key={entry.plan.id} className="flex flex-col">
                     <BestMatchCard
                       entry={entry}
+                      state={state}
+                      provider={providerFor(entry.plan)}
                       usageKwh={usageKwh}
-                      onSelect={openAffiliate}
+                      href={referralUrlFor(entry, "top_match", entry.rank)}
+                      onReferralClick={() => onReferralClick(entry, "top_match", entry.rank)}
                       onDetails={showDetails}
                       isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
                     />
@@ -1082,11 +1218,14 @@ function ResultsScreen({
                 More electricity options
               </h2>
               <div className="space-y-3">
-                {visible.map((entry) => (
+                {visible.map((entry, index) => (
                   <div key={entry.plan.id}>
                     <PlanRow
                       entry={entry}
-                      onSelect={openAffiliate}
+                      state={state}
+                      provider={providerFor(entry.plan)}
+                      href={referralUrlFor(entry, "more_options", index + 1)}
+                      onReferralClick={() => onReferralClick(entry, "more_options", index + 1)}
                       onDetails={showDetails}
                       isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
                     />
@@ -1106,7 +1245,7 @@ function ResultsScreen({
                   remaining={remaining}
                   onClick={() => {
                     setVisibleCount((n) => n + RESULTS_PAGE_SIZE);
-                    track(EVENTS.RESULTS_VIEW_MORE, {
+                    track(EVENTS.RESULTS_SHOW_MORE, {
                       shown: visible.length + RESULTS_PAGE_SIZE,
                       session_id: state.sessionId,
                     });

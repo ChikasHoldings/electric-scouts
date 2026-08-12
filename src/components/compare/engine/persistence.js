@@ -16,6 +16,7 @@
 
 import { CUSTOMER_TYPES, createInitialState, invalidateBranchState } from './comparisonState.js';
 import { resolveEntryContext } from './entryContext.js';
+import { fullName } from '../../../lib/contactValidation.js';
 
 const SESSION_KEY = 'es_comparison_session';
 
@@ -57,7 +58,7 @@ export function getOrCreateSessionId() {
  * asked for their email again — the same email, which upserts onto the same
  * row, so no duplicate lead is created.
  */
-const CONTACT_FIELDS = ['firstName', 'email', 'phone', 'consentContact'];
+const CONTACT_FIELDS = ['firstName', 'lastName', 'email', 'phone', 'consentContact'];
 
 /** The subset of a session that is safe to keep in the browser. */
 export function safeSessionSnapshot(state) {
@@ -138,7 +139,11 @@ export function buildLeadPayload(state, extra = {}) {
 
   return {
     email: state.email,
-    name: state.firstName || null,
+    // `name` stays the derived display name every existing email template and
+    // the admin panel already read; the parts ride alongside it.
+    name: fullName(state.firstName, state.lastName),
+    first_name: state.firstName || null,
+    last_name: state.lastName || null,
     phone: state.phone || null,
     zip: state.zip || null,
     city: state.city || null,

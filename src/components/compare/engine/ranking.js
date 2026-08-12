@@ -13,6 +13,7 @@
  */
 
 import { estimateMonthlyCost, COST_CONFIDENCE, costSortKey } from './planPricing.js';
+import { matchScore } from './matchScore.js';
 
 /**
  * Weights, in points. Cost dominates because it is what the customer pays;
@@ -25,7 +26,7 @@ import { estimateMonthlyCost, COST_CONFIDENCE, costSortKey } from './planPricing
  */
 const PREMIUM_CEILING = 0.25;
 
-const WEIGHTS = {
+export const WEIGHTS = {
   cost: 50,          // relative monthly cost against the eligible set
   renewable: 20,     // only when the customer asked for renewable
   term: 12,          // contract length against stated intent
@@ -192,13 +193,33 @@ export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set() } =
     return String(a.plan.id).localeCompare(String(b.plan.id));
   });
 
-  const top = scored.slice(0, 3).map((entry, index) => ({
+  // The customer-facing score is attached to every entry, not just the top
+  // three, so a plan shows the same number wherever it appears.
+  for (const entry of scored) entry.match = matchScore(entry, state, WEIGHTS);
+
+  // ── Completeness gate on the Top 3 ──
+  //
+  // A plan we cannot fully price must not occupy a headline slot while plans
+  // we CAN fully price are available. Ranking already compares supply-to-supply
+  // so a missing delivery charge cannot inflate the cost score — but the figure
+  // the customer READS is the total, and a partial total sits next to complete
+  // ones as though the two were comparable. A $105 "excludes delivery" card in
+  // the #1 slot beside a complete $158 card tells the customer they would save
+  // $53, which is not something we know.
+  //
+  // So completeness gates the top three only. Partial plans keep their place in
+  // the full list, correctly ordered and clearly disclosed.
+  const complete = scored.filter((e) => e.estimate.confidence === COST_CONFIDENCE.COMPLETE);
+  const headline = complete.length >= 3 ? complete : scored;
+  const rest = scored.filter((e) => !headline.slice(0, 3).includes(e));
+
+  const top = headline.slice(0, 3).map((entry, index) => ({
     ...entry,
     rank: index + 1,
     reasons: matchReasons(entry, state, { ranked: scored, usageKwh }),
   }));
 
-  return { top, rest: scored.slice(3), all: scored };
+  return { top, rest, all: scored };
 }
 
 /**
