@@ -47,11 +47,17 @@ export default async function handler(req, res) {
       leadsBySource[lead.source] = (leadsBySource[lead.source] || 0) + 1;
     });
 
-    // Bill uploads (quotes with bill_file_url)
+    // Bill uploads.
+    //
+    // Counted off `leads`, which is where a bill upload has actually been
+    // recorded since the comparison engine took over the flow. This used to
+    // count rows in `custom_business_quotes` — a table nothing writes to any
+    // more — so the figure had been a hard zero every week regardless of how
+    // many bills were analysed.
     const { count: billUploads } = await supabase
-      .from("custom_business_quotes")
+      .from("leads")
       .select("id", { count: "exact", head: true })
-      .not("bill_file_url", "is", null)
+      .eq("bill_uploaded", true)
       .gte("created_at", weekAgo.toISOString());
 
     // Affiliate clicks

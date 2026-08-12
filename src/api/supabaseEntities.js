@@ -173,11 +173,6 @@ export const Article = createEntity('articles', {
   defaultDirection: 'desc',
 });
 
-export const CustomBusinessQuote = createEntity('custom_business_quotes', {
-  defaultOrder: 'created_date',
-  defaultDirection: 'desc',
-});
-
 export const ChatbotConversation = createEntity('chatbot_conversations', {
   defaultOrder: 'created_at',
   defaultDirection: 'desc',

@@ -8,10 +8,10 @@
 - **Provider Directory** — Browse detailed profiles for major Texas electricity providers
 - **Bill Analyzer** — Upload an electricity bill and get AI-powered savings recommendations
 - **Learning Center** — Educational articles about energy savings, deregulation, and renewables
-- **Business Quotes** — Custom quote request system for commercial customers
+- **Business Comparison** — Commercial rate comparison and quote requests, captured as leads
 - **AI Chatbot (Nora)** — Conversational assistant for energy plan questions
 - **City Rate Pages** — SEO-optimized pages for major Texas cities
-- **Admin Panel** — Full CRUD dashboard for managing providers, plans, articles, quotes, and users
+- **Admin Panel** — Full CRUD dashboard for managing providers, plans, articles, leads, lead buyers, affiliates and users
 
 ## Tech Stack
 
@@ -136,7 +136,9 @@ electricscouts/
 | `/admin/providers` | Manage electricity providers |
 | `/admin/plans` | Manage electricity plans |
 | `/admin/articles` | Manage learning center articles |
-| `/admin/quotes` | Manage business quote requests |
+| `/admin/leads` | Manage captured leads and buyer delivery |
+| `/admin/lead-buyers` | Configure lead buyers and routing rules |
+| `/admin/monetization` | Referral, click and revenue health |
 | `/admin/users` | Manage users and roles |
 
 ## License

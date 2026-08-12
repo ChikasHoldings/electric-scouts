@@ -190,7 +190,6 @@ export const STATIC_ROUTES = [
  * the noindex, so blocking them would strand them in the index instead.
  */
 export const NOINDEX_ROUTES = [
-  { path: '/business-quote-dashboard', title: 'Business Quote Dashboard | Electric Scouts', reason: 'customer dashboard' },
   { path: '/provider-details', title: 'Electricity Providers | Electric Scouts', reason: 'legacy query-param URL, superseded by /providers/:slug' },
   { path: '/city-rates', title: 'Electricity Rates by City | Electric Scouts', reason: 'legacy query-param URL, superseded by /electricity-rates/:state/:city' },
   { path: '/article-detail', title: 'Learning Center | Electric Scouts', reason: 'legacy query-param URL, superseded by /learn/:id' },

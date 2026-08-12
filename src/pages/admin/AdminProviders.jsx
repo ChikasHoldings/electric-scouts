@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ElectricityProvider, ElectricityPlan, AffiliateLink } from "@/api/supabaseEntities";
-import { PROVIDER_SEED_DATA, PLAN_SEED_DATA, DEREGULATED_STATES } from "@/data/providerSeedData";
-import { supabase } from "@/lib/supabaseClient";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
+import { getAllDeregulatedStates } from "@/components/compare/stateData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,10 +21,20 @@ import {
 import {
   Plus, Pencil, Trash2, Search, Loader2, Building2, ExternalLink,
   Star, CheckCircle2, XCircle, Leaf,
-  Zap, Building, AlertTriangle, Database,
+  Zap, Building,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import LogoUpload from "@/components/admin/LogoUpload";
+
+/**
+ * The markets the comparison engine actually serves.
+ *
+ * Read from the engine's own market table rather than a second list kept
+ * beside it: the retired seed file offered Delaware, which no comparison can
+ * ever return, so a provider tagged for it advertised coverage the site does
+ * not have.
+ */
+const DEREGULATED_STATES = getAllDeregulatedStates();
 
 const emptyProvider = {
   name: "", slug: "", description: "", logo_url: "", website_url: "",
@@ -48,11 +57,6 @@ export default function AdminProviders() {
   const [editingProvider, setEditingProvider] = useState(null);
   const [form, setForm] = useState(emptyProvider);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [seedDialogOpen, setSeedDialogOpen] = useState(false);
-  const [seeding, setSeeding] = useState(false);
-  const [seedProgress, setSeedProgress] = useState("");
-  const [cleanupDialogOpen, setCleanupDialogOpen] = useState(false);
-  const [cleaning, setCleaning] = useState(false);
 
   // Queries
   const { data: providers = [], isLoading } = useQuery({
@@ -140,114 +144,6 @@ export default function AdminProviders() {
     }
   };
 
-  // ─── SEED ALL: Providers + Plans + Affiliate Links ─────────
-  const handleSeedAll = async () => {
-    setSeeding(true);
-    try {
-      // Step 1: Seed providers
-      setSeedProgress("Seeding providers...");
-      const existingSlugs = providers.map(p => p.slug).filter(Boolean);
-      const newProviders = PROVIDER_SEED_DATA.filter(p => !existingSlugs.includes(p.slug));
-
-      let addedProviders = 0;
-      if (newProviders.length > 0) {
-        for (let i = 0; i < newProviders.length; i += 10) {
-          const chunk = newProviders.slice(i, i + 10);
-          await ElectricityProvider.bulkCreate(chunk);
-          addedProviders += chunk.length;
-          setSeedProgress(`Seeded ${addedProviders}/${newProviders.length} providers...`);
-        }
-      }
-
-      // Refresh providers list to get IDs
-      await queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
-      const { data: allProviders } = await supabase.from("electricity_providers").select("id, name, slug, website_url, affiliate_url, has_affiliate_program").order("name");
-
-      // Step 2: Seed plans
-      setSeedProgress("Seeding plans...");
-      const existingPlans = await ElectricityPlan.list();
-      const existingPlanKeys = existingPlans.map(p => `${p.provider_name}|${p.plan_name}|${p.state || 'TX'}`);
-      const newPlans = PLAN_SEED_DATA.filter(p => !existingPlanKeys.includes(`${p.provider_name}|${p.plan_name}|${p.state || 'TX'}`));
-
-      let addedPlans = 0;
-      if (newPlans.length > 0) {
-        for (let i = 0; i < newPlans.length; i += 10) {
-          const chunk = newPlans.slice(i, i + 10);
-          await ElectricityPlan.bulkCreate(chunk);
-          addedPlans += chunk.length;
-          setSeedProgress(`Seeded ${addedPlans}/${newPlans.length} plans...`);
-        }
-      }
-
-      // Step 3: Create affiliate links for providers that have affiliate programs
-      setSeedProgress("Creating affiliate links...");
-      const { data: existingLinks } = await supabase.from("affiliate_links").select("slug");
-      const existingLinkSlugs = (existingLinks || []).map(l => l.slug);
-
-      let addedLinks = 0;
-      for (const provider of (allProviders || [])) {
-        if (provider.has_affiliate_program && provider.affiliate_url) {
-          const linkSlug = provider.slug || generateSlug(provider.name);
-          if (!existingLinkSlugs.includes(linkSlug)) {
-            try {
-              await AffiliateLink.create({
-                slug: linkSlug,
-                target_url: provider.affiliate_url,
-                label: `${provider.name} Affiliate`,
-                provider_id: provider.id,
-                is_active: true,
-              });
-              addedLinks++;
-            } catch (e) {
-              console.warn(`Skipped affiliate link for ${provider.name}:`, e.message);
-            }
-          }
-        }
-      }
-
-      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-plans-all"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-plans"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-renewable-plans"] });
-
-      toast({
-        title: "Database seeded successfully",
-        description: `Added ${addedProviders} providers, ${addedPlans} plans, ${addedLinks} affiliate links.`,
-      });
-      setSeedDialogOpen(false);
-    } catch (err) {
-      toast({ title: "Seed Error", description: err.message, variant: "destructive" });
-    }
-    setSeeding(false);
-    setSeedProgress("");
-  };
-
-  // ─── CLEANUP: Remove all old data ─────────────────────────
-  const handleCleanup = async () => {
-    setCleaning(true);
-    try {
-      const { error: planErr } = await supabase.from("electricity_plans").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-      if (planErr) throw planErr;
-      const { error: linkErr } = await supabase.from("affiliate_links").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-      if (linkErr) throw linkErr;
-      const { error: provErr } = await supabase.from("electricity_providers").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-      if (provErr) throw provErr;
-
-      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-plans-all"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-plans"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-business-plans"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-renewable-plans"] });
-
-      toast({ title: "Cleanup complete", description: "All old providers, plans, and affiliate links removed." });
-      setCleanupDialogOpen(false);
-    } catch (err) {
-      toast({ title: "Cleanup Error", description: err.message, variant: "destructive" });
-    }
-    setCleaning(false);
-  };
-
   // ─── Filtering ─────────────────────────────────────────────
   const filtered = providers.filter(p => {
     if (search && !p.name?.toLowerCase().includes(search.toLowerCase())) return false;
@@ -275,12 +171,6 @@ export default function AdminProviders() {
           <p className="text-sm text-gray-500 mt-1">Manage electricity providers across all deregulated states</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => setCleanupDialogOpen(true)} className="text-red-600 border-red-200 hover:bg-red-50">
-            <Trash2 className="w-4 h-4 mr-1" /> Clean All Data
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setSeedDialogOpen(true)} className="text-blue-600 border-blue-200 hover:bg-blue-50">
-            <Database className="w-4 h-4 mr-1" /> Seed All Data
-          </Button>
           <Button size="sm" onClick={() => { setEditingProvider(null); setForm(emptyProvider); setDialogOpen(true); }}>
             <Plus className="w-4 h-4 mr-1" /> Add Provider
           </Button>
@@ -362,11 +252,11 @@ export default function AdminProviders() {
             <Building2 className="w-12 h-12 mx-auto text-gray-300 mb-4" />
             <h3 className="text-lg font-semibold text-gray-600">No providers found</h3>
             <p className="text-sm text-gray-400 mt-1">
-              {providers.length === 0 ? "Click 'Seed All Data' to populate the database with 47 providers and 80+ plans." : "Try adjusting your filters."}
+              {providers.length === 0 ? "Add your first provider to start building the catalog." : "Try adjusting your filters."}
             </p>
             {providers.length === 0 && (
-              <Button className="mt-4" onClick={() => setSeedDialogOpen(true)}>
-                <Database className="w-4 h-4 mr-2" /> Seed All Data
+              <Button className="mt-4" onClick={() => { setEditingProvider(null); setForm(emptyProvider); setDialogOpen(true); }}>
+                <Plus className="w-4 h-4 mr-2" /> Add Provider
               </Button>
             )}
           </CardContent>
@@ -596,52 +486,6 @@ export default function AdminProviders() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Seed All Dialog ────────────────────────────────── */}
-      <Dialog open={seedDialogOpen} onOpenChange={setSeedDialogOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Seed Provider Database</DialogTitle></DialogHeader>
-          <div className="space-y-3 text-sm text-gray-600">
-            <p>This will populate the database with:</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li><strong>{PROVIDER_SEED_DATA.length}</strong> electricity providers across 12 deregulated states</li>
-              <li><strong>{PLAN_SEED_DATA.length}</strong> current electricity plans (residential, business, renewable)</li>
-              <li>Affiliate links for providers with affiliate programs</li>
-            </ul>
-            <p className="text-xs text-gray-400">Only new entries will be added. Existing data won't be duplicated.</p>
-            {seedProgress && <p className="text-blue-600 font-medium">{seedProgress}</p>}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSeedDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSeedAll} disabled={seeding}>
-              {seeding && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {seeding ? "Seeding..." : "Seed All Data"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* ─── Cleanup Dialog ─────────────────────────────────── */}
-      <Dialog open={cleanupDialogOpen} onOpenChange={setCleanupDialogOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle className="text-red-600 flex items-center gap-2"><AlertTriangle className="w-5 h-5" /> Clean All Data</DialogTitle></DialogHeader>
-          <div className="space-y-3 text-sm text-gray-600">
-            <p>This will permanently delete:</p>
-            <ul className="list-disc pl-5 space-y-1 text-red-600">
-              <li>All {providers.length} providers</li>
-              <li>All {plans.length} plans</li>
-              <li>All affiliate links</li>
-            </ul>
-            <p className="font-medium">This action cannot be undone. You can re-seed after cleanup.</p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCleanupDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleCleanup} disabled={cleaning}>
-              {cleaning && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {cleaning ? "Cleaning..." : "Delete All Data"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

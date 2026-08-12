@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -148,9 +149,11 @@ export default function BusinessComparison() {
                   <p className="text-sm text-gray-300 mb-4">
                     Get personalized quotes from top providers for {selectedData.name.toLowerCase()}s
                   </p>
-                  <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white">
-                    Get Custom Quote
-                  </Button>
+                  <Link to="/business-compare-rates">
+                    <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white">
+                      Get Custom Quote
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>

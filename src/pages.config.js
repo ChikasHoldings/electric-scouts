@@ -26,7 +26,6 @@ const PAGE_LOADERS = {
   BusinessCompareRates: () => import('./pages/BusinessCompareRates'),
   BusinessElectricity: () => import('./pages/BusinessElectricity'),
   BusinessHub: () => import('./pages/BusinessHub'),
-  BusinessQuoteDashboard: () => import('./pages/BusinessQuoteDashboard'),
   CityRates: () => import('./pages/CityRates'),
   CompareRates: () => import('./pages/CompareRates'),
   ConnecticutElectricity: () => import('./pages/ConnecticutElectricity'),

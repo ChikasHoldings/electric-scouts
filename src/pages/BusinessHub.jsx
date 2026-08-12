@@ -47,9 +47,11 @@ export default function BusinessHub() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
-                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 px-8">
-                  Request Custom Quote
-                </Button>
+                <Link to={createPageUrl("BusinessCompareRates")}>
+                  <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 px-8">
+                    Request Custom Quote
+                  </Button>
+                </Link>
               </div>
             </div>
 
@@ -351,9 +353,11 @@ export default function BusinessHub() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-14 px-10 text-lg">
-              Speak to an Expert
-            </Button>
+            <Link to="/home-concierge?type=business">
+              <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-14 px-10 text-lg">
+                Speak to an Expert
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

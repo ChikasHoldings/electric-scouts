@@ -103,13 +103,18 @@
       "permanent": true
     },
     {
+      "source": "/business-quote-dashboard",
+      "destination": "/business-compare-rates",
+      "permanent": true
+    },
+    {
       "source": "/BusinessQuoteDashboard",
-      "destination": "/business-quote-dashboard",
+      "destination": "/business-compare-rates",
       "permanent": true
     },
     {
       "source": "/businessquotedashboard",
-      "destination": "/business-quote-dashboard",
+      "destination": "/business-compare-rates",
       "permanent": true
     },
     {
