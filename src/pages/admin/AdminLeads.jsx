@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import LeadComparisonDetail, {
   CustomerTypeCell,
+  DeliveryBadge,
   QualificationBadge,
   RouteBadge,
 } from "@/components/admin/LeadComparisonDetail";
@@ -185,16 +186,29 @@ export default function AdminLeads() {
 
   // ─── Export CSV ──────────────────────────────────────────
   const exportCSV = () => {
-    const headers = ['Name', 'Email', 'ZIP', 'City', 'State', 'Source', 'Source Page', 'Status', 'Created At'];
+    // Delivery columns are here so a month's sales can be reconciled against
+    // what a buyer says they received, without anyone opening the database.
+    const headers = [
+      'Name', 'Email', 'ZIP', 'City', 'State', 'Source', 'Source Page', 'Status',
+      'Delivery', 'Buyer', 'Sale Price', 'Sold At', 'Created At',
+    ];
     const rows = filteredLeads.map(l => [
       l.name || '', l.email, l.zip || '', l.city || '',
       l.state ? STATE_NAMES[l.state] || l.state : '',
       SOURCE_LABELS[l.source] || l.source || '',
       l.source_page || '',
       l.status || '',
+      l.lead_delivery_status || '',
+      l.lead_buyer_name || '',
+      l.sale_price ?? '',
+      l.sold_at ? new Date(l.sold_at).toLocaleString() : '',
       new Date(l.created_at).toLocaleString(),
     ]);
-    const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    // A buyer name carrying a quote would otherwise close the CSV field early
+    // and shift every later column in that row.
+    const csv = [headers, ...rows]
+      .map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -321,6 +335,7 @@ export default function AdminLeads() {
                   <TableHead className="font-semibold text-gray-700">Source</TableHead>
                   <TableHead className="font-semibold text-gray-700">Type</TableHead>
                   <TableHead className="font-semibold text-gray-700">Route</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Delivery</TableHead>
                   <TableHead className="font-semibold text-gray-700">Status</TableHead>
                   <TableHead className="font-semibold text-gray-700">Date</TableHead>
                   <TableHead className="font-semibold text-gray-700 text-right">Actions</TableHead>
@@ -364,6 +379,9 @@ export default function AdminLeads() {
                         <RouteBadge route={lead.monetization_route} />
                         <QualificationBadge qualification={lead.qualification} />
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <DeliveryBadge lead={lead} />
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(lead.status)}

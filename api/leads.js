@@ -9,6 +9,9 @@ import {
   ADMIN_EMAILS,
 } from "./_lib/email.js";
 import { validateContact } from "../src/lib/contactValidation.js";
+import { adminRecipients, ADMIN_NOTIFICATIONS } from "./_lib/adminNotifications.js";
+import { routeLead } from "./_lib/leadDelivery.js";
+import { buyerLeadEmail, unsoldLeadEmail } from "./_lib/email.js";
 
 // ZIP prefix to state mapping for server-side resolution
 const ZIP_TO_STATE = {
@@ -353,6 +356,97 @@ async function writeLeadRow(payload, run) {
   return run(attempt);
 }
 
+/**
+ * Routes that mean "somebody else should be talking to this customer".
+ *
+ * `affiliate` is deliberately absent: that customer is clicking through to a
+ * provider themselves and we are paid for the click, so also selling their
+ * details would be charging twice for one person and handing them a call they
+ * did not ask for. `concierge` stays with our own team.
+ */
+const SELLABLE_ROUTES = new Set(["residential_partner", "commercial_partner", "renewable_partner"]);
+
+/**
+ * Offer a finished lead to its buyer.
+ *
+ * The delivery pipeline has existed and been tested since lead buyers were
+ * added, and nothing ever called it — leads were captured, classified, scored,
+ * and then sat there. This is the call that makes a routed lead a sold lead.
+ *
+ * Two rules govern whether a lead is offered at all:
+ *
+ *   Consent. `consent_contact` is the customer agreeing to be contacted about
+ *   offers. Without it their details are not passed to a third party, whatever
+ *   the lead is worth.
+ *
+ *   A partner route. See SELLABLE_ROUTES.
+ *
+ * Never throws. A buyer's webhook being down, or no buyer covering a market,
+ * must not fail the request that captured the lead — the customer's side of
+ * this transaction is already complete.
+ */
+async function offerLeadToBuyer(lead) {
+  if (!lead?.id) return { attempted: false, reason: "no_lead" };
+  if (lead.consent_contact !== true) return { attempted: false, reason: "no_consent" };
+  if (!SELLABLE_ROUTES.has(lead.monetization_route)) {
+    return { attempted: false, reason: "route_not_sellable" };
+  }
+
+  try {
+    const result = await routeLead(supabase, lead, lead.monetization_route, {
+      sendEmail: ({ to, subject, payload }) => {
+        const template = buyerLeadEmail(payload);
+        return sendEmail({
+          to,
+          subject: subject || template.subject,
+          html: template.html,
+          // One send per lead per buyer, so a retried request cannot deliver
+          // the same lead twice even if the claim row was written by an
+          // earlier attempt.
+          idempotencyKey: `buyer_lead_${payload.lead_id}_${to}`,
+          eventType: "buyer_lead",
+          leadId: payload.lead_id,
+        });
+      },
+    });
+
+    await supabase
+      .from("leads")
+      .update({
+        lead_buyer_name: result.buyer?.name || null,
+        lead_delivery_status: result.delivered ? "delivered" : "unsold",
+        sale_price: result.delivered ? result.buyer?.price_per_lead ?? null : null,
+        sold_at: result.delivered ? new Date().toISOString() : null,
+      })
+      .eq("id", lead.id);
+
+    if (!result.delivered) {
+      // Revenue on the floor is a configuration problem, and it is invisible
+      // unless somebody is told. The coverage summary names every buyer that
+      // declined and why.
+      const { recipients } = await adminRecipients(supabase, ADMIN_NOTIFICATIONS.UNSOLD_LEAD, {
+        fallback: ADMIN_EMAILS,
+      });
+      if (recipients.length) {
+        const template = unsoldLeadEmail(lead, result.coverage);
+        await sendEmail({
+          to: recipients,
+          subject: template.subject,
+          html: template.html,
+          idempotencyKey: `unsold_lead_${lead.id}`,
+          eventType: "unsold_lead",
+          leadId: lead.id,
+        });
+      }
+    }
+
+    return { attempted: true, ...result };
+  } catch (err) {
+    console.error("Lead delivery failed:", err?.message || err);
+    return { attempted: true, delivered: false, reason: "delivery_error" };
+  }
+}
+
 async function handleCreateLead(req, res) {
   try {
     const {
@@ -411,6 +505,16 @@ async function handleCreateLead(req, res) {
         supabase.from("leads").update(row).eq("id", existingLead.id)
       );
 
+      // Enrichment is where a lead usually becomes sellable: the route and the
+      // consent arrive on a later write than the email did, so the merged row
+      // is re-read rather than the update payload being inspected.
+      const { data: enriched } = await supabase
+        .from("leads")
+        .select("*")
+        .eq("id", existingLead.id)
+        .maybeSingle();
+      if (enriched) await offerLeadToBuyer(enriched);
+
       return res.status(200).json({
         success: true,
         message: "Thank you! We already have your information on file.",
@@ -456,10 +560,16 @@ async function handleCreateLead(req, res) {
       leadId: lead.id,
     });
 
-    if (ADMIN_EMAILS.length > 0) {
+    const { recipients: leadAlertRecipients } = await adminRecipients(
+      supabase,
+      ADMIN_NOTIFICATIONS.NEW_LEAD,
+      { fallback: ADMIN_EMAILS }
+    );
+
+    if (leadAlertRecipients.length > 0) {
       const adminTemplate = adminNewLeadEmail(lead);
       await sendEmail({
-        to: ADMIN_EMAILS,
+        to: leadAlertRecipients,
         subject: adminTemplate.subject,
         html: adminTemplate.html,
         idempotencyKey: `admin_new_lead_${lead.id}`,
@@ -467,6 +577,10 @@ async function handleCreateLead(req, res) {
         leadId: lead.id,
       });
     }
+
+    // A first write can already be complete — the comparison engine persists
+    // once the visitor finishes, so this is not only an enrichment path.
+    await offerLeadToBuyer(lead);
 
     return res.status(200).json({
       success: true,

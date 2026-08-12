@@ -268,6 +268,102 @@ export function adminNewLeadEmail(lead) {
   };
 }
 
+/**
+ * The lead handed to a buyer who takes delivery by email.
+ *
+ * Contains exactly what `buyerPayload` decided a buyer may see — contact,
+ * location, usage profile. Nothing commercial: not the price we are being paid
+ * for it, not which other buyers were considered, not the internal score.
+ */
+export function buyerLeadEmail(payload) {
+  const row = (label, value) =>
+    value
+      ? `<tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;width:170px;">${label}</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${value}</td></tr>`
+      : "";
+
+  const name = [payload.contact?.first_name, payload.contact?.last_name].filter(Boolean).join(" ");
+  const place = [payload.location?.city, payload.location?.state].filter(Boolean).join(", ");
+  const usage = payload.profile?.monthly_usage_kwh
+    ? `${Number(payload.profile.monthly_usage_kwh).toLocaleString()} kWh/month`
+    : "";
+  const spend = payload.profile?.monthly_cost
+    ? `$${Number(payload.profile.monthly_cost).toFixed(2)}/month`
+    : "";
+
+  return {
+    subject: `New ${payload.profile?.customer_type || "electricity"} lead — ${payload.location?.zip || "unknown ZIP"}`,
+    html: baseLayout(`
+      <h2 style="margin:0 0 8px;color:#1a1a1a;font-size:20px;">New qualified lead</h2>
+      <p style="color:#6b7280;font-size:14px;margin:0 0 16px;">Delivered by Electric Scouts.</p>
+      <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">
+        ${row("Name", name)}
+        ${row("Email", payload.contact?.email)}
+        ${row("Phone", payload.contact?.phone)}
+        ${row("Service address", payload.location?.service_address)}
+        ${row("Location", place)}
+        ${row("ZIP", payload.location?.zip)}
+        ${row("Customer type", payload.profile?.customer_type)}
+        ${row("Business name", payload.profile?.business_name)}
+        ${row("Property type", payload.profile?.property_type)}
+        ${row("Usage", usage)}
+        ${row("Current spend", spend)}
+        ${row("Current provider", payload.profile?.current_provider)}
+        ${row("Energy preference", payload.profile?.energy_preference)}
+        ${row("Shopping intent", payload.profile?.shopping_intent)}
+        ${row("Received", payload.received_at)}
+      </table>
+      <p style="color:#9ca3af;font-size:12px;margin:0;">Reference ${payload.lead_id}</p>
+    `),
+  };
+}
+
+/**
+ * A qualified lead that no configured buyer would take.
+ *
+ * Sent because the alternative is silence: without it a market with no active
+ * buyer, a cap that filled up mid-month or a targeting rule that excludes a
+ * whole state looks exactly like ordinary quiet traffic. Each rejection reason
+ * is listed, because the fix differs completely between "nobody covers this
+ * state" and "everybody who does is at capacity".
+ */
+export function unsoldLeadEmail(lead, coverage) {
+  const rejected = (coverage?.rejected || [])
+    .map(
+      (r) =>
+        `<tr><td style="padding:6px 12px;border:1px solid #e5e7eb;color:#374151;font-size:14px;">${r.name}</td><td style="padding:6px 12px;border:1px solid #e5e7eb;color:#6b7280;font-size:14px;">${r.reason}</td></tr>`
+    )
+    .join("");
+
+  const explanation = coverage?.noBuyersConfigured
+    ? "No lead buyers are configured at all, so nothing can be sold yet."
+    : "Every configured buyer declined this lead for the reason shown.";
+
+  return {
+    subject: `Unsold lead: ${lead.email}${lead.state ? ` (${lead.state})` : ""}`,
+    html: baseLayout(`
+      <h2 style="margin:0 0 8px;color:#1a1a1a;font-size:20px;">A qualified lead went unsold</h2>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">${explanation}</p>
+      <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">
+        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;width:150px;">Lead</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.email}</td></tr>
+        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">Market</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.state || "unknown"} ${lead.zip ? `(${lead.zip})` : ""}</td></tr>
+        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">Customer type</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.customer_type || "unknown"}</td></tr>
+        <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;">Route</td><td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${lead.monetization_route || "unrouted"}</td></tr>
+      </table>
+      ${
+        rejected
+          ? `<p style="color:#1a1a1a;font-size:15px;font-weight:600;margin:0 0 8px;">Buyers considered</p>
+             <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">${rejected}</table>`
+          : ""
+      }
+      <table cellpadding="0" cellspacing="0">
+        <tr><td style="background:#0A5C8C;border-radius:6px;padding:10px 24px;">
+          <a href="${APP_BASE_URL}/admin/lead-buyers" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;">Review lead buyers →</a>
+        </td></tr>
+      </table>
+    `),
+  };
+}
+
 export function adminResetCodeEmail(code) {
   return {
     subject: `Your Electric Scouts Admin Code: ${code}`,

@@ -4,6 +4,7 @@ import {
   weeklyReportEmail,
   ADMIN_EMAILS,
 } from "../_lib/email.js";
+import { adminRecipients, ADMIN_NOTIFICATIONS } from "../_lib/adminNotifications.js";
 
 export default async function handler(req, res) {
   // Allow both POST (manual trigger) and GET (cron trigger)
@@ -21,8 +22,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    if (ADMIN_EMAILS.length === 0) {
-      return res.status(200).json({ success: true, message: "No admin emails configured" });
+    // Admins who have not switched the weekly report off. An empty list here
+    // is a decision, not a misconfiguration — see `adminRecipients`.
+    const { recipients, source } = await adminRecipients(
+      supabase,
+      ADMIN_NOTIFICATIONS.WEEKLY_REPORT,
+      { fallback: ADMIN_EMAILS }
+    );
+
+    if (recipients.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: source === "opted_out"
+          ? "No admin has the weekly report enabled"
+          : "No admin recipients configured",
+        recipientSource: source,
+      });
     }
 
     // Calculate date range (last 7 days)
@@ -79,7 +94,7 @@ export default async function handler(req, res) {
     const idempotencyKey = `weekly_report_${weekAgo.toISOString().split("T")[0]}`;
 
     const result = await sendEmail({
-      to: ADMIN_EMAILS,
+      to: recipients,
       subject: template.subject,
       html: template.html,
       idempotencyKey,
@@ -89,6 +104,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       data: reportData,
+      recipientCount: recipients.length,
+      recipientSource: source,
       emailResult: result,
     });
   } catch (error) {

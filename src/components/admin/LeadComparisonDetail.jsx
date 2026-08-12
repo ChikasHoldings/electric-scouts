@@ -78,6 +78,41 @@ export function RouteBadge({ route }) {
   );
 }
 
+/**
+ * What happened when this lead was offered to a buyer.
+ *
+ * Three states, and the difference between the last two is the one that pays:
+ * a lead nobody bought is a configuration gap to fix, while a lead that was
+ * never offered is simply one the rules exclude — no partner route, or no
+ * consent to be contacted. Showing them as one "not sold" would send an admin
+ * hunting for a problem that is not there.
+ */
+export function DeliveryBadge({ lead }) {
+  if (lead.lead_delivery_status === "delivered") {
+    return (
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Badge variant="outline" className="border-0 bg-emerald-50 text-emerald-700 text-xs">
+          Sold
+          {lead.sale_price ? ` · $${Number(lead.sale_price).toFixed(2)}` : ""}
+        </Badge>
+        {lead.lead_buyer_name && (
+          <span className="text-xs text-gray-500 truncate max-w-[120px]">{lead.lead_buyer_name}</span>
+        )}
+      </div>
+    );
+  }
+
+  if (lead.lead_delivery_status === "unsold") {
+    return (
+      <Badge variant="outline" className="border-0 bg-amber-50 text-amber-700 text-xs">
+        No buyer
+      </Badge>
+    );
+  }
+
+  return <span className="text-gray-400 italic text-sm">—</span>;
+}
+
 /** Compact customer-type cell: residential/commercial plus renewable intent. */
 export function CustomerTypeCell({ lead }) {
   if (!lead.customer_type) {

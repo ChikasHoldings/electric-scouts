@@ -51,7 +51,7 @@ export default function AdminSettings() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(true);
   const [newLeadAlert, setNewLeadAlert] = useState(true);
-  const [newQuoteAlert, setNewQuoteAlert] = useState(true);
+  const [unsoldLeadAlert, setUnsoldLeadAlert] = useState(true);
 
   useEffect(() => {
     if (profile) {
@@ -62,7 +62,7 @@ export default function AdminSettings() {
         setEmailNotifications(prefs.email_notifications !== false);
         setWeeklyReport(prefs.weekly_report !== false);
         setNewLeadAlert(prefs.new_lead_alert !== false);
-        setNewQuoteAlert(prefs.new_quote_alert !== false);
+        setUnsoldLeadAlert(prefs.unsold_lead_alert !== false);
       }
     }
   }, [profile]);
@@ -162,7 +162,7 @@ export default function AdminSettings() {
             email_notifications: emailNotifications,
             weekly_report: weeklyReport,
             new_lead_alert: newLeadAlert,
-            new_quote_alert: newQuoteAlert,
+            unsold_lead_alert: unsoldLeadAlert,
           },
           updated_at: new Date().toISOString(),
         })
@@ -485,10 +485,10 @@ export default function AdminSettings() {
 
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">New Quote Requests</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Get notified when a business submits a quote request.</p>
+                  <p className="text-sm font-medium text-gray-900">Unsold Lead Alerts</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Get notified when a qualified lead is offered and no buyer takes it.</p>
                 </div>
-                <Switch checked={newQuoteAlert} onCheckedChange={setNewQuoteAlert} />
+                <Switch checked={unsoldLeadAlert} onCheckedChange={setUnsoldLeadAlert} />
               </div>
             </div>
 
