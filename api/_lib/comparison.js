@@ -10,6 +10,7 @@ import {
   MONETIZATION,
   PRICING_COMPLETENESS,
 } from "../../src/components/compare/engine/resultsContract.js";
+import { resolveTerritory } from "../../src/components/compare/engine/utilityTerritory.js";
 import { classifyMonetization } from "./referral.js";
 
 /**
@@ -36,8 +37,21 @@ const PLAN_COLUMNS = `
   id, plan_name, provider_id, provider_name, rate_per_kwh, contract_length,
   plan_type, renewable_percentage, monthly_base_charge, base_charge,
   tdsp_charges, usage_credit, usage_credit_threshold, early_termination_fee,
-  state, customer_type, is_active,
+  state, customer_type, is_active, utility_territory_id,
   provider:provider_id!inner ( id, name, logo_url, is_active )
+`;
+
+/**
+ * Territory columns the pricing engine reads.
+ *
+ * `notes` and nothing else admin-private is selected. The comparison runs under
+ * the service role, which bypasses RLS, so the column list is what keeps
+ * operational commentary out of a customer-facing response — not the policy.
+ */
+const TERRITORY_COLUMNS = `
+  id, name, short_code, state, billing_model,
+  delivery_per_kwh_cents, fixed_monthly_delivery_charge,
+  effective_from, effective_to, service_zip_prefixes, is_active
 `;
 
 /**
@@ -150,8 +164,56 @@ export async function runComparison(supabase, body, options = {}) {
     eligible.filter((p) => linkByProvider.has(p.provider_id)).map((p) => p.id)
   );
 
+  // ── Utility delivery context ──
+  //
+  // One query for every territory in this market — not one per plan. The whole
+  // set is small (a state has a handful of utilities at most, times their tariff
+  // windows), so resolution afterwards is pure in-memory work even across a few
+  // hundred plans.
+  //
+  // A failure here is NOT fatal. Losing delivery data costs completeness, not
+  // the comparison: every plan simply prices as partial, which is the same
+  // honest outcome as never having configured a tariff.
+  let territories = [];
+  const { data: territoryRows, error: territoryError } = await supabase
+    .from("utility_territories")
+    .select(TERRITORY_COLUMNS)
+    .eq("state", session.state)
+    .eq("is_active", true);
+
+  if (territoryError) {
+    console.error("utility territory query failed:", territoryError.message);
+  } else {
+    territories = territoryRows || [];
+  }
+
+  // Resolved per plan, but from the already-loaded set. Almost every plan in a
+  // market resolves to the same territory, so the result is memoized on the
+  // inputs that can actually vary it.
+  const territoryCache = new Map();
+  const pricingContextFor = (plan) => {
+    const key = plan.utility_territory_id || "__location__";
+    if (!territoryCache.has(key)) {
+      const resolved = resolveTerritory({
+        plan,
+        state: session.state,
+        zip: session.zip,
+        territories,
+      });
+      territoryCache.set(key, {
+        territory: resolved.territory,
+        resolution: resolved.resolution,
+      });
+    }
+    return territoryCache.get(key);
+  };
+
   // ── Price, score and rank ──
-  const { all } = rankPlans(eligible, session, { usageKwh, affiliateIds });
+  const { all } = rankPlans(eligible, session, {
+    usageKwh,
+    affiliateIds,
+    pricingContextFor,
+  });
 
   const results = all.map((entry) => {
     const link = linkByProvider.get(entry.plan.provider_id) || null;
@@ -176,12 +238,24 @@ export async function runComparison(supabase, body, options = {}) {
 
   const { headline } = selectHeadline(results);
 
+  // What the delivery context resolved to for this request. Reported so the
+  // reason a market prices as partial is visible — an unresolved territory and
+  // a resolved-but-unpriced one are different problems with different fixes.
+  const resolvedContext = eligible.length ? pricingContextFor(eligible[0]) : null;
+
   return {
     ok: true,
     comparison: {
       state: session.state,
       customerType: session.customerType,
       usageKwh,
+      utility: resolvedContext?.territory
+        ? {
+          name: resolvedContext.territory.name,
+          billingModel: resolvedContext.territory.billing_model,
+          resolution: resolvedContext.resolution,
+        }
+        : { name: null, billingModel: null, resolution: resolvedContext?.resolution || "unresolved" },
       counts: {
         eligible: results.length,
         complete: results.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.COMPLETE).length,

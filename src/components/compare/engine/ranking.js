@@ -54,8 +54,11 @@ function clamp01(value) {
  * set, so cost is scored relatively — the cheapest plan available scores full
  * marks whatever the absolute price level in that market happens to be.
  */
-export function scorePlan(plan, state, { usageKwh, costRange, hasAffiliate }) {
-  const estimate = estimateMonthlyCost(plan, usageKwh);
+export function scorePlan(plan, state, { usageKwh, costRange, hasAffiliate, pricingContext, estimate: precomputed }) {
+  // The caller may hand in an estimate it already produced. `rankPlans` does,
+  // because it needs every estimate up front to build the cost range, and
+  // pricing each plan twice would double the territory resolution for no gain.
+  const estimate = precomputed || estimateMonthlyCost(plan, usageKwh, pricingContext);
   const breakdown = {};
 
   // ── Cost ──
@@ -131,7 +134,10 @@ export function matchReasons(scored, state, { ranked, usageKwh, cheapestId }) {
       ranked[0]
     )?.plan?.id;
 
-  if (cheapest === plan.id && estimate.amount !== null) {
+  // Keyed on the comparable subtotal rather than the full bill, matching what
+  // `cheapest` was actually chosen on. A plan can be the cheapest supply in the
+  // set while its delivery charge is still unknown, and that is worth saying.
+  if (cheapest === plan.id && estimate.comparableAmount !== null) {
     reasons.push(
       usageKwh
         ? `Lowest estimated cost at ${Math.round(usageKwh).toLocaleString()} kWh`
@@ -170,12 +176,22 @@ export function matchReasons(scored, state, { ranked, usageKwh, cheapestId }) {
  * score order. Ties break on estimated cost then plan id so the order is
  * stable across renders and reloads.
  */
-export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set() } = {}) {
+export function rankPlans(
+  plans,
+  state,
+  { usageKwh, affiliateIds = new Set(), pricingContextFor } = {}
+) {
   if (!Array.isArray(plans) || plans.length === 0) {
     return { top: [], rest: [], all: [] };
   }
 
-  const estimates = plans.map((plan) => estimateMonthlyCost(plan, usageKwh));
+  // Delivery context is resolved once per plan, here, and reused for scoring.
+  // `pricingContextFor` is supplied by the comparison service, which has already
+  // loaded every relevant territory in a single query — so this stays in-memory
+  // and never turns into a lookup per plan.
+  const contexts = plans.map((plan) => (pricingContextFor ? pricingContextFor(plan) : undefined));
+  const estimates = plans.map((plan, i) => estimateMonthlyCost(plan, usageKwh, contexts[i]));
+
   // Built from the supply-only figure for the same reason scoring uses it.
   const amounts = estimates.map((e) => e.comparableAmount).filter((a) => a !== null);
 
@@ -184,11 +200,13 @@ export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set() } =
     max: amounts.length ? Math.max(...amounts) : 0,
   };
 
-  const scored = plans.map((plan) =>
+  const scored = plans.map((plan, i) =>
     scorePlan(plan, state, {
       usageKwh,
       costRange,
       hasAffiliate: affiliateIds.has(plan.id),
+      pricingContext: contexts[i],
+      estimate: estimates[i],
     })
   );
 
