@@ -25,6 +25,7 @@ import {
   Zap, Building, AlertTriangle, Database,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import LogoUpload from "@/components/admin/LogoUpload";
 
 const emptyProvider = {
   name: "", slug: "", description: "", logo_url: "", website_url: "",
@@ -496,8 +497,12 @@ export default function AdminProviders() {
               <Input value={form.affiliate_url} onChange={e => setForm({ ...form, affiliate_url: e.target.value })} placeholder="https://..." />
             </div>
             <div>
-              <Label>Logo URL</Label>
-              <Input value={form.logo_url} onChange={e => setForm({ ...form, logo_url: e.target.value })} placeholder="https://..." />
+              <Label>Provider logo</Label>
+              <LogoUpload
+                providerName={form.name}
+                value={form.logo_url}
+                onChange={(url) => setForm({ ...form, logo_url: url })}
+              />
             </div>
             <div>
               <Label>Phone</Label>
