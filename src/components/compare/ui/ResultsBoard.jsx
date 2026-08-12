@@ -75,24 +75,37 @@ function RankBadge({ position, accent, label }) {
  * The results page stays open because target="_blank" opens a new tab.
  *
  * A plan with no configured destination renders a disabled control rather than
- * a dead link, so the customer is never sent nowhere.
+ * A plan with no configured referral route falls back to the concierge
+ * handover rather than a disabled control, so a customer is never stranded and
+ * a qualified lead is never thrown away.
  */
 function ViewPlanCta({ href, onReferralClick, result, className }) {
-  const label = (
-    <>
-      View plan
-      <span className="sr-only">
-        {" "}— {result.planName} from {result.providerName} (opens in a new tab)
-      </span>
-    </>
-  );
-
+  // No configured referral route.
+  //
+  // This happens the moment an admin adds a provider before its affiliate link
+  // exists — a normal, expected state, not an error. The plan is real and the
+  // customer is eligible for it, so a disabled "Unavailable" control is the
+  // wrong answer twice over: it strands a customer on a plan they chose, and
+  // it throws away a qualified lead we could still route to a person.
+  //
+  // The concierge path is the established fallback. It carries the plan the
+  // customer picked so the handover starts from their actual choice, and only
+  // identifiers travel in the URL — never a name, email or address.
   if (!href) {
+    const params = new URLSearchParams({ plan: result.id || "", from: "results_no_route" });
+    if (result.providerName) params.set("provider", result.providerName);
+
     return (
-      <span className={`${className} inline-flex items-center justify-center bg-gray-200 text-gray-500 cursor-not-allowed`}>
-        Unavailable
-        <span className="sr-only"> — no link configured for {result.planName}</span>
-      </span>
+      <a
+        href={`/home-concierge?${params.toString()}`}
+        onClick={onReferralClick}
+        className={`${className} inline-flex items-center justify-center border border-[#FF6B35] bg-white text-[#FF6B35] hover:bg-[#FF6B35]/[0.06] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2`}
+      >
+        Request this plan
+        <span className="sr-only">
+          {" "}— {result.planName} from {result.providerName}. We&rsquo;ll help you switch.
+        </span>
+      </a>
     );
   }
 
@@ -104,7 +117,10 @@ function ViewPlanCta({ href, onReferralClick, result, className }) {
       onClick={onReferralClick}
       className={`${className} inline-flex items-center justify-center bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2`}
     >
-      {label}
+      View plan
+      <span className="sr-only">
+        {" "}— {result.planName} from {result.providerName} (opens in a new tab)
+      </span>
     </a>
   );
 }
