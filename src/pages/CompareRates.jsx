@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Building2, Home, Leaf, MapPin } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { ElectricityPlan, ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import SEOHead, {
   getOrganizationSchema,
@@ -18,7 +17,6 @@ import {
   validatePhone,
   formatPhone,
 } from "@/lib/contactValidation";
-import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
 import {
   createInitialState,
@@ -105,7 +103,6 @@ export default function CompareRates() {
   const [sort, setSort] = useState("best");
   const [matchingFailed, setMatchingFailed] = useState(false);
   const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
-  const { getAffiliateUrl, affiliateOfferIds, affiliateProviderIds } = useAffiliateLinks();
 
   // ── Session bootstrap ──
   //
@@ -263,39 +260,43 @@ export default function CompareRates() {
   }, [state.customerType, state.energyPreference, state.entryContext]);
 
   // ── Plans ──
-  const { data: allPlans = [], isLoading: plansQueryLoading, isError: plansError } = useQuery({
-    queryKey: ["plans"],
-    queryFn: () => ElectricityPlan.list(),
-    placeholderData: [],
+  /**
+   * The authoritative catalog.
+   *
+   * This replaced ElectricityPlan.list() — `select('*')` with no active filter
+   * — which downloaded every row and decided eligibility in React on state and
+   * customer type alone. In production that was publishing 29 plans an admin
+   * had deactivated, 5 of them in a single TX residential search, and a
+   * deactivated PROVIDER's plans stayed visible because nothing joined the
+   * provider at all. RLS does not help: both public SELECT policies are
+   * `USING (true)`.
+   *
+   * The server now decides what is eligible and returns provider branding from
+   * the join, so the browser receives only inventory it is allowed to show.
+   */
+  const { data: catalog, isLoading: plansQueryLoading, isError: plansError } = useQuery({
+    queryKey: ["comparison-catalog", state.state, state.customerType],
+    enabled: Boolean(state.state),
+    queryFn: async () => {
+      const response = await fetch("/api/comparison", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          state: state.state,
+          customerType: state.customerType === CUSTOMER_TYPES.COMMERCIAL ? "commercial" : "residential",
+        }),
+      });
+      if (!response.ok) throw new Error("catalog_unavailable");
+      return response.json();
+    },
   });
+
+  const eligiblePlans = useMemo(() => catalog?.plans || [], [catalog]);
   const plansLoading = plansQueryLoading && !plansError;
 
-  // Provider records carry the logo. Failing to load them is not fatal: the
-  // cards fall back to the designed initials mark rather than blocking results.
-  const { data: allProviders = [] } = useQuery({
-    queryKey: ["providers"],
-    queryFn: () => ElectricityProvider.list(),
-    placeholderData: [],
-  });
-  const providersById = useMemo(() => {
-    const byId = {};
-    const byName = {};
-    for (const provider of allProviders) {
-      if (provider.id) byId[provider.id] = provider;
-      if (provider.name) byName[provider.name.trim().toLowerCase()] = provider;
-    }
-    return { byId, byName };
-  }, [allProviders]);
-
-  // Plans carry provider_id, but resolve by name too so a plan whose id is
-  // missing still shows its brand instead of dropping to initials.
-  const providerFor = useCallback(
-    (plan) =>
-      providersById.byId[plan?.provider_id] ||
-      providersById.byName[String(plan?.provider_name || "").trim().toLowerCase()] ||
-      null,
-    [providersById]
-  );
+  // Branding now arrives on the plan from the server-side provider join, so
+  // there is no second name-based lookup on the client.
+  const providerFor = useCallback((plan) => (plan?.logo_url ? { name: plan.provider_name, logo_url: plan.logo_url } : null), []);
 
   // Hold the analysis screen for its minimum presentation period.
   //
@@ -336,35 +337,13 @@ export default function CompareRates() {
   // Plan ids that resolve to a monetized outbound link, by offer OR by
   // provider. Provider is the one that actually matters — links are registered
   // per provider, so an offer-only lookup matched nothing at all.
-  const affiliateIds = useMemo(() => {
-    const offers = affiliateOfferIds || new Set();
-    const providers = affiliateProviderIds || new Set();
-    return new Set(
-      allPlans
-        .filter((plan) => offers.has(plan.id) || providers.has(plan.provider_id))
-        .map((plan) => plan.id)
-    );
-  }, [allPlans, affiliateOfferIds, affiliateProviderIds]);
+  // Which plans have a monetized outbound route, as resolved by the server.
+  const affiliateIds = useMemo(
+    () => new Set(eligiblePlans.filter((p) => p.referral_slug).map((p) => p.id)),
+    [eligiblePlans]
+  );
 
   const usageKwh = resolveUsageKwh(state);
-
-  const eligiblePlans = useMemo(() => {
-    if (!state.state) return [];
-    const isCommercial = state.customerType === CUSTOMER_TYPES.COMMERCIAL;
-
-    // `customer_type` carries three values, and 'renewable' is a residential
-    // product rather than a third audience — matching it strictly against
-    // 'residential' would hide every green plan from the people asking for one.
-    const accepted = isCommercial
-      ? ["business"]
-      : ["residential", "renewable"];
-
-    return allPlans.filter(
-      (plan) =>
-        plan.state === state.state &&
-        (!plan.customer_type || accepted.includes(plan.customer_type))
-    );
-  }, [allPlans, state.state, state.customerType]);
 
   const renewablePlans = useMemo(
     () =>
@@ -481,7 +460,6 @@ export default function CompareRates() {
           plans={eligiblePlans}
           renewablePlans={renewablePlans}
           usageKwh={usageKwh}
-          getAffiliateUrl={getAffiliateUrl}
           providerFor={providerFor}
           affiliateIds={affiliateIds}
           filters={filters}
@@ -999,7 +977,7 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
 /* ─────────────────────────────────────────────────────────── */
 
 function ResultsScreen({
-  state, accent, context, routing, plans, renewablePlans, usageKwh, getAffiliateUrl,
+  state, accent, context, routing, plans, renewablePlans, usageKwh,
   affiliateIds, filters, setFilters, sort, setSort, visibleCount, setVisibleCount,
   showAllPlans, setShowAllPlans, providerFor,
 }) {
@@ -1073,13 +1051,10 @@ function ResultsScreen({
    */
   const referralUrlFor = (entry, section, position) => {
     const plan = entry.plan;
-    const base = getAffiliateUrl({
-      offerId: plan.id,
-      providerId: plan.provider_id,
-      fallbackUrl: plan.plan_details_url || "",
-    });
-    if (!base || base === "#") return null;
-    if (!base.startsWith("/api/go")) return base;
+    // The slug is resolved server-side from the admin-configured relationship,
+    // so a tampered client cannot redirect the revenue somewhere else.
+    if (!plan.referral_slug) return null;
+    const base = `/api/go?slug=${encodeURIComponent(plan.referral_slug)}`;
 
     const params = new URLSearchParams({
       s: state.sessionId || "",

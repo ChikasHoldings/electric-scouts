@@ -335,6 +335,36 @@ export async function sendEmail({ to, subject, html, idempotencyKey, eventType, 
     }
   }
 
+  /**
+   * Record the attempt.
+   *
+   * Logged for every send, not only when an idempotency key exists — without a
+   * key the row simply is not deduplicated. Previously a keyless send produced
+   * no event at all, so those deliveries were invisible.
+   *
+   * The write's own failure is surfaced rather than swallowed: a silent
+   * logging failure is how an email system comes to look healthy while its
+   * audit trail is empty.
+   */
+  async function logEvent(fields) {
+    const row = {
+      event_type: eventType || "unknown",
+      lead_id: leadId || null,
+      to_email: Array.isArray(to) ? to.join(",") : to,
+      subject,
+      ...fields,
+    };
+    try {
+      const query = supabase.from("email_events");
+      const { error: logError } = idempotencyKey
+        ? await query.upsert({ ...row, idempotency_key: idempotencyKey }, { onConflict: "idempotency_key" })
+        : await query.insert(row);
+      if (logError) console.error("email_events write failed:", logError.message);
+    } catch (err) {
+      console.error("email_events write threw:", err?.message || err);
+    }
+  }
+
   try {
     const result = await resend.emails.send({
       from: FROM_EMAIL,
@@ -343,33 +373,23 @@ export async function sendEmail({ to, subject, html, idempotencyKey, eventType, 
       html,
     });
 
-    // Log success
-    if (idempotencyKey) {
-      await supabase.from("email_events").upsert({
-        event_type: eventType || "unknown",
-        lead_id: leadId || null,
-        to_email: Array.isArray(to) ? to.join(",") : to,
-        subject,
-        status: "sent",
-        idempotency_key: idempotencyKey,
-      }, { onConflict: "idempotency_key" });
+    // The Resend SDK reports API failures in `result.error` and does NOT
+    // throw, so treating the call returning as proof of delivery marked failed
+    // sends as "sent". A send is only recorded as sent when Resend returned an
+    // id, which is the only evidence we actually have that it accepted it.
+    if (result?.error) {
+      await logEvent({ status: "failed", error: String(result.error.message || result.error).slice(0, 500) });
+      return { success: false, error: result.error.message || "send_failed" };
     }
 
-    return { success: true, data: result };
+    const resendId = result?.data?.id || null;
+    await logEvent({ status: "sent", resend_id: resendId });
+
+    // "sent" means Resend accepted it — not that it reached an inbox. Delivery
+    // is a webhook event and is not claimed here.
+    return { success: true, id: resendId, data: result?.data };
   } catch (error) {
-    // Log failure
-    if (idempotencyKey) {
-      await supabase.from("email_events").upsert({
-        event_type: eventType || "unknown",
-        lead_id: leadId || null,
-        to_email: Array.isArray(to) ? to.join(",") : to,
-        subject,
-        status: "failed",
-        error: error.message,
-        idempotency_key: idempotencyKey,
-      }, { onConflict: "idempotency_key" });
-    }
-
+    await logEvent({ status: "failed", error: String(error.message || error).slice(0, 500) });
     return { success: false, error: error.message };
   }
 }
