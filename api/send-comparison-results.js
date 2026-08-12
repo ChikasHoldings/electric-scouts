@@ -5,17 +5,55 @@ import {
   LOGO_HEADER_URL,
   LOGO_EMAIL_HEADER_URL,
 } from "./_lib/email.js";
+import { runComparison } from "./_lib/comparison.js";
+import {
+  selectHeadline,
+  describeResultPrice,
+  pricingCaveatText,
+  withResultPlacement,
+  RESULT_SECTIONS,
+} from "../src/components/compare/engine/resultsContract.js";
 
 /**
- * Send Comparison Results via Email
- * 
- * Sends a beautifully formatted HTML email with:
- * - Top recommended plans with affiliate links
- * - Rate comparison details
- * - CTA buttons to switch plans
- * 
- * Works for Residential, Business, and Renewable comparison flows
+ * Send comparison results by email.
+ *
+ * This endpoint used to price plans itself. It took whatever the browser posted
+ * and computed `rate × usage + base charge` — a third pricing algorithm, after
+ * the one on the page and the one in the engine — which ignored utility
+ * delivery charges, bill credits and credit thresholds entirely. It then
+ * ordered the cards by the array the browser sent, badged position 0 as TOP
+ * PICK, and linked each one to a `plan.affiliateUrl` the browser supplied.
+ *
+ * Every one of those was a way for the inbox to disagree with the website, and
+ * the last was a way for a crafted request to put an attacker's URL behind an
+ * ElectricScouts "Get this plan" button in an email we send and sign.
+ *
+ * Now the request carries a reference to a comparison — where, what for, how
+ * much they use — and the results are recomputed here through the same service
+ * /api/comparison calls. Same catalog, same prices, same completeness, same
+ * ranking, same savings, same tracked routes. Client-supplied economics are not
+ * validated and rejected; they are never read.
  */
+
+/** Escape untrusted text before it is interpolated into the email HTML. */
+function esc(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const MONEY = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
+
+/** How many results an email carries. Beyond this it stops being readable. */
+const MAX_EMAIL_RESULTS = 6;
+
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -27,7 +65,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, name, plans, zipCode, cityName, monthlyUsage, comparisonType } = req.body;
+    const { email, name, zipCode, cityName, comparisonType } = req.body || {};
 
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
@@ -38,17 +76,79 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
-    if (!plans || plans.length === 0) {
+    const type = ['residential', 'business', 'renewable'].includes(comparisonType)
+      ? comparisonType
+      : 'residential';
+
+    // ── Recompute the comparison, server-side ──
+    //
+    // The legacy quote pages describe their audience with a `comparisonType`
+    // rather than the engine's own fields, so it is translated here. Renewable
+    // is a residential product with a stated preference, not a third audience.
+    const { ok, comparison, error: comparisonError } = await runComparison(
+      supabase,
+      {
+        zip: zipCode,
+        state: req.body?.state,
+        customerType: type === 'business' ? 'commercial' : 'residential',
+        energyPreference: type === 'renewable' ? 'renewable' : req.body?.energyPreference,
+        shoppingIntent: req.body?.shoppingIntent,
+        usageRange: req.body?.usageRange,
+        monthlyUsageKwh: req.body?.monthlyUsage ?? req.body?.monthlyUsageKwh,
+        monthlyCost: req.body?.monthlyCost,
+        billAnalysisStatus: req.body?.billAnalysisStatus,
+        billConfidence: req.body?.billConfidence,
+        unverifiedFields: req.body?.unverifiedFields,
+        sessionId: req.body?.sessionId,
+        entryContext: req.body?.entryContext,
+        attribution: req.body?.attribution,
+      },
+      // Absolute, because a relative href is dead in an inbox.
+      { baseUrl: APP_BASE_URL }
+    );
+
+    if (!ok) {
+      console.error("comparison for email failed:", comparisonError);
+      return res.status(comparisonError === 'catalog_unavailable' ? 502 : 400).json({
+        error: comparisonError === 'catalog_unavailable'
+          ? "We couldn't load plans right now. Please try again."
+          : "We couldn't work out which plans to send. Please check your ZIP code.",
+      });
+    }
+
+    // ── Which results to send ──
+    //
+    // A client may name the plans it was looking at, which is what makes the
+    // email match a filtered view of the page. That list can only ever narrow
+    // the authoritative set — an id that is not in it (inactive, out of state,
+    // invented) selects nothing — and the order stays the server's.
+    const requestedIds = Array.isArray(req.body?.planIds)
+      ? new Set(req.body.planIds.filter((id) => typeof id === 'string').slice(0, 50))
+      : null;
+
+    const pool = requestedIds?.size
+      ? comparison.results.filter((r) => requestedIds.has(r.planId))
+      : comparison.results;
+
+    // The same headline selection the page makes, so the Top 3 in the inbox is
+    // the Top 3 on screen rather than a re-sort by advertised rate.
+    const { headline, rest } = selectHeadline(pool);
+    const sending = [...headline, ...rest].slice(0, MAX_EMAIL_RESULTS);
+
+    if (sending.length === 0) {
       return res.status(400).json({ error: "No plans to send" });
     }
 
-    const usage = parseInt(monthlyUsage) || 1000;
-    const type = comparisonType || 'residential';
-    const firstName = name ? name.split(' ')[0] : '';
+    const usage = comparison.usageKwh;
+    const firstName = name ? String(name).split(' ')[0].slice(0, 60) : '';
     const year = new Date().getFullYear();
     const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
-    
-    // Type-specific styling
+
+    // Type-specific styling.
+    //
+    // Every "compare more" CTA points at /compare-rates. The old per-type URLs
+    // sent customers into the duplicate quote engines, whose results are priced
+    // by a different path than the ones in the email they just read.
     const typeConfig = {
       residential: {
         label: 'Residential',
@@ -56,7 +156,6 @@ export default async function handler(req, res) {
         accentColor: '#0A5C8C',
         emoji: '🏠',
         subtitle: 'Residential Electricity Plans',
-        compareUrl: `${APP_BASE_URL}/compare-rates?zip=${zipCode || ''}`,
       },
       business: {
         label: 'Business',
@@ -64,34 +163,61 @@ export default async function handler(req, res) {
         accentColor: '#0A5C8C',
         emoji: '🏢',
         subtitle: 'Business Electricity Plans',
-        compareUrl: `${APP_BASE_URL}/business-compare-rates?zip=${zipCode || ''}`,
       },
       renewable: {
         label: 'Renewable',
         headerBg: 'linear-gradient(135deg,#059669,#047857)',
         accentColor: '#059669',
         emoji: '🌿',
-        subtitle: '100% Green Energy Plans',
-        compareUrl: `${APP_BASE_URL}/renewable-compare-rates?zip=${zipCode || ''}`,
+        subtitle: 'Green Energy Plans',
       },
     };
 
-    const config = typeConfig[type] || typeConfig.residential;
+    const config = typeConfig[type];
+    const compareUrl = `${APP_BASE_URL}/compare-rates${zipCode ? `?zip=${encodeURIComponent(zipCode)}` : ''}`;
 
-    // Build plan cards HTML
-    const plansHtml = plans.slice(0, 6).map((plan, index) => {
-      const affiliateUrl = plan.affiliateUrl || `${APP_BASE_URL}/api/go?slug=${encodeURIComponent((plan.provider_name || '').toLowerCase().replace(/\s+/g, '-'))}`;
-      const estimatedCost = ((plan.rate_per_kwh * usage) / 100 + (plan.monthly_base_charge || 0)).toFixed(2);
-      
-      const bestBadge = index === 0 
+    // Build plan cards from the authoritative results
+    const plansHtml = sending.map((result, index) => {
+      const isHeadline = headline.some((h) => h.planId === result.planId);
+      const section = isHeadline ? RESULT_SECTIONS.TOP_MATCH : RESULT_SECTIONS.MORE_OPTIONS;
+      const href = withResultPlacement(result.trackedOutboundRoute, section, index + 1);
+
+      const price = describeResultPrice(result);
+      const caveat = pricingCaveatText(result);
+
+      const bestBadge = index === 0
         ? `<div style="background:#FF6B35;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:4px;display:inline-block;margin-bottom:8px;">⭐ TOP PICK</div><br/>`
         : '';
-      
-      const renewableBadge = plan.renewable_percentage >= 50 
-        ? `<div style="color:#059669;font-size:13px;margin-top:6px;">🌿 ${plan.renewable_percentage}% Renewable</div>`
+
+      const renewableBadge = Number(result.renewablePercentage) >= 50
+        ? `<div style="color:#059669;font-size:13px;margin-top:6px;">🌿 ${esc(result.renewablePercentage)}% Renewable</div>`
         : '';
 
-      const contractText = plan.contract_length ? `${plan.contract_length} mo term` : 'Variable';
+      const contractText = result.termMonths > 0 ? `${esc(result.termMonths)} mo term` : 'Variable';
+
+      // Savings appears only when the server produced one. A partial estimate
+      // never yields a difference, so the email cannot claim a saving the page
+      // is withholding.
+      const savingsLine = result.monthlyDifference === null
+        ? ''
+        : result.differenceDirection === 'saving'
+          ? `<div style="color:#0A7C52;font-size:13px;font-weight:600;margin-top:6px;">Potential savings: $${Math.abs(result.monthlyDifference).toFixed(0)}/mo</div>`
+          : result.differenceDirection === 'costlier'
+            ? `<div style="color:#b45309;font-size:13px;font-weight:600;margin-top:6px;">About $${Math.abs(result.monthlyDifference).toFixed(0)}/mo more than your current bill</div>`
+            : `<div style="color:#6b7280;font-size:13px;margin-top:6px;">About the same as your current bill</div>`;
+
+      const priceBlock = price
+        ? `<div style="font-size:13px;color:#6b7280;margin-top:8px;">${price.basis === 'supply' ? 'Est. Supply' : 'Est. Monthly'}</div>
+           <div style="font-size:17px;font-weight:700;color:#1a1a1a;">${MONEY.format(price.amount)}</div>`
+        : '';
+
+      const ctaCell = href
+        ? `<table cellpadding="0" cellspacing="0" style="margin-top:14px;" width="100%">
+             <tr><td style="background:#FF6B35;border-radius:6px;text-align:center;padding:12px 20px;">
+               <a href="${esc(href)}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;display:block;">Get This Plan →</a>
+             </td></tr>
+           </table>`
+        : `<div style="margin-top:14px;font-size:13px;color:#6b7280;text-align:center;">Enrolment link coming soon — <a href="${esc(compareUrl)}" style="color:#0A5C8C;">compare on the site</a></div>`;
 
       return `
         <tr><td style="padding:8px 0;">
@@ -101,34 +227,33 @@ export default async function handler(req, res) {
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="vertical-align:top;width:55%;">
-                    <div style="font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">${plan.provider_name || 'Provider'}</div>
-                    <div style="font-size:14px;color:#6b7280;margin-bottom:8px;">${plan.plan_name || 'Plan'}</div>
-                    ${plan.plan_type ? `<div style="background:#f3f4f6;color:#374151;font-size:12px;font-weight:600;padding:3px 10px;border-radius:10px;display:inline-block;margin-bottom:4px;">${plan.plan_type}</div>` : ''}
+                    <div style="font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">${esc(result.providerName || 'Provider')}</div>
+                    <div style="font-size:14px;color:#6b7280;margin-bottom:8px;">${esc(result.planName || 'Plan')}</div>
+                    ${result.rateType ? `<div style="background:#f3f4f6;color:#374151;font-size:12px;font-weight:600;padding:3px 10px;border-radius:10px;display:inline-block;margin-bottom:4px;">${esc(result.rateType)}</div>` : ''}
+                    ${result.matchScore ? `<div style="font-size:12.5px;color:#6b7280;margin-top:6px;">${esc(result.matchScore)}% match · ${esc(result.matchLabel || '')}</div>` : ''}
                     ${renewableBadge}
+                    ${savingsLine}
                   </td>
                   <td style="vertical-align:top;text-align:right;width:45%;">
                     <div style="font-size:13px;color:#6b7280;">Rate</div>
-                    <div style="font-size:22px;font-weight:700;color:${config.accentColor};">${plan.rate_per_kwh}¢<span style="font-size:14px;font-weight:400;">/kWh</span></div>
-                    <div style="font-size:13px;color:#6b7280;margin-top:8px;">Est. Monthly</div>
-                    <div style="font-size:17px;font-weight:700;color:#1a1a1a;">$${estimatedCost}</div>
+                    <div style="font-size:22px;font-weight:700;color:${config.accentColor};">${esc(result.ratePerKwh)}¢<span style="font-size:14px;font-weight:400;">/kWh</span></div>
+                    ${priceBlock}
                     <div style="font-size:13px;color:#6b7280;margin-top:4px;">${contractText}</div>
                   </td>
                 </tr>
               </table>
-              <table cellpadding="0" cellspacing="0" style="margin-top:14px;" width="100%">
-                <tr><td style="background:#FF6B35;border-radius:6px;text-align:center;padding:12px 20px;">
-                  <a href="${affiliateUrl}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;display:block;">Get This Plan →</a>
-                </td></tr>
-              </table>
+              ${caveat ? `<div style="margin-top:10px;font-size:12px;color:#b45309;">${esc(caveat)}</div>` : ''}
+              ${ctaCell}
             </td></tr>
           </table>
         </td></tr>`;
     }).join('');
 
-    // Lowest rate for summary
-    const lowestRate = Math.min(...plans.map(p => p.rate_per_kwh));
-    const lowestCost = ((lowestRate * usage) / 100).toFixed(2);
-    const planCount = plans.length;
+    // Summary figures, read off the authoritative results — never recomputed.
+    const rates = sending.map((r) => Number(r.ratePerKwh)).filter(Number.isFinite);
+    const lowestRate = rates.length ? Math.min(...rates) : null;
+    const bestPrice = describeResultPrice(sending[0]);
+    const planCount = comparison.counts.eligible;
 
     const html = `
     <!DOCTYPE html>
@@ -148,9 +273,9 @@ export default async function handler(req, res) {
             <!-- Body -->
             <tr><td style="background:#fff;padding:30px;">
               
-              <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 8px;">${firstName ? `Hi ${firstName},` : 'Hi there,'}</p>
+              <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 8px;">${firstName ? `Hi ${esc(firstName)},` : 'Hi there,'}</p>
               <p style="color:#374151;font-size:16px;line-height:1.7;margin:0 0 20px;">
-                Here are your personalized ${config.label.toLowerCase()} electricity plan recommendations for <strong>${cityName || 'your area'}</strong> (${zipCode || 'N/A'}).
+                Here are your personalized ${config.label.toLowerCase()} electricity plan recommendations for <strong>${esc(cityName || 'your area')}</strong> (${esc(zipCode || 'N/A')}).
               </p>
 
               <!-- Summary Stats -->
@@ -166,15 +291,15 @@ export default async function handler(req, res) {
                   <td width="33%" style="padding:0 3px;vertical-align:top;">
                     <div style="background:#f0fdf4;border-radius:10px;padding:16px;text-align:center;">
                       <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">Lowest Rate</div>
-                      <div style="font-size:28px;font-weight:700;color:#059669;">${lowestRate.toFixed(1)}¢</div>
+                      <div style="font-size:28px;font-weight:700;color:#059669;">${lowestRate === null ? '—' : `${lowestRate.toFixed(1)}¢`}</div>
                       <div style="font-size:12px;color:#6b7280;">per kWh</div>
                     </div>
                   </td>
                   <td width="33%" style="padding:0 0 0 6px;vertical-align:top;">
                     <div style="background:#fff7ed;border-radius:10px;padding:16px;text-align:center;">
-                      <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">Est. Monthly</div>
-                      <div style="font-size:28px;font-weight:700;color:#FF6B35;">$${lowestCost}</div>
-                      <div style="font-size:12px;color:#6b7280;">@ ${usage} kWh</div>
+                      <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">${bestPrice?.basis === 'supply' ? 'Top Match Supply' : 'Top Match Est.'}</div>
+                      <div style="font-size:28px;font-weight:700;color:#FF6B35;">${bestPrice ? MONEY.format(bestPrice.amount) : '—'}</div>
+                      <div style="font-size:12px;color:#6b7280;">@ ${Math.round(usage).toLocaleString()} kWh</div>
                     </div>
                   </td>
                 </tr>
@@ -189,12 +314,12 @@ export default async function handler(req, res) {
               <!-- CTA -->
               <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:24px;">
                 <tr><td style="background:${config.accentColor};border-radius:8px;text-align:center;padding:14px 24px;">
-                  <a href="${config.compareUrl}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;display:block;">Compare All ${config.label} Plans →</a>
+                  <a href="${esc(compareUrl)}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;display:block;">Compare All ${config.label} Plans →</a>
                 </td></tr>
               </table>
 
               <p style="color:#9ca3af;font-size:13px;margin-top:24px;text-align:center;line-height:1.6;">
-                Rates and savings are estimates based on current market rates and ${usage} kWh monthly usage. Actual rates may vary.
+                Estimates use ${Math.round(usage).toLocaleString()} kWh monthly usage and the plan components we hold — energy charge, base charge, delivery and bill credits where available. Where delivery charges are not published for a plan we say so rather than leaving them out silently. Verify all details with the provider before enrolling.
               </p>
             </td></tr>
 
@@ -312,7 +437,13 @@ export default async function handler(req, res) {
       'MD': 'Maryland', 'IL': 'Illinois', 'CT': 'Connecticut', 'MA': 'Massachusetts',
       'ME': 'Maine', 'NH': 'New Hampshire', 'RI': 'Rhode Island'
     };
-    const resolvedState = zipCode ? (zipToState[zipCode.substring(0, 3)] || null) : null;
+    // The comparison already resolved the market from the ZIP with the same
+    // validator the questionnaire uses, so that answer is preferred over this
+    // prefix table and the table is only a fallback for a request that reached
+    // here with a bare state code.
+    const resolvedState =
+      comparison.state ||
+      (zipCode ? (zipToState[String(zipCode).substring(0, 3)] || null) : null);
     const resolvedStateName = resolvedState ? stateNames[resolvedState] : null;
 
     // Save lead with enhanced data
@@ -330,10 +461,18 @@ export default async function handler(req, res) {
         search_preferences: {
           comparisonType: type,
           monthlyUsage: usage,
-          topPlans: plans.slice(0, 3).map(p => ({
-            name: p.plan_name,
-            provider: p.provider_name,
-            rate: p.rate_per_kwh,
+          // What we actually sent, as the server ranked and priced it. Recording
+          // the browser's version here was the same mistake as rendering it:
+          // the lead history then disagreed with the email the customer holds.
+          topPlans: headline.slice(0, 3).map((r) => ({
+            name: r.planName,
+            provider: r.providerName,
+            rate: r.ratePerKwh,
+            rank: r.rank,
+            estimatedMonthlyCost: r.estimatedMonthlyCost,
+            supplyEstimate: r.supplyEstimate,
+            pricingCompleteness: r.pricingCompleteness,
+            matchScore: r.matchScore,
           })),
           searchedAt: new Date().toISOString(),
         },

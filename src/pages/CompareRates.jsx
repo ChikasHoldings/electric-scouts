@@ -70,10 +70,14 @@ import {
   ResultsToolbar,
   ViewMoreButton,
 } from "../components/compare/ui/ResultsBoard";
-import { rankPlans } from "../components/compare/engine/ranking";
 import { resolveAnalysisPhase } from "../components/compare/engine/analysisTimeline";
 import AnalysisLoader, { AnalysisFailed } from "../components/compare/ui/AnalysisLoader";
-import { costSortKey } from "../components/compare/engine/planPricing";
+import {
+  selectHeadline,
+  withResultPlacement,
+  RESULT_SECTIONS,
+  MONETIZATION,
+} from "../components/compare/engine/resultsContract";
 import {
   NoMatchState,
   CommercialComplete,
@@ -259,44 +263,78 @@ export default function CompareRates() {
     setView("question");
   }, [state.customerType, state.energyPreference, state.entryContext]);
 
-  // ── Plans ──
+  // ── Results ──
   /**
-   * The authoritative catalog.
+   * The authoritative comparison.
    *
-   * This replaced ElectricityPlan.list() — `select('*')` with no active filter
-   * — which downloaded every row and decided eligibility in React on state and
-   * customer type alone. In production that was publishing 29 plans an admin
-   * had deactivated, 5 of them in a single TX residential search, and a
-   * deactivated PROVIDER's plans stayed visible because nothing joined the
-   * provider at all. RLS does not help: both public SELECT policies are
-   * `USING (true)`.
+   * This page sends what the customer told us — where they live, what they are
+   * shopping for, what they use, what they pay today — and receives finished
+   * results: priced, ranked, scored, with the savings already decided and the
+   * outbound route already authorized.
    *
-   * The server now decides what is eligible and returns provider branding from
-   * the join, so the browser receives only inventory it is allowed to show.
+   * It used to fetch plan rows and do all of that here. Two rounds of damage
+   * came out of that arrangement: eligibility decided in React published 29
+   * deactivated plans, and pricing computed in React disagreed with the pricing
+   * the comparison email computed for the same plan. Both are server questions,
+   * and neither is asked here any more.
    */
-  const { data: catalog, isLoading: plansQueryLoading, isError: plansError } = useQuery({
-    queryKey: ["comparison-catalog", state.state, state.customerType],
-    enabled: Boolean(state.state),
+  const comparisonInput = useMemo(
+    () => ({
+      zip: state.zip,
+      state: state.state,
+      customerType: state.customerType === CUSTOMER_TYPES.COMMERCIAL ? "commercial" : "residential",
+      energyPreference: state.energyPreference,
+      shoppingIntent: state.shoppingIntent,
+      usageRange: state.usageRange,
+      monthlyUsageKwh: state.monthlyUsageKwh,
+      monthlyCost: state.monthlyCost,
+      billAnalysisStatus: state.billAnalysisStatus,
+      billConfidence: state.billConfidence,
+      unverifiedFields: state.unverifiedFields,
+      sessionId: state.sessionId,
+      entryContext: state.entryContext,
+      attribution: {
+        utm_source: state.attribution?.utm_source,
+        utm_campaign: state.attribution?.utm_campaign,
+      },
+    }),
+    [
+      state.zip, state.state, state.customerType, state.energyPreference,
+      state.shoppingIntent, state.usageRange, state.monthlyUsageKwh, state.monthlyCost,
+      state.billAnalysisStatus, state.billConfidence, state.unverifiedFields,
+      state.sessionId, state.entryContext, state.attribution,
+    ]
+  );
+
+  const { data: comparison, isLoading: plansQueryLoading, isError: plansError } = useQuery({
+    // Every input that can change a price, a rank or a score is in the key, so
+    // a customer who corrects their usage gets a recomputed comparison rather
+    // than a cached one that no longer describes them.
+    queryKey: ["comparison", comparisonInput],
+    enabled: Boolean(state.state || state.zip),
     queryFn: async () => {
       const response = await fetch("/api/comparison", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          state: state.state,
-          customerType: state.customerType === CUSTOMER_TYPES.COMMERCIAL ? "commercial" : "residential",
-        }),
+        body: JSON.stringify(comparisonInput),
       });
       if (!response.ok) throw new Error("catalog_unavailable");
       return response.json();
     },
   });
 
-  const eligiblePlans = useMemo(() => catalog?.plans || [], [catalog]);
+  const results = useMemo(() => comparison?.results || [], [comparison]);
   const plansLoading = plansQueryLoading && !plansError;
 
-  // Branding now arrives on the plan from the server-side provider join, so
-  // there is no second name-based lookup on the client.
-  const providerFor = useCallback((plan) => (plan?.logo_url ? { name: plan.provider_name, logo_url: plan.logo_url } : null), []);
+  // Branding arrives on the result from the server-side provider join, so there
+  // is no second name-based lookup on the client.
+  const providerFor = useCallback(
+    (result) =>
+      result?.providerLogoUrl
+        ? { name: result.providerName, logo_url: result.providerLogoUrl }
+        : null,
+    []
+  );
 
   // Hold the analysis screen for its minimum presentation period.
   //
@@ -334,32 +372,23 @@ export default function CompareRates() {
     return () => clearTimeout(timer);
   }, [view, plansLoading]);
 
-  // Plan ids that resolve to a monetized outbound link, by offer OR by
-  // provider. Provider is the one that actually matters — links are registered
-  // per provider, so an offer-only lookup matched nothing at all.
-  // Which plans have a monetized outbound route, as resolved by the server.
-  const affiliateIds = useMemo(
-    () => new Set(eligiblePlans.filter((p) => p.referral_slug).map((p) => p.id)),
-    [eligiblePlans]
-  );
+  // Usage is resolved server-side for pricing; this copy is for display only —
+  // "estimated at 1,500 kWh a month" — and the server echoes back the figure it
+  // actually priced against so the two can never disagree.
+  const usageKwh = comparison?.usageKwh ?? resolveUsageKwh(state);
 
-  const usageKwh = resolveUsageKwh(state);
-
-  const renewablePlans = useMemo(
-    () =>
-      eligiblePlans.filter(
-        (p) => Number(p.renewable_percentage) >= 50 || p.customer_type === "renewable"
-      ),
-    [eligiblePlans]
+  const renewableResults = useMemo(
+    () => results.filter((r) => r.isRenewable),
+    [results]
   );
 
   const routing = useMemo(
     () =>
       resolveRoute(state, {
-        matchCount: eligiblePlans.length,
-        renewableMatchCount: renewablePlans.length,
+        matchCount: results.length,
+        renewableMatchCount: renewableResults.length,
       }),
-    [state, eligiblePlans.length, renewablePlans.length]
+    [state, results.length, renewableResults.length]
   );
 
   // ── Persistence: recoverable at email, complete at results ──
@@ -383,12 +412,12 @@ export default function CompareRates() {
     track(EVENTS.RESULTS_VIEWED, {
       customer_type: state.customerType,
       state: state.state,
-      match_count: eligiblePlans.length,
+      match_count: results.length,
       route: routing.route,
     });
     track(EVENTS.COMPARISON_COMPLETED, { route: routing.route });
     track(EVENTS.COMPARISON_RESULTS_LOADED, {
-      match_count: eligiblePlans.length,
+      match_count: results.length,
       route: routing.route,
     });
   }, [view]);  
@@ -457,11 +486,10 @@ export default function CompareRates() {
           accent={accent}
           context={context}
           routing={routing}
-          plans={eligiblePlans}
-          renewablePlans={renewablePlans}
+          results={results}
+          renewableResults={renewableResults}
           usageKwh={usageKwh}
           providerFor={providerFor}
-          affiliateIds={affiliateIds}
           filters={filters}
           setFilters={setFilters}
           sort={sort}
@@ -976,9 +1004,18 @@ function ContactQuestion({ questionKey, title, subtitle, onBack, footer, questio
 
 /* ─────────────────────────────────────────────────────────── */
 
+/**
+ * The results board.
+ *
+ * Presentation only. Every result arrives priced, ranked, scored and routed by
+ * the server; this component decides how those look, never what they are. It
+ * may filter, sort and paginate the authoritative set — none of which invents a
+ * number — and it formats currency and percentages. It does not compute a cost,
+ * a saving, a score or a winner.
+ */
 function ResultsScreen({
-  state, accent, context, routing, plans, renewablePlans, usageKwh,
-  affiliateIds, filters, setFilters, sort, setSort, visibleCount, setVisibleCount,
+  state, accent, context, routing, results, renewableResults, usageKwh,
+  filters, setFilters, sort, setSort, visibleCount, setVisibleCount,
   showAllPlans, setShowAllPlans, providerFor,
 }) {
   const [openDetails, setOpenDetails] = useState(null);
@@ -993,7 +1030,7 @@ function ResultsScreen({
     );
   }
 
-  if (plans.length === 0) {
+  if (results.length === 0) {
     return (
       <ComparisonShell accent={accent} context={context}>
         <NoMatchState
@@ -1009,27 +1046,32 @@ function ResultsScreen({
   }
 
   const wantsRenewable = state.energyPreference === "renewable";
-  const noRenewableInventory = wantsRenewable && renewablePlans.length === 0;
+  const noRenewableInventory = wantsRenewable && renewableResults.length === 0;
 
   // A renewable request narrows the pool to renewable plans while any exist;
   // "show all" is the customer's own escape hatch from that.
-  const pool = wantsRenewable && !showAllPlans && renewablePlans.length > 0
-    ? renewablePlans
-    : plans;
+  const pool = wantsRenewable && !showAllPlans && renewableResults.length > 0
+    ? renewableResults
+    : results;
 
-  const filteredPool = pool.filter((plan) => {
-    if (filters.provider !== "all" && plan.provider_name !== filters.provider) return false;
-    if (filters.term !== "all" && Number(plan.contract_length) !== Number(filters.term)) return false;
-    if (filters.planType !== "all" && plan.plan_type !== filters.planType) return false;
-    if (filters.renewableOnly && Number(plan.renewable_percentage) < 50) return false;
+  // Filters act on the authoritative set. They remove results; they never
+  // change what a surviving result costs or scores, and the server's rank order
+  // is preserved through the filter.
+  const filteredPool = pool.filter((result) => {
+    if (filters.provider !== "all" && result.providerName !== filters.provider) return false;
+    if (filters.term !== "all" && Number(result.termMonths) !== Number(filters.term)) return false;
+    if (filters.planType !== "all" && result.rateType !== filters.planType) return false;
+    if (filters.renewableOnly && Number(result.renewablePercentage) < 50) return false;
     return true;
   });
 
-  // Ranking runs on the filtered set, so the three best matches are the best of
-  // what the customer is actually looking at rather than a fixed trio that
-  // ignores their filters.
-  const { top, rest } = rankPlans(filteredPool, state, { usageKwh, affiliateIds });
-  const sortedRest = sortEntries(rest, sort);
+  // The headline set is re-selected — not re-scored — from the filtered
+  // results, so the three best matches are the best of what the customer is
+  // actually looking at. `selectHeadline` is the same function the server ran
+  // for the unfiltered set: it reads rank and pricing completeness and picks;
+  // it cannot produce a score, a price or an order of its own.
+  const { headline, rest } = selectHeadline(filteredPool);
+  const sortedRest = sortResults(rest, sort);
   const visible = sortedRest.slice(0, visibleCount);
   const remaining = sortedRest.length - visible.length;
 
@@ -1037,64 +1079,48 @@ function ResultsScreen({
   // not universal. Every listed plan currently resolves to a referral link, so
   // badging all of them would be noise; the page-level disclosure below covers
   // the standing commercial relationship instead.
-  const monetizedCount = filteredPool.filter((p) => affiliateIds.has(p.id)).length;
+  const monetizedCount = filteredPool.filter(
+    (r) => r.monetizationStatus !== MONETIZATION.UNAVAILABLE
+  ).length;
   const discloseSponsored =
     monetizedCount > 0 && monetizedCount < filteredPool.length;
 
   /**
-   * The outbound URL for a plan, carrying attribution.
+   * The outbound URL for a result.
    *
-   * Resolution is server-side: /api/go looks the destination up from the slug
-   * and records the click, so nothing the browser sends can change where the
-   * revenue is credited. The query carries identifiers and enumerated values
-   * only — never a name, email, phone or address.
+   * The route itself is built and authorized by the server and arrives on the
+   * result; all that happens here is stamping on where the customer clicked it,
+   * which is only knowable at render time. The browser never assembles a
+   * provider destination — /api/go resolves that from the slug at click time,
+   * so nothing sent from here can redirect the revenue.
    */
-  const referralUrlFor = (entry, section, position) => {
-    const plan = entry.plan;
-    // The slug is resolved server-side from the admin-configured relationship,
-    // so a tampered client cannot redirect the revenue somewhere else.
-    if (!plan.referral_slug) return null;
-    const base = `/api/go?slug=${encodeURIComponent(plan.referral_slug)}`;
-
-    const params = new URLSearchParams({
-      s: state.sessionId || "",
-      p: plan.id || "",
-      pn: plan.plan_name || "",
-      rs: section,
-      rp: String(position),
-      ec: state.entryContext || "",
-    });
-    if (entry.match?.score) params.set("ms", String(entry.match.score));
-    const attribution = state.attribution || {};
-    if (attribution.utm_source) params.set("utm_source", attribution.utm_source);
-    if (attribution.utm_campaign) params.set("utm_campaign", attribution.utm_campaign);
-
-    return `${base}&${params.toString()}`;
-  };
+  const referralUrlFor = (result, section, position) =>
+    withResultPlacement(result.trackedOutboundRoute, section, position);
 
   /** Fire-and-forget analytics; navigation is the anchor's job, not ours. */
-  const onReferralClick = (entry, section, position) => {
+  const onReferralClick = (result, section, position) => {
     track(EVENTS.VIEW_PLAN_CLICKED, {
-      provider: entry.plan.provider_name,
-      plan_id: entry.plan.id,
+      provider: result.providerName,
+      plan_id: result.planId,
       route: routing.route,
       session_id: state.sessionId,
       result_section: section,
       result_position: position,
-      match_score: entry.match?.score ?? null,
+      match_score: result.matchScore ?? null,
+      monetization: result.monetizationStatus,
       sort,
     });
-    if (affiliateIds.has(entry.plan.id)) {
+    if (result.monetizationStatus !== MONETIZATION.UNAVAILABLE) {
       track(EVENTS.REFERRAL_LINK_OPENED, {
-        plan_id: entry.plan.id,
-        provider: entry.plan.provider_name,
+        plan_id: result.planId,
+        provider: result.providerName,
       });
     }
   };
 
-  const showDetails = (entry) => {
-    setOpenDetails((current) => (current === entry.plan.id ? null : entry.plan.id));
-    track(EVENTS.PLAN_DETAILS_OPENED, { plan_id: entry.plan.id, provider: entry.plan.provider_name });
+  const showDetails = (result) => {
+    setOpenDetails((current) => (current === result.planId ? null : result.planId));
+    track(EVENTS.PLAN_DETAILS_OPENED, { plan_id: result.planId, provider: result.providerName });
   };
 
   return (
@@ -1120,7 +1146,7 @@ function ResultsScreen({
       )}
 
       <ResultsToolbar
-        plans={pool}
+        results={pool}
         filters={filters}
         onFilterChange={(next) => {
           setFilters(next);
@@ -1150,30 +1176,36 @@ function ResultsScreen({
         </div>
       ) : (
         <>
-          {top.length > 0 && (
+          {headline.length > 0 && (
             <section aria-labelledby="best-matches-heading" className="mb-10">
               <h2
                 id="best-matches-heading"
                 className="text-[15px] font-semibold text-gray-900 mb-3"
               >
-                Top {top.length === 1 ? "match" : `${top.length} matches`} for you
+                Top {headline.length === 1 ? "match" : `${headline.length} matches`} for you
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {top.map((entry) => (
-                  <div key={entry.plan.id} className="flex flex-col">
+                {headline.map((result, index) => (
+                  <div key={result.planId} className="flex flex-col">
                     <BestMatchCard
-                      entry={entry}
-                      state={state}
-                      provider={providerFor(entry.plan)}
+                      result={result}
+                      // Where this card sits in the headline row. The match
+                      // score and label beside it are the server's; this is a
+                      // display ordinal for the badge, not a judgement.
+                      position={index + 1}
+                      provider={providerFor(result)}
                       usageKwh={usageKwh}
-                      href={referralUrlFor(entry, "top_match", entry.rank)}
-                      onReferralClick={() => onReferralClick(entry, "top_match", entry.rank)}
+                      href={referralUrlFor(result, RESULT_SECTIONS.TOP_MATCH, index + 1)}
+                      onReferralClick={() =>
+                        onReferralClick(result, RESULT_SECTIONS.TOP_MATCH, index + 1)}
                       onDetails={showDetails}
-                      isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
+                      isSponsored={
+                        discloseSponsored && result.monetizationStatus !== MONETIZATION.UNAVAILABLE
+                      }
                     />
-                    {openDetails === entry.plan.id && (
+                    {openDetails === result.planId && (
                       <PlanDetails
-                        entry={entry}
+                        result={result}
                         usageKwh={usageKwh}
                         onClose={() => setOpenDetails(null)}
                       />
@@ -1193,20 +1225,23 @@ function ResultsScreen({
                 More electricity options
               </h2>
               <div className="space-y-3">
-                {visible.map((entry, index) => (
-                  <div key={entry.plan.id}>
+                {visible.map((result, index) => (
+                  <div key={result.planId}>
                     <PlanRow
-                      entry={entry}
-                      state={state}
-                      provider={providerFor(entry.plan)}
-                      href={referralUrlFor(entry, "more_options", index + 1)}
-                      onReferralClick={() => onReferralClick(entry, "more_options", index + 1)}
+                      result={result}
+                      provider={providerFor(result)}
+                      usageKwh={usageKwh}
+                      href={referralUrlFor(result, RESULT_SECTIONS.MORE_OPTIONS, index + 1)}
+                      onReferralClick={() =>
+                        onReferralClick(result, RESULT_SECTIONS.MORE_OPTIONS, index + 1)}
                       onDetails={showDetails}
-                      isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
+                      isSponsored={
+                        discloseSponsored && result.monetizationStatus !== MONETIZATION.UNAVAILABLE
+                      }
                     />
-                    {openDetails === entry.plan.id && (
+                    {openDetails === result.planId && (
                       <PlanDetails
-                        entry={entry}
+                        result={result}
                         usageKwh={usageKwh}
                         onClose={() => setOpenDetails(null)}
                       />
@@ -1244,21 +1279,42 @@ function ResultsScreen({
   );
 }
 
-/** Sorts already-scored entries. "Best match" keeps the ranking engine order. */
-function sortEntries(entries, sort) {
-  const list = [...entries];
+/**
+ * Reorder authoritative results.
+ *
+ * Every key here is a field the server already decided; sorting reads them and
+ * never recomputes one. "Best match" is the server's own rank order, which is
+ * why it is the default and why it needs no comparator of its own.
+ */
+function sortResults(results, sort) {
+  const list = [...results];
+
+  // A result we could not price must never sort as though it cost nothing —
+  // that would put the plans we know least about at the top of a cheapest-first
+  // list. They sort last, whichever direction the customer asked for.
+  const byCost = (result) => {
+    const amount = result.estimatedMonthlyCost ?? result.supplyEstimate;
+    return amount === null || amount === undefined ? Number.POSITIVE_INFINITY : amount;
+  };
+  const numeric = (value, fallback) =>
+    Number.isFinite(Number(value)) ? Number(value) : fallback;
+
   switch (sort) {
     case "cost":
-      return list.sort((a, b) => costSortKey(a.estimate) - costSortKey(b.estimate));
+      return list.sort((a, b) => byCost(a) - byCost(b));
     case "rate":
-      return list.sort((a, b) => Number(a.plan.rate_per_kwh) - Number(b.plan.rate_per_kwh));
+      return list.sort(
+        (a, b) => numeric(a.ratePerKwh, Infinity) - numeric(b.ratePerKwh, Infinity)
+      );
     case "term_short":
-      return list.sort((a, b) => Number(a.plan.contract_length) - Number(b.plan.contract_length));
+      return list.sort(
+        (a, b) => numeric(a.termMonths, Infinity) - numeric(b.termMonths, Infinity)
+      );
     case "term_long":
-      return list.sort((a, b) => Number(b.plan.contract_length) - Number(a.plan.contract_length));
+      return list.sort((a, b) => numeric(b.termMonths, -1) - numeric(a.termMonths, -1));
     case "renewable":
       return list.sort(
-        (a, b) => Number(b.plan.renewable_percentage) - Number(a.plan.renewable_percentage)
+        (a, b) => numeric(b.renewablePercentage, -1) - numeric(a.renewablePercentage, -1)
       );
     default:
       return list;

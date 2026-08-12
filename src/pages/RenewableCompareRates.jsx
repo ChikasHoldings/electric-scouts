@@ -692,7 +692,6 @@ export default function RenewableCompareRates() {
                   monthlyUsage={monthlyUsage}
                   comparisonType="renewable"
                   accentColor="#059669"
-                  getAffiliateUrl={getProviderAffiliateUrl}
                 />
               </div>
             )}

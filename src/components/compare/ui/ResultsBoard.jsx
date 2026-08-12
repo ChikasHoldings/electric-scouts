@@ -1,16 +1,16 @@
 import { useState, useMemo } from "react";
 import { Leaf, Check, ChevronDown, SlidersHorizontal, X, TrendingDown, TrendingUp } from "lucide-react";
 import { useAccent } from "./ComparisonShell";
-import { COST_CONFIDENCE } from "../engine/planPricing";
-import { RANK_LABELS } from "../engine/ranking";
-import { compareToCurrentBill, describeComparison } from "../engine/savings";
+import { describeResultPrice, pricingCaveatText } from "../engine/resultsContract";
 import ProviderLogo from "./ProviderLogo";
 
 /**
  * The results board: three best matches, then a paginated list.
  *
- * Everything shown here is derived from the ranking engine — this file decides
- * how a scored plan looks, never which plan wins.
+ * Every number rendered here was decided by the server and arrives on the
+ * result. This file chooses type sizes and colours; it does not compute a cost,
+ * a saving, a score or an order. If a figure is missing from the result, the
+ * right behaviour is to say so — never to fill the gap with a calculation.
  */
 
 const CURRENCY = new Intl.NumberFormat("en-US", {
@@ -19,33 +19,46 @@ const CURRENCY = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
-function formatCost(estimate) {
-  return estimate?.amount !== null && estimate?.amount !== undefined
-    ? CURRENCY.format(estimate.amount)
-    : null;
+/**
+ * The headline price, formatted.
+ *
+ * Which figure to show and what to call it is decided by the shared contract,
+ * not here — the comparison email asks the same function the same question, so
+ * a plan cannot read "$105/mo" in an inbox and "$105/mo supply" on screen.
+ */
+function priceDisplay(result) {
+  const described = describeResultPrice(result);
+  if (!described) return null;
+  return { ...described, amount: CURRENCY.format(described.amount) };
+}
+
+/** Partial pricing, stated the same way wherever a result is rendered. */
+function PricingCaveatNote({ result, className = "" }) {
+  const text = pricingCaveatText(result);
+  if (!text) return null;
+  return <p className={`text-[11.5px] text-amber-700 ${className}`}>{text}</p>;
 }
 
 /**
  * Rank badge.
  *
- * Carries its rank in text as well as colour, so the ordering survives for
+ * Carries its position in text as well as colour, so the ordering survives for
  * anyone who can't distinguish the tints.
  */
-function RankBadge({ rank, accent, match }) {
-  const isTop = rank === 1;
-  // The label comes from the score band, not from the rank position. Those two
-  // can contradict each other: when one unusually cheap plan is available every
-  // other plan scores near the floor, and a badge reading "#1 Best match" beside
-  // "38% match" tells the customer two different things. Rank says where it
-  // placed; the label says how well it actually fits.
-  const label = match?.label || RANK_LABELS[rank];
+function RankBadge({ position, accent, label }) {
+  const isTop = position === 1;
+  // The label comes from the server's score band, not from the position. Those
+  // two can contradict each other: when one unusually cheap plan is available
+  // every other plan scores near the floor, and a badge reading "#1 Best match"
+  // beside "38% match" tells the customer two different things. The position
+  // says where it placed; the label says how well it actually fits.
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide ${
         isTop ? `${accent.solidBg} text-white` : `${accent.tintBg} ${accent.text}`
       }`}
     >
-      #{rank} {label}
+      #{position} {label}
     </span>
   );
 }
@@ -64,12 +77,12 @@ function RankBadge({ rank, accent, match }) {
  * A plan with no configured destination renders a disabled control rather than
  * a dead link, so the customer is never sent nowhere.
  */
-function ViewPlanCta({ href, onReferralClick, plan, className }) {
+function ViewPlanCta({ href, onReferralClick, result, className }) {
   const label = (
     <>
       View plan
       <span className="sr-only">
-        {" "}— {plan.plan_name} from {plan.provider_name} (opens in a new tab)
+        {" "}— {result.planName} from {result.providerName} (opens in a new tab)
       </span>
     </>
   );
@@ -78,7 +91,7 @@ function ViewPlanCta({ href, onReferralClick, plan, className }) {
     return (
       <span className={`${className} inline-flex items-center justify-center bg-gray-200 text-gray-500 cursor-not-allowed`}>
         Unavailable
-        <span className="sr-only"> — no link configured for {plan.plan_name}</span>
+        <span className="sr-only"> — no link configured for {result.planName}</span>
       </span>
     );
   }
@@ -102,12 +115,12 @@ function ViewPlanCta({ href, onReferralClick, plan, className }) {
  * The number is carried in text, and the band label beside it repeats the
  * meaning in words — the score is never conveyed by colour alone.
  */
-function MatchScore({ match, accent }) {
-  if (!match || !match.score) return null;
+function MatchScore({ result, accent }) {
+  if (!result.matchScore) return null;
   return (
     <span className="inline-flex items-baseline gap-1.5">
       <span className={`text-[15px] font-semibold tabular-nums ${accent.text}`}>
-        {match.score}%
+        {result.matchScore}%
       </span>
       <span className="text-[11.5px] text-gray-500">match</span>
     </span>
@@ -117,48 +130,75 @@ function MatchScore({ match, accent }) {
 /**
  * Current bill vs this plan.
  *
- * Renders nothing at all unless `compareToCurrentBill` says both sides are
- * trustworthy, and states an unfavourable difference as plainly as a saving.
+ * The server decides whether a comparison may be shown at all — it withholds
+ * one unless both sides are trustworthy, which is why `monthlyDifference` is
+ * null far more often than it is populated. Nothing is computed here; when the
+ * server says nothing, this renders nothing.
+ *
+ * An unfavourable difference is stated as plainly as a saving. Hiding the
+ * plans that cost more is what makes a comparison site untrustworthy.
  */
-function SavingsBlock({ entry, state, compact = false }) {
-  const comparison = compareToCurrentBill(entry.estimate, state);
-  const described = describeComparison(comparison);
-  if (!described) return null;
+function SavingsBlock({ result, compact = false }) {
+  const delta = result.monthlyDifference;
+  if (delta === null || delta === undefined) return null;
 
-  const positive = described.tone === "positive";
-  const Icon = positive ? TrendingDown : described.tone === "negative" ? TrendingUp : null;
+  const direction = result.differenceDirection;
+  const positive = direction === "saving";
+  const negative = direction === "costlier";
+  const monthly = Math.abs(delta);
+  const annual = Math.abs(result.annualDifference ?? delta * 12);
+
+  const headline = positive
+    ? `Potential savings: $${monthly.toFixed(0)}/mo`
+    : negative
+      ? `Estimated difference: +$${monthly.toFixed(0)}/mo`
+      : "About the same as your current bill";
+
+  const annualLine = positive
+    ? `≈ $${annual.toFixed(0)}/year`
+    : negative
+      ? `About $${annual.toFixed(0)}/year more`
+      : null;
+
+  // Direction is carried in words as well as colour, so the meaning never
+  // rests on green-vs-amber alone.
+  const srText = positive
+    ? `Estimated saving of ${monthly.toFixed(0)} dollars per month`
+    : negative
+      ? `Estimated ${monthly.toFixed(0)} dollars per month more than your current bill`
+      : "Estimated cost is about the same as your current bill";
+
+  const Icon = positive ? TrendingDown : negative ? TrendingUp : null;
 
   return (
     <div
       className={`mt-3 rounded-xl px-3 py-2.5 ${
         positive
           ? "bg-[#0A7C52]/[0.06] ring-1 ring-inset ring-[#0A7C52]/15"
-          : described.tone === "negative"
+          : negative
             ? "bg-amber-50/70 ring-1 ring-inset ring-amber-200/60"
             : "bg-gray-50 ring-1 ring-inset ring-gray-200/70"
       }`}
     >
       <p
         className={`flex items-center gap-1.5 text-[13.5px] font-semibold ${
-          positive ? "text-[#0A7C52]" : described.tone === "negative" ? "text-amber-800" : "text-gray-700"
+          positive ? "text-[#0A7C52]" : negative ? "text-amber-800" : "text-gray-700"
         }`}
       >
         {Icon && <Icon className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />}
-        {described.headline}
-        <span className="sr-only">. {described.srText}</span>
+        {headline}
+        <span className="sr-only">. {srText}</span>
       </p>
-      {described.annual && (
-        <p className="mt-0.5 text-[12px] text-gray-600">{described.annual}</p>
-      )}
-      {!compact && (
+      {annualLine && <p className="mt-0.5 text-[12px] text-gray-600">{annualLine}</p>}
+      {!compact && result.currentMonthlyCost !== null && (
         <dl className="mt-2 pt-2 border-t border-black/[0.06] grid grid-cols-2 gap-x-3 text-[11.5px]">
           <dt className="text-gray-500">Current bill</dt>
           <dd className="text-right text-gray-700 tabular-nums">
-            {CURRENCY.format(comparison.currentMonthly)}/mo
+            {CURRENCY.format(result.currentMonthlyCost)}/mo
           </dd>
           <dt className="text-gray-500 mt-0.5">With this plan</dt>
           <dd className="text-right text-gray-700 tabular-nums mt-0.5">
-            {CURRENCY.format(comparison.estimatedMonthly)}/mo
+            {CURRENCY.format(result.estimatedMonthlyCost)}/mo
           </dd>
         </dl>
       )}
@@ -172,11 +212,11 @@ function SavingsBlock({ entry, state, compact = false }) {
  * Squarer and taller than a list row so the three sit as a set on desktop, with
  * the reasons — which are the whole point of a "best match" — given real space.
  */
-export function BestMatchCard({ entry, usageKwh, href, onReferralClick, onDetails, isSponsored, state, provider }) {
+export function BestMatchCard({ result, position, usageKwh, href, onReferralClick, onDetails, isSponsored, provider }) {
   const accent = useAccent();
-  const { plan, estimate, rank, reasons } = entry;
-  const cost = formatCost(estimate);
-  const renewable = Number(plan.renewable_percentage) || 0;
+  const price = priceDisplay(result);
+  const renewable = Number(result.renewablePercentage) || 0;
+  const reasons = result.matchReasons || [];
 
   return (
     <article
@@ -185,13 +225,13 @@ export function BestMatchCard({ entry, usageKwh, href, onReferralClick, onDetail
       // and the three cards in a row end up different heights whenever one has
       // more match reasons than another.
       className={`flex flex-col h-full rounded-2xl border bg-white p-5 transition-shadow ${
-        rank === 1
+        position === 1
           ? `${accent.border} shadow-[0_1px_2px_rgba(16,24,40,0.04),0_12px_28px_-14px_rgba(16,24,40,0.22)]`
           : "border-gray-200 hover:shadow-[0_1px_2px_rgba(16,24,40,0.04),0_10px_24px_-14px_rgba(16,24,40,0.18)]"
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <RankBadge rank={rank} accent={accent} match={entry.match} />
+        <RankBadge position={position} accent={accent} label={result.matchLabel} />
         {isSponsored && (
           <span className="text-[10px] font-medium text-gray-500 border border-gray-200 rounded-full px-2 py-0.5">
             Sponsored
@@ -200,40 +240,43 @@ export function BestMatchCard({ entry, usageKwh, href, onReferralClick, onDetail
       </div>
 
       <div className="mt-4 flex items-start gap-3">
-        <ProviderLogo provider={provider} name={plan.provider_name} eager />
+        <ProviderLogo provider={provider} name={result.providerName} eager />
         <div className="min-w-0 flex-1">
-          <p className="text-[12.5px] text-gray-500 truncate">{plan.provider_name}</p>
+          <p className="text-[12.5px] text-gray-500 truncate">{result.providerName}</p>
           <h3 className="mt-0.5 text-[15.5px] font-semibold text-gray-900 leading-snug">
-            {plan.plan_name}
+            {result.planName}
           </h3>
         </div>
       </div>
 
       <div className="mt-3">
-        <MatchScore match={entry.match} accent={accent} />
+        <MatchScore result={result} accent={accent} />
       </div>
 
       <div className="mt-4">
-        {cost ? (
+        {price ? (
           <>
             <p className="text-[28px] font-semibold text-gray-900 leading-none tracking-[-0.02em]">
-              {cost}
-              <span className="text-[14px] font-medium text-gray-500 ml-1">/mo est.</span>
+              {price.amount}
+              <span className="text-[14px] font-medium text-gray-500 ml-1">{price.unit}</span>
             </p>
             <p className="mt-1.5 text-[12px] text-gray-500">
               at {Math.round(usageKwh).toLocaleString()} kWh
-              {estimate.confidence === COST_CONFIDENCE.PARTIAL && " · excludes delivery"}
             </p>
+            <PricingCaveatNote result={result} className="mt-1" />
           </>
         ) : (
-          <p className="text-[24px] font-semibold text-gray-900 leading-none tracking-[-0.02em]">
-            {Number(plan.rate_per_kwh).toFixed(1)}
-            <span className="text-[14px] font-medium text-gray-500 ml-0.5">¢/kWh</span>
-          </p>
+          <>
+            <p className="text-[24px] font-semibold text-gray-900 leading-none tracking-[-0.02em]">
+              {Number(result.ratePerKwh).toFixed(1)}
+              <span className="text-[14px] font-medium text-gray-500 ml-0.5">¢/kWh</span>
+            </p>
+            <PricingCaveatNote result={result} className="mt-1.5" />
+          </>
         )}
       </div>
 
-      <SavingsBlock entry={entry} state={state} />
+      <SavingsBlock result={result} />
 
       {reasons.length > 0 && (
         <ul className="mt-4 space-y-1.5">
@@ -247,8 +290,8 @@ export function BestMatchCard({ entry, usageKwh, href, onReferralClick, onDetail
       )}
 
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-gray-600">
-        {plan.contract_length > 0 && <span>{plan.contract_length} mo term</span>}
-        {plan.plan_type && <span className="capitalize">{plan.plan_type}</span>}
+        {result.termMonths > 0 && <span>{result.termMonths} mo term</span>}
+        {result.rateType && <span className="capitalize">{result.rateType}</span>}
         {renewable > 0 && (
           <span className="inline-flex items-center gap-1 text-[#0A7C52]">
             <Leaf className="w-3 h-3" aria-hidden="true" />
@@ -264,16 +307,16 @@ export function BestMatchCard({ entry, usageKwh, href, onReferralClick, onDetail
         <ViewPlanCta
           href={href}
           onReferralClick={onReferralClick}
-          plan={plan}
+          result={result}
           className="h-11 rounded-lg text-[14px]"
         />
         <button
           type="button"
-          onClick={() => onDetails(entry)}
+          onClick={() => onDetails(result)}
           className={`h-9 rounded-lg border border-gray-300 bg-white text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 ${accent.focus}`}
         >
           Plan details
-          <span className="sr-only"> for {plan.plan_name}</span>
+          <span className="sr-only"> for {result.planName}</span>
         </button>
       </div>
     </article>
@@ -281,21 +324,20 @@ export function BestMatchCard({ entry, usageKwh, href, onReferralClick, onDetail
 }
 
 /** A row in the "more options" list. */
-export function PlanRow({ entry, href, onReferralClick, onDetails, isSponsored, state, provider }) {
+export function PlanRow({ result, href, onReferralClick, onDetails, isSponsored, provider }) {
   const accent = useAccent();
-  const { plan, estimate } = entry;
-  const cost = formatCost(estimate);
-  const renewable = Number(plan.renewable_percentage) || 0;
+  const price = priceDisplay(result);
+  const renewable = Number(result.renewablePercentage) || 0;
 
   return (
     <article className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 transition-shadow hover:shadow-[0_1px_2px_rgba(16,24,40,0.04),0_8px_20px_-12px_rgba(16,24,40,0.16)]">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-        <ProviderLogo provider={provider} name={plan.provider_name} size="sm" />
+        <ProviderLogo provider={provider} name={result.providerName} size="sm" />
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-[12.5px] text-gray-500">{plan.provider_name}</p>
-            <MatchScore match={entry.match} accent={accent} />
+            <p className="text-[12.5px] text-gray-500">{result.providerName}</p>
+            <MatchScore result={result} accent={accent} />
             {isSponsored && (
               <span className="text-[10px] font-medium text-gray-500 border border-gray-200 rounded-full px-1.5 py-0.5">
                 Sponsored
@@ -303,11 +345,11 @@ export function PlanRow({ entry, href, onReferralClick, onDetails, isSponsored, 
             )}
           </div>
           <h3 className="mt-0.5 text-[15px] font-semibold text-gray-900 leading-snug">
-            {plan.plan_name}
+            {result.planName}
           </h3>
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-gray-600">
-            {plan.contract_length > 0 && <span>{plan.contract_length} mo term</span>}
-            {plan.plan_type && <span className="capitalize">{plan.plan_type}</span>}
+            {result.termMonths > 0 && <span>{result.termMonths} mo term</span>}
+            {result.rateType && <span className="capitalize">{result.rateType}</span>}
             {renewable > 0 && (
               <span className="inline-flex items-center gap-1 text-[#0A7C52]">
                 <Leaf className="w-3 h-3" aria-hidden="true" />
@@ -315,44 +357,53 @@ export function PlanRow({ entry, href, onReferralClick, onDetails, isSponsored, 
               </span>
             )}
           </div>
+          {/* The partial-pricing caveat belongs on every result, not only the
+              headline three. A customer scrolling the list is comparing these
+              figures with each other and with the cards above. */}
+          <PricingCaveatNote result={result} className="mt-1.5 sm:hidden" />
         </div>
 
-        <div className="sm:text-right sm:w-32 flex-shrink-0">
-          {cost ? (
+        <div className="sm:text-right sm:w-36 flex-shrink-0">
+          {price ? (
             <>
               <p className="text-[20px] font-semibold text-gray-900 leading-none">
-                {cost}
-                <span className="text-[12px] font-medium text-gray-500 ml-0.5">/mo</span>
+                {price.amount}
+                <span className="text-[12px] font-medium text-gray-500 ml-0.5">
+                  {price.basis === "supply" ? "/mo supply" : "/mo"}
+                </span>
               </p>
               <p className="mt-1 text-[11.5px] text-gray-500">
-                {Number(plan.rate_per_kwh).toFixed(1)}¢/kWh
+                {Number(result.ratePerKwh).toFixed(1)}¢/kWh
               </p>
             </>
           ) : (
             <p className="text-[20px] font-semibold text-gray-900 leading-none">
-              {Number(plan.rate_per_kwh).toFixed(1)}
+              {Number(result.ratePerKwh).toFixed(1)}
               <span className="text-[12px] font-medium text-gray-500 ml-0.5">¢</span>
             </p>
           )}
+          <PricingCaveatNote result={result} className="mt-1 hidden sm:block" />
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
           <ViewPlanCta
             href={href}
             onReferralClick={onReferralClick}
-            plan={plan}
+            result={result}
             className="h-10 px-4 rounded-lg text-[13.5px] whitespace-nowrap"
           />
           <button
             type="button"
-            onClick={() => onDetails(entry)}
+            onClick={() => onDetails(result)}
             className={`h-10 px-3 rounded-lg border border-gray-300 bg-white text-[13px] text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 ${accent.focus}`}
           >
             Details
-            <span className="sr-only"> for {plan.plan_name}</span>
+            <span className="sr-only"> for {result.planName}</span>
           </button>
         </div>
       </div>
+
+      <SavingsBlock result={result} compact />
     </article>
   );
 }
@@ -363,35 +414,44 @@ export function PlanRow({ entry, href, onReferralClick, onDetails, isSponsored, 
  * Shows the cost breakdown and the caveats the pricing engine produced, so the
  * customer understands the estimate before they click through to a provider.
  */
-export function PlanDetails({ entry, usageKwh, onClose }) {
+export function PlanDetails({ result, usageKwh, onClose }) {
   const accent = useAccent();
-  const { plan, estimate } = entry;
+  const components = result.costComponents || {};
 
   const rows = [
-    estimate.components?.energy && {
+    components.energy && {
       label: `Energy at ${Math.round(usageKwh).toLocaleString()} kWh`,
-      value: CURRENCY.format(estimate.components.energy),
+      value: CURRENCY.format(components.energy),
     },
-    estimate.components?.baseCharge && {
+    components.baseCharge && {
       label: "Monthly base charge",
-      value: CURRENCY.format(estimate.components.baseCharge),
+      value: CURRENCY.format(components.baseCharge),
     },
-    estimate.components?.delivery && {
+    components.delivery && {
       label: "Utility delivery",
-      value: CURRENCY.format(estimate.components.delivery),
+      value: CURRENCY.format(components.delivery),
     },
-    estimate.components?.usageCredit && {
+    components.usageCredit && {
       label: "Bill credit",
-      value: `−${CURRENCY.format(Math.abs(estimate.components.usageCredit))}`,
+      value: `−${CURRENCY.format(Math.abs(components.usageCredit))}`,
     },
   ].filter(Boolean);
+
+  // Named for what it is. A supply-only subtotal presented as "Estimated
+  // monthly" is the exact misreading this panel exists to prevent.
+  const total =
+    result.estimatedMonthlyCost !== null && result.estimatedMonthlyCost !== undefined
+      ? { label: "Estimated monthly", value: result.estimatedMonthlyCost }
+      : result.supplyEstimate !== null && result.supplyEstimate !== undefined
+        ? { label: "Estimated supply subtotal", value: result.supplyEstimate }
+        : null;
 
   return (
     <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-5 mt-3">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[12.5px] text-gray-500">{plan.provider_name}</p>
-          <h4 className="text-[15px] font-semibold text-gray-900">{plan.plan_name}</h4>
+          <p className="text-[12.5px] text-gray-500">{result.providerName}</p>
+          <h4 className="text-[15px] font-semibold text-gray-900">{result.planName}</h4>
         </div>
         <button
           type="button"
@@ -411,40 +471,42 @@ export function PlanDetails({ entry, usageKwh, onClose }) {
               <dd className="text-gray-900 font-medium">{row.value}</dd>
             </div>
           ))}
-          {estimate.amount !== null && (
+          {total && (
             <div className="flex justify-between gap-4 text-[13.5px] pt-2 border-t border-gray-200">
-              <dt className="text-gray-900 font-semibold">Estimated monthly</dt>
-              <dd className="text-gray-900 font-semibold">{CURRENCY.format(estimate.amount)}</dd>
+              <dt className="text-gray-900 font-semibold">{total.label}</dt>
+              <dd className="text-gray-900 font-semibold">{CURRENCY.format(total.value)}</dd>
             </div>
           )}
         </dl>
       )}
 
+      <PricingCaveatNote result={result} className="mt-3" />
+
       <dl className="mt-4 pt-4 border-t border-gray-200 space-y-2 text-[13px]">
-        {plan.contract_length > 0 && (
-          <Detail label="Contract term" value={`${plan.contract_length} months`} />
+        {result.termMonths > 0 && (
+          <Detail label="Contract term" value={`${result.termMonths} months`} />
         )}
-        {plan.plan_type && <Detail label="Rate type" value={plan.plan_type} capitalize />}
-        {Number(plan.renewable_percentage) > 0 && (
-          <Detail label="Renewable content" value={`${plan.renewable_percentage}%`} />
+        {result.rateType && <Detail label="Rate type" value={result.rateType} capitalize />}
+        {Number(result.renewablePercentage) > 0 && (
+          <Detail label="Renewable content" value={`${result.renewablePercentage}%`} />
         )}
-        {Number(plan.early_termination_fee) > 0 && (
+        {Number(result.earlyTerminationFee) > 0 && (
           <Detail
             label="Early termination fee"
-            value={CURRENCY.format(plan.early_termination_fee)}
+            value={CURRENCY.format(result.earlyTerminationFee)}
           />
         )}
-        {Number(plan.usage_credit) > 0 && (
+        {Number(result.usageCredit) > 0 && (
           <Detail
             label="Bill credit"
-            value={`${CURRENCY.format(plan.usage_credit)} at ${Number(plan.usage_credit_threshold || 0).toLocaleString()} kWh+`}
+            value={`${CURRENCY.format(result.usageCredit)} at ${Number(result.usageCreditThreshold || 0).toLocaleString()} kWh+`}
           />
         )}
       </dl>
 
-      {estimate.caveats?.length > 0 && (
+      {result.pricingCaveats?.length > 0 && (
         <ul className="mt-4 pt-4 border-t border-gray-200 space-y-1.5">
-          {estimate.caveats.map((caveat) => (
+          {result.pricingCaveats.map((caveat) => (
             <li key={caveat} className="text-[12px] text-gray-600 leading-relaxed">
               {caveat}
             </li>
@@ -479,22 +541,22 @@ export const SORT_OPTIONS = [
  * Filter options are built from the plans actually in the result set, so the
  * control can never offer a provider or a term that returns nothing.
  */
-export function ResultsToolbar({ plans, filters, onFilterChange, sort, onSortChange, resultCount }) {
+export function ResultsToolbar({ results, filters, onFilterChange, sort, onSortChange, resultCount }) {
   const accent = useAccent();
   const [open, setOpen] = useState(false);
 
   const providers = useMemo(
-    () => [...new Set(plans.map((p) => p.provider_name).filter(Boolean))].sort(),
-    [plans]
+    () => [...new Set(results.map((r) => r.providerName).filter(Boolean))].sort(),
+    [results]
   );
   const terms = useMemo(
-    () => [...new Set(plans.map((p) => Number(p.contract_length)).filter((t) => t > 0))]
+    () => [...new Set(results.map((r) => Number(r.termMonths)).filter((t) => t > 0))]
       .sort((a, b) => a - b),
-    [plans]
+    [results]
   );
   const planTypes = useMemo(
-    () => [...new Set(plans.map((p) => p.plan_type).filter(Boolean))].sort(),
-    [plans]
+    () => [...new Set(results.map((r) => r.rateType).filter(Boolean))].sort(),
+    [results]
   );
 
   const activeCount = [
