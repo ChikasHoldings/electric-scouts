@@ -51,6 +51,52 @@ function RankBadge({ rank, accent, match }) {
 }
 
 /**
+ * The outbound CTA.
+ *
+ * A real anchor, not a button calling window.open. That is what makes
+ * middle-click, cmd-click and "open in new tab" behave, keeps it reachable by
+ * keyboard, and stops a popup blocker eating the click. rel="noopener" denies
+ * the opened page access to this one; "sponsored" is the correct signal for a
+ * monetized outbound link.
+ *
+ * The results page stays open because target="_blank" opens a new tab.
+ *
+ * A plan with no configured destination renders a disabled control rather than
+ * a dead link, so the customer is never sent nowhere.
+ */
+function ViewPlanCta({ href, onReferralClick, plan, className }) {
+  const label = (
+    <>
+      View plan
+      <span className="sr-only">
+        {" "}— {plan.plan_name} from {plan.provider_name} (opens in a new tab)
+      </span>
+    </>
+  );
+
+  if (!href) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center bg-gray-200 text-gray-500 cursor-not-allowed`}>
+        Unavailable
+        <span className="sr-only"> — no link configured for {plan.plan_name}</span>
+      </span>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer sponsored"
+      onClick={onReferralClick}
+      className={`${className} inline-flex items-center justify-center bg-[#FF6B35] hover:bg-[#e55a2b] text-white font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2`}
+    >
+      {label}
+    </a>
+  );
+}
+
+/**
  * Match score.
  *
  * The number is carried in text, and the band label beside it repeats the
@@ -126,7 +172,7 @@ function SavingsBlock({ entry, state, compact = false }) {
  * Squarer and taller than a list row so the three sit as a set on desktop, with
  * the reasons — which are the whole point of a "best match" — given real space.
  */
-export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsored, state, provider }) {
+export function BestMatchCard({ entry, usageKwh, href, onReferralClick, onDetails, isSponsored, state, provider }) {
   const accent = useAccent();
   const { plan, estimate, rank, reasons } = entry;
   const cost = formatCost(estimate);
@@ -215,14 +261,12 @@ export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsore
           content would otherwise squeeze its own buttons, leaving the three
           CTAs at different heights across the set. */}
       <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-2 flex-shrink-0">
-        <button
-          type="button"
-          onClick={() => onSelect(plan)}
-          className="h-11 rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-[14px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2"
-        >
-          View plan
-          <span className="sr-only"> — {plan.plan_name} from {plan.provider_name}</span>
-        </button>
+        <ViewPlanCta
+          href={href}
+          onReferralClick={onReferralClick}
+          plan={plan}
+          className="h-11 rounded-lg text-[14px]"
+        />
         <button
           type="button"
           onClick={() => onDetails(entry)}
@@ -237,7 +281,7 @@ export function BestMatchCard({ entry, usageKwh, onSelect, onDetails, isSponsore
 }
 
 /** A row in the "more options" list. */
-export function PlanRow({ entry, onSelect, onDetails, isSponsored, state, provider }) {
+export function PlanRow({ entry, href, onReferralClick, onDetails, isSponsored, state, provider }) {
   const accent = useAccent();
   const { plan, estimate } = entry;
   const cost = formatCost(estimate);
@@ -293,14 +337,12 @@ export function PlanRow({ entry, onSelect, onDetails, isSponsored, state, provid
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button
-            type="button"
-            onClick={() => onSelect(plan)}
-            className="h-10 px-4 rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-[13.5px] font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] focus-visible:ring-offset-2"
-          >
-            View plan
-            <span className="sr-only"> — {plan.plan_name} from {plan.provider_name}</span>
-          </button>
+          <ViewPlanCta
+            href={href}
+            onReferralClick={onReferralClick}
+            plan={plan}
+            className="h-10 px-4 rounded-lg text-[13.5px] whitespace-nowrap"
+          />
           <button
             type="button"
             onClick={() => onDetails(entry)}

@@ -1063,26 +1063,57 @@ function ResultsScreen({
   const discloseSponsored =
     monetizedCount > 0 && monetizedCount < filteredPool.length;
 
-  const openAffiliate = (plan) => {
-    track(EVENTS.VIEW_PLAN_CLICKED, {
-      provider: plan.provider_name,
-      plan_id: plan.id,
-      route: routing.route,
-      session_id: state.sessionId,
-      sort,
-    });
-    // providerId is what resolves in practice; offerId stays first so a
-    // plan-specific link still wins when one is configured.
-    const url = getAffiliateUrl({
+  /**
+   * The outbound URL for a plan, carrying attribution.
+   *
+   * Resolution is server-side: /api/go looks the destination up from the slug
+   * and records the click, so nothing the browser sends can change where the
+   * revenue is credited. The query carries identifiers and enumerated values
+   * only — never a name, email, phone or address.
+   */
+  const referralUrlFor = (entry, section, position) => {
+    const plan = entry.plan;
+    const base = getAffiliateUrl({
       offerId: plan.id,
       providerId: plan.provider_id,
       fallbackUrl: plan.plan_details_url || "",
     });
-    if (url && url !== "#") {
-      if (affiliateIds.has(plan.id)) {
-        track(EVENTS.AFFILIATE_CLICKED, { plan_id: plan.id, provider: plan.provider_name });
-      }
-      window.open(url, "_blank", "noopener,noreferrer");
+    if (!base || base === "#") return null;
+    if (!base.startsWith("/api/go")) return base;
+
+    const params = new URLSearchParams({
+      s: state.sessionId || "",
+      p: plan.id || "",
+      pn: plan.plan_name || "",
+      rs: section,
+      rp: String(position),
+      ec: state.entryContext || "",
+    });
+    if (entry.match?.score) params.set("ms", String(entry.match.score));
+    const attribution = state.attribution || {};
+    if (attribution.utm_source) params.set("utm_source", attribution.utm_source);
+    if (attribution.utm_campaign) params.set("utm_campaign", attribution.utm_campaign);
+
+    return `${base}&${params.toString()}`;
+  };
+
+  /** Fire-and-forget analytics; navigation is the anchor's job, not ours. */
+  const onReferralClick = (entry, section, position) => {
+    track(EVENTS.VIEW_PLAN_CLICKED, {
+      provider: entry.plan.provider_name,
+      plan_id: entry.plan.id,
+      route: routing.route,
+      session_id: state.sessionId,
+      result_section: section,
+      result_position: position,
+      match_score: entry.match?.score ?? null,
+      sort,
+    });
+    if (affiliateIds.has(entry.plan.id)) {
+      track(EVENTS.REFERRAL_LINK_OPENED, {
+        plan_id: entry.plan.id,
+        provider: entry.plan.provider_name,
+      });
     }
   };
 
@@ -1160,7 +1191,8 @@ function ResultsScreen({
                       state={state}
                       provider={providerFor(entry.plan)}
                       usageKwh={usageKwh}
-                      onSelect={openAffiliate}
+                      href={referralUrlFor(entry, "top_match", entry.rank)}
+                      onReferralClick={() => onReferralClick(entry, "top_match", entry.rank)}
                       onDetails={showDetails}
                       isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
                     />
@@ -1186,13 +1218,14 @@ function ResultsScreen({
                 More electricity options
               </h2>
               <div className="space-y-3">
-                {visible.map((entry) => (
+                {visible.map((entry, index) => (
                   <div key={entry.plan.id}>
                     <PlanRow
                       entry={entry}
                       state={state}
                       provider={providerFor(entry.plan)}
-                      onSelect={openAffiliate}
+                      href={referralUrlFor(entry, "more_options", index + 1)}
+                      onReferralClick={() => onReferralClick(entry, "more_options", index + 1)}
                       onDetails={showDetails}
                       isSponsored={discloseSponsored && affiliateIds.has(entry.plan.id)}
                     />

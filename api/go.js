@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
+import { isCommissionCapable, resolutionOf } from "./_lib/referral.js";
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL,
@@ -14,6 +15,24 @@ const supabase = createClient(
  * 4. Records the click in click_tracking
  * 5. Redirects to the resolved URL
  */
+/** Bounded, safe scalar from a query param — never trusted, never PII. */
+function param(value, max = 120) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, max) : null;
+}
+
+function intParam(value, max = 10000) {
+  const n = parseInt(param(value) || "", 10);
+  return Number.isFinite(n) && n >= 0 && n <= max ? n : null;
+}
+
+/** UUID or null. Anything else is discarded rather than written. */
+function uuidParam(value) {
+  const v = param(value, 40);
+  return v && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) ? v : null;
+}
+
 export default async function handler(req, res) {
   const { slug } = req.query;
 
@@ -53,6 +72,15 @@ export default async function handler(req, res) {
     const ipRaw = req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || req.socket?.remoteAddress || "";
     const ipHash = crypto.createHash("sha256").update(ipRaw).digest("hex").substring(0, 16);
 
+    // Attribution. Migration 014 added these columns; without them a click was
+    // a slug, a user agent and a hashed IP — impossible to tie to the
+    // comparison that produced it, so no conversion could be attributed.
+    //
+    // Everything here is a non-PII identifier or an enumerated value. No name,
+    // email, phone or service address is accepted, and anything malformed is
+    // discarded rather than written.
+    const resolution = resolutionOf(link, redirectUrl);
+
     supabase
       .from("click_tracking")
       .insert({
@@ -61,6 +89,25 @@ export default async function handler(req, res) {
         user_agent: userAgent,
         ip_hash: ipHash,
         resolved_url: redirectUrl,
+
+        session_id: param(req.query.s, 64),
+        provider_id: link.provider_id || null,
+        provider_name: link.provider?.name || null,
+        plan_id: uuidParam(req.query.p),
+        plan_name: param(req.query.pn, 160),
+        match_score: intParam(req.query.ms, 100),
+        result_position: intParam(req.query.rp, 500),
+        result_section: ["top_match", "more_options"].includes(req.query.rs) ? req.query.rs : null,
+        entry_context: param(req.query.ec, 60),
+        utm_source: param(req.query.utm_source, 80),
+        utm_campaign: param(req.query.utm_campaign, 80),
+
+        resolution,
+        // The distinction the business needs: a click through /api/go to a
+        // plain provider page is attributable internally, but it is NOT
+        // commission-bearing unless the destination carries real network
+        // tracking. Recording them as the same thing would overstate revenue.
+        monetized: isCommissionCapable(redirectUrl),
       })
       .then(() => {})
       .catch(() => {});
