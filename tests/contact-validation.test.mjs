@@ -289,3 +289,46 @@ describe('whole-contact validation (server side)', () => {
     assert.ok(r.errors.phone);
   });
 });
+
+// ─── Full names ─────────────────────────────────────────────
+
+test('a full name with initials or a title is accepted', async () => {
+  const { validateFullName } = await import('../src/lib/contactValidation.js');
+
+  // Every one of these was rejected before the period was allowed, which meant
+  // the concierge and commercial quote forms could not be submitted at all by
+  // anyone who writes their name this way.
+  for (const name of [
+    'John A. Smith',
+    'Dr. Jane Roe',
+    'Robert Kennedy Jr.',
+    'J. R. R. Tolkien',
+    'St. John Fisher',
+  ]) {
+    const result = validateFullName(name);
+    assert.equal(result.valid, true, `${name} should be a valid full name`);
+    assert.ok(result.firstName, `${name} should yield a first name`);
+  }
+});
+
+test('a full name keeps middle parts with the surname', async () => {
+  const { validateFullName } = await import('../src/lib/contactValidation.js');
+  const result = validateFullName('John A. Smith');
+  assert.equal(result.firstName, 'John');
+  // Dropping the middle initial would quietly rename the customer.
+  assert.equal(result.lastName, 'A. Smith');
+});
+
+test('a full name still rejects what is not a name', async () => {
+  const { validateFullName } = await import('../src/lib/contactValidation.js');
+  for (const bad of ['', '   ', '...', '---', 'me@example.com', 'https://x.com', '12345']) {
+    assert.equal(validateFullName(bad).valid, false, `${JSON.stringify(bad)} should be rejected`);
+  }
+});
+
+test('accented and hyphenated full names are accepted', async () => {
+  const { validateFullName } = await import('../src/lib/contactValidation.js');
+  for (const name of ['José Álvarez', "Mary-Jane O'Connor", 'Nguyễn Văn An', 'Chloë Grace Moretz']) {
+    assert.equal(validateFullName(name).valid, true, `${name} should be valid`);
+  }
+});

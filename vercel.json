@@ -504,5 +504,15 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/leads?action=follow-up",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/admin/weekly-report",
+      "schedule": "0 14 * * 1"
+    }
   ]
 }

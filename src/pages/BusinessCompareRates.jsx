@@ -58,7 +58,17 @@ export default function BusinessCompareRates() {
     const loadZipData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const zipFromUrl = urlParams.get('zip');
-      
+
+      // The business hub asks for monthly usage before handing over. It was
+      // appended to the URL and read by nobody, so every quote silently priced
+      // against the 5,000 kWh default and the visitor was asked the same
+      // question twice.
+      const usageFromUrl = urlParams.get('usage');
+      const parsedUsage = parseInt(usageFromUrl, 10);
+      if (Number.isFinite(parsedUsage) && parsedUsage > 0 && parsedUsage <= 10_000_000) {
+        setMonthlyUsage(String(parsedUsage));
+      }
+
       if (zipFromUrl && zipFromUrl.length === 5) {
         const validation = validateZipCode(zipFromUrl);
         if (validation.valid) {

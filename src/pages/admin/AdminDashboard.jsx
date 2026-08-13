@@ -3,32 +3,32 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient";
 import { useAuth } from "@/lib/AuthContext";
 import { summarizeRevenue } from "@/lib/revenue";
-import {
-  ElectricityProvider,
-  ElectricityPlan,
-  Article,
-  Profile,
-} from "@/api/supabaseEntities";
+import { ElectricityProvider, ElectricityPlan } from "@/api/supabaseEntities";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Building2,
   Zap,
-  FileText,
-  Users,
   TrendingUp,
   ArrowRight,
   Clock,
   CheckCircle2,
   AlertCircle,
-  Loader2,
   Link2,
   MousePointerClick,
   UserPlus,
   BarChart3,
 } from "lucide-react";
 
-function StatCard({ title, value, icon: Icon, color, link, subtitle }) {
+/**
+ * One dashboard figure.
+ *
+ * `loading` shows a placeholder bar instead of the value. Without it every tile
+ * rendered its default — 0, or $0.00 — and then snapped to the real number when
+ * its query landed, so the dashboard visibly counted up on every visit. A
+ * placeholder says "not known yet", which is the truth, and does not move.
+ */
+function StatCard({ title, value, icon: Icon, color, link, subtitle, loading }) {
   const Wrapper = link ? Link : "div";
   const wrapperProps = link ? { to: link } : {};
 
@@ -39,10 +39,18 @@ function StatCard({ title, value, icon: Icon, color, link, subtitle }) {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">{title}</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
-              {subtitle && (
+              {loading ? (
+                <div className="h-9 mt-1 flex items-center" aria-live="polite" aria-busy="true">
+                  <span className="sr-only">Loading {title}</span>
+                  <span className="block h-6 w-16 rounded bg-gray-200 animate-pulse" aria-hidden="true" />
+                </div>
+              ) : (
+                <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+              )}
+              {subtitle && !loading && (
                 <p className="text-xs text-gray-400 mt-1">{subtitle}</p>
               )}
+              {loading && <div className="h-4 mt-1" aria-hidden="true" />}
             </div>
             <div className={`p-3 rounded-xl ${color}`}>
               <Icon className="w-6 h-6 text-white" />
@@ -74,11 +82,6 @@ export default function AdminDashboard() {
   const { data: plans = [], isLoading: loadingPlans } = useQuery({
     queryKey: ["admin-plans"],
     queryFn: () => ElectricityPlan.list(),
-  });
-
-  const { data: articles = [], isLoading: loadingArticles } = useQuery({
-    queryKey: ["admin-articles"],
-    queryFn: () => Article.list(),
   });
 
   /**
@@ -124,11 +127,6 @@ export default function AdminDashboard() {
       if (error) throw error;
       return summarizeRevenue(data || []);
     },
-  });
-
-  const { data: users = [], isLoading: loadingUsers } = useQuery({
-    queryKey: ["admin-users"],
-    queryFn: () => Profile.list(),
   });
 
   // Affiliate analytics
@@ -179,26 +177,13 @@ export default function AdminDashboard() {
     },
   });
 
-  const isLoading =
-    loadingProviders || loadingPlans || loadingArticles || loadingLeads ||
-    loadingUsers || loadingAffiliates || (canSeeRevenue && loadingEarnings);
-
   const activeProviders = providers.filter((p) => p.is_active);
-  const publishedArticles = articles.filter((a) => a.published);
   const recentLeads = leadStats.recent;
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0A5C8C]" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8">
       {/* Primary Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard
           title="Providers"
           value={providers.length}
@@ -206,6 +191,7 @@ export default function AdminDashboard() {
           icon={Building2}
           color="bg-blue-500"
           link="/admin/providers"
+          loading={loadingProviders}
         />
         <StatCard
           title="Plans"
@@ -214,14 +200,7 @@ export default function AdminDashboard() {
           icon={Zap}
           color="bg-orange-500"
           link="/admin/plans"
-        />
-        <StatCard
-          title="Articles"
-          value={articles.length}
-          subtitle={`${publishedArticles.length} published`}
-          icon={FileText}
-          color="bg-green-500"
-          link="/admin/articles"
+          loading={loadingPlans}
         />
         <StatCard
           title="Leads"
@@ -230,14 +209,7 @@ export default function AdminDashboard() {
           icon={UserPlus}
           color="bg-purple-500"
           link="/admin/leads"
-        />
-        <StatCard
-          title="Users"
-          value={users.length}
-          subtitle="Registered users"
-          icon={Users}
-          color="bg-slate-600"
-          link="/admin/users"
+          loading={loadingLeads}
         />
       </div>
 
@@ -255,6 +227,7 @@ export default function AdminDashboard() {
             icon={MousePointerClick}
             color="bg-cyan-500"
             link="/admin/affiliates"
+            loading={loadingAffiliates}
           />
           <StatCard
             title="Active Affiliate Links"
@@ -263,6 +236,7 @@ export default function AdminDashboard() {
             icon={Link2}
             color="bg-teal-500"
             link="/admin/affiliates"
+            loading={loadingAffiliates}
           />
           {canSeeRevenue && (
             <StatCard
@@ -272,16 +246,9 @@ export default function AdminDashboard() {
               icon={CheckCircle2}
               color="bg-indigo-500"
               link="/admin/revenue"
+              loading={loadingEarnings}
             />
           )}
-          <StatCard
-            title="New Leads"
-            value={leadStats.new}
-            subtitle={`${leadStats.converted} converted`}
-            icon={AlertCircle}
-            color="bg-rose-500"
-            link="/admin/leads"
-          />
         </div>
       </div>
 
@@ -423,27 +390,15 @@ export default function AdminDashboard() {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-green-600" />
-                  <span className="text-sm font-medium text-green-900">
-                    Published Articles
-                  </span>
-                </div>
-                <span className="text-lg font-bold text-green-700">
-                  {publishedArticles.length} / {articles.length}
-                </span>
-              </div>
-
               <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <UserPlus className="w-5 h-5 text-purple-600" />
+                  <Zap className="w-5 h-5 text-purple-600" />
                   <span className="text-sm font-medium text-purple-900">
-                    New Leads
+                    Active Plans
                   </span>
                 </div>
                 <span className="text-lg font-bold text-purple-700">
-                  {leadStats.new}
+                  {plans.filter((p) => p.is_active).length} / {plans.length}
                 </span>
               </div>
 
@@ -461,17 +416,6 @@ export default function AdminDashboard() {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Users className="w-5 h-5 text-slate-600" />
-                  <span className="text-sm font-medium text-slate-900">
-                    Admin Users
-                  </span>
-                </div>
-                <span className="text-lg font-bold text-slate-700">
-                  {users.filter((u) => u.role === "admin").length}
-                </span>
-              </div>
             </div>
           </CardContent>
         </Card>

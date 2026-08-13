@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { CustomBusinessQuote } from "@/api/supabaseEntities";
 import { UploadFile } from "@/api/supabaseIntegrations";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -32,12 +31,40 @@ export default function CustomQuoteModal({ onClose, initialData = {} }) {
   });
 
   const queryClient = useQueryClient();
+  const [submitError, setSubmitError] = useState("");
 
+  /**
+   * Submitted through the server.
+   *
+   * A direct table insert could not work here at all: the row-level policy
+   * required an authenticated session and this site has no public sign-up, so
+   * every anonymous submission was rejected by the database. With no onError
+   * handler the rejection was invisible — the business filled in a long form,
+   * pressed submit, and nothing happened and nothing was said.
+   *
+   * The endpoint validates, stores, confirms to the customer, notifies the
+   * team, and mirrors the enquiry into `leads`.
+   */
   const createQuoteMutation = useMutation({
-    mutationFn: (data) => CustomBusinessQuote.create(data),
+    mutationFn: async (data) => {
+      const response = await fetch("/api/leads?action=business-quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await response.json().catch(() => null);
+      if (!response.ok || !body?.success) {
+        throw new Error(body?.error || "We could not send your request. Please try again.");
+      }
+      return body;
+    },
     onSuccess: () => {
+      setSubmitError("");
       queryClient.invalidateQueries({ queryKey: ['businessQuotes'] });
       setStep(3);
+    },
+    onError: (error) => {
+      setSubmitError(error.message || "We could not send your request. Please try again.");
     },
   });
 
@@ -63,9 +90,10 @@ export default function CustomQuoteModal({ onClose, initialData = {} }) {
 
   const handleSubmit = () => {
     if (!formData.business_name || !formData.contact_name || !formData.email || !formData.monthly_usage) {
-      alert("Please fill in all required fields");
+      setSubmitError("Please fill in the business name, contact name, email and monthly usage.");
       return;
     }
+    setSubmitError("");
     createQuoteMutation.mutate(formData);
   };
 
@@ -332,16 +360,25 @@ export default function CustomQuoteModal({ onClose, initialData = {} }) {
                 </div>
               </div>
 
+              {submitError && (
+                <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3">
+                  <p className="text-sm text-red-700">{submitError}</p>
+                </div>
+              )}
+
               <div className="flex gap-3 pt-4">
                 <Button onClick={() => setStep(1)} variant="outline" className="flex-1">
                   Back
                 </Button>
-                <Button 
-                  onClick={handleSubmit} 
-                  disabled={createQuoteMutation.isLoading}
+                {/* isPending, not isLoading: React Query v5 renamed it, and the
+                    old name reads as undefined — so the button was never
+                    disabled and a slow submit could be sent twice. */}
+                <Button
+                  onClick={handleSubmit}
+                  disabled={createQuoteMutation.isPending}
                   className="flex-1 bg-[#FF6B35] hover:bg-[#e55a2b] text-white"
                 >
-                  {createQuoteMutation.isLoading ? "Submitting..." : "Submit Request"}
+                  {createQuoteMutation.isPending ? "Submitting..." : "Submit Request"}
                 </Button>
               </div>
             </div>

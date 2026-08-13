@@ -4,39 +4,46 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { TrendingDown, Award, CheckCircle } from "lucide-react";
+import CustomQuoteModal from "./CustomQuoteModal";
+import { getCommercialTotals } from "@/seo/market";
 
+/**
+ * `value` matches the option values the quote form's Select uses. Passing the
+ * display name instead left the field showing its placeholder while submitting
+ * a value nothing recognised.
+ */
 const businessTiers = [
   {
+    value: "small",
     name: "Small Business",
     range: "< 10,000 kWh/month",
     examples: ["Retail stores", "Small offices", "Restaurants", "Salons"],
-    avgRate: "11.5¢/kWh",
-    avgSavings: "$1,800/year",
     topFeatures: ["No long-term commitment", "Month-to-month options", "Quick approval"],
     color: "blue"
   },
   {
+    value: "medium",
     name: "Medium Business",
     range: "10,000 - 50,000 kWh/month",
     examples: ["Warehouses", "Medical offices", "Hotels", "Large retail"],
-    avgRate: "10.2¢/kWh",
-    avgSavings: "$4,500/year",
     topFeatures: ["Volume discounts", "Flexible terms", "Dedicated support"],
     color: "green",
     popular: true
   },
   {
+    value: "large",
     name: "Large Business",
     range: "> 50,000 kWh/month",
     examples: ["Manufacturing", "Data centers", "Hospitals", "Multi-location"],
-    avgRate: "8.9¢/kWh",
-    avgSavings: "$12,000/year",
     topFeatures: ["Custom contracts", "Peak demand pricing", "Portfolio management"],
     color: "purple"
   }
 ];
 
+const COMMERCIAL = getCommercialTotals();
+
 export default function BusinessComparison() {
+  const [quoteOpen, setQuoteOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState("Medium Business");
 
   const selectedData = businessTiers.find(t => t.name === selectedTier);
@@ -67,15 +74,11 @@ export default function BusinessComparison() {
                   </Badge>
                 )}
               </div>
-              <div className="space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-xs text-gray-600">Avg Rate:</span>
-                  <span className="text-lg font-bold text-blue-600">{tier.avgRate}</span>
-                </div>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-xs text-gray-600">Avg Savings:</span>
-                  <span className="text-sm font-bold text-green-600">{tier.avgSavings}</span>
-                </div>
+              <div className="pt-2 border-t border-gray-100">
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  Priced against your load profile, so the rate depends on when
+                  you use power as well as how much.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -107,10 +110,18 @@ export default function BusinessComparison() {
                 </div>
 
                 <div className="space-y-4 mb-6">
+                  {/* Real catalog figures. This showed "Average Rate" and
+                      "Estimated Savings" per tier — invented numbers rising to
+                      $12,000/year, derived from nothing. */}
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
-                      <div className="text-sm text-gray-600">Average Rate</div>
-                      <div className="text-2xl font-bold text-blue-600">{selectedData.avgRate}</div>
+                      <div className="text-sm text-gray-600">Listed commercial plans start at</div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {COMMERCIAL.lowestEntryRate}¢–{COMMERCIAL.highestEntryRate}¢/kWh
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Range of the cheapest listed plan across {COMMERCIAL.states} states
+                      </div>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                       <TrendingDown className="w-6 h-6 text-blue-600" />
@@ -119,8 +130,11 @@ export default function BusinessComparison() {
 
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
-                      <div className="text-sm text-gray-600">Estimated Savings</div>
-                      <div className="text-2xl font-bold text-green-600">{selectedData.avgSavings}</div>
+                      <div className="text-sm text-gray-600">Commercial plans tracked</div>
+                      <div className="text-2xl font-bold text-green-600">{COMMERCIAL.commercialPlans}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        A bid against your own usage can land above or below these
+                      </div>
                     </div>
                     <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                       <Award className="w-6 h-6 text-green-600" />
@@ -148,7 +162,10 @@ export default function BusinessComparison() {
                   <p className="text-sm text-gray-300 mb-4">
                     Get personalized quotes from top providers for {selectedData.name.toLowerCase()}s
                   </p>
-                  <Button className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white">
+                  <Button
+                    onClick={() => setQuoteOpen(true)}
+                    className="w-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white"
+                  >
                     Get Custom Quote
                   </Button>
                 </div>
@@ -156,6 +173,13 @@ export default function BusinessComparison() {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {quoteOpen && (
+        <CustomQuoteModal
+          onClose={() => setQuoteOpen(false)}
+          initialData={{ businessType: selectedData?.value || "" }}
+        />
       )}
     </div>
   );

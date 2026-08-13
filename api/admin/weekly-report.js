@@ -4,6 +4,7 @@ import {
   weeklyReportEmail,
   ADMIN_EMAILS,
 } from "../_lib/email.js";
+import { verifyCronRequest } from "../_lib/cronAuth.js";
 
 export default async function handler(req, res) {
   // Allow both POST (manual trigger) and GET (cron trigger)
@@ -11,14 +12,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // Optional: verify cron secret for automated calls
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && req.headers["authorization"] !== `Bearer ${cronSecret}`) {
-    // Allow without auth for admin-triggered calls from the dashboard
-    if (req.method === "GET") {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-  }
+  // Checked on every method, and fails closed when no secret is configured.
+  // The previous check ran only for GET and treated an unset CRON_SECRET as
+  // "open", so a POST reached the send path unauthenticated either way.
+  const auth = verifyCronRequest(req);
+  if (!auth.ok) return res.status(auth.status).json({ error: auth.error });
 
   try {
     if (ADMIN_EMAILS.length === 0) {

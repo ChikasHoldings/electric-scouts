@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Loader2, Leaf, ChevronDown, ArrowRight, Headset } from "lucide-react";
 import { PrimaryAction, SecondaryAction } from "./QuestionInputs";
@@ -248,11 +247,9 @@ export function CommercialComplete({ state, qualification }) {
       </p>
 
       <div className="mt-6 max-w-sm mx-auto">
-        <Link to={createPageUrl("BusinessElectricity")}>
-          <SecondaryAction onClick={() => {}}>
-            Read about business electricity
-          </SecondaryAction>
-        </Link>
+        <SecondaryAction to={createPageUrl("BusinessElectricity")}>
+          Read about business electricity
+        </SecondaryAction>
       </div>
     </div>
   );

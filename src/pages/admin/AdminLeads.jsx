@@ -6,6 +6,9 @@ import { useAuth } from "@/lib/AuthContext";
 import { adminPost } from "@/lib/adminApi";
 import { leadMonetizationState } from "@/lib/revenue";
 import { REJECTION_LABELS } from "@/lib/leadBuyerRouting";
+import {
+  describeSource, inSegment, countBySegment, SEGMENTS, SEGMENT_LABELS,
+} from "@/lib/leadSources";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -66,27 +69,6 @@ const STATUS_OPTIONS = [
   { value: "unsubscribed", label: "Unsubscribed", icon: UserX, color: "bg-gray-100 text-gray-600" },
 ];
 
-// ─── Source Labels ──────────────────────────────────────────
-const SOURCE_LABELS = {
-  'residential_comparison_results': 'Residential Results',
-  'business_comparison_results': 'Business Results',
-  'renewable_comparison_results': 'Renewable Results',
-  'newsletter_footer': 'Newsletter (Footer)',
-  'newsletter_slideup': 'Newsletter (Slide-up)',
-  'homepage': 'Homepage',
-  'website': 'Website',
-};
-
-const SOURCE_PAGE_LABELS = {
-  'residential_results': { label: 'Residential', color: 'bg-blue-100 text-blue-700' },
-  'business_results': { label: 'Business', color: 'bg-indigo-100 text-indigo-700' },
-  'renewable_results': { label: 'Renewable', color: 'bg-green-100 text-green-700' },
-  'newsletter_footer': { label: 'Newsletter', color: 'bg-orange-100 text-orange-700' },
-  'newsletter_slideup': { label: 'Slide-up', color: 'bg-amber-100 text-amber-700' },
-  'homepage': { label: 'Homepage', color: 'bg-gray-100 text-gray-600' },
-  'website': { label: 'Website', color: 'bg-gray-100 text-gray-600' },
-};
-
 // ─── State Names ──────────────────────────────────────────
 const STATE_NAMES = {
   'TX': 'Texas', 'OH': 'Ohio', 'PA': 'Pennsylvania', 'NY': 'New York',
@@ -105,11 +87,17 @@ function getStatusBadge(status) {
   );
 }
 
-function getSourceBadge(sourcePage) {
-  const config = SOURCE_PAGE_LABELS[sourcePage] || { label: sourcePage || 'Unknown', color: 'bg-gray-100 text-gray-600' };
+/**
+ * Where the lead came from, described by the shared registry.
+ *
+ * Previously two label maps lived here, written against source values the
+ * capture forms never send — so every badge fell through to the raw string.
+ */
+function getSourceBadge(lead) {
+  const { label, tone } = describeSource(lead);
   return (
-    <Badge variant="outline" className={`${config.color} border-0 text-xs`}>
-      {config.label}
+    <Badge variant="outline" className={`${tone} border-0 text-xs`}>
+      {label}
     </Badge>
   );
 }
@@ -249,10 +237,11 @@ export default function AdminLeads() {
     const newCount = leads.filter(l => l.status === 'new').length;
     const activeCount = leads.filter(l => l.status === 'active').length;
     const convertedCount = leads.filter(l => l.status === 'converted').length;
-    const residentialCount = leads.filter(l => l.source_page === 'residential_results' || l.source?.includes('residential')).length;
-    const businessCount = leads.filter(l => l.source_page === 'business_results' || l.source?.includes('business')).length;
-    const renewableCount = leads.filter(l => l.source_page === 'renewable_results' || l.source?.includes('renewable')).length;
-    const newsletterCount = leads.filter(l => l.source_page?.includes('newsletter') || l.source?.includes('newsletter')).length;
+    // Segment counts come from the shared registry. The previous substring
+    // tests ("source includes 'business'") never matched anything the capture
+    // forms actually write, so the business tile read 0 no matter how many
+    // commercial leads had arrived.
+    const segments = countBySegment(leads);
     const todayCount = leads.filter(l => {
       const d = new Date(l.created_at);
       const today = new Date();
@@ -275,9 +264,8 @@ export default function AdminLeads() {
     const unrouted = sellable.filter(l => !routedIds.has(l.id)).length;
 
     return {
-      total, newCount, activeCount, convertedCount, residentialCount, businessCount,
-      renewableCount, newsletterCount, todayCount, sold, awaiting, unrouted,
-      sellable: sellable.length,
+      total, newCount, activeCount, convertedCount, todayCount,
+      sold, awaiting, unrouted, sellable: sellable.length, segments,
     };
   }, [leads, deliveries]);
 
@@ -294,12 +282,7 @@ export default function AdminLeads() {
         if (!match) return false;
       }
       if (filterStatus !== 'all' && lead.status !== filterStatus) return false;
-      if (filterSource !== 'all') {
-        if (filterSource === 'residential' && !lead.source?.includes('residential') && lead.source_page !== 'residential_results') return false;
-        if (filterSource === 'business' && !lead.source?.includes('business') && lead.source_page !== 'business_results') return false;
-        if (filterSource === 'renewable' && !lead.source?.includes('renewable') && lead.source_page !== 'renewable_results') return false;
-        if (filterSource === 'newsletter' && !lead.source?.includes('newsletter') && !lead.source_page?.includes('newsletter')) return false;
-      }
+      if (!inSegment(lead, filterSource)) return false;
       if (filterState !== 'all' && lead.state !== filterState) return false;
       return true;
     });
@@ -311,7 +294,7 @@ export default function AdminLeads() {
     const rows = filteredLeads.map(l => [
       l.name || '', l.email, l.zip || '', l.city || '',
       l.state ? STATE_NAMES[l.state] || l.state : '',
-      SOURCE_LABELS[l.source] || l.source || '',
+      describeSource(l).label,
       l.source_page || '',
       l.status || '',
       new Date(l.created_at).toLocaleString(),
@@ -368,6 +351,35 @@ export default function AdminLeads() {
         <StatCard label="Sellable, unrouted" value={stats.unrouted} color="text-rose-600" border="border-l-rose-500" />
       </div>
 
+      {/* Where the leads came from. Clicking a segment filters the table, so the
+          breakdown is a way into the data rather than a decoration. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium text-gray-500">By source:</span>
+        {Object.values(SEGMENTS).map((seg) => (
+          <button
+            key={seg}
+            type="button"
+            onClick={() => setFilterSource(filterSource === seg ? "all" : seg)}
+            className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+              filterSource === seg
+                ? "bg-[#0A5C8C] text-white border-[#0A5C8C]"
+                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+            }`}
+            aria-pressed={filterSource === seg}
+          >
+            {SEGMENT_LABELS[seg]} {stats.segments[seg]}
+          </button>
+        ))}
+        {stats.segments.unknown > 0 && (
+          <span
+            className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200"
+            title="Leads whose source is not in the shared registry — a capture form was added without registering it"
+          >
+            Unregistered {stats.segments.unknown}
+          </span>
+        )}
+      </div>
+
       {stats.unrouted > 0 && canReadBuyers && buyers.filter(b => b.is_active).length === 0 && (
         <div className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
           <ShieldAlert className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
@@ -412,10 +424,9 @@ export default function AdminLeads() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Sources</SelectItem>
-            <SelectItem value="residential">Residential</SelectItem>
-            <SelectItem value="business">Business</SelectItem>
-            <SelectItem value="renewable">Renewable</SelectItem>
-            <SelectItem value="newsletter">Newsletter</SelectItem>
+            {Object.values(SEGMENTS).map((seg) => (
+              <SelectItem key={seg} value={seg}>{SEGMENT_LABELS[seg]}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select value={filterState} onValueChange={setFilterState}>
@@ -493,7 +504,7 @@ export default function AdminLeads() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {getSourceBadge(lead.source_page || lead.source)}
+                      {getSourceBadge(lead)}
                     </TableCell>
                     <TableCell>
                       <CustomerTypeCell lead={lead} />
@@ -594,11 +605,11 @@ export default function AdminLeads() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1">Source</p>
-                  <p className="text-sm text-gray-900">{SOURCE_LABELS[viewLead.source] || viewLead.source || 'Unknown'}</p>
+                  <p className="text-sm text-gray-900">{describeSource(viewLead).label}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1">Source Page</p>
-                  {getSourceBadge(viewLead.source_page || viewLead.source)}
+                  {getSourceBadge(viewLead)}
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 font-medium mb-1">Created</p>

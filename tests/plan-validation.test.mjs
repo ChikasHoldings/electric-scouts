@@ -23,6 +23,7 @@ import {
   parseRequiredNumber,
   parseOptionalUrl,
   pricingCompleteness,
+  catalogPricingCoverage,
 } from '../src/lib/planValidation.js';
 
 const providers = [
@@ -218,5 +219,101 @@ describe('pricing completeness matches the comparison engine', () => {
 
   test('a missing rate is reported too', () => {
     assert.match(pricingCompleteness({ tdsp_charges: 4 }).missing.join(' '), /rate/i);
+  });
+
+  test('a stored zero delivery charge is incomplete, not free delivery', () => {
+    // The exact shape of the live catalog before migration 023: `DEFAULT 0` on
+    // the column meant all 378 active plans claimed delivery cost nothing, and
+    // the engine — correctly — read that as "not configured". Every plan on the
+    // site was capped at a supply-only subtotal because of it.
+    const r = pricingCompleteness({ rate_per_kwh: 10, tdsp_charges: 0 });
+    assert.equal(r.complete, false);
+    assert.equal(r.savingsAvailable, false);
+  });
+});
+
+describe('catalog pricing coverage', () => {
+  const complete = (id) => ({ id, is_active: true, rate_per_kwh: 10, tdsp_charges: 4 });
+  const supplyOnly = (id) => ({ id, is_active: true, rate_per_kwh: 10, tdsp_charges: 0 });
+
+  test('reports how much of the published catalog can show a monthly bill', () => {
+    const coverage = catalogPricingCoverage([complete('a'), complete('b'), supplyOnly('c'), supplyOnly('d')]);
+    assert.equal(coverage.active, 4);
+    assert.equal(coverage.complete, 2);
+    assert.equal(coverage.incomplete, 2);
+    assert.equal(coverage.percent, 50);
+  });
+
+  test('inactive plans are not counted — they publish nothing', () => {
+    const coverage = catalogPricingCoverage([
+      complete('a'),
+      { id: 'b', is_active: false, rate_per_kwh: 10, tdsp_charges: 0 },
+    ]);
+    assert.equal(coverage.active, 1);
+    assert.equal(coverage.percent, 100);
+  });
+
+  test('the live catalog shape reports 0%, which is the finding', () => {
+    const catalog = Array.from({ length: 20 }, (_, i) => supplyOnly(`p-${i}`));
+    const coverage = catalogPricingCoverage(catalog);
+    assert.equal(coverage.percent, 0);
+    assert.equal(coverage.incomplete, 20);
+  });
+
+  test('an empty catalog is 0% rather than a division by zero', () => {
+    assert.deepEqual(catalogPricingCoverage([]), { active: 0, complete: 0, incomplete: 0, percent: 0 });
+    assert.deepEqual(catalogPricingCoverage(null), { active: 0, complete: 0, incomplete: 0, percent: 0 });
+  });
+});
+
+describe('the delivery charge cannot be stored as zero', () => {
+  test('an explicit 0 is refused with an actionable message', () => {
+    // Refused rather than silently converted to null: quietly rewriting a typed
+    // value is its own surprise, and migration 023 enforces the same rule in the
+    // database, so accepting it here would only move the failure somewhere the
+    // admin cannot read it.
+    const { valid, errors } = validatePlan({ ...goodForm, tdsp_charges: '0' }, providers);
+    assert.equal(valid, false);
+    assert.match(errors.tdsp_charges, /more than 0/i);
+    assert.match(errors.tdsp_charges, /blank/i, 'the message must say what to do instead');
+  });
+
+  test('blank is still accepted as "not known yet"', () => {
+    const { valid, values } = validatePlan({ ...goodForm, tdsp_charges: '' }, providers);
+    assert.equal(valid, true);
+    assert.equal(values.tdsp_charges, null);
+  });
+
+  test('a real delivery rate is accepted', () => {
+    const { valid, values } = validatePlan({ ...goodForm, tdsp_charges: '4.85' }, providers);
+    assert.equal(valid, true);
+    assert.equal(values.tdsp_charges, 4.85);
+  });
+});
+
+describe('the fixed monthly charge has one authority', () => {
+  test('the legacy column is mirrored so it cannot go stale', () => {
+    // The admin form edited `base_charge`; the pricing engine reads
+    // `monthly_base_charge ?? base_charge` and every public page reads
+    // `monthly_base_charge`. On the five live plans carrying a positive
+    // `monthly_base_charge`, correcting the base charge changed nothing a
+    // customer would ever see, with no error shown.
+    const { values } = validatePlan({ ...goodForm, monthly_base_charge: '9.95' }, providers);
+    assert.equal(values.monthly_base_charge, 9.95);
+    assert.equal(values.base_charge, 9.95, 'the legacy column must follow the authority');
+  });
+
+  test('clearing the base charge clears both columns', () => {
+    const { values } = validatePlan({ ...goodForm, monthly_base_charge: '' }, providers);
+    assert.equal(values.monthly_base_charge, null);
+    assert.equal(values.base_charge, null);
+  });
+
+  test('a stale base_charge in the form cannot override the authority', () => {
+    const { values } = validatePlan(
+      { ...goodForm, monthly_base_charge: '9.95', base_charge: '4.95' },
+      providers
+    );
+    assert.equal(values.base_charge, 9.95);
   });
 });

@@ -167,6 +167,31 @@ export function validatePlan(form = {}, providers = []) {
     errors.usage_credit = 'Set a usage credit, or clear the threshold.';
   }
 
+  // ── The delivery charge that cannot be zero ──
+  //
+  // A stored 0 is what disabled full pricing across the entire catalog: the
+  // engine reads it as "not configured" (correctly — no utility delivers power
+  // for free), so the plan can never show a monthly bill or a savings figure.
+  // Blank already means unknown and is fine. An explicit 0 is refused rather
+  // than silently rewritten, because quietly turning a typed value into null is
+  // its own kind of surprise, and migration 023 puts the same rule in the
+  // database as a CHECK constraint.
+  if (values.tdsp_charges === 0) {
+    errors.tdsp_charges =
+      'Delivery charge must be more than 0¢. Leave it blank if the rate is not known yet.';
+  }
+
+  // ── One authority for the fixed monthly charge ──
+  //
+  // The engine reads `monthly_base_charge ?? base_charge` and every public page
+  // reads `monthly_base_charge`, so that is the field the form edits. The legacy
+  // `base_charge` column is mirrored here rather than left to drift: while the
+  // form wrote `base_charge` alone, editing the base charge on a plan that had
+  // a `monthly_base_charge` changed nothing a customer would ever see.
+  if ('monthly_base_charge' in values) {
+    values.base_charge = values.monthly_base_charge;
+  }
+
   // ── URLs ──
   for (const spec of [
     { key: 'plan_details_url', field: 'Plan details URL' },
@@ -204,5 +229,31 @@ export function pricingCompleteness(plan) {
     // Mirrors the engine: without complete pricing there is no defensible
     // savings figure, so the admin is told that plainly.
     savingsAvailable: missing.length === 0,
+  };
+}
+
+/**
+ * How much of the live catalog can actually produce a monthly bill estimate.
+ *
+ * This exists because the answer was 0 of 378 and nothing in the admin panel
+ * said so. Every plan silently fell back to a supply-only subtotal, no savings
+ * comparison could be computed anywhere on the site, and match scores were
+ * capped at 79 — all invisible from the catalog screen, which showed a
+ * configured `0` delivery charge as though it were a real price.
+ *
+ * Only active plans are counted: an inactive plan is not published, so its
+ * missing delivery rate is not costing anything today.
+ *
+ * @returns {{active: number, complete: number, incomplete: number, percent: number}}
+ */
+export function catalogPricingCoverage(plans) {
+  const active = (Array.isArray(plans) ? plans : []).filter((p) => p?.is_active);
+  const complete = active.filter((p) => pricingCompleteness(p).complete).length;
+
+  return {
+    active: active.length,
+    complete,
+    incomplete: active.length - complete,
+    percent: active.length ? Math.round((complete / active.length) * 100) : 0,
   };
 }

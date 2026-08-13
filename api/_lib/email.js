@@ -268,6 +268,158 @@ export function adminNewLeadEmail(lead) {
   };
 }
 
+/** HTML-escape a value bound for an email body. */
+function esc(value) {
+  if (value === null || value === undefined || value === "") return "—";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/** One label/value row in an admin notification table. */
+function detailRow(label, value) {
+  return `<tr>
+    <td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:600;color:#374151;width:150px;">${label}</td>
+    <td style="padding:8px 12px;border:1px solid #e5e7eb;color:#374151;">${esc(value)}</td>
+  </tr>`;
+}
+
+/**
+ * A concierge request has arrived.
+ *
+ * Concierge is a revenue route — the admin screen tracks estimated and actual
+ * revenue against these — and until now a submission notified nobody at all.
+ * A request that sits unseen for a week is a customer who has already arranged
+ * their utilities somewhere else.
+ */
+export function adminConciergeRequestEmail(request) {
+  const services = Array.isArray(request.services_requested)
+    ? request.services_requested.join(", ")
+    : request.services_requested;
+
+  const extras = [
+    request.wants_home_security && "Home security",
+    request.wants_home_insurance && "Home insurance",
+    request.wants_moving_service && "Moving help",
+    request.wants_home_warranty && "Home warranty",
+  ].filter(Boolean);
+
+  return {
+    subject: `New concierge request — ${request.full_name || request.email}`,
+    html: baseLayout(`
+      <h2 style="margin:0 0 8px;color:#1a1a1a;font-size:20px;">New Concierge Request</h2>
+      <p style="color:#6b7280;font-size:14px;margin:0 0 16px;">A customer wants help setting up utilities at a new address.</p>
+      <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">
+        ${detailRow("Name", request.full_name)}
+        ${detailRow("Email", request.email)}
+        ${detailRow("Phone", request.phone)}
+        ${detailRow("Moving to", request.new_address)}
+        ${detailRow("City / State", [request.city, request.state].filter(Boolean).join(", "))}
+        ${detailRow("ZIP", request.zip_code)}
+        ${detailRow("Move-in date", request.move_in_date)}
+        ${detailRow("Property type", request.property_type)}
+        ${detailRow("Services", services)}
+        ${detailRow("Partner interest", extras.length ? extras.join(", ") : "None")}
+        ${detailRow("Budget", request.monthly_budget)}
+        ${detailRow("Notes", request.special_instructions)}
+      </table>
+      <table cellpadding="0" cellspacing="0">
+        <tr><td style="background:#0A5C8C;border-radius:6px;padding:10px 24px;">
+          <a href="${APP_BASE_URL}/admin/concierge" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;">Open in Admin →</a>
+        </td></tr>
+      </table>
+    `)
+  };
+}
+
+/** Confirmation to the customer who asked for concierge help. */
+export function conciergeConfirmationEmail(request) {
+  const firstName = (request.full_name || "").split(" ")[0] || "there";
+  return {
+    subject: "We've got your utility setup request",
+    html: baseLayout(`
+      <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Hi ${esc(firstName)},</h2>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">
+        Thanks for your request. We're putting together options for
+        <strong>${esc(request.new_address)}</strong> and will be in touch within one business day.
+      </p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">
+        In the meantime you can compare electricity plans for your new ZIP code yourself —
+        it takes about a minute.
+      </p>
+      <table cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
+        <tr><td style="background:#FF6B35;border-radius:6px;padding:12px 28px;">
+          <a href="${APP_BASE_URL}/compare-rates?zip=${encodeURIComponent(request.zip_code || "")}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;">Compare plans for ${esc(request.zip_code)}</a>
+        </td></tr>
+      </table>
+    `, request.email)
+  };
+}
+
+/**
+ * A commercial quote request has arrived.
+ *
+ * Commercial is the highest-value segment on the platform, and these
+ * submissions previously reached the database (when they reached it at all)
+ * with no notification to anyone.
+ */
+export function adminBusinessQuoteEmail(quote) {
+  const goals = Array.isArray(quote.energy_goals) ? quote.energy_goals.join(", ") : quote.energy_goals;
+
+  return {
+    subject: `New commercial quote request — ${quote.business_name || quote.email}`,
+    html: baseLayout(`
+      <h2 style="margin:0 0 8px;color:#1a1a1a;font-size:20px;">New Commercial Quote Request</h2>
+      <p style="color:#6b7280;font-size:14px;margin:0 0 16px;">Commercial supply is quoted against a load profile — this one needs a human.</p>
+      <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">
+        ${detailRow("Business", quote.business_name)}
+        ${detailRow("Contact", quote.contact_name)}
+        ${detailRow("Email", quote.email)}
+        ${detailRow("Phone", quote.phone)}
+        ${detailRow("ZIP", quote.zip_code)}
+        ${detailRow("Business type", quote.business_type || quote.industry_type)}
+        ${detailRow("Monthly usage", quote.monthly_usage ? `${quote.monthly_usage} kWh` : null)}
+        ${detailRow("Peak demand", quote.peak_demand)}
+        ${detailRow("Locations", quote.number_of_locations)}
+        ${detailRow("Current supplier", quote.current_supplier)}
+        ${detailRow("Current rate", quote.current_rate)}
+        ${detailRow("Contract ends", quote.contract_end_date)}
+        ${detailRow("Goals", goals)}
+      </table>
+      <table cellpadding="0" cellspacing="0">
+        <tr><td style="background:#0A5C8C;border-radius:6px;padding:10px 24px;">
+          <a href="${APP_BASE_URL}/admin/leads" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;">Open in Admin →</a>
+        </td></tr>
+      </table>
+    `)
+  };
+}
+
+/** Confirmation to the business that asked for a quote. */
+export function businessQuoteConfirmationEmail(quote) {
+  const firstName = (quote.contact_name || "").split(" ")[0] || "there";
+  return {
+    subject: "We've received your commercial electricity enquiry",
+    html: baseLayout(`
+      <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Hi ${esc(firstName)},</h2>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">
+        Thanks for your enquiry about electricity supply for <strong>${esc(quote.business_name)}</strong>.
+      </p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">
+        Commercial supply is priced against your load profile rather than sold from a
+        list, so a specialist will review what you sent and come back with options.
+        Expect to hear from us within one business day.
+      </p>
+      <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 16px;">
+        If you have recent bills to hand — ideally twelve months — having them ready
+        will make the quote sharper.
+      </p>
+    `, quote.email)
+  };
+}
+
 export function adminResetCodeEmail(code) {
   return {
     subject: `Your Electric Scouts Admin Code: ${code}`,

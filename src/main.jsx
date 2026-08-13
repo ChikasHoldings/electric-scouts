@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { preloadPageForPath } from '@/pages.config'
 import '@/index.css'
 
@@ -30,9 +31,14 @@ container?.querySelector('[data-seo-prerender]')?.remove()
  */
 preloadPageForPath(window.location.pathname).then(() => {
   ReactDOM.createRoot(container).render(
-    // <React.StrictMode>
-    <App />
-    // </React.StrictMode>,
+    /**
+     * The boundary was written and never mounted, so any render error anywhere
+     * in the tree unmounted React and left the visitor on a blank white page
+     * with no way back. It now catches at the root and offers a recovery path.
+     */
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   )
 })
 

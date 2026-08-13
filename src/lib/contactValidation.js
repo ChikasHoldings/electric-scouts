@@ -27,8 +27,13 @@ const NAME_MAX = 60;
  * Nguyễn and O'Connor — real customers with real names — and there is no
  * business reason to refuse their business. \p{L} covers every alphabet,
  * \p{M} the combining marks that accented characters decompose into.
+ *
+ * The period is allowed for the same reason. Without it "John A. Smith",
+ * "Dr. Jane Roe" and "Robert Kennedy Jr." are all rejected — an extremely
+ * common way to write a name, and one that was silently blocking the concierge
+ * and commercial quote forms outright.
  */
-const NAME_ALLOWED = /^[\p{L}\p{M}’'\- ]+$/u;
+const NAME_ALLOWED = /^[\p{L}\p{M}’'.\- ]+$/u;
 
 /** A name has to contain at least one actual letter. */
 const HAS_LETTER = /[\p{L}]/u;
@@ -70,7 +75,7 @@ function validateNamePart(input, label) {
   // letters to outnumber punctuation rejects them without touching
   // legitimately punctuated names like Mary-Jane or O'Connor.
   const letters = (value.match(/[\p{L}\p{M}]/gu) || []).length;
-  const punctuation = (value.match(/['\-]/g) || []).length;
+  const punctuation = (value.match(/['.\-]/g) || []).length;
   if (punctuation >= letters) return { valid: false, value: null, error };
 
   return { valid: true, value, error: null };
@@ -78,6 +83,43 @@ function validateNamePart(input, label) {
 
 export function validateFirstName(input) {
   return validateNamePart(input, 'first name');
+}
+
+/**
+ * A whole name as one field.
+ *
+ * The concierge and commercial quote forms ask for a single "full name" rather
+ * than separate parts, and running that through the first-name rule was wrong
+ * in two ways: the length cap applies to one word, and a multi-part name
+ * carries more punctuation. This validates the whole string and then splits it,
+ * so "Dr. Jane Roe" and "Mary-Jane O'Connor" both pass and both produce usable
+ * first and last names.
+ */
+export function validateFullName(input) {
+  const value = normalizeName(input);
+  if (!value) return { valid: false, value: null, firstName: null, lastName: null, error: 'Enter your name.' };
+
+  const error = 'Enter a valid name.';
+  if (value.length > NAME_MAX * 3) return { valid: false, value: null, firstName: null, lastName: null, error };
+  if (LOOKS_LIKE_EMAIL.test(value)) return { valid: false, value: null, firstName: null, lastName: null, error };
+  if (LOOKS_LIKE_URL.test(value)) return { valid: false, value: null, firstName: null, lastName: null, error };
+  if (!HAS_LETTER.test(value)) return { valid: false, value: null, firstName: null, lastName: null, error };
+  if (!NAME_ALLOWED.test(value)) return { valid: false, value: null, firstName: null, lastName: null, error };
+
+  const letters = (value.match(/[\p{L}\p{M}]/gu) || []).length;
+  const punctuation = (value.match(/['.\-]/g) || []).length;
+  if (punctuation >= letters) return { valid: false, value: null, firstName: null, lastName: null, error };
+
+  const parts = value.split(/\s+/).filter(Boolean);
+  return {
+    valid: true,
+    value,
+    firstName: parts[0] || null,
+    // Everything after the first token, so middle names and initials stay with
+    // the surname rather than being dropped.
+    lastName: parts.length > 1 ? parts.slice(1).join(' ') : null,
+    error: null,
+  };
 }
 
 export function validateLastName(input) {

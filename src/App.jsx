@@ -12,6 +12,8 @@ import { createPageUrl } from '@/utils';
 import ProviderDetailsPage from '@/pages/ProviderDetails';
 
 // Admin imports — lazy-loaded for code-splitting
+import AdminBoot from '@/components/admin/AdminBoot';
+
 const AdminRoute = lazy(() => import('@/components/admin/AdminRoute'));
 const AdminLogin = lazy(() => import('@/pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
@@ -56,15 +58,6 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
       {children}
     </Suspense>;
 
-const AdminLoading = () => (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
-    <div className="text-center">
-      <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin mx-auto mb-3" />
-      <p className="text-sm text-gray-500">Loading admin panel...</p>
-    </div>
-  </div>
-);
-
 // The main app component — public pages render immediately without waiting for auth.
 // Only admin routes (wrapped in AdminRoute) wait for auth to resolve.
 const AppRoutes = () => {
@@ -72,22 +65,22 @@ const AppRoutes = () => {
     <Routes>
       {/* ── Admin Routes (lazy-loaded, auth-gated by AdminRoute) ── */}
       <Route path="/admin/login" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminLogin />
         </Suspense>
       } />
       <Route path="/admin" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminDashboard /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/providers" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminProviders /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/plans" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminPlans /></AdminRoute>
         </Suspense>
       } />
@@ -98,37 +91,37 @@ const AppRoutes = () => {
       <Route path="/admin/business-plans" element={<Navigate to="/admin/plans" replace />} />
       <Route path="/admin/renewable-plans" element={<Navigate to="/admin/plans" replace />} />
       <Route path="/admin/articles" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminArticles /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/users" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminUsers /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/affiliates" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminAffiliates /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/settings" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminSettings /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/concierge" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminConcierge /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/lead-buyers" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminLeadBuyers /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/revenue" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminRevenue /></AdminRoute>
         </Suspense>
       } />
@@ -136,7 +129,7 @@ const AppRoutes = () => {
           question "can we earn" is only useful next to "what did we earn". */}
       <Route path="/admin/monetization" element={<Navigate to="/admin/revenue" replace />} />
       <Route path="/admin/leads" element={
-        <Suspense fallback={<AdminLoading />}>
+        <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminLeads /></AdminRoute>
         </Suspense>
       } />

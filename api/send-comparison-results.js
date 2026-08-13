@@ -217,7 +217,24 @@ export default async function handler(req, res) {
                <a href="${esc(href)}" style="color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;display:block;">Get This Plan →</a>
              </td></tr>
            </table>`
-        : `<div style="margin-top:14px;font-size:13px;color:#6b7280;text-align:center;">Enrolment link coming soon — <a href="${esc(compareUrl)}" style="color:#0A5C8C;">compare on the site</a></div>`;
+        // No referral link configured for this provider yet.
+        //
+        // The results board already handles this by routing to the concierge
+        // handover carrying the chosen plan, and the email now does the same
+        // rather than saying "coming soon" — a promise with no date attached,
+        // offering the customer no way to act on the plan they just picked.
+        // Only identifiers travel in the URL; no name, email or address.
+        : (() => {
+            const params = new URLSearchParams({ from: "email_no_route" });
+            if (result.planId) params.set("plan", String(result.planId));
+            if (result.providerName) params.set("provider", String(result.providerName));
+            const conciergeUrl = `${APP_BASE_URL}/home-concierge?${params.toString()}`;
+            return `<table cellpadding="0" cellspacing="0" style="margin-top:14px;" width="100%">
+             <tr><td style="border:1px solid #FF6B35;border-radius:6px;text-align:center;padding:11px 20px;">
+               <a href="${esc(conciergeUrl)}" style="color:#FF6B35;text-decoration:none;font-weight:600;font-size:15px;display:block;">Request this plan →</a>
+             </td></tr>
+           </table>`;
+          })();
 
       return `
         <tr><td style="padding:8px 0;">

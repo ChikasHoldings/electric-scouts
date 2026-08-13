@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +19,37 @@ export default function HomeConcierge() {
   const [openFaq, setOpenFaq] = useState(null);
   const [step, setStep] = useState(0); // 0 = landing, 1-4 = form steps, 5 = confirmation
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  /**
+   * The plan the customer was looking at when they got here.
+   *
+   * A plan whose provider has no referral link configured routes here from the
+   * results board and from the comparison email, both carrying `plan`,
+   * `provider` and `from` in the query string. This page read none of them, so
+   * a customer who pressed "Request this plan" landed on a blank form and the
+   * team had no idea which plan they meant — the handover threw away the one
+   * fact that made it a qualified lead.
+   *
+   * Only identifiers travel in the URL, never a name, email or address.
+   */
+  const [handoff] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const params = new URLSearchParams(window.location.search);
+    const provider = params.get("provider");
+    const planId = params.get("plan");
+    if (!provider && !planId) return null;
+    return {
+      provider: provider ? provider.slice(0, 120) : null,
+      planId: planId ? planId.slice(0, 64) : null,
+      from: (params.get("from") || "").slice(0, 40) || null,
+    };
+  });
+
+  // A visitor who arrived with a plan in hand has already made their choice —
+  // drop them straight into the form rather than making them read the pitch.
+  useEffect(() => {
+    if (handoff) setStep(1);
+  }, [handoff]);
 
   // Scroll to top on every step change
   useEffect(() => {
@@ -64,39 +94,46 @@ export default function HomeConcierge() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Use supabase client directly with just .insert() — no .select().single()
-      // The entity .create() method chains .select().single() after insert, which
-      // triggers a SELECT query that can fail for anonymous users due to RLS policies.
-      const { error } = await supabase
-        .from('concierge_requests')
-        .insert({
-          full_name: formData.full_name,
-          email: formData.email,
-          phone: formData.phone || null,
-          new_address: formData.new_address,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip_code: formData.zip_code,
-          move_in_date: formData.move_in_date || null,
-          property_type: formData.property_type,
-          services_requested: formData.services_requested,
-          electricity_preference: formData.electricity_preference,
-          internet_speed: formData.internet_speed,
-          monthly_budget: formData.monthly_budget || null,
-          wants_home_security: formData.wants_home_security,
-          wants_home_insurance: formData.wants_home_insurance,
-          wants_moving_service: formData.wants_moving_service,
-          wants_home_warranty: formData.wants_home_warranty,
-          special_instructions: formData.special_instructions || null,
-          status: 'new',
-          source: 'website',
-        });
-      if (error) throw error;
+      // Submitted through the server, not straight to the table.
+      //
+      // A direct browser insert cannot send the customer a confirmation, cannot
+      // tell the team a revenue-bearing request has arrived, and cannot mirror
+      // the request into `leads` so it shows up where an operator actually
+      // looks. All three now happen server-side, and the endpoint validates the
+      // NOT NULL columns so a missing field comes back as a readable message
+      // rather than a constraint violation.
+      const response = await fetch('/api/leads?action=concierge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          // Appended rather than replacing whatever the customer typed.
+          special_instructions: handoff
+            ? [
+                `Requested plan: ${handoff.provider || "unknown provider"}` +
+                  (handoff.planId ? ` (plan ${handoff.planId})` : "") +
+                  (handoff.from ? ` — from ${handoff.from}` : ""),
+                formData.special_instructions,
+              ].filter(Boolean).join("\n\n")
+            : formData.special_instructions,
+        }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.error || 'We could not save your request. Please try again.');
+      }
+
       setStep(5);
       toast({ title: "Request submitted!", description: "We'll be in touch within 24 hours." });
     } catch (err) {
       console.error('Concierge submit error:', err);
-      toast({ title: "Error", description: "Something went wrong. Please try again.", variant: "destructive" });
+      toast({
+        title: "Something went wrong",
+        description: err.message || "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -474,6 +511,20 @@ export default function HomeConcierge() {
           </div>
 
           <div className="max-w-2xl mx-auto px-4 py-8">
+            {/* Confirm the plan they came here for, so the handover does not
+                feel like starting over. */}
+            {handoff && step < 5 && (
+              <div className="mb-6 rounded-xl border border-[#FF6B35]/30 bg-[#FF6B35]/[0.05] p-4">
+                <p className="text-sm font-semibold text-gray-900">
+                  Requesting{handoff.provider ? ` ${handoff.provider}` : " this plan"}
+                </p>
+                <p className="mt-1 text-[13px] text-gray-600 leading-relaxed">
+                  This supplier doesn&rsquo;t offer instant online enrolment yet, so a
+                  specialist will set it up for you. Tell us where you need service and
+                  we&rsquo;ll take it from there.
+                </p>
+              </div>
+            )}
             {renderFormStep()}
 
             <div className="flex justify-between mt-8">

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { FileText, Search, ShieldCheck } from "lucide-react";
+import { MARKET_TOTALS } from "@/seo/market";
 
 export default function AboutSection() {
   return (
@@ -71,8 +72,8 @@ export default function AboutSection() {
             {/* Stats */}
             <div className="flex items-center justify-between sm:justify-start sm:gap-8 pt-1 sm:pt-2">
               <div className="text-center">
-                <span className="text-xl sm:text-2xl font-bold text-[#084a6f]">50K+</span>
-                <span className="text-xs sm:text-sm text-gray-500 block">Households switched</span>
+                <span className="text-xl sm:text-2xl font-bold text-[#084a6f]">{MARKET_TOTALS.activePlans.toLocaleString()}</span>
+                <span className="text-xs sm:text-sm text-gray-500 block">Plans tracked</span>
               </div>
               <div className="w-px h-8 sm:h-10 bg-gray-200"></div>
               <div className="text-center">

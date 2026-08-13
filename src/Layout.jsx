@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Building2, Home as HomeIcon, FileText, Leaf, Search } from "lucide-react";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ExitIntentPopup from "./components/ExitIntentPopup";
+import EmailCapture from "./components/EmailCapture";
 
 // Primary navigation — customer segments first (Residential → Commercial →
 // Renewable Energy), then the Bill Analyzer tool. Service Areas follows as a
@@ -158,12 +159,31 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               ))}
 
+              {/*
+                Hover opens it for a mouse; click and Enter open it for
+                everyone else.
+
+                The pointer-type guard is what makes tapping work. A touch tap
+                emits the compatibility mouse events before the click — so with
+                a plain `onMouseEnter` the sequence was: synthetic mouseenter
+                opens the menu, then the click toggles it straight back shut,
+                and the control did nothing at all on a tablet or a touchscreen
+                laptop. Pointer events carry the input that actually caused
+                them, so hover-to-open can be limited to a real mouse and the
+                click is left to do its job for touch.
+              */}
               <div
                 className="relative group"
-                onMouseEnter={() => setServiceAreaOpen(true)}
-                onMouseLeave={() => setServiceAreaOpen(false)}
+                onPointerEnter={(e) => { if (e.pointerType === "mouse") setServiceAreaOpen(true); }}
+                onPointerLeave={(e) => { if (e.pointerType === "mouse") setServiceAreaOpen(false); }}
               >
-                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium whitespace-nowrap">
+                <button
+                  type="button"
+                  onClick={() => setServiceAreaOpen((open) => !open)}
+                  aria-expanded={serviceAreaOpen}
+                  aria-haspopup="true"
+                  className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium whitespace-nowrap"
+                >
                   Service Areas
                   <ChevronDown className={`w-4 h-4 transition-transform ${serviceAreaOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -592,6 +612,19 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </div>
 
+          {/* Newsletter capture.
+              The component existed and was rendered on no page at all, so a
+              lead source the business counts on collected nothing. The footer
+              is where a visitor who has read this far actually is. The inline
+              variant carries its own heading and copy. */}
+          <div className="border-t border-gray-700 pt-8 pb-8">
+            <EmailCapture
+              source="newsletter"
+              sourcePage="newsletter_footer"
+              variant="inline"
+            />
+          </div>
+
           <div className="border-t border-gray-700 pt-6">
             <p className="text-gray-500 text-xs leading-relaxed mb-4 max-w-5xl mx-auto">
               <strong>Disclaimer:</strong> Electricity rates, plan details, and provider actual rates vary by ZIP code, usage, credit, and are subject to change. Verify all details with providers before enrollment. Electric Scouts is a comparison service and does not guarantee rate accuracy or plan availability. Savings estimates are based on average usage and market conditions.
@@ -620,7 +653,6 @@ export default function Layout({ children, currentPageName }) {
       {/* Schema Debugger (Dev Only) */}
 
       {/* AI Chatbot - Hidden */}
-      {/* <ChatBot /> */}
 
       {/* Exit Intent Popup — triggers only when user tries to leave */}
       {!location.pathname.includes('/admin') && <ExitIntentPopup />}

@@ -23,10 +23,22 @@ export function useZipDetection() {
   const detectZipFromIP = async () => {
     setIsDetecting(true);
     try {
-      // Using ipapi.co for geolocation
+      // Using ipapi.co for geolocation. A failure here is not an error the
+      // visitor should ever see — they simply type their ZIP, which most do
+      // anyway — but it is not nothing either: this call is rate-limited, and
+      // an ad blocker or a changed response shape breaks it silently. The catch
+      // stays graceful and logs the reason so the failure is diagnosable.
       const response = await fetch('https://ipapi.co/json/');
+
+      // Without this, a 429 body parses as JSON, carries no `postal`, and is
+      // indistinguishable from a visitor whose IP simply has no ZIP.
+      if (!response.ok) {
+        console.warn(`ZIP geolocation unavailable: HTTP ${response.status}`);
+        return;
+      }
+
       const data = await response.json();
-      
+
       if (data.postal) {
         const zip = data.postal.split('-')[0]; // Handle ZIP+4 format
         const validation = validateZipCode(zip);
@@ -36,6 +48,7 @@ export function useZipDetection() {
         }
       }
     } catch (error) {
+      console.warn('ZIP geolocation failed:', error.message);
     } finally {
       setIsDetecting(false);
     }
