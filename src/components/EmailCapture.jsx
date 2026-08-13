@@ -140,8 +140,12 @@ export default function EmailCapture({
             <h3 className="text-lg font-bold text-white mb-1">
               Get Rate Alerts for Your Area
             </h3>
+            {/* No subscriber count. The previous copy claimed "Join 50,000+
+                homeowners", which is not a number this platform can support —
+                and a claim a visitor can disprove costs more trust than the
+                claim was ever going to buy. */}
             <p className="text-sm text-white/70">
-              Join 50,000+ homeowners saving with personalized alerts. No spam.
+              We&rsquo;ll email you when a better rate lands in your area. No spam, unsubscribe anytime.
             </p>
           </div>
 

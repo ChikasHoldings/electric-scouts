@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Building2, Home as HomeIcon, FileText, Leaf, Search } from "lucide-react";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ExitIntentPopup from "./components/ExitIntentPopup";
+import EmailCapture from "./components/EmailCapture";
 
 // Primary navigation — customer segments first (Residential → Commercial →
 // Renewable Energy), then the Bill Analyzer tool. Service Areas follows as a
@@ -590,6 +591,19 @@ export default function Layout({ children, currentPageName }) {
                 Energy deregulation gives you the power to choose — but only if you can see what’s available. Electric Scouts puts every option on the table: budget-friendly fixed rates, flexible month-to-month plans, green energy from certified renewable sources, and business-grade contracts for commercial properties. Our comparison tool is 100% free, requires no credit card, and carries zero obligation. On average, people who switch through Electric Scouts save around $800 per year.
               </p>
             </div>
+          </div>
+
+          {/* Newsletter capture.
+              The component existed and was rendered on no page at all, so a
+              lead source the business counts on collected nothing. The footer
+              is where a visitor who has read this far actually is. The inline
+              variant carries its own heading and copy. */}
+          <div className="border-t border-gray-700 pt-8 pb-8">
+            <EmailCapture
+              source="newsletter"
+              sourcePage="newsletter_footer"
+              variant="inline"
+            />
           </div>
 
           <div className="border-t border-gray-700 pt-6">

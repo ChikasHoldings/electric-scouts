@@ -15,8 +15,23 @@ export default async function handler(req, res) {
     const { message, conversationHistory = [], billFileUrl } = req.body;
 
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
-      return res.json({ 
+      return res.json({
         response: "I didn't catch that. Could you type that again? 😊"
+      });
+    }
+
+    // Every reply on this endpoint goes through OpenAI, so without a key the
+    // only possible outcome is a 401 from their API surfaced to the visitor as
+    // "something went wrong". Answered honestly instead, and pointed at the
+    // comparison engine, which needs no third party and does the same job.
+    if (!openaiApiKey) {
+      return res.json({
+        response:
+          "Chat isn't available right now, but the rate comparison tool is — " +
+          "pop in your ZIP code on the Compare Rates page and it'll show you " +
+          "every plan available at your address. ⚡",
+        recommendations: [],
+        unavailable: true,
       });
     }
 

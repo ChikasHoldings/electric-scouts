@@ -9,12 +9,14 @@ import {
   Building, TrendingDown, Award, Shield, Users, CheckCircle, 
   ArrowRight, Calculator, Zap, Clock, DollarSign 
 } from "lucide-react";
+import CustomQuoteModal from "../components/business/CustomQuoteModal";
 import BusinessTestimonials from "../components/business/BusinessTestimonials";
 import BusinessComparison from "../components/business/BusinessComparison";
 import SEOHead from "../components/SEOHead";
 
 export default function BusinessHub() {
   const [zipCode, setZipCode] = useState("");
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -351,12 +353,23 @@ export default function BusinessHub() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-14 px-10 text-lg">
+            <Button
+              variant="outline"
+              onClick={() => setQuoteOpen(true)}
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-14 px-10 text-lg"
+            >
               Speak to an Expert
             </Button>
           </div>
         </div>
       </div>
+
+      {quoteOpen && (
+        <CustomQuoteModal
+          onClose={() => setQuoteOpen(false)}
+          initialData={{ zipCode }}
+        />
+      )}
     </div>
   );
 }

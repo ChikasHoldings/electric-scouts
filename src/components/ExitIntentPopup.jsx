@@ -63,9 +63,16 @@ export default function ExitIntentPopup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: firstName.trim(),
+          first_name: firstName.trim(),
           email: email.trim(),
-          zip_code: zipCode,
+          // `zip`, not `zip_code`. /api/leads reads `zip`, so the previous key
+          // was silently discarded: the visitor typed a ZIP, the form validated
+          // it, and the lead was stored with no ZIP and therefore no state —
+          // which made it unroutable to any buyer and excluded it from the
+          // state-specific follow-up email. Confirmed against the live row.
+          zip: zipCode,
           source: "exit_intent_rate_alerts",
+          source_page: "exit_intent",
         }),
       });
       if (!response.ok) throw new Error("Failed to submit");

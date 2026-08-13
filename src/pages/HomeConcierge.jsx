@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -64,39 +63,35 @@ export default function HomeConcierge() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Use supabase client directly with just .insert() — no .select().single()
-      // The entity .create() method chains .select().single() after insert, which
-      // triggers a SELECT query that can fail for anonymous users due to RLS policies.
-      const { error } = await supabase
-        .from('concierge_requests')
-        .insert({
-          full_name: formData.full_name,
-          email: formData.email,
-          phone: formData.phone || null,
-          new_address: formData.new_address,
-          city: formData.city || null,
-          state: formData.state || null,
-          zip_code: formData.zip_code,
-          move_in_date: formData.move_in_date || null,
-          property_type: formData.property_type,
-          services_requested: formData.services_requested,
-          electricity_preference: formData.electricity_preference,
-          internet_speed: formData.internet_speed,
-          monthly_budget: formData.monthly_budget || null,
-          wants_home_security: formData.wants_home_security,
-          wants_home_insurance: formData.wants_home_insurance,
-          wants_moving_service: formData.wants_moving_service,
-          wants_home_warranty: formData.wants_home_warranty,
-          special_instructions: formData.special_instructions || null,
-          status: 'new',
-          source: 'website',
-        });
-      if (error) throw error;
+      // Submitted through the server, not straight to the table.
+      //
+      // A direct browser insert cannot send the customer a confirmation, cannot
+      // tell the team a revenue-bearing request has arrived, and cannot mirror
+      // the request into `leads` so it shows up where an operator actually
+      // looks. All three now happen server-side, and the endpoint validates the
+      // NOT NULL columns so a missing field comes back as a readable message
+      // rather than a constraint violation.
+      const response = await fetch('/api/leads?action=concierge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.error || 'We could not save your request. Please try again.');
+      }
+
       setStep(5);
       toast({ title: "Request submitted!", description: "We'll be in touch within 24 hours." });
     } catch (err) {
       console.error('Concierge submit error:', err);
-      toast({ title: "Error", description: "Something went wrong. Please try again.", variant: "destructive" });
+      toast({
+        title: "Something went wrong",
+        description: err.message || "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }

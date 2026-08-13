@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import AdminLayout from "./AdminLayout";
+import AdminBoot from "./AdminBoot";
 
 /**
  * Which roles may open which admin route.
@@ -31,35 +32,18 @@ export default function AdminRoute({ children }) {
   const { user, profile, isAuthenticated, isLoadingAuth, isLoadingProfile } = useAuth();
   const location = useLocation();
 
-  // Show loading while checking auth
-  if (isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm text-gray-500">Checking access...</p>
-        </div>
-      </div>
-    );
-  }
+  // One boot state covers the whole start-up, so nothing flashes between steps.
+  if (isLoadingAuth) return <AdminBoot />;
 
   // Not logged in → redirect to admin login
   if (!isAuthenticated || !user) {
     return <Navigate to="/admin/login" replace />;
   }
 
-  // Show loading while profile is being fetched
-  // This prevents the "Access Denied" flash when profile hasn't loaded yet
-  if (isLoadingProfile || (!profile && isAuthenticated)) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm text-gray-500">Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
+  // Still the same boot state: the role decides which nav items exist, so
+  // rendering the shell before the profile arrives would show an empty sidebar
+  // and then populate it — a second flash in place of the one just removed.
+  if (isLoadingProfile || (!profile && isAuthenticated)) return <AdminBoot />;
 
   const userRole = profile?.role || "user";
   const allowedRoles = ["admin", "editor", "viewer"];

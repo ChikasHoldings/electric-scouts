@@ -4,12 +4,17 @@ import {
   leadWelcomeEmail,
   rateAlertsConfirmationEmail,
   adminNewLeadEmail,
+  adminConciergeRequestEmail,
+  conciergeConfirmationEmail,
+  adminBusinessQuoteEmail,
+  businessQuoteConfirmationEmail,
   APP_BASE_URL,
   LOGO_EMAIL_HEADER_URL,
   ADMIN_EMAILS,
 } from "./_lib/email.js";
 import { validateContact } from "../src/lib/contactValidation.js";
 import { routeLead } from "./_lib/leadDelivery.js";
+import { verifyCronRequest } from "./_lib/cronAuth.js";
 
 // ZIP prefix to state mapping for server-side resolution
 const ZIP_TO_STATE = {
@@ -163,6 +168,11 @@ function buildFollowUpEmail(lead, plans, followUpNumber) {
 // ─── Follow-Up Handler ───
 
 async function handleFollowUp(req, res) {
+  // Authenticated: this mails up to 50 real customers per call, and was
+  // previously reachable by anyone who knew the URL.
+  const auth = verifyCronRequest(req);
+  if (!auth.ok) return res.status(auth.status).json({ error: auth.error });
+
   try {
     const now = new Date();
     const threeDaysAgo = new Date(now - 3 * 24 * 60 * 60 * 1000);
@@ -562,22 +572,286 @@ async function handleCreateLead(req, res) {
   }
 }
 
+// ─── Concierge and commercial quote submissions ───
+
+/** Bounded text bound for the database. */
+function text(value, max = 500) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, max) : null;
+}
+
+/**
+ * A concierge request.
+ *
+ * Submitted through the server rather than straight from the browser so that
+ * three things happen that could not happen client-side: the customer gets a
+ * confirmation, an admin is told a revenue-bearing request has arrived, and a
+ * matching row lands in `leads` so the request appears in the one place an
+ * operator looks for everything that came in.
+ */
+async function handleConcierge(req, res) {
+  const body = req.body || {};
+
+  const contact = validateContact(
+    { firstName: body.full_name, email: body.email, phone: body.phone },
+    { require: ["email"] }
+  );
+  if (!contact.valid) {
+    return res.status(400).json({ error: "Invalid contact details", fields: contact.errors });
+  }
+
+  // These three are NOT NULL on the table. Checked here so the customer gets a
+  // usable message rather than a constraint violation surfaced as "something
+  // went wrong".
+  const fullName = text(body.full_name, 200);
+  const newAddress = text(body.new_address, 300);
+  const zip = text(body.zip_code, 10);
+  const missing = [];
+  if (!fullName) missing.push("full_name");
+  if (!newAddress) missing.push("new_address");
+  if (!zip) missing.push("zip_code");
+  if (missing.length) {
+    return res.status(400).json({
+      error: "Name, the address you are moving to, and a ZIP code are all required.",
+      fields: missing,
+    });
+  }
+
+  const row = {
+    full_name: fullName,
+    email: contact.values.email,
+    phone: contact.values.phone,
+    new_address: newAddress,
+    city: text(body.city, 120),
+    state: text(body.state, 2) || resolveState(zip),
+    zip_code: zip,
+    move_in_date: body.move_in_date || null,
+    property_type: text(body.property_type, 40) || "house",
+    services_requested: Array.isArray(body.services_requested) ? body.services_requested : ["electricity"],
+    electricity_preference: text(body.electricity_preference, 60),
+    internet_speed: text(body.internet_speed, 60),
+    monthly_budget: text(body.monthly_budget, 60),
+    special_instructions: text(body.special_instructions, 2000),
+    wants_home_security: body.wants_home_security === true,
+    wants_home_insurance: body.wants_home_insurance === true,
+    wants_moving_service: body.wants_moving_service === true,
+    wants_home_warranty: body.wants_home_warranty === true,
+    status: "new",
+    source: "website",
+    utm_source: text(body.utm_source, 80),
+    utm_medium: text(body.utm_medium, 80),
+    utm_campaign: text(body.utm_campaign, 80),
+  };
+
+  const { data: request, error } = await supabase
+    .from("concierge_requests")
+    .insert(row)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Concierge insert failed:", error.message);
+    return res.status(500).json({ error: "Could not save your request. Please try again." });
+  }
+
+  // The lead row is what makes a concierge request visible alongside every
+  // other lead. Non-fatal: the request itself is already safely stored.
+  await upsertLeadFromSubmission({
+    email: request.email,
+    name: request.full_name,
+    zip: request.zip_code,
+    city: request.city,
+    state: request.state,
+    phone: request.phone,
+    source: "concierge",
+    source_page: "concierge",
+    monetization_route: "concierge",
+  });
+
+  await notify({
+    adminTemplate: adminConciergeRequestEmail(request),
+    customerTemplate: conciergeConfirmationEmail(request),
+    to: request.email,
+    key: `concierge_${request.id}`,
+    eventType: "concierge_request",
+  });
+
+  return res.status(200).json({ success: true, id: request.id });
+}
+
+/**
+ * A commercial quote request.
+ *
+ * Same reasoning as concierge, and more urgent: commercial is the highest-value
+ * segment, and these submissions were reaching nobody.
+ */
+async function handleBusinessQuote(req, res) {
+  const body = req.body || {};
+
+  const contact = validateContact(
+    { firstName: body.contact_name, email: body.email, phone: body.phone },
+    { require: ["email"] }
+  );
+  if (!contact.valid) {
+    return res.status(400).json({ error: "Invalid contact details", fields: contact.errors });
+  }
+
+  const businessName = text(body.business_name, 200);
+  const contactName = text(body.contact_name, 200);
+  if (!businessName || !contactName) {
+    return res.status(400).json({ error: "A business name and a contact name are both required." });
+  }
+
+  const zip = text(body.zip_code, 10);
+  const row = {
+    business_name: businessName,
+    contact_name: contactName,
+    email: contact.values.email,
+    phone: contact.values.phone,
+    zip_code: zip,
+    business_type: text(body.business_type, 80),
+    industry_type: text(body.industry_type, 80),
+    monthly_usage: text(body.monthly_usage, 40),
+    peak_demand: text(body.peak_demand, 40),
+    peak_demand_hours: text(body.peak_demand_hours, 80),
+    number_of_locations: text(body.number_of_locations, 10) || "1",
+    current_supplier: text(body.current_supplier, 120),
+    contract_end_date: text(body.contract_end_date, 40),
+    current_rate: text(body.current_rate, 40),
+    energy_goals: Array.isArray(body.energy_goals) ? body.energy_goals : [],
+    bill_file_url: text(body.bill_file_url, 500),
+    status: "pending",
+  };
+
+  const { data: quote, error } = await supabase
+    .from("custom_business_quotes")
+    .insert(row)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Business quote insert failed:", error.message);
+    return res.status(500).json({ error: "Could not save your request. Please try again." });
+  }
+
+  await upsertLeadFromSubmission({
+    email: quote.email,
+    name: quote.contact_name,
+    zip: quote.zip_code,
+    state: resolveState(quote.zip_code),
+    phone: quote.phone,
+    source: "business_quote",
+    source_page: "business_quote",
+    customer_type: "commercial",
+    business_name: quote.business_name,
+    business_type: quote.business_type,
+    monetization_route: "commercial_partner",
+  });
+
+  await notify({
+    adminTemplate: adminBusinessQuoteEmail(quote),
+    customerTemplate: businessQuoteConfirmationEmail(quote),
+    to: quote.email,
+    key: `business_quote_${quote.id}`,
+    eventType: "business_quote",
+  });
+
+  return res.status(200).json({ success: true, id: quote.id });
+}
+
+/**
+ * Mirror a submission into `leads`.
+ *
+ * Concierge requests and commercial quotes are leads by any useful definition,
+ * and an operator should not have to check three screens to see everything that
+ * arrived today. Upserted on email so a visitor who fills in two forms is one
+ * person, and only non-empty values are written so a later submission cannot
+ * blank out detail an earlier one captured.
+ */
+async function upsertLeadFromSubmission(fields) {
+  try {
+    const row = Object.fromEntries(
+      Object.entries(fields).filter(([, v]) => v !== null && v !== undefined && v !== "")
+    );
+    row.last_activity_at = new Date().toISOString();
+
+    const { data: existing } = await supabase
+      .from("leads")
+      .select("id")
+      .eq("email", row.email)
+      .maybeSingle();
+
+    if (existing) {
+      await writeLeadRow(row, (r) => supabase.from("leads").update(r).eq("id", existing.id));
+    } else {
+      await writeLeadRow({ ...row, status: "new" }, (r) => supabase.from("leads").insert(r));
+    }
+  } catch (error) {
+    // The submission is already stored; a missing mirror row is a reporting
+    // gap, not a lost customer.
+    console.error("Lead mirror failed:", error?.message || error);
+  }
+}
+
+/**
+ * Tell the customer and tell the team.
+ *
+ * Never throws: a submission that was saved must return success even if the
+ * mail provider is down, or the visitor sees an error for something that
+ * actually worked and submits again.
+ */
+async function notify({ adminTemplate, customerTemplate, to, key, eventType }) {
+  try {
+    if (customerTemplate && to) {
+      await sendEmail({
+        to,
+        subject: customerTemplate.subject,
+        html: customerTemplate.html,
+        idempotencyKey: `${key}_confirmation`,
+        eventType: `${eventType}_confirmation`,
+      });
+    }
+    if (adminTemplate && ADMIN_EMAILS.length > 0) {
+      await sendEmail({
+        to: ADMIN_EMAILS,
+        subject: adminTemplate.subject,
+        html: adminTemplate.html,
+        idempotencyKey: `${key}_admin`,
+        eventType: `admin_${eventType}`,
+      });
+    }
+  } catch (error) {
+    console.error(`Notification failed for ${eventType}:`, error?.message || error);
+  }
+}
+
 // ─── Main Handler (routes by action query param) ───
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  if (req.method !== "POST") {
+  const action = req.query.action || req.body?.action || "create";
+  const isFollowUp = action === "follow-up" || action === "followup";
+
+  // Vercel Cron invokes with GET. Only the scheduled action accepts it, and it
+  // still has to present the cron secret — without this the nightly follow-up
+  // pass would have 405'd every night and nobody would have been told.
+  if (req.method !== "POST" && !(req.method === "GET" && isFollowUp)) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const action = req.query.action || req.body?.action || "create";
-
-  if (action === "follow-up" || action === "followup") {
+  if (isFollowUp) {
     return handleFollowUp(req, res);
+  }
+  if (action === "concierge") {
+    return handleConcierge(req, res);
+  }
+  if (action === "business-quote") {
+    return handleBusinessQuote(req, res);
   }
 
   return handleCreateLead(req, res);
