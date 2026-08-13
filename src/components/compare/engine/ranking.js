@@ -14,6 +14,7 @@
 
 import { estimateMonthlyCost, COST_CONFIDENCE, costSortKey } from './planPricing.js';
 import { matchScore } from './matchScore.js';
+import { resolveDelivery } from '../../../lib/deliveryTariff.js';
 
 /**
  * Weights, in points. Cost dominates because it is what the customer pays;
@@ -54,8 +55,10 @@ function clamp01(value) {
  * set, so cost is scored relatively — the cheapest plan available scores full
  * marks whatever the absolute price level in that market happens to be.
  */
-export function scorePlan(plan, state, { usageKwh, costRange, hasAffiliate }) {
-  const estimate = estimateMonthlyCost(plan, usageKwh);
+export function scorePlan(plan, state, { usageKwh, costRange, hasAffiliate, territory }) {
+  const estimate = estimateMonthlyCost(plan, usageKwh, {
+    delivery: territory ? resolveDelivery(plan, territory) : null,
+  });
   const breakdown = {};
 
   // ── Cost ──
@@ -170,12 +173,16 @@ export function matchReasons(scored, state, { ranked, usageKwh, cheapestId }) {
  * score order. Ties break on estimated cost then plan id so the order is
  * stable across renders and reloads.
  */
-export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set() } = {}) {
+export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set(), territory = null } = {}) {
   if (!Array.isArray(plans) || plans.length === 0) {
     return { top: [], rest: [], all: [] };
   }
 
-  const estimates = plans.map((plan) => estimateMonthlyCost(plan, usageKwh));
+  const estimates = plans.map((plan) =>
+    estimateMonthlyCost(plan, usageKwh, {
+      delivery: territory ? resolveDelivery(plan, territory) : null,
+    })
+  );
   // Built from the supply-only figure for the same reason scoring uses it.
   const amounts = estimates.map((e) => e.comparableAmount).filter((a) => a !== null);
 
@@ -189,6 +196,7 @@ export function rankPlans(plans, state, { usageKwh, affiliateIds = new Set() } =
       usageKwh,
       costRange,
       hasAffiliate: affiliateIds.has(plan.id),
+      territory,
     })
   );
 

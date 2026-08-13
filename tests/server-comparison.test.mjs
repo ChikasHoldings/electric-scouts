@@ -22,6 +22,7 @@ import {
   MONETIZATION,
   PRICING_COMPLETENESS,
   RESULT_SECTIONS,
+  MAX_RESULTS,
 } from '../src/components/compare/engine/resultsContract.js';
 import { classifyMonetization, resolveRedirectUrl } from '../api/_lib/referral.js';
 
@@ -864,8 +865,69 @@ describe('the catalog is read in a fixed number of queries', () => {
 
     const { comparison } = await runComparison(supabase, BASE_REQUEST);
 
-    assert.equal(comparison.results.length, 120);
-    assert.equal(supabase.calls.queries, 2, 'one catalog read, one referral read');
+    // The whole catalog slice is still read and ranked in a fixed number of
+    // queries — the cost of a comparison does not grow with the size of the
+    // result set, and 120 plans cost exactly what 3 would.
+    assert.equal(
+      supabase.calls.queries,
+      3,
+      'one catalog read, one referral read, one delivery-tariff read'
+    );
+
+    // What is returned is the top of that ranking, not all 120. The count of
+    // what matched stays truthful.
+    assert.equal(comparison.results.length, MAX_RESULTS);
+    assert.equal(comparison.counts.eligible, 120, 'the market size is reported honestly');
+    assert.equal(comparison.counts.returned, MAX_RESULTS);
+    assert.equal(comparison.counts.capped, true);
+  });
+});
+
+describe('a comparison returns a shortlist, not the whole catalog', () => {
+  const priced = (id, rate) => planRow({ id, rate_per_kwh: rate, tdsp_charges: 4 });
+
+  test('the returned plans are the best-ranked ones, not an arbitrary slice', async () => {
+    // Cheapest last in input order, so a naive slice would drop exactly the
+    // plans the customer came for.
+    const plans = Array.from({ length: 40 }, (_, i) => priced(`plan-${i}`, 20 - i * 0.25));
+    const supabase = fakeSupabase({ plans, links: [] });
+
+    const { comparison } = await runComparison(supabase, BASE_REQUEST);
+
+    assert.equal(comparison.results.length, MAX_RESULTS);
+    assert.equal(comparison.results[0].planId, 'plan-39', 'the cheapest plan survives the cap');
+
+    // Ranks are contiguous from the top of the full ranking.
+    assert.deepEqual(
+      comparison.results.map((r) => r.rank),
+      Array.from({ length: MAX_RESULTS }, (_, i) => i + 1)
+    );
+  });
+
+  test('a small market is returned whole and not marked capped', async () => {
+    const supabase = fakeSupabase({
+      plans: [priced('a', 9), priced('b', 10), priced('c', 11)],
+      links: [],
+    });
+
+    const { comparison } = await runComparison(supabase, BASE_REQUEST);
+
+    assert.equal(comparison.results.length, 3);
+    assert.equal(comparison.counts.eligible, 3);
+    assert.equal(comparison.counts.capped, false);
+  });
+
+  test('the headline three come from the returned set', async () => {
+    const plans = Array.from({ length: 40 }, (_, i) => priced(`plan-${i}`, 8 + i * 0.1));
+    const supabase = fakeSupabase({ plans, links: [] });
+
+    const { comparison } = await runComparison(supabase, BASE_REQUEST);
+    const returnedIds = new Set(comparison.results.map((r) => r.planId));
+
+    assert.equal(comparison.topMatchIds.length, 3);
+    for (const id of comparison.topMatchIds) {
+      assert.ok(returnedIds.has(id), 'a headline plan must be one the customer can see');
+    }
   });
 });
 

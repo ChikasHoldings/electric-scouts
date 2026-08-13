@@ -27,6 +27,7 @@ const AdminConcierge = lazy(() => import('@/pages/admin/AdminConcierge'));
 const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
 const AdminRevenue = lazy(() => import('@/pages/admin/AdminRevenue'));
 const AdminLeadBuyers = lazy(() => import('@/pages/admin/AdminLeadBuyers'));
+const AdminTerritories = lazy(() => import('@/pages/admin/AdminTerritories'));
 
 // Lazy-loaded SEO redirect components
 const CityRatesRedirect = lazy(() => import('@/components/CityRatesRedirect'));
@@ -118,6 +119,11 @@ const AppRoutes = () => {
       <Route path="/admin/lead-buyers" element={
         <Suspense fallback={<AdminBoot />}>
           <AdminRoute><AdminLeadBuyers /></AdminRoute>
+        </Suspense>
+      } />
+      <Route path="/admin/territories" element={
+        <Suspense fallback={<AdminBoot />}>
+          <AdminRoute><AdminTerritories /></AdminRoute>
         </Suspense>
       } />
       <Route path="/admin/revenue" element={

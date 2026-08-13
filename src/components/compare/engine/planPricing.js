@@ -38,10 +38,17 @@ function positive(value) {
  * Returns the amount plus the components that produced it, so the UI can show
  * a breakdown rather than an unexplained figure, and `caveats` naming the
  * pricing structures we could not model.
+ *
+ * `options.delivery` is the resolved delivery terms from `resolveDelivery` —
+ * the utility tariff for the market, or the plan's own override. Omitting it
+ * falls back to reading the plan's `tdsp_charges` alone, which is what every
+ * caller did before territories existed and what the browser still does when it
+ * prices a plan without market context.
  */
-export function estimateMonthlyCost(plan, usageKwh) {
+export function estimateMonthlyCost(plan, usageKwh, options = {}) {
   const usage = positive(usageKwh);
   const rate = positive(plan?.rate_per_kwh);
+  const delivery = options.delivery || null;
 
   if (!usage || !rate) {
     return {
@@ -66,11 +73,31 @@ export function estimateMonthlyCost(plan, usageKwh) {
   if (baseCharge !== null) components.baseCharge = baseCharge;
 
   // ── Utility delivery ──
-  // Stored per-kWh where present. Absent it, the estimate is supply-only, which
-  // is materially lower than the bill the customer will receive.
-  const tdsp = positive(plan.tdsp_charges);
-  if (tdsp !== null) {
-    components.delivery = (tdsp / 100) * usage;
+  //
+  // Three cases, and conflating them is how an estimate becomes confidently
+  // wrong rather than honestly incomplete:
+  //
+  //   all_in       the advertised rate already includes delivery. Nothing is
+  //                added, and the estimate is complete as it stands — adding a
+  //                delivery component here would double-charge the customer.
+  //   supply_only  delivery is billed on top, so it is added from the tariff
+  //                (or the plan's own override) and the estimate is complete.
+  //   unknown      no tariff configured. Supply-only subtotal, clearly labelled.
+  //
+  // Without a resolved tariff this reads the plan's own charge, which is the
+  // pre-territory behaviour every existing caller relies on.
+  const allIn = delivery?.billingModel === 'all_in';
+  const deliveryRate = delivery ? delivery.perKwhCents : positive(plan.tdsp_charges);
+  const deliveryKnown = allIn || (deliveryRate !== null && deliveryRate !== undefined);
+
+  if (!allIn && deliveryRate !== null && deliveryRate !== undefined) {
+    components.delivery = (deliveryRate / 100) * usage;
+  }
+
+  // A fixed monthly delivery charge is levied by the utility regardless of the
+  // retailer, so it applies wherever the tariff records one.
+  if (!allIn && delivery?.fixedMonthly) {
+    components.deliveryFixed = delivery.fixedMonthly;
   }
 
   // ── Usage credit ──
@@ -94,7 +121,7 @@ export function estimateMonthlyCost(plan, usageKwh) {
   // Delivery charges are the single biggest thing we can be missing, so their
   // absence downgrades the estimate even when everything else is present.
   let confidence = COST_CONFIDENCE.COMPLETE;
-  if (tdsp === null) {
+  if (!deliveryKnown) {
     confidence = COST_CONFIDENCE.PARTIAL;
     caveats.push('Utility delivery charges are billed separately and are not included.');
   }
@@ -111,6 +138,12 @@ export function estimateMonthlyCost(plan, usageKwh) {
   // favour whichever plans happen to be *missing* delivery data — they look
   // cheaper purely because we know less about them. Every plan has a supply
   // figure, so comparing on it is like for like.
+  //
+  // Still true with territory tariffs: a comparison resolves one territory for
+  // the whole result set, so every plan in a ranking shares the same delivery
+  // terms and the same billing model. Excluding a component all of them share
+  // cannot reorder them — it only keeps a plan carrying its own override from
+  // being penalised against plans that inherit the tariff.
   const comparableAmount =
     (components.energy ?? 0) + (components.baseCharge ?? 0) + (components.usageCredit ?? 0);
 

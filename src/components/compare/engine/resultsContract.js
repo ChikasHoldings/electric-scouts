@@ -50,6 +50,21 @@ export const RESULT_SECTIONS = {
   MORE_OPTIONS: 'more_options',
 };
 
+/**
+ * The most results a comparison will ever return.
+ *
+ * A Texas residential search matches 96 plans. Returning all of them is not
+ * thoroughness — it is handing the customer the problem they came here to have
+ * solved, and a list nobody reads is worth nothing to them or to us. The job is
+ * to find the cheaper rate, not to prove how much inventory exists.
+ *
+ * The cap is applied server-side, after ranking, so it always keeps the best
+ * matches rather than an arbitrary slice, and no client can ask for more.
+ * `counts.eligible` still reports how many plans genuinely matched, so the
+ * total stays honest even though the list is short.
+ */
+export const MAX_RESULTS = 13;
+
 function round2(value) {
   return typeof value === 'number' && Number.isFinite(value)
     ? Math.round(value * 100) / 100
