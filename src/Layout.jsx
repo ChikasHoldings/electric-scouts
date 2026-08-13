@@ -159,15 +159,24 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
               ))}
 
+              {/*
+                Hover opens it for a mouse; click and Enter open it for
+                everyone else.
+
+                The pointer-type guard is what makes tapping work. A touch tap
+                emits the compatibility mouse events before the click — so with
+                a plain `onMouseEnter` the sequence was: synthetic mouseenter
+                opens the menu, then the click toggles it straight back shut,
+                and the control did nothing at all on a tablet or a touchscreen
+                laptop. Pointer events carry the input that actually caused
+                them, so hover-to-open can be limited to a real mouse and the
+                click is left to do its job for touch.
+              */}
               <div
                 className="relative group"
-                onMouseEnter={() => setServiceAreaOpen(true)}
-                onMouseLeave={() => setServiceAreaOpen(false)}
+                onPointerEnter={(e) => { if (e.pointerType === "mouse") setServiceAreaOpen(true); }}
+                onPointerLeave={(e) => { if (e.pointerType === "mouse") setServiceAreaOpen(false); }}
               >
-                {/* Openable by click as well as hover. Hover alone left this
-                    unreachable by keyboard and unusable on any touch device
-                    wide enough to get the desktop nav — a tablet saw a menu
-                    item that did nothing. */}
                 <button
                   type="button"
                   onClick={() => setServiceAreaOpen((open) => !open)}

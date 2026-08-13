@@ -14,6 +14,7 @@ import {
   Store,
   UtensilsCrossed,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { useAccent } from "./ComparisonShell";
 
@@ -251,16 +252,29 @@ export function TextQuestion({
   );
 }
 
-/** Secondary action styled to sit below a primary button without competing. */
-export function SecondaryAction({ onClick, children }) {
+/**
+ * Secondary action styled to sit below a primary button without competing.
+ *
+ * Pass `to` when the action is navigation and it renders a link instead of a
+ * button. The results view previously wrapped this button in a `<Link>` and
+ * passed `onClick={() => {}}` to satisfy the signature — a button inside an
+ * anchor is invalid HTML and gives assistive technology two nested interactive
+ * elements where there is one action. One element, chosen by what it does.
+ */
+export function SecondaryAction({ onClick, to, children }) {
   const accent = useAccent();
+  const className = `w-full h-[52px] rounded-2xl border border-gray-300 bg-white text-[15px] font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${accent.focus}`;
+
+  if (to) {
+    return (
+      <Link to={to} className={`${className} flex items-center justify-center`}>
+        {children}
+      </Link>
+    );
+  }
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`w-full h-[52px] rounded-2xl border border-gray-300 bg-white text-[15px] font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${accent.focus}`}
-    >
+    <button type="button" onClick={onClick} className={className}>
       {children}
     </button>
   );
