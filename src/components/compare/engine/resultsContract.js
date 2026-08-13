@@ -103,11 +103,25 @@ export function toResultDto(scored, context = {}) {
 
     // ── Pricing ──
     pricingCompleteness: estimate.confidence,
+    // Which material components are missing, by stable name. A generic boolean
+    // cannot tell an admin what to go and fix, and cannot tell the customer
+    // what the estimate excludes — both read this.
+    missingComponents: Array.isArray(estimate.missingComponents)
+      ? estimate.missingComponents
+      : [],
     ratePerKwh: numberOrNull(plan.rate_per_kwh),
     baseCharge: round2(estimate.components?.baseCharge ?? null),
     deliveryCharge: round2(estimate.components?.delivery ?? null),
     usageCredit: numberOrNull(plan.usage_credit),
     usageCreditThreshold: numberOrNull(plan.usage_credit_threshold),
+
+    // ── Delivery context ──
+    //
+    // The utility's NAME is the customer's own utility and appears on their
+    // bill, so naming it makes the estimate checkable. Nothing else about the
+    // territory row travels: no source references, no admin notes, no ids.
+    utilityName: estimate.territory?.name || null,
+    billingModel: estimate.billingModel || null,
 
     estimatedMonthlyCost,
     supplyEstimate,
@@ -115,6 +129,11 @@ export function toResultDto(scored, context = {}) {
     costComponents: {
       energy: round2(estimate.components?.energy ?? null),
       baseCharge: round2(estimate.components?.baseCharge ?? null),
+      // Split, because they are different kinds of charge: one scales with
+      // usage and one does not, and a customer checking the estimate against a
+      // real bill needs to see both lines.
+      deliveryVariable: round2(estimate.components?.deliveryVariable ?? null),
+      deliveryFixed: round2(estimate.components?.deliveryFixed ?? null),
       delivery: round2(estimate.components?.delivery ?? null),
       usageCredit: round2(estimate.components?.usageCredit ?? null),
     },
@@ -193,11 +212,23 @@ export function describeResultPrice(result) {
   return null;
 }
 
-/** The completeness caveat, worded once for every surface that shows it. */
+/**
+ * The completeness caveat, worded once for every surface that shows it.
+ *
+ * Market-aware, because the two structures mean different things to the
+ * customer. Where the supplier bills everything, the missing delivery charge
+ * would have appeared on the bill this plan produces. Where the utility bills
+ * delivery separately, it is a charge the customer already pays and will keep
+ * paying whoever supplies them — a materially less alarming fact, and saying so
+ * is more accurate than one generic warning for both.
+ */
 export function pricingCaveatText(result) {
   if (result?.pricingCompleteness === PRICING_COMPLETENESS.COMPLETE) return null;
-  return result?.pricingCompleteness === PRICING_COMPLETENESS.UNAVAILABLE
-    ? 'Not enough pricing data for a monthly estimate'
+  if (result?.pricingCompleteness === PRICING_COMPLETENESS.UNAVAILABLE) {
+    return 'Not enough pricing data for a monthly estimate';
+  }
+  return result?.billingModel === 'supply_only'
+    ? 'Supply only — your utility bills delivery separately'
     : 'Supply only — utility delivery charges are billed separately';
 }
 

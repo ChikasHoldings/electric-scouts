@@ -19,6 +19,21 @@
  * number a customer will be charged against.
  */
 
+// Relative, not aliased: this module is exercised directly by `node --test`,
+// which does not resolve the bundler's `@/` alias.
+import { estimateMonthlyCost, COST_CONFIDENCE } from '../components/compare/engine/planPricing.js';
+import { resolveTerritory, COMPONENT_LABELS } from '../components/compare/engine/utilityTerritory.js';
+import { checkEligibility, REASON_LABELS } from '../components/compare/engine/eligibility.js';
+
+/**
+ * Reference load for completeness checks only.
+ *
+ * Completeness is a question about which components are known, not about a
+ * particular customer's usage — but the engine needs a positive usage figure to
+ * exercise them. 1,000 kWh is the industry-standard comparison point.
+ */
+const REFERENCE_USAGE_KWH = 1000;
+
 /**
  * Parse an optional number.
  *
@@ -131,14 +146,23 @@ export function validatePlan(form = {}, providers = []) {
   }
 
   // ── Pricing ──
+  //
+  // `monthly_base_charge` is the CANONICAL supplier base charge and the only one
+  // admin writes. The legacy `base_charge` column is deliberately absent from
+  // this list: two admin-editable fields for one concept is how a plan ends up
+  // with a different base charge depending on which screen last saved it. It
+  // stays readable — the pricing engine falls back to it — but nothing here
+  // writes it, so existing values are preserved untouched.
+  //
+  // All money is DOLLARS per month; all per-kWh rates are CENTS per kWh.
   const numericFields = [
-    { key: 'rate_per_kwh', field: 'Rate per kWh', min: 0, max: 200, required: true },
-    { key: 'monthly_base_charge', field: 'Base charge', min: 0, max: 1000 },
-    { key: 'tdsp_charges', field: 'Delivery charge', min: 0, max: 200 },
-    { key: 'usage_credit', field: 'Usage credit', min: 0, max: 10000 },
-    { key: 'usage_credit_threshold', field: 'Usage credit threshold', min: 0, max: 100000, integer: true },
-    { key: 'early_termination_fee', field: 'Early termination fee', min: 0, max: 10000 },
-    { key: 'contract_length', field: 'Contract term', min: 0, max: 120, integer: true },
+    { key: 'rate_per_kwh', field: 'Rate per kWh (¢)', min: 0, max: 200, required: true },
+    { key: 'monthly_base_charge', field: 'Base charge ($/mo)', min: 0, max: 1000 },
+    { key: 'tdsp_charges', field: 'Delivery charge (¢/kWh)', min: 0, max: 200 },
+    { key: 'usage_credit', field: 'Usage credit ($)', min: 0, max: 10000 },
+    { key: 'usage_credit_threshold', field: 'Usage credit threshold (kWh)', min: 0, max: 100000, integer: true },
+    { key: 'early_termination_fee', field: 'Early termination fee ($)', min: 0, max: 10000 },
+    { key: 'contract_length', field: 'Contract term (months)', min: 0, max: 120, integer: true },
   ];
 
   for (const spec of numericFields) {
@@ -185,24 +209,64 @@ export function validatePlan(form = {}, providers = []) {
 }
 
 /**
- * Pricing completeness, using the SAME rule the comparison engine applies.
+ * Pricing completeness, computed by the SAME engine the public comparison runs.
  *
- * Delivery charges are the component whose absence downgrades an estimate, so
- * an admin can see exactly why a plan will show as partial and cannot generate
- * a savings comparison.
+ * This calls `estimateMonthlyCost` rather than re-implementing its rule. The
+ * previous version re-stated the test as `tdsp_charges > 0`, which meant the
+ * badge an admin read and the classification the customer got were two separate
+ * pieces of code that could disagree — and would have, the moment delivery moved
+ * to the territory model.
+ *
+ * The usage figure is a REFERENCE load used only to exercise the components; it
+ * is not a claim about any customer. Completeness depends on which components
+ * are known, not on how much electricity is used.
+ *
+ * @param {object} plan
+ * @param {object[]} [territories] territory rows for the plan's state
+ * @returns {{status: string, complete: boolean, missing: string[],
+ *            missingLabels: string[], savingsAvailable: boolean,
+ *            territory: object|null, territoryResolution: string}}
  */
-export function pricingCompleteness(plan) {
-  const missing = [];
-  const rate = Number(plan?.rate_per_kwh);
-  if (!Number.isFinite(rate) || rate <= 0) missing.push('Rate per kWh');
-  const tdsp = Number(plan?.tdsp_charges);
-  if (!Number.isFinite(tdsp) || tdsp <= 0) missing.push('Delivery (TDSP) charge');
+export function pricingCompleteness(plan, territories = []) {
+  const resolved = resolveTerritory({
+    plan,
+    state: plan?.state,
+    territories,
+  });
+
+  const estimate = estimateMonthlyCost(plan, REFERENCE_USAGE_KWH, {
+    territory: resolved.territory,
+    resolution: resolved.resolution,
+  });
+
+  const missing = estimate.missingComponents || [];
 
   return {
-    complete: missing.length === 0,
+    status: estimate.confidence,
+    complete: estimate.confidence === COST_CONFIDENCE.COMPLETE,
     missing,
+    missingLabels: missing.map((c) => COMPONENT_LABELS[c] || c),
     // Mirrors the engine: without complete pricing there is no defensible
     // savings figure, so the admin is told that plainly.
-    savingsAvailable: missing.length === 0,
+    savingsAvailable: estimate.confidence === COST_CONFIDENCE.COMPLETE,
+    territory: resolved.territory,
+    territoryResolution: resolved.resolution,
+  };
+}
+
+/**
+ * Public eligibility, for the admin badge.
+ *
+ * Distinct from pricing completeness, and the two must not be conflated: a
+ * partial plan is still publishable — clearly disclosed — while an inactive
+ * provider blocks a perfectly priced one. An admin needs to see which of the
+ * two is happening.
+ */
+export function publicEligibility(plan, provider) {
+  const result = checkEligibility(plan, provider || plan?.provider);
+  return {
+    eligible: result.eligible,
+    reason: result.reason,
+    label: result.reason ? REASON_LABELS[result.reason] || 'Not publicly eligible' : null,
   };
 }
