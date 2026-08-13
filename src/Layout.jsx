@@ -634,7 +634,6 @@ export default function Layout({ children, currentPageName }) {
       {/* Schema Debugger (Dev Only) */}
 
       {/* AI Chatbot - Hidden */}
-      {/* <ChatBot /> */}
 
       {/* Exit Intent Popup — triggers only when user tries to leave */}
       {!location.pathname.includes('/admin') && <ExitIntentPopup />}

@@ -8,7 +8,6 @@ export {
   ElectricityPlan,
   Article,
   CustomBusinessQuote,
-  ChatbotConversation,
   Profile,
 } from './supabaseEntities';
 

@@ -9,7 +9,6 @@
 - **Bill Analyzer** — Upload an electricity bill and get AI-powered savings recommendations
 - **Learning Center** — Educational articles about energy savings, deregulation, and renewables
 - **Business Quotes** — Custom quote request system for commercial customers
-- **AI Chatbot (Nora)** — Conversational assistant for energy plan questions
 - **City Rate Pages** — SEO-optimized pages for major Texas cities
 - **Admin Panel** — Full CRUD dashboard for managing providers, plans, articles, quotes, and users
 
@@ -24,7 +23,7 @@
 | Auth | Supabase Auth (email/password + Google OAuth) |
 | Storage | Supabase Storage (logos, articles, bill uploads) |
 | Backend | Vercel Serverless Functions (Node.js) |
-| AI | OpenAI GPT (chatbot, bill analysis, article recommendations) |
+| AI | OpenAI GPT (bill analysis) |
 | Hosting | Vercel |
 
 ## Project Structure
@@ -32,7 +31,6 @@
 ```
 electricscouts/
 ├── api/                          # Vercel serverless functions
-│   ├── chatbot.js                # Nora chatbot endpoint
 │   ├── invoke-llm.js             # Generic LLM invocation
 │   └── extract-data.js           # Bill data extraction (OCR + GPT)
 ├── public/
@@ -72,7 +70,7 @@ electricscouts/
 - Node.js 18+
 - A [Supabase](https://supabase.com) project
 - A [Vercel](https://vercel.com) account (for deployment)
-- An [OpenAI](https://openai.com) API key (for chatbot and bill analysis)
+- An [OpenAI](https://openai.com) API key — optional, for bill analysis
 
 ### Local Development
 
@@ -123,7 +121,7 @@ electricscouts/
    | `VITE_SUPABASE_URL` | Supabase project URL |
    | `VITE_SUPABASE_ANON_KEY` | Supabase anon/public key |
    | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side only) |
-   | `OPENAI_API_KEY` | OpenAI API key for chatbot and AI features |
+   | `OPENAI_API_KEY` | OpenAI API key for bill analysis (optional) |
 
 3. **Deploy** — Vercel will automatically build and deploy on push to `main`
 
