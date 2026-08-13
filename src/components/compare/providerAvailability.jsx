@@ -98,8 +98,12 @@ export const getProvidersForZipCode = async (zipCode) => {
       logo: provider.logo_url,
       website: provider.affiliate_url || provider.website_url,
       states: provider.supported_states || [],
+      // `is_featured` used to be read here too. Neither it nor the `data`
+      // wrapper it was read through exists on electricity_providers, no admin
+      // screen could set it, and nothing consumed the resulting `isFeatured`
+      // field — it was always false, and read from two columns that are not
+      // there. `is_recommended` is the real flag and is editable in admin.
       isRecommended: provider.data?.is_recommended || provider.is_recommended || false,
-      isFeatured: provider.data?.is_featured || provider.is_featured || false
     };
   });
   

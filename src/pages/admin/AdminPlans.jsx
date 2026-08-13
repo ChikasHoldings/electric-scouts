@@ -16,9 +16,11 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Search, Loader2, Zap, Leaf, Building } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Loader2, Zap, Leaf, Building, AlertTriangle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { validatePlan, CUSTOMER_TYPES } from "@/lib/planValidation";
+import {
+  validatePlan, pricingCompleteness, catalogPricingCoverage, CUSTOMER_TYPES,
+} from "@/lib/planValidation";
 
 /**
  * Plans — every audience, one screen.
@@ -45,6 +47,29 @@ const emptyPlan = {
   plan_details_url: "", facts_label_url: "", promo_code: "",
 };
 
+/**
+ * Fields the form must show as empty rather than as the string "null".
+ *
+ * `null` is now a real stored value — it is how a plan says "this delivery rate
+ * has not been researched yet" — so spreading a row straight into form state
+ * would hand a controlled <Input> a null value and make React switch it to
+ * uncontrolled mid-edit.
+ */
+const NUMERIC_FORM_FIELDS = [
+  "rate_per_kwh", "contract_length", "early_termination_fee", "monthly_base_charge",
+  "base_charge", "tdsp_charges", "usage_credit", "usage_credit_threshold",
+];
+
+const TEXT_FORM_FIELDS = ["plan_details_url", "facts_label_url", "promo_code", "special_offer"];
+
+function toFormValues(plan) {
+  const values = { ...emptyPlan, ...plan };
+  for (const key of [...NUMERIC_FORM_FIELDS, ...TEXT_FORM_FIELDS]) {
+    if (values[key] === null || values[key] === undefined) values[key] = "";
+  }
+  return values;
+}
+
 const CUSTOMER_TYPE_LABELS = {
   residential: "Residential",
   business: "Business",
@@ -67,6 +92,7 @@ export default function AdminPlans() {
   const [filterState, setFilterState] = useState("all");
   const [filterAudience, setFilterAudience] = useState("all");
   const [filterGreen, setFilterGreen] = useState("all");
+  const [filterPricing, setFilterPricing] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [editingPlan, setEditingPlan] = useState(null);
@@ -119,8 +145,7 @@ export default function AdminPlans() {
   const openEdit = (plan) => {
     setEditingPlan(plan);
     setForm({
-      ...emptyPlan,
-      ...plan,
+      ...toFormValues(plan),
       // An unclassified legacy row is residential inventory, which is how the
       // public engine already treats it. Showing it as blank in the form would
       // invite an admin to guess.
@@ -188,8 +213,13 @@ export default function AdminPlans() {
     }
     if (filterGreen === "green" && (p.renewable_percentage || 0) < 50) return false;
     if (filterGreen === "standard" && (p.renewable_percentage || 0) >= 50) return false;
+    if (filterPricing !== "all") {
+      const complete = pricingCompleteness(p).complete;
+      if (filterPricing === "complete" && !complete) return false;
+      if (filterPricing === "incomplete" && complete) return false;
+    }
     return true;
-  }), [allPlans, search, filterProvider, filterType, filterState, filterAudience, filterGreen]);
+  }), [allPlans, search, filterProvider, filterType, filterState, filterAudience, filterGreen, filterPricing]);
 
   const uniqueProviders = useMemo(
     () => [...new Set(allPlans.map((p) => p.provider_name).filter(Boolean))].sort(),
@@ -213,6 +243,12 @@ export default function AdminPlans() {
     return { byType, active, green };
   }, [allPlans]);
 
+  // How much of the published catalog can produce a real monthly bill estimate.
+  // This was 0 of 378 and nothing said so: every plan quietly fell back to a
+  // supply-only subtotal, so no savings comparison could be shown anywhere on
+  // the site and match scores were capped at 79.
+  const coverage = useMemo(() => catalogPricingCoverage(allPlans), [allPlans]);
+
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   return (
@@ -231,6 +267,43 @@ export default function AdminPlans() {
           <Plus className="w-4 h-4 mr-1" /> Add Plan
         </Button>
       </div>
+
+      {/*
+        The pricing-coverage banner.
+
+        A plan without a delivery (TDSP) rate cannot be priced completely, and
+        the consequences are invisible from a catalog listing: the plan shows a
+        supply-only subtotal instead of a monthly bill, it can never produce a
+        savings figure against the customer's current bill, and its match score
+        is capped at 79. Showing the count turns that from a silent ceiling into
+        a work queue.
+      */}
+      {coverage.incomplete > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="text-sm">
+              <p className="font-semibold text-amber-900">
+                {coverage.complete} of {coverage.active} active plans can show a full monthly estimate
+                {" "}({coverage.percent}%)
+              </p>
+              <p className="text-amber-800 mt-0.5">
+                The other {coverage.incomplete} have no delivery (TDSP) charge configured, so they
+                show a supply-only subtotal, cannot produce a savings comparison against a
+                customer&apos;s bill, and their match score is capped at 79.
+              </p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-amber-300 bg-white text-amber-900 hover:bg-amber-100 shrink-0"
+            onClick={() => setFilterPricing("incomplete")}
+          >
+            Show them
+          </Button>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center bg-white p-4 rounded-lg border">
@@ -258,6 +331,14 @@ export default function AdminPlans() {
             <SelectItem value="all">Any renewable</SelectItem>
             <SelectItem value="green">50%+ renewable</SelectItem>
             <SelectItem value="standard">Under 50%</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterPricing} onValueChange={setFilterPricing}>
+          <SelectTrigger className="w-[170px]"><SelectValue placeholder="Pricing" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Any pricing</SelectItem>
+            <SelectItem value="complete">Fully priced</SelectItem>
+            <SelectItem value="incomplete">Missing delivery rate</SelectItem>
           </SelectContent>
         </Select>
         <Select value={filterProvider} onValueChange={setFilterProvider}>
@@ -307,6 +388,7 @@ export default function AdminPlans() {
                   <TableHead>Provider</TableHead>
                   <TableHead className="text-center">Audience</TableHead>
                   <TableHead className="text-center">Rate</TableHead>
+                  <TableHead className="text-center">Pricing</TableHead>
                   <TableHead className="text-center">Term</TableHead>
                   <TableHead className="text-center">Type</TableHead>
                   <TableHead className="text-center">State</TableHead>
@@ -343,6 +425,30 @@ export default function AdminPlans() {
                     </TableCell>
                     <TableCell className="text-center">
                       <span className="font-semibold text-green-700">{plan.rate_per_kwh}¢</span>
+                    </TableCell>
+                    {/*
+                      Why this plan does or does not show a monthly bill on the
+                      public site. The same rule the comparison engine applies,
+                      via the shared helper, so the badge cannot disagree with
+                      what a customer actually sees.
+                    */}
+                    <TableCell className="text-center">
+                      {(() => {
+                        const pricing = pricingCompleteness(plan);
+                        return pricing.complete ? (
+                          <Badge variant="outline" className="text-[10px] text-green-700 border-green-200 bg-green-50">
+                            Full estimate
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] text-amber-700 border-amber-200 bg-amber-50"
+                            title={`Missing: ${pricing.missing.join(", ")}. Shows a supply-only subtotal and no savings comparison.`}
+                          >
+                            Supply only
+                          </Badge>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-center text-sm">{plan.contract_length || "—"} mo</TableCell>
                     <TableCell className="text-center">
@@ -397,6 +503,26 @@ export default function AdminPlans() {
           <DialogHeader>
             <DialogTitle>{editingPlan ? `Edit ${editingPlan.plan_name}` : "Add Plan"}</DialogTitle>
           </DialogHeader>
+          {/*
+            Every validation failure, guaranteed visible.
+
+            The inline messages below cover each field, but they only work for
+            errors that have a slot: `validatePlan` reported a missing provider
+            as `provider_id` while this dialog rendered `provider_name`, so that
+            failure was invisible — Save simply did nothing and the dialog sat
+            there. This summary means a validation key without its own slot can
+            never silently stall the form again.
+          */}
+          {Object.keys(formErrors).length > 0 && (
+            <div role="alert" className="rounded-md border border-red-200 bg-red-50 p-3">
+              <p className="text-sm font-semibold text-red-800">This plan could not be saved:</p>
+              <ul className="mt-1 list-disc pl-5 text-xs text-red-700 space-y-0.5">
+                {Object.entries(formErrors).map(([key, message]) => (
+                  <li key={key}>{message}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
               <Label>Provider *</Label>
@@ -406,8 +532,8 @@ export default function AdminPlans() {
                   {providers.map((p) => <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>)}
                 </SelectContent>
               </Select>
-              {formErrors.provider_name && (
-                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.provider_name}</p>
+              {formErrors.provider_id && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.provider_id}</p>
               )}
             </div>
             <div className="col-span-2">
@@ -485,12 +611,22 @@ export default function AdminPlans() {
                 <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.state}</p>
               )}
             </div>
+            {/*
+              Edits `monthly_base_charge`, not `base_charge`. This field wrote
+              the legacy column while the pricing engine and every public page
+              read the other one, so correcting the base charge on a plan that
+              had a `monthly_base_charge` changed nothing a customer would see.
+              `validatePlan` keeps the legacy column mirrored.
+            */}
             <div>
               <Label>Base Charge ($/mo)</Label>
               <Input
-                type="number" step="0.01" value={form.base_charge}
-                onChange={(e) => setForm({ ...form, base_charge: e.target.value })}
+                type="number" step="0.01" value={form.monthly_base_charge}
+                onChange={(e) => setForm({ ...form, monthly_base_charge: e.target.value })}
               />
+              {formErrors.monthly_base_charge && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.monthly_base_charge}</p>
+              )}
             </div>
             <div>
               <Label>ETF ($)</Label>
@@ -498,14 +634,57 @@ export default function AdminPlans() {
                 type="number" value={form.early_termination_fee}
                 onChange={(e) => setForm({ ...form, early_termination_fee: e.target.value })}
               />
+              {formErrors.early_termination_fee && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.early_termination_fee}</p>
+              )}
             </div>
-            <div>
-              <Label>TDSP (¢/kWh)</Label>
+
+            {/* The field that decides whether this plan can show a monthly bill. */}
+            <div className="col-span-2">
+              <Label>Delivery / TDSP charge (¢/kWh)</Label>
               <Input
                 type="number" step="0.01" value={form.tdsp_charges}
                 onChange={(e) => setForm({ ...form, tdsp_charges: e.target.value })}
+                placeholder="e.g. 4.85 — leave blank if not known"
               />
+              <p className="mt-1 text-xs text-gray-500">
+                {Number(form.tdsp_charges) > 0
+                  ? "This plan can show a full monthly estimate and a savings comparison."
+                  : "Without this, the plan shows a supply-only subtotal, cannot be compared "
+                    + "against a customer's current bill, and its match score is capped at 79."}
+              </p>
+              {formErrors.tdsp_charges && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.tdsp_charges}</p>
+              )}
             </div>
+
+            {/*
+              Bill credits were priced by the engine and validated on save, but
+              had no field here — so a Texas bill-credit plan, one of the most
+              common products in that market, could not be entered at all.
+            */}
+            <div>
+              <Label>Bill credit ($/mo)</Label>
+              <Input
+                type="number" step="0.01" value={form.usage_credit}
+                onChange={(e) => setForm({ ...form, usage_credit: e.target.value })}
+              />
+              {formErrors.usage_credit && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.usage_credit}</p>
+              )}
+            </div>
+            <div>
+              <Label>Credit applies at (kWh)</Label>
+              <Input
+                type="number" value={form.usage_credit_threshold}
+                onChange={(e) => setForm({ ...form, usage_credit_threshold: e.target.value })}
+                placeholder="Blank = always"
+              />
+              {formErrors.usage_credit_threshold && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.usage_credit_threshold}</p>
+              )}
+            </div>
+
             <div>
               <Label>Renewable %</Label>
               <Input
@@ -530,6 +709,35 @@ export default function AdminPlans() {
                 onChange={(e) => setForm({ ...form, promo_code: e.target.value })}
               />
             </div>
+            {/*
+              Both URLs were already validated on save but had nowhere to be
+              entered. The Electricity Facts Label is the document a customer is
+              legally entitled to before enrolling in Texas, so having no way to
+              record it is a compliance gap, not just a missing field.
+            */}
+            <div className="col-span-2">
+              <Label>Plan details URL</Label>
+              <Input
+                value={form.plan_details_url || ""}
+                onChange={(e) => setForm({ ...form, plan_details_url: e.target.value })}
+                placeholder="https://provider.example.com/plans/simple-rate-24"
+              />
+              {formErrors.plan_details_url && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.plan_details_url}</p>
+              )}
+            </div>
+            <div className="col-span-2">
+              <Label>Electricity Facts Label (EFL) URL</Label>
+              <Input
+                value={form.facts_label_url || ""}
+                onChange={(e) => setForm({ ...form, facts_label_url: e.target.value })}
+                placeholder="https://provider.example.com/efl/simple-rate-24.pdf"
+              />
+              {formErrors.facts_label_url && (
+                <p role="alert" className="mt-1 text-xs text-red-600">{formErrors.facts_label_url}</p>
+              )}
+            </div>
+
             <div className="col-span-2">
               <Label>Features (comma-separated)</Label>
               <Input
