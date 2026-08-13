@@ -12,7 +12,7 @@ import {
   LOGO_EMAIL_HEADER_URL,
   ADMIN_EMAILS,
 } from "./_lib/email.js";
-import { validateContact } from "../src/lib/contactValidation.js";
+import { validateContact, validateFullName } from "../src/lib/contactValidation.js";
 import { routeLead } from "./_lib/leadDelivery.js";
 import { verifyCronRequest } from "./_lib/cronAuth.js";
 
@@ -591,20 +591,30 @@ function text(value, max = 500) {
  * operator looks for everything that came in.
  */
 async function handleConcierge(req, res) {
+  try {
   const body = req.body || {};
 
+  // The whole name goes through the full-name rule, not the first-name one.
+  // Passing "John A. Smith" to validateFirstName rejected it, so a very common
+  // way of writing a name could never submit this form at all.
+  const name = validateFullName(body.full_name);
   const contact = validateContact(
-    { firstName: body.full_name, email: body.email, phone: body.phone },
+    { email: body.email, phone: body.phone },
     { require: ["email"] }
   );
-  if (!contact.valid) {
-    return res.status(400).json({ error: "Invalid contact details", fields: contact.errors });
+  if (!name.valid || !contact.valid) {
+    // The specific field errors travel back so the form can say which one is
+    // wrong, instead of a blanket "invalid contact details".
+    return res.status(400).json({
+      error: name.error || "Please check the details you entered.",
+      fields: { ...contact.errors, ...(name.valid ? {} : { full_name: name.error }) },
+    });
   }
 
   // These three are NOT NULL on the table. Checked here so the customer gets a
   // usable message rather than a constraint violation surfaced as "something
   // went wrong".
-  const fullName = text(body.full_name, 200);
+  const fullName = name.value;
   const newAddress = text(body.new_address, 300);
   const zip = text(body.zip_code, 10);
   const missing = [];
@@ -660,6 +670,8 @@ async function handleConcierge(req, res) {
   await upsertLeadFromSubmission({
     email: request.email,
     name: request.full_name,
+    first_name: name.firstName,
+    last_name: name.lastName,
     zip: request.zip_code,
     city: request.city,
     state: request.state,
@@ -678,6 +690,10 @@ async function handleConcierge(req, res) {
   });
 
   return res.status(200).json({ success: true, id: request.id });
+  } catch (error) {
+    console.error("Concierge submission failed:", error);
+    return res.status(500).json({ error: "Something went wrong saving your request. Please try again." });
+  }
 }
 
 /**
@@ -687,23 +703,37 @@ async function handleConcierge(req, res) {
  * segment, and these submissions were reaching nobody.
  */
 async function handleBusinessQuote(req, res) {
+  try {
   const body = req.body || {};
 
+  const name = validateFullName(body.contact_name);
   const contact = validateContact(
-    { firstName: body.contact_name, email: body.email, phone: body.phone },
+    { email: body.email, phone: body.phone },
     { require: ["email"] }
   );
-  if (!contact.valid) {
-    return res.status(400).json({ error: "Invalid contact details", fields: contact.errors });
+  if (!name.valid || !contact.valid) {
+    return res.status(400).json({
+      error: name.error || "Please check the details you entered.",
+      fields: { ...contact.errors, ...(name.valid ? {} : { contact_name: name.error }) },
+    });
   }
 
   const businessName = text(body.business_name, 200);
-  const contactName = text(body.contact_name, 200);
-  if (!businessName || !contactName) {
-    return res.status(400).json({ error: "A business name and a contact name are both required." });
+  if (!businessName) {
+    return res.status(400).json({ error: "A business name is required." });
   }
+  const contactName = name.value;
 
+  // zip_code is TEXT NOT NULL on custom_business_quotes and the form does not
+  // require it, so a blank one reached the database and came back as an
+  // unactionable 500 every time. Checked here, where the message can say so.
   const zip = text(body.zip_code, 10);
+  if (!zip) {
+    return res.status(400).json({
+      error: "A service ZIP code is required so we can find suppliers for your area.",
+      fields: { zip_code: "Enter the ZIP code where the business takes supply." },
+    });
+  }
   const row = {
     business_name: businessName,
     contact_name: contactName,
@@ -738,6 +768,8 @@ async function handleBusinessQuote(req, res) {
   await upsertLeadFromSubmission({
     email: quote.email,
     name: quote.contact_name,
+    first_name: name.firstName,
+    last_name: name.lastName,
     zip: quote.zip_code,
     state: resolveState(quote.zip_code),
     phone: quote.phone,
@@ -758,6 +790,10 @@ async function handleBusinessQuote(req, res) {
   });
 
   return res.status(200).json({ success: true, id: quote.id });
+  } catch (error) {
+    console.error("Business quote submission failed:", error);
+    return res.status(500).json({ error: "Something went wrong sending your request. Please try again." });
+  }
 }
 
 /**

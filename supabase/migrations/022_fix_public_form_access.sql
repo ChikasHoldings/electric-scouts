@@ -28,12 +28,26 @@
 -- ═══════════════════════════════════════════════════════════
 
 -- ─── Concierge: staff only ─────────────────────────────────
-DROP POLICY IF EXISTS "Anyone can read back their submission" ON public.concierge_requests;
+--
+-- Every existing SELECT policy is dropped by enumeration rather than by name.
+--
+-- Naming them individually is how this fix fails silently: DROP POLICY IF
+-- EXISTS on a name that does not match is a successful no-op, so a database
+-- whose policy is called something slightly different keeps the world-readable
+-- grant while the migration reports success. Two permissive SELECT policies
+-- existed here and both had to go — a single leftover re-opens the table,
+-- because RLS ORs permissive policies together.
+DO $$
+DECLARE pol RECORD;
+BEGIN
+  FOR pol IN
+    SELECT policyname FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'concierge_requests' AND cmd = 'SELECT'
+  LOOP
+    EXECUTE format('DROP POLICY %I ON public.concierge_requests', pol.policyname);
+  END LOOP;
+END $$;
 
--- The remaining staff read policy was also USING (true) rather than a role
--- check — correct by accident, since only staff should reach it, but it would
--- have kept the table readable if the policy above were the only one removed.
-DROP POLICY IF EXISTS "Admin staff can read concierge requests" ON public.concierge_requests;
 CREATE POLICY "Admin staff can read concierge requests"
   ON public.concierge_requests FOR SELECT
   USING (public.is_admin_staff());
@@ -49,21 +63,33 @@ COMMENT ON TABLE public.concierge_requests IS
   'Home-concierge requests. Contains PII (name, email, phone, destination address): readable by admin staff only, writable by anyone, which is what a public form needs.';
 
 -- ─── Commercial quotes: a public form the public can use ───
-DROP POLICY IF EXISTS "Authenticated users can create quotes" ON public.custom_business_quotes;
+--
+-- Same enumeration for the same reason. The INSERT policy required
+-- auth.uid() IS NOT NULL and this site has no public sign-up, so every
+-- anonymous submission was refused by the database; a FOR ALL policy also
+-- covered INSERT and had to be removed for the new grant to take effect.
+DO $$
+DECLARE pol RECORD;
+BEGIN
+  FOR pol IN
+    SELECT policyname FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'custom_business_quotes'
+      AND cmd IN ('INSERT', 'SELECT', 'ALL')
+  LOOP
+    EXECUTE format('DROP POLICY %I ON public.custom_business_quotes', pol.policyname);
+  END LOOP;
+END $$;
+
 CREATE POLICY "Anyone can submit a business quote request"
   ON public.custom_business_quotes FOR INSERT
   WITH CHECK (true);
 
--- "Users can view own quotes" compares the row's email to the caller's
--- auth.users email. With no public sign-up nobody is ever authenticated here,
--- so it grants nothing and only widens the surface. Staff read stays.
-DROP POLICY IF EXISTS "Users can view own quotes" ON public.custom_business_quotes;
-
--- Two overlapping admin policies did the same job with different predicates;
--- the inline profiles subquery is replaced by the same helper every other
--- table uses, so there is one definition of "admin" to reason about.
-DROP POLICY IF EXISTS "Admins can update quotes" ON public.custom_business_quotes;
-DROP POLICY IF EXISTS "Admins can manage quotes" ON public.custom_business_quotes;
+-- Staff read, restored after the sweep above. "Users can view own quotes"
+-- compared the row's email to the caller's auth.users email; with nobody ever
+-- authenticated it granted nothing and only widened the surface.
+CREATE POLICY "Admin staff can read quotes"
+  ON public.custom_business_quotes FOR SELECT
+  USING (public.is_admin_staff());
 
 COMMENT ON TABLE public.custom_business_quotes IS
   'Commercial quote requests from the public business form. Anyone may submit; only admin staff may read.';

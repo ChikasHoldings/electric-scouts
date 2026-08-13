@@ -92,6 +92,23 @@ test('the commercial segment is no longer always empty', () => {
   assert.ok(counts[SEGMENTS.COMMERCIAL] > 0);
 });
 
+test('there is no renewable segment to be permanently empty', () => {
+  // Renewable is a preference inside the quote engine, not a capture path. A
+  // renewable chip would read 0 forever and its filter would show an empty
+  // table — the dead filter this module exists to remove.
+  assert.equal(SEGMENTS.RENEWABLE, undefined);
+  assert.ok(!Object.values(SEGMENTS).includes('renewable'));
+});
+
+test('every segment the UI offers has at least one registered source', () => {
+  // Guards the same class of bug generally: a chip or filter option that can
+  // never match anything.
+  for (const segment of Object.values(SEGMENTS)) {
+    const backed = LEAD_SOURCES.some((s) => s.segment === segment);
+    assert.ok(backed, `segment "${segment}" has no registered source and would always read 0`);
+  }
+});
+
 test('every segment counts what belongs to it', () => {
   const counts = countBySegment(SAMPLE);
   assert.equal(counts[SEGMENTS.RESIDENTIAL], 1);

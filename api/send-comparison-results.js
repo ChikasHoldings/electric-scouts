@@ -226,7 +226,7 @@ export default async function handler(req, res) {
         // Only identifiers travel in the URL; no name, email or address.
         : (() => {
             const params = new URLSearchParams({ from: "email_no_route" });
-            if (result.id) params.set("plan", String(result.id));
+            if (result.planId) params.set("plan", String(result.planId));
             if (result.providerName) params.set("provider", String(result.providerName));
             const conciergeUrl = `${APP_BASE_URL}/home-concierge?${params.toString()}`;
             return `<table cellpadding="0" cellspacing="0" style="margin-top:14px;" width="100%">

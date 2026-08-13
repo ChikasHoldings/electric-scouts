@@ -16,11 +16,20 @@
  * fails the test run rather than quietly showing up as an unlabelled badge.
  */
 
-/** Which part of the business a lead belongs to. Drives the admin filter. */
+/**
+ * Segments a lead can belong to.
+ *
+ * There is deliberately no RENEWABLE segment. Renewable is a preference a
+ * residential shopper states inside the quote engine, not a separate capture
+ * path — no form posts a renewable source, so a renewable chip would read 0
+ * forever and its filter would show an empty table. That is the same dead
+ * filter this module exists to remove, and adding it back "for completeness"
+ * would recreate it. A renewable lead is a residential lead; the preference
+ * lives on `leads.energy_preference`.
+ */
 export const SEGMENTS = {
   RESIDENTIAL: 'residential',
   COMMERCIAL: 'commercial',
-  RENEWABLE: 'renewable',
   NEWSLETTER: 'newsletter',
   CONCIERGE: 'concierge',
 };
@@ -28,7 +37,6 @@ export const SEGMENTS = {
 export const SEGMENT_LABELS = {
   [SEGMENTS.RESIDENTIAL]: 'Residential',
   [SEGMENTS.COMMERCIAL]: 'Commercial',
-  [SEGMENTS.RENEWABLE]: 'Renewable',
   [SEGMENTS.NEWSLETTER]: 'Newsletter',
   [SEGMENTS.CONCIERGE]: 'Concierge',
 };

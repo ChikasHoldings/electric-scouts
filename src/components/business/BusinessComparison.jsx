@@ -7,8 +7,14 @@ import { TrendingDown, Award, CheckCircle } from "lucide-react";
 import CustomQuoteModal from "./CustomQuoteModal";
 import { getCommercialTotals } from "@/seo/market";
 
+/**
+ * `value` matches the option values the quote form's Select uses. Passing the
+ * display name instead left the field showing its placeholder while submitting
+ * a value nothing recognised.
+ */
 const businessTiers = [
   {
+    value: "small",
     name: "Small Business",
     range: "< 10,000 kWh/month",
     examples: ["Retail stores", "Small offices", "Restaurants", "Salons"],
@@ -16,6 +22,7 @@ const businessTiers = [
     color: "blue"
   },
   {
+    value: "medium",
     name: "Medium Business",
     range: "10,000 - 50,000 kWh/month",
     examples: ["Warehouses", "Medical offices", "Hotels", "Large retail"],
@@ -24,6 +31,7 @@ const businessTiers = [
     popular: true
   },
   {
+    value: "large",
     name: "Large Business",
     range: "> 50,000 kWh/month",
     examples: ["Manufacturing", "Data centers", "Hospitals", "Multi-location"],
@@ -170,7 +178,7 @@ export default function BusinessComparison() {
       {quoteOpen && (
         <CustomQuoteModal
           onClose={() => setQuoteOpen(false)}
-          initialData={{ businessType: selectedData?.name || "" }}
+          initialData={{ businessType: selectedData?.value || "" }}
         />
       )}
     </div>
