@@ -1,16 +1,22 @@
-import { requireAdmin, applyCors, supabaseAdmin } from "../_lib/adminAuth.js";
-import { sendEmail } from "../_lib/email.js";
-import { routeLead, loadActiveBuyers, alreadyDeliveredTo } from "../_lib/leadDelivery.js";
+import { supabaseAdmin } from "./adminAuth.js";
+import { sendEmail } from "./email.js";
+import { routeLead, loadActiveBuyers, alreadyDeliveredTo } from "./leadDelivery.js";
 import {
   recordRevenueEvent,
   settleLeadSale,
   recordConciergeRevenue,
-} from "../_lib/revenue.js";
+} from "./revenue.js";
 import { summarizeCoverage } from "../../src/lib/leadBuyerRouting.js";
 import { REVENUE_SOURCES, REVENUE_STATUS, money } from "../../src/lib/revenue.js";
 
 /**
  * Every write that moves money or a lead.
+ *
+ * Mounted as actions on /api/admin/manage rather than as its own endpoint.
+ * That is a deployment constraint, not a design preference: the plan allows 12
+ * serverless functions and the project was already at 12, so a thirteenth file
+ * under api/ fails the whole build. Living in _lib keeps it out of the function
+ * count while staying a separate module — `manage.js` dispatches to it.
  *
  * Reads are not here. The admin panel reads the ledger and the delivery table
  * directly under RLS, and runs the same `summarizeRevenue` the tests cover, so
@@ -425,9 +431,13 @@ async function handleConciergeRevenue(req, res, auth) {
   });
 }
 
-// ─── Router ─────────────────────────────────────────────────
+// ─── Actions ────────────────────────────────────────────────
+//
+// Exported as a table rather than a handler so `manage.js` can merge these
+// with its own user-management actions behind one authenticated entry point.
+// Each entry carries the roles allowed to invoke it; the router enforces them.
 
-const HANDLERS = {
+export const MONETIZATION_ACTIONS = {
   "route-lead": { handler: handleRouteLead, roles: ["admin", "editor"] },
   coverage: { handler: handleCoverage, roles: ["admin", "editor", "viewer"] },
   "delivery-status": { handler: handleDeliveryStatus, roles: ["admin", "editor"] },
@@ -437,30 +447,3 @@ const HANDLERS = {
   "record-conversion": { handler: handleRecordConversion, roles: ["admin"] },
   "concierge-revenue": { handler: handleConciergeRevenue, roles: ["admin", "editor"] },
 };
-
-export default async function handler(req, res) {
-  if (applyCors(req, res)) return;
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const action = req.body?.action;
-  const entry = HANDLERS[action];
-
-  if (!entry) {
-    return res.status(400).json({
-      error: `Unknown action. Expected one of: ${Object.keys(HANDLERS).join(", ")}.`,
-    });
-  }
-
-  const auth = await requireAdmin(req, entry.roles);
-  if (auth.error) return res.status(auth.status).json({ error: auth.error });
-
-  try {
-    return await entry.handler(req, res, auth);
-  } catch (error) {
-    console.error(`admin/monetization ${action} failed:`, error);
-    return res.status(500).json({ error: "Internal server error." });
-  }
-}

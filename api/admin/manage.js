@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { sendEmail } from "../_lib/email.js";
+import { requireAdmin } from "../_lib/adminAuth.js";
+import { MONETIZATION_ACTIONS } from "../_lib/monetizationActions.js";
 
 const supabaseAdmin = createClient(
   process.env.VITE_SUPABASE_URL,
@@ -334,10 +336,29 @@ export default async function handler(req, res) {
       case "update-user":
         return await handleUpdateUser(req, res);
       default:
-        return res.status(400).json({
-          error: "Invalid action. Use 'change-password', 'create-user', or 'update-user'.",
-        });
+        break;
     }
+
+    // ── Monetization and lead-routing actions ──
+    //
+    // Mounted here rather than on their own endpoint because the deployment
+    // plan allows 12 serverless functions and this project already uses all
+    // 12; a thirteenth file under api/ fails the entire build. The handlers
+    // live in _lib/monetizationActions.js, which is excluded from the function
+    // count by its underscore prefix.
+    //
+    // Each action declares the roles that may invoke it, and authorization is
+    // resolved from the caller's token here — never from anything in the body.
+    const monetization = MONETIZATION_ACTIONS[action];
+    if (monetization) {
+      const auth = await requireAdmin(req, monetization.roles);
+      if (auth.error) return res.status(auth.status).json({ error: auth.error });
+      return await monetization.handler(req, res, auth);
+    }
+
+    return res.status(400).json({
+      error: `Invalid action. Expected one of: change-password, create-user, update-user, ${Object.keys(MONETIZATION_ACTIONS).join(", ")}.`,
+    });
   } catch (error) {
     console.error("Admin manage handler error:", error);
     return res.status(500).json({ error: "Internal server error." });

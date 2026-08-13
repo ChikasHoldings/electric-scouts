@@ -19,7 +19,10 @@ export async function adminPost(action, payload = {}) {
     throw new Error("Your session has expired. Sign in again to continue.");
   }
 
-  const response = await fetch("/api/admin/monetization", {
+  // One admin endpoint, dispatching by action. Not a stylistic choice: the
+  // deployment plan caps serverless functions at 12 and the project uses all
+  // of them, so money and routing actions ride on the existing admin router.
+  const response = await fetch("/api/admin/manage", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
