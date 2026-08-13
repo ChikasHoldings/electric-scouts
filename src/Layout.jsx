@@ -164,7 +164,17 @@ export default function Layout({ children, currentPageName }) {
                 onMouseEnter={() => setServiceAreaOpen(true)}
                 onMouseLeave={() => setServiceAreaOpen(false)}
               >
-                <button className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium whitespace-nowrap">
+                {/* Openable by click as well as hover. Hover alone left this
+                    unreachable by keyboard and unusable on any touch device
+                    wide enough to get the desktop nav — a tablet saw a menu
+                    item that did nothing. */}
+                <button
+                  type="button"
+                  onClick={() => setServiceAreaOpen((open) => !open)}
+                  aria-expanded={serviceAreaOpen}
+                  aria-haspopup="true"
+                  className="flex items-center gap-1 text-[#084a6f] hover:text-[#0A5C8C] transition-colors text-base xl:text-lg font-medium whitespace-nowrap"
+                >
                   Service Areas
                   <ChevronDown className={`w-4 h-4 transition-transform ${serviceAreaOpen ? 'rotate-180' : ''}`} />
                 </button>

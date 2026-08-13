@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Star, CheckCircle, Shield, Sparkles, ArrowRight } from "lucide-react";
+import { CheckCircle, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ValidatedZipInput from "../ValidatedZipInput";
+import { MARKET_TOTALS } from "@/seo/market";
 
 export default function HeroSection({ zipCode, setZipCode }) {
   const [isZipValid, setIsZipValid] = useState(false);
@@ -56,24 +57,28 @@ export default function HeroSection({ zipCode, setZipCode }) {
               </div>
             </div>
 
-            {/* Social Proof — centered on mobile */}
+            {/* Catalog scale, not invented social proof.
+                This was a stack of avatar circles ending in "+50K", a 4.8/5
+                star rating, and "Joined by 50,000+ households saving avg
+                $600/yr". The platform has had two leads and no recorded
+                conversions, so all three were invented — and a visitor who
+                checks one of them has no reason to believe the real prices
+                further down the page. These figures come from the same catalog
+                snapshot every state and city page reads. */}
             <div className="flex items-center gap-3 sm:gap-4 justify-start">
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-[#084a6f] flex items-center justify-center text-white text-[10px] sm:text-xs font-bold ring-2 ring-white">S</div>
-                <div className="w-8 h-8 rounded-full bg-[#FF6B35] flex items-center justify-center text-white text-[10px] sm:text-xs font-bold ring-2 ring-white">M</div>
-                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold ring-2 ring-white">J</div>
-                <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold ring-2 ring-white">R</div>
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-[9px] sm:text-[10px] font-bold ring-2 ring-white">+50K</div>
-              </div>
-              <div>
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                  <span className="text-gray-500 font-medium ml-1 text-xs">4.8/5</span>
-                </div>
-                <p className="text-gray-600 text-xs sm:text-xs font-medium">Joined by <span className="text-[#084a6f] font-bold">50,000+</span> households saving avg <span className="text-[#FF6B35] font-bold">$600/yr</span></p>
-              </div>
+              <p className="text-gray-600 text-xs sm:text-sm font-medium">
+                Comparing{" "}
+                <span className="text-[#084a6f] font-bold">
+                  {MARKET_TOTALS.activePlans.toLocaleString()}
+                </span>{" "}
+                plans from{" "}
+                <span className="text-[#084a6f] font-bold">
+                  {MARKET_TOTALS.providersWithPlans}
+                </span>{" "}
+                suppliers across{" "}
+                <span className="text-[#FF6B35] font-bold">{MARKET_TOTALS.states}</span>{" "}
+                deregulated states
+              </p>
             </div>
 
             {/* Trust Indicators — icon on top on mobile, inline row on desktop */}

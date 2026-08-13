@@ -118,3 +118,30 @@ export function compareToStateMedian(cityRate, stateMedian) {
 }
 
 export default marketData;
+
+/**
+ * Platform-wide commercial totals.
+ *
+ * Summed from the same per-state snapshot every other page reads, so the
+ * business hub cannot claim a number the catalog does not support. The stats
+ * it replaced ("5,000+ Businesses Served", "24/7 Support Available") were not
+ * derived from anything and were not true.
+ */
+export function getCommercialTotals() {
+  const states = Object.values(marketData.states || {});
+  const entryRates = states
+    .map((s) => s.minBusinessRate)
+    .filter((r) => typeof r === 'number' && r > 0);
+
+  return {
+    commercialPlans: states.reduce((sum, s) => sum + (s.businessPlans || 0), 0),
+    suppliers: marketData.totals.providersWithPlans,
+    states: marketData.totals.states,
+    // The range of the cheapest commercial plan we list in each state. Not a
+    // promise about any given business — commercial supply is bid against a
+    // load profile — but it is a real figure from the catalog, which
+    // "$12,000/year average savings" was not.
+    lowestEntryRate: entryRates.length ? Math.min(...entryRates) : null,
+    highestEntryRate: entryRates.length ? Math.max(...entryRates) : null,
+  };
+}

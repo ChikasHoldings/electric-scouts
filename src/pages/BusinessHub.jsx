@@ -13,10 +13,26 @@ import CustomQuoteModal from "../components/business/CustomQuoteModal";
 import BusinessTestimonials from "../components/business/BusinessTestimonials";
 import BusinessComparison from "../components/business/BusinessComparison";
 import SEOHead from "../components/SEOHead";
+import { getCommercialTotals } from "@/seo/market";
+
+// Read once at module load — a static snapshot, not a live query.
+const MARKET_STATS = getCommercialTotals();
 
 export default function BusinessHub() {
   const [zipCode, setZipCode] = useState("");
+  const [monthlyUsage, setMonthlyUsage] = useState("");
   const [quoteOpen, setQuoteOpen] = useState(false);
+
+  // Carry both answers into the comparison engine. The usage field was
+  // previously unbound, so whatever the visitor typed was thrown away and they
+  // were asked for it again on the next screen.
+  const compareHref = (() => {
+    const params = new URLSearchParams();
+    if (zipCode) params.set("zip", zipCode);
+    if (monthlyUsage) params.set("usage", monthlyUsage);
+    const query = params.toString();
+    return createPageUrl("BusinessCompareRates") + (query ? `?${query}` : "");
+  })();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -40,7 +56,7 @@ export default function BusinessHub() {
                 Power Your Business with Better Rates
               </h1>
               <p className="text-xl text-blue-100 mb-6">
-                Compare commercial electricity plans tailored for businesses. Save up to 30% with volume pricing and flexible contracts.
+                Commercial supply is bid against your load profile, not sold from a list. Tell us how you use power and we will get it priced.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link to={createPageUrl("BusinessCompareRates")}>
@@ -49,7 +65,11 @@ export default function BusinessHub() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
-                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 px-8">
+                <Button
+                  variant="outline"
+                  onClick={() => setQuoteOpen(true)}
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-12 px-8"
+                >
                   Request Custom Quote
                 </Button>
               </div>
@@ -68,7 +88,10 @@ export default function BusinessHub() {
                     </Label>
                     <Input
                       type="number"
+                      inputMode="numeric"
                       placeholder="e.g., 5000"
+                      value={monthlyUsage}
+                      onChange={(e) => setMonthlyUsage(e.target.value.replace(/\D/g, ''))}
                       className="h-11"
                     />
                   </div>
@@ -85,7 +108,7 @@ export default function BusinessHub() {
                       className="h-11"
                     />
                   </div>
-                  <Link to={createPageUrl("BusinessCompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                  <Link to={compareHref}>
                     <Button className="w-full bg-[#0A5C8C] hover:bg-[#084a6f] text-white h-11">
                       Get Instant Quote
                       <Calculator className="w-4 h-4 ml-2" />
@@ -103,20 +126,20 @@ export default function BusinessHub() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">30%</div>
-              <div className="text-sm text-gray-600">Average Savings</div>
+              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">{MARKET_STATS.commercialPlans}</div>
+              <div className="text-sm text-gray-600">Commercial plans tracked</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">5,000+</div>
-              <div className="text-sm text-gray-600">Businesses Served</div>
+              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">{MARKET_STATS.suppliers}</div>
+              <div className="text-sm text-gray-600">Suppliers compared</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">40+</div>
-              <div className="text-sm text-gray-600">Provider Partners</div>
+              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">{MARKET_STATS.states}</div>
+              <div className="text-sm text-gray-600">Deregulated states</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">24/7</div>
-              <div className="text-sm text-gray-600">Support Available</div>
+              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">Free</div>
+              <div className="text-sm text-gray-600">No fee to compare</div>
             </div>
           </div>
         </div>
@@ -261,7 +284,7 @@ export default function BusinessHub() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Save 20-30% on average</span>
+                    <span>Free to compare, no obligation</span>
                   </div>
                 </div>
                 <Link to={createPageUrl("BusinessCompareRates")}>

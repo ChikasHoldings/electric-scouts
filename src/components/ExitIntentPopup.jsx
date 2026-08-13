@@ -161,12 +161,12 @@ export default function ExitIntentPopup() {
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5 text-white/70 text-xs">
                       <TrendingDown className="w-3.5 h-3.5 text-green-400" />
-                      <span>Avg. $600/yr saved</span>
+                      <span>Free to compare</span>
                     </div>
                     <div className="w-px h-3 bg-white/20" />
                     <div className="flex items-center gap-1.5 text-white/70 text-xs">
                       <Shield className="w-3.5 h-3.5 text-blue-300" />
-                      <span>50K+ users</span>
+                      <span>No spam, unsubscribe anytime</span>
                     </div>
                   </div>
                 </div>

@@ -1,158 +1,96 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, Building, TrendingDown } from "lucide-react";
+import { Factory, Store, Server, Building2 } from "lucide-react";
 
-const testimonials = [
+/**
+ * What commercial supply actually involves, by business shape.
+ *
+ * This component previously rendered six customer testimonials — invented
+ * companies ("Austin Manufacturing Co.", "Philadelphia Medical Center"), named
+ * individuals with job titles ("Dr. Emily Thompson, Facility Director"), exact
+ * monthly and annual savings, five-star ratings, and Unsplash stock photographs
+ * presented as those people's headshots. The platform has never had a
+ * commercial customer; there are zero rows in custom_business_quotes.
+ *
+ * Attributing invented quotes to invented named people is prohibited by the
+ * FTC's endorsement rules (16 CFR Part 255) and is the kind of claim a
+ * prospective commercial buyer can check in a minute. ProviderDetails had
+ * already had its fabricated reviews removed on the same grounds.
+ *
+ * The section keeps its job — help a business recognise itself and understand
+ * what to expect — using descriptions of how commercial supply is priced, which
+ * are true regardless of who has bought what.
+ */
+
+const PROFILES = [
   {
-    business: "Austin Manufacturing Co.",
-    industry: "Manufacturing",
-    location: "Austin, TX",
-    size: "Large",
-    monthlySavings: "$2,400",
-    annualSavings: "$28,800",
-    usage: "120,000 kWh/month",
-    testimonial: "Switching to a competitive supplier through Electric Scouts saved us nearly $30k in the first year. The volume discounts for our manufacturing facility were game-changing.",
-    contact: "Michael Rodriguez",
-    position: "Operations Manager",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=150&h=150&fit=crop"
+    icon: Store,
+    name: "Retail and hospitality",
+    usage: "Under 10,000 kWh/month",
+    body:
+      "Load follows opening hours, so a flat fixed rate is usually the simplest fit. Small accounts are often quoted from a rate card rather than bid, which means a quote can come back the same day.",
+    watch: "Early termination fees, which bite hardest on short leases.",
   },
   {
-    business: "Chicago Retail Group",
-    industry: "Retail",
-    location: "Chicago, IL",
-    size: "Medium",
-    monthlySavings: "$850",
-    annualSavings: "$10,200",
-    usage: "25,000 kWh/month",
-    testimonial: "Managing energy costs across 5 retail locations was challenging. Electric Scouts found us a plan with consistent rates that works for all our stores.",
-    contact: "Sarah Chen",
-    position: "Regional Director",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
+    icon: Building2,
+    name: "Offices and professional services",
+    usage: "10,000 – 50,000 kWh/month",
+    body:
+      "Weekday-heavy consumption with a pronounced summer cooling peak. At this size suppliers begin pricing against your actual interval data rather than a standard profile.",
+    watch: "Demand charges, which are billed separately from the rate you are quoted.",
   },
   {
-    business: "Dallas Tech Solutions",
-    industry: "Technology",
-    location: "Dallas, TX",
-    size: "Small",
-    monthlySavings: "$320",
-    annualSavings: "$3,840",
-    usage: "8,500 kWh/month",
-    testimonial: "As a growing tech startup, every dollar counts. The 18% savings on our electricity bill goes straight to our growth initiatives. The process was incredibly easy.",
-    contact: "James Patterson",
-    position: "Co-Founder & CEO",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop"
+    icon: Factory,
+    name: "Manufacturing and logistics",
+    usage: "50,000+ kWh/month",
+    body:
+      "Round-the-clock or shift-based load. Contracts are individually bid, and the price depends on when you use power as much as how much — a flat overnight profile prices very differently from a daytime peak.",
+    watch: "Whether the quote is fixed, indexed, or a blend, and what triggers a reprice.",
   },
   {
-    business: "Philadelphia Medical Center",
-    industry: "Healthcare",
-    location: "Philadelphia, PA",
-    size: "Large",
-    monthlySavings: "$1,900",
-    annualSavings: "$22,800",
-    usage: "85,000 kWh/month",
-    testimonial: "Healthcare facilities can't compromise on reliability. We needed a provider offering both competitive rates and 24/7 support. Electric Scouts delivered exactly that.",
-    contact: "Dr. Emily Thompson",
-    position: "Facility Director",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop"
+    icon: Server,
+    name: "Multi-site operators",
+    usage: "Any size, several meters",
+    body:
+      "Aggregating sites inside one deregulated market gives a supplier more volume to price against. Sites in different states are separate contracts, because the markets are separate.",
+    watch: "Contract end dates drifting apart, which loses the aggregation benefit.",
   },
-  {
-    business: "Columbus Warehouse LLC",
-    industry: "Logistics",
-    location: "Columbus, OH",
-    size: "Large",
-    monthlySavings: "$1,650",
-    annualSavings: "$19,800",
-    usage: "65,000 kWh/month",
-    testimonial: "Our warehouse operates 24/7, so electricity is a major expense. The fixed-rate plan Electric Scouts recommended has stabilized our operating costs significantly.",
-    contact: "Robert Martinez",
-    position: "Logistics Manager",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop"
-  },
-  {
-    business: "Brooklyn Restaurant Group",
-    industry: "Food Service",
-    location: "Brooklyn, NY",
-    size: "Medium",
-    monthlySavings: "$680",
-    annualSavings: "$8,160",
-    usage: "18,000 kWh/month",
-    testimonial: "Running 3 restaurants in NYC with high energy costs was eating into our margins. Electric Scouts helped us save over $8k annually across all locations.",
-    contact: "Maria Gonzalez",
-    position: "Owner",
-    rating: 5,
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop"
-  }
 ];
 
 export default function BusinessTestimonials() {
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {testimonials.map((testimonial, index) => (
-        <Card key={index} className="border-2 border-gray-100 hover:border-blue-300 transition-colors">
-          <CardContent className="p-6">
-            {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.contact}
-                  className="w-12 h-12 rounded-full object-cover"
-                loading="lazy" />
+    <div>
+      <div className="grid md:grid-cols-2 gap-6">
+        {PROFILES.map(({ icon: Icon, name, usage, body, watch }) => (
+          <Card key={name} className="border-2 border-gray-100">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-11 h-11 rounded-lg bg-[#0A5C8C]/10 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-[#0A5C8C]" aria-hidden="true" />
+                </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 text-sm">{testimonial.contact}</h4>
-                  <p className="text-xs text-gray-600">{testimonial.position}</p>
+                  <h4 className="font-bold text-gray-900 text-[15px]">{name}</h4>
+                  <p className="text-xs text-gray-500">{usage}</p>
                 </div>
               </div>
-            </div>
 
-            {/* Rating */}
-            <div className="flex gap-1 mb-3">
-              {[...Array(testimonial.rating)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              ))}
-            </div>
+              <p className="text-sm text-gray-700 leading-relaxed mb-3">{body}</p>
 
-            {/* Testimonial */}
-            <p className="text-sm text-gray-700 mb-4 leading-relaxed">
-              "{testimonial.testimonial}"
-            </p>
+              <div className="rounded-lg bg-amber-50 border border-amber-100 p-3">
+                <p className="text-[13px] text-amber-900">
+                  <span className="font-semibold">Worth checking: </span>
+                  {watch}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-            {/* Business Info */}
-            <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-4 space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 flex items-center gap-1">
-                  <Building className="w-3 h-3" />
-                  {testimonial.business}
-                </span>
-              </div>
-              <div className="text-xs text-gray-600">
-                {testimonial.industry} • {testimonial.location}
-              </div>
-              <div className="pt-2 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-xs text-gray-600">Annual Savings</div>
-                    <div className="text-lg font-bold text-green-600 flex items-center gap-1">
-                      <TrendingDown className="w-4 h-4" />
-                      {testimonial.annualSavings}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-gray-600">Usage</div>
-                    <div className="text-sm font-semibold text-gray-900">
-                      {testimonial.usage}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      <p className="mt-6 text-[13px] text-gray-500 text-center max-w-2xl mx-auto leading-relaxed">
+        Commercial supply is quoted against your load profile rather than sold from
+        a list, so the only way to know your rate is to ask for a quote. It is free
+        and carries no obligation.
+      </p>
     </div>
   );
 }

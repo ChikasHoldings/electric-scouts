@@ -19,7 +19,7 @@ export default function ProvidersSection() {
           viewport={{ once: true }}
           className="text-center text-xs sm:text-base text-gray-500 font-medium mb-4 sm:mb-8"
         >
-          Trusted by 50,000+ households — powered by top providers
+          Comparing plans from the suppliers licensed in your state
         </motion.p>
         
         {/* Desktop: grid layout */}

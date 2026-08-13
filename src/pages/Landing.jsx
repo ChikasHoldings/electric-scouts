@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   MapPin, CheckCircle, Zap, TrendingDown, Shield, Star, Users, ArrowRight, Sparkles, FileText, Search, ShieldCheck
 } from "lucide-react";
+import { MARKET_TOTALS } from "@/seo/market";
 import { 
   OrganizationSchema, 
   WebSiteSchema, 
@@ -79,7 +80,7 @@ export default function Landing() {
             {/* Trust Badge */}
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full mb-4">
               <Sparkles className="w-4 h-4 text-yellow-300" />
-              <span className="text-xs font-semibold">Trusted by 50,000+ Households Across 12 States</span>
+              <span className="text-xs font-semibold">Comparing {MARKET_TOTALS.activePlans.toLocaleString()} Plans Across {MARKET_TOTALS.states} Deregulated States</span>
             </div>
 
             {/* Main Headline */}
@@ -149,11 +150,15 @@ export default function Landing() {
       <section className="bg-white border-y border-gray-200 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {/* Catalog figures from the market snapshot. The previous row —
+                "50K+ Households Switched", "4.8/5 Customer Rating",
+                "$600+ Avg. Annual Savings" — was invented; there have been two
+                leads and no recorded conversions. */}
             {[
-              { number: "40+", label: "Licensed Providers" },
-              { number: "50K+", label: "Households Switched" },
-              { number: "4.8/5", label: "Customer Rating" },
-              { number: "$600+", label: "Avg. Annual Savings" }
+              { number: MARKET_TOTALS.activePlans.toLocaleString(), label: "Plans Tracked" },
+              { number: String(MARKET_TOTALS.providersWithPlans), label: "Suppliers Compared" },
+              { number: String(MARKET_TOTALS.states), label: "Deregulated States" },
+              { number: "Free", label: "Cost to Compare" }
             ].map((stat, index) => (
               <div key={index}>
                 <div className="text-3xl font-bold text-[#0A5C8C] mb-1">{stat.number}</div>
@@ -316,62 +321,46 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Social Proof - Testimonials */}
+      {/* What the bill analyzer actually does.
+          This block previously rendered three testimonials — invented people,
+          invented cities, and exact annual savings ("Saved $960/year") — under
+          "Real People. Real Bills. Real Savings." and a "4.8/5 from 2,500+
+          verified reviews" badge. None of it was real; the platform has had two
+          leads and no recorded conversions. Fabricated endorsements are
+          prohibited by the FTC's endorsement rules, and ProviderDetails had
+          already had its invented reviews removed on the same grounds.
+          Replaced with what the tool does, which is checkable by using it. */}
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-              Real People. Real Bills. Real Savings.
+              What the Bill Analyzer looks for
             </h2>
-            <div className="flex items-center justify-center gap-2 text-base text-gray-600">
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-              <span className="font-semibold">4.8/5</span>
-              <span className="text-sm">from 2,500+ verified reviews</span>
-            </div>
+            <p className="text-base text-gray-600 max-w-2xl mx-auto">
+              Upload a bill and it reads the line items most people never check —
+              the ones that decide what you actually pay.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                name: "Sarah M.",
-                location: "Houston, TX",
-                text: "I uploaded my bill and Electric Scouts showed me I was paying $40/month in hidden fees I didn't even know about. Switched to a plan that's $80 cheaper. Should've done this years ago.",
-                savings: "$960/year"
+                title: "Your real effective rate",
+                text: "The advertised rate is rarely what you pay. We divide your total supply charge by the kWh you used, which is the only number worth comparing against another plan.",
               },
               {
-                name: "Patricia G.",
-                location: "Philadelphia, PA",
-                text: "The Bill Analyzer was the game changer. It broke down my bill line by line and showed me exactly where I was overpaying. Found a better plan in 10 minutes.",
-                savings: "$720/year"
+                title: "Charges that are easy to miss",
+                text: "Base charges, minimum-usage fees and expired bill credits. A plan can advertise a low rate and still cost more than one that does not, and this is usually why.",
               },
               {
-                name: "Daniel F.",
-                location: "New York, NY",
-                text: "Mentioned this to three people at work and they all ended up using it. The rates really are that much better than what most of us were paying. No gimmicks.",
-                savings: "$650/year"
-              }
-            ].map((testimonial, index) => (
-              <Card key={index} className="border-2 hover:shadow-xl transition-all">
+                title: "Whether switching is worth it",
+                text: "Your current cost against plans available at your address today, with any early termination fee counted against the saving rather than left out of it.",
+              },
+            ].map((item) => (
+              <Card key={item.title} className="border-2">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-700 mb-4 italic leading-relaxed">"{testimonial.text}"</p>
-                  <div className="flex items-center justify-between border-t pt-4">
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm">{testimonial.name}</p>
-                      <p className="text-xs text-gray-600">{testimonial.location}</p>
-                    </div>
-                    <div className="bg-green-100 px-2.5 py-1 rounded-full">
-                      <span className="text-green-700 font-bold text-xs">Saved {testimonial.savings}</span>
-                    </div>
-                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-700 leading-relaxed">{item.text}</p>
                 </CardContent>
               </Card>
             ))}
@@ -453,7 +442,7 @@ export default function Landing() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-[#0A5C8C]" />
-              <span>50,000+ Happy Customers</span>
+              <span>{MARKET_TOTALS.providersWithPlans} Suppliers Compared</span>
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-[#0A5C8C]" />
@@ -461,7 +450,7 @@ export default function Landing() {
             </div>
             <div className="flex items-center gap-2">
               <Star className="w-5 h-5 text-yellow-500" />
-              <span>4.8/5 Rating (2,500+ Reviews)</span>
+              <span>Free to use, no obligation</span>
             </div>
           </div>
         </div>
