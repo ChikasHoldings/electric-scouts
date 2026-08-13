@@ -19,8 +19,6 @@ import {
   Settings,
   User,
   ChevronDown,
-  Building,
-  Leaf,
   Home,
   UserCheck,
 } from "lucide-react";
@@ -30,13 +28,14 @@ import {
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard, roles: ["admin", "editor", "viewer"] },
   { label: "Leads", path: "/admin/leads", icon: UserCheck, roles: ["admin", "editor"] },
-  { label: "Monetization", path: "/admin/monetization", icon: TrendingUp, roles: ["admin"] },
+  { label: "Revenue", path: "/admin/revenue", icon: TrendingUp, roles: ["admin"] },
   { label: "Lead Buyers", path: "/admin/lead-buyers", icon: Handshake, roles: ["admin"] },
   { label: "Affiliates", path: "/admin/affiliates", icon: Link2, roles: ["admin"] },
   { label: "Providers", path: "/admin/providers", icon: Building2, roles: ["admin", "editor"] },
+  // One plan screen for every audience. Business and renewable were separate
+  // pages that differed only by a filter, and which one you opened silently
+  // decided how a plan got classified.
   { label: "Plans", path: "/admin/plans", icon: Zap, roles: ["admin", "editor"] },
-  { label: "Business Plans", path: "/admin/business-plans", icon: Building, roles: ["admin", "editor"] },
-  { label: "Renewable Plans", path: "/admin/renewable-plans", icon: Leaf, roles: ["admin", "editor"] },
   { label: "Concierge", path: "/admin/concierge", icon: Home, roles: ["admin", "editor"] },
   { label: "Articles", path: "/admin/articles", icon: FileText, roles: ["admin", "editor"] },
   { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },

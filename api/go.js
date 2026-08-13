@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import { isCommissionCapable, resolutionOf, resolveRedirectUrl } from "./_lib/referral.js";
+import { recordClickRevenue } from "./_lib/revenue.js";
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL,
@@ -81,36 +82,72 @@ export default async function handler(req, res) {
     // discarded rather than written.
     const resolution = resolutionOf(link, redirectUrl);
 
-    supabase
-      .from("click_tracking")
-      .insert({
-        slug: link.slug,
-        referrer,
-        user_agent: userAgent,
-        ip_hash: ipHash,
-        resolved_url: redirectUrl,
+    // The distinction the business needs: a click through /api/go to a plain
+    // provider page is attributable internally, but it is NOT commission-
+    // bearing unless the destination carries real network tracking. Recording
+    // them as the same thing would overstate revenue.
+    const commissionCapable = isCommissionCapable(redirectUrl);
 
-        session_id: param(req.query.s, 64),
-        provider_id: link.provider_id || null,
-        provider_name: link.provider?.name || null,
-        plan_id: uuidParam(req.query.p),
-        plan_name: param(req.query.pn, 160),
-        match_score: intParam(req.query.ms, 100),
-        result_position: intParam(req.query.rp, 500),
-        result_section: ["top_match", "more_options"].includes(req.query.rs) ? req.query.rs : null,
-        entry_context: param(req.query.ec, 60),
-        utm_source: param(req.query.utm_source, 80),
-        utm_campaign: param(req.query.utm_campaign, 80),
+    // Awaited, not fired and forgotten.
+    //
+    // A serverless invocation is free to be frozen the moment the response is
+    // sent, so a dangling promise here is a click that may simply never be
+    // recorded — and an unrecorded click is both lost attribution and lost
+    // revenue. Two indexed inserts cost a few milliseconds; a silently dropped
+    // referral costs the commission on it.
+    //
+    // Every failure below is swallowed: the customer's redirect is not the
+    // accounting system's to block.
+    try {
+      const { data: click, error: clickError } = await supabase
+        .from("click_tracking")
+        .insert({
+          slug: link.slug,
+          referrer,
+          user_agent: userAgent,
+          ip_hash: ipHash,
+          resolved_url: redirectUrl,
 
-        resolution,
-        // The distinction the business needs: a click through /api/go to a
-        // plain provider page is attributable internally, but it is NOT
-        // commission-bearing unless the destination carries real network
-        // tracking. Recording them as the same thing would overstate revenue.
-        monetized: isCommissionCapable(redirectUrl),
-      })
-      .then(() => {})
-      .catch(() => {});
+          session_id: param(req.query.s, 64),
+          provider_id: link.provider_id || null,
+          provider_name: link.provider?.name || null,
+          plan_id: uuidParam(req.query.p),
+          plan_name: param(req.query.pn, 160),
+          match_score: intParam(req.query.ms, 100),
+          result_position: intParam(req.query.rp, 500),
+          result_section: ["top_match", "more_options"].includes(req.query.rs) ? req.query.rs : null,
+          entry_context: param(req.query.ec, 60),
+          utm_source: param(req.query.utm_source, 80),
+          utm_campaign: param(req.query.utm_campaign, 80),
+
+          resolution,
+          monetized: commissionCapable,
+        })
+        .select("id, clicked_at")
+        .single();
+
+      // supabase-js returns errors, it does not throw them, so the catch below
+      // would never fire for the likeliest failure — a column the deployed
+      // schema does not have yet. Logged explicitly, or the click disappears
+      // in silence and the attribution gap is invisible.
+      if (clickError) {
+        console.error("Click tracking insert failed (redirect continues):", clickError.message);
+      }
+
+      // Accrues only when an admin has configured a per-click rate on this
+      // link AND the destination really carries tracking. Everything else
+      // records the click and earns nothing, which is the truth for most links.
+      if (click?.id) {
+        await recordClickRevenue(supabase, {
+          click,
+          link,
+          commissionCapable,
+          providerName: link.provider?.name || null,
+        });
+      }
+    } catch (trackingError) {
+      console.error("Click tracking threw (redirect continues):", trackingError?.message);
+    }
 
     // Redirect to resolved URL
     res.setHeader("Location", redirectUrl);

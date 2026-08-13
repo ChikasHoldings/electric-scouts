@@ -21,11 +21,9 @@ const AdminArticles = lazy(() => import('@/pages/admin/AdminArticles'));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
 const AdminAffiliates = lazy(() => import('@/pages/admin/AdminAffiliates'));
 const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
-const AdminBusinessPlans = lazy(() => import('@/pages/admin/AdminBusinessPlans'));
-const AdminRenewablePlans = lazy(() => import('@/pages/admin/AdminRenewablePlans'));
 const AdminConcierge = lazy(() => import('@/pages/admin/AdminConcierge'));
 const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
-const AdminMonetization = lazy(() => import('@/pages/admin/AdminMonetization'));
+const AdminRevenue = lazy(() => import('@/pages/admin/AdminRevenue'));
 const AdminLeadBuyers = lazy(() => import('@/pages/admin/AdminLeadBuyers'));
 
 // Lazy-loaded SEO redirect components
@@ -93,16 +91,12 @@ const AppRoutes = () => {
           <AdminRoute><AdminPlans /></AdminRoute>
         </Suspense>
       } />
-      <Route path="/admin/business-plans" element={
-        <Suspense fallback={<AdminLoading />}>
-          <AdminRoute><AdminBusinessPlans /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/renewable-plans" element={
-        <Suspense fallback={<AdminLoading />}>
-          <AdminRoute><AdminRenewablePlans /></AdminRoute>
-        </Suspense>
-      } />
+      {/* The business and renewable plan screens were the residential one with
+          a filter changed, so they are now filters on /admin/plans. Redirected
+          rather than removed: these paths are in browser histories and, more
+          importantly, in the muscle memory of whoever runs the catalog. */}
+      <Route path="/admin/business-plans" element={<Navigate to="/admin/plans" replace />} />
+      <Route path="/admin/renewable-plans" element={<Navigate to="/admin/plans" replace />} />
       <Route path="/admin/articles" element={
         <Suspense fallback={<AdminLoading />}>
           <AdminRoute><AdminArticles /></AdminRoute>
@@ -133,11 +127,14 @@ const AppRoutes = () => {
           <AdminRoute><AdminLeadBuyers /></AdminRoute>
         </Suspense>
       } />
-      <Route path="/admin/monetization" element={
+      <Route path="/admin/revenue" element={
         <Suspense fallback={<AdminLoading />}>
-          <AdminRoute><AdminMonetization /></AdminRoute>
+          <AdminRoute><AdminRevenue /></AdminRoute>
         </Suspense>
       } />
+      {/* Monetization readiness is now one section of the revenue screen — the
+          question "can we earn" is only useful next to "what did we earn". */}
+      <Route path="/admin/monetization" element={<Navigate to="/admin/revenue" replace />} />
       <Route path="/admin/leads" element={
         <Suspense fallback={<AdminLoading />}>
           <AdminRoute><AdminLeads /></AdminRoute>

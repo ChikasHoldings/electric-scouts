@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ConciergeRequest } from "@/api/supabaseEntities";
+import { adminPost } from "@/lib/adminApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,20 +82,47 @@ export default function AdminConcierge() {
     setShowDetailDialog(true);
   };
 
+  /**
+   * Save through the server, not straight to the table.
+   *
+   * Concierge revenue is platform revenue, so it has to reach the same ledger
+   * everything else does — otherwise "total platform earnings" quietly excludes
+   * a whole product line. The endpoint writes the request row and the ledger
+   * entry together, keyed on the request, so correcting a figure edits the
+   * existing line rather than booking the money a second time.
+   */
   const handleUpdate = async () => {
     if (!selectedRequest) return;
+
+    const amount = parseFloat(editRevenue);
+    if (editRevenue !== "" && (!Number.isFinite(amount) || amount < 0)) {
+      toast({
+        title: "Check the revenue figure",
+        description: "Enter an amount of zero or more.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsUpdating(true);
     try {
-      await ConciergeRequest.update(selectedRequest.id, {
+      await adminPost("concierge-revenue", {
+        requestId: selectedRequest.id,
+        amount: Number.isFinite(amount) ? amount : 0,
         status: editStatus,
-        admin_notes: editNotes,
-        actual_revenue: parseFloat(editRevenue) || 0,
+        adminNotes: editNotes,
       });
       queryClient.invalidateQueries({ queryKey: ["concierge_requests"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-revenue"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-dashboard-earnings"] });
       toast({ title: "Updated", description: "Concierge request updated successfully." });
       setShowDetailDialog(false);
     } catch (err) {
-      toast({ title: "Error", description: "Failed to update request.", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: err.message || "Failed to update request.",
+        variant: "destructive",
+      });
     } finally {
       setIsUpdating(false);
     }
