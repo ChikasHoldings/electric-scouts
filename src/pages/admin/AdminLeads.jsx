@@ -1,6 +1,11 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lead } from "@/api/supabaseEntities";
+import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "@/lib/AuthContext";
+import { adminPost } from "@/lib/adminApi";
+import { leadMonetizationState } from "@/lib/revenue";
+import { REJECTION_LABELS } from "@/lib/leadBuyerRouting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +52,8 @@ import {
   RefreshCw,
   TrendingUp,
   Send,
+  Handshake,
+  ShieldAlert,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -110,6 +117,15 @@ function getSourceBadge(sourcePage) {
 export default function AdminLeads() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { profile } = useAuth();
+
+  // Buyer payout terms are admin-only at the row level, so an editor's query
+  // would come back empty. That is a permission boundary, not evidence that no
+  // buyers exist — and the difference matters, because telling an editor
+  // "no buyers are configured" would send them to fix a problem that isn't
+  // theirs and isn't real. Editors still forward leads; the server picks the
+  // buyer with the service role.
+  const canReadBuyers = profile?.role === "admin";
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterSource, setFilterSource] = useState("all");
@@ -121,6 +137,34 @@ export default function AdminLeads() {
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["admin-leads"],
     queryFn: () => Lead.list(),
+  });
+
+  // Where each lead actually went. Fetched alongside the leads so the list can
+  // show the outcome per row — "captured" and "sold" look identical otherwise,
+  // and the difference is the entire point of the page.
+  const { data: deliveries = [] } = useQuery({
+    queryKey: ["admin-lead-deliveries"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("lead_deliveries")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: buyers = [] } = useQuery({
+    queryKey: ["admin-lead-buyers"],
+    enabled: canReadBuyers,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("lead_buyers")
+        .select("id, name, is_active, price_per_lead, priority")
+        .order("priority", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
   });
 
   // ─── Mutations ──────────────────────────────────────────
@@ -141,6 +185,64 @@ export default function AdminLeads() {
     },
   });
 
+  const refreshRouting = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-leads"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-lead-deliveries"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-revenue"] });
+  };
+
+  // Forwarding runs the same server path capture-time routing uses, so a lead
+  // sent by hand is deduplicated, capped and put on the ledger identically.
+  const forwardLead = useMutation({
+    mutationFn: ({ leadId, buyerId }) =>
+      adminPost("route-lead", { leadId, buyerId: buyerId || undefined }),
+    onSuccess: (result) => {
+      refreshRouting();
+      if (result.delivered && result.buyer) {
+        toast({ title: `Lead sent to ${result.buyer.name}` });
+      } else {
+        // A lead nobody will take is a configuration answer, not a failure, so
+        // it is reported as the reason rather than as an error toast.
+        toast({
+          title: "No buyer took this lead",
+          description:
+            result.coverage?.noBuyersConfigured
+              ? "No lead buyers are configured yet."
+              : "Every active buyer's targeting excludes it. Open the lead for the breakdown.",
+        });
+      }
+    },
+    onError: (err) =>
+      toast({ title: "Could not forward lead", description: err.message, variant: "destructive" }),
+  });
+
+  const setDeliveryStatus = useMutation({
+    mutationFn: ({ deliveryId, status }) => adminPost("delivery-status", { deliveryId, status }),
+    onSuccess: (_result, variables) => {
+      refreshRouting();
+      toast({
+        title: variables.status === "accepted" ? "Marked as accepted" : "Marked as rejected",
+        description:
+          variables.status === "accepted"
+            ? "Revenue for this sale is now confirmed on the ledger."
+            : "The accrued revenue for this sale has been reversed.",
+      });
+    },
+    onError: (err) =>
+      toast({ title: "Could not update delivery", description: err.message, variant: "destructive" }),
+  });
+
+  const deliveriesByLead = useMemo(() => {
+    const map = new Map();
+    for (const row of deliveries) {
+      if (!row.lead_id) continue;
+      const list = map.get(row.lead_id) || [];
+      list.push(row);
+      map.set(row.lead_id, list);
+    }
+    return map;
+  }, [deliveries]);
+
   // ─── Computed Stats ──────────────────────────────────────
   const stats = useMemo(() => {
     const total = leads.length;
@@ -156,8 +258,28 @@ export default function AdminLeads() {
       const today = new Date();
       return d.toDateString() === today.toDateString();
     }).length;
-    return { total, newCount, activeCount, convertedCount, residentialCount, businessCount, renewableCount, newsletterCount, todayCount };
-  }, [leads]);
+    // Routing outcomes, computed from deliveries rather than from a status
+    // string on the lead — the delivery rows are the record of what actually
+    // happened, and a label can fall out of step with them.
+    const sold = new Set(deliveries.filter(d => d.status === 'accepted').map(d => d.lead_id)).size;
+    const awaiting = new Set(
+      deliveries.filter(d => d.status === 'delivered' || d.status === 'pending').map(d => d.lead_id)
+    ).size;
+    const routedIds = new Set(deliveries.map(d => d.lead_id));
+    // Only leads that could be sold count as "unrouted" — an affiliate lead is
+    // monetized by its click, so counting it here would invent a backlog.
+    const sellable = leads.filter(l =>
+      l.consent_contact === true &&
+      ['residential_partner', 'commercial_partner', 'renewable_partner'].includes(l.monetization_route)
+    );
+    const unrouted = sellable.filter(l => !routedIds.has(l.id)).length;
+
+    return {
+      total, newCount, activeCount, convertedCount, residentialCount, businessCount,
+      renewableCount, newsletterCount, todayCount, sold, awaiting, unrouted,
+      sellable: sellable.length,
+    };
+  }, [leads, deliveries]);
 
   // ─── Filtering ──────────────────────────────────────────
   const filteredLeads = useMemo(() => {
@@ -241,10 +363,26 @@ export default function AdminLeads() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <StatCard label="Total Leads" value={stats.total} color="text-gray-900" border="border-l-[#0A5C8C]" />
         <StatCard label="New" value={stats.newCount} color="text-blue-600" border="border-l-blue-500" />
-        <StatCard label="Converted" value={stats.convertedCount} color="text-emerald-600" border="border-l-emerald-500" />
-        <StatCard label="Residential" value={stats.residentialCount} color="text-indigo-600" border="border-l-indigo-500" />
-        <StatCard label="Newsletter" value={stats.newsletterCount} color="text-orange-600" border="border-l-orange-500" />
+        <StatCard label="Sold" value={stats.sold} color="text-emerald-600" border="border-l-emerald-500" />
+        <StatCard label="Awaiting buyer" value={stats.awaiting} color="text-amber-600" border="border-l-amber-500" />
+        <StatCard label="Sellable, unrouted" value={stats.unrouted} color="text-rose-600" border="border-l-rose-500" />
       </div>
+
+      {stats.unrouted > 0 && canReadBuyers && buyers.filter(b => b.is_active).length === 0 && (
+        <div className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
+          <ShieldAlert className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <div>
+            <p className="text-[15px] font-medium text-gray-900">
+              {stats.unrouted} sellable {stats.unrouted === 1 ? "lead has" : "leads have"} nowhere to go
+            </p>
+            <p className="mt-1 text-[13.5px] text-gray-600 leading-relaxed">
+              These leads consented to contact and were routed to a partner, but
+              no active lead buyer is configured to receive them. Add one under
+              Lead Buyers and they can be forwarded.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -321,6 +459,7 @@ export default function AdminLeads() {
                   <TableHead className="font-semibold text-gray-700">Source</TableHead>
                   <TableHead className="font-semibold text-gray-700">Type</TableHead>
                   <TableHead className="font-semibold text-gray-700">Route</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Delivery</TableHead>
                   <TableHead className="font-semibold text-gray-700">Status</TableHead>
                   <TableHead className="font-semibold text-gray-700">Date</TableHead>
                   <TableHead className="font-semibold text-gray-700 text-right">Actions</TableHead>
@@ -364,6 +503,12 @@ export default function AdminLeads() {
                         <RouteBadge route={lead.monetization_route} />
                         <QualificationBadge qualification={lead.qualification} />
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <DeliveryCell
+                        lead={lead}
+                        deliveries={deliveriesByLead.get(lead.id) || []}
+                      />
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(lead.status)}
@@ -466,6 +611,22 @@ export default function AdminLeads() {
                 <LeadComparisonDetail lead={viewLead} />
               </div>
 
+              {/* Buyer routing — the step between a captured lead and revenue */}
+              <div className="border-t pt-4">
+                <RoutingPanel
+                  lead={viewLead}
+                  deliveries={deliveriesByLead.get(viewLead.id) || []}
+                  buyers={buyers}
+                  canChooseBuyer={canReadBuyers}
+                  onForward={(buyerId) => forwardLead.mutate({ leadId: viewLead.id, buyerId })}
+                  onDeliveryStatus={(deliveryId, status) =>
+                    setDeliveryStatus.mutate({ deliveryId, status })}
+                  isForwarding={forwardLead.isPending}
+                  isUpdating={setDeliveryStatus.isPending}
+                  lastResult={forwardLead.data}
+                />
+              </div>
+
               {/* Search Preferences */}
               {viewLead.search_preferences && Object.keys(viewLead.search_preferences).length > 0 && (
                 <div className="border-t pt-4">
@@ -565,6 +726,212 @@ function StatCard({ label, value, color, border }) {
     <div className={`bg-white rounded-lg border ${border} border-l-4 p-4`}>
       <p className="text-xs text-gray-500 font-medium">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
+    </div>
+  );
+}
+
+// ─── Routing ──────────────────────────────────────────────
+
+/** Routes whose destination is a lead buyer, mirroring the server's rule. */
+const SELLABLE_ROUTES = ["residential_partner", "commercial_partner", "renewable_partner"];
+
+const DELIVERY_STATE_STYLES = {
+  sold: "bg-emerald-100 text-emerald-700",
+  delivered: "bg-amber-100 text-amber-700",
+  pending: "bg-blue-100 text-blue-700",
+  rejected: "bg-gray-100 text-gray-600",
+  failed: "bg-red-100 text-red-700",
+  unrouted: "bg-gray-100 text-gray-500",
+};
+
+/**
+ * One lead's delivery state, at a glance.
+ *
+ * A lead that cannot be sold is shown as such rather than as "not routed" —
+ * an affiliate lead earns through its click and a lead without consent may
+ * never be sold, and neither is a backlog item an operator should chase.
+ */
+function DeliveryCell({ lead, deliveries }) {
+  const state = leadMonetizationState(lead, deliveries);
+
+  if (state.state === "unrouted") {
+    if (lead.consent_contact !== true) {
+      return <span className="text-xs text-gray-400 italic">No consent</span>;
+    }
+    if (!SELLABLE_ROUTES.includes(lead.monetization_route)) {
+      return <span className="text-xs text-gray-400 italic">Not sellable</span>;
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-0.5">
+      <Badge variant="outline" className={`${DELIVERY_STATE_STYLES[state.state]} border-0 text-xs w-fit`}>
+        {state.label}
+      </Badge>
+      {state.value > 0 && (
+        <span className="text-xs font-medium text-emerald-700 tabular-nums">
+          ${state.value.toFixed(2)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Forward a lead, and record what the buyer said.
+ *
+ * Deliberately explicit about why a lead cannot be forwarded. "Nothing
+ * happened" is the least useful thing an admin screen can say, and the three
+ * reasons — no consent, not a sellable route, no buyer matches — each have a
+ * different fix.
+ */
+function RoutingPanel({
+  lead, deliveries, buyers, canChooseBuyer, onForward, onDeliveryStatus,
+  isForwarding, isUpdating, lastResult,
+}) {
+  const [targetBuyer, setTargetBuyer] = useState("auto");
+
+  const activeBuyers = buyers.filter((b) => b.is_active);
+  const hasConsent = lead.consent_contact === true;
+  const isSellable = SELLABLE_ROUTES.includes(lead.monetization_route);
+  // An editor cannot see the buyer list, so "no buyers" is unknowable to them
+  // and must not block forwarding — the server resolves the buyer either way.
+  const knowsBuyers = canChooseBuyer;
+  const canForward = hasConsent && isSellable && (!knowsBuyers || activeBuyers.length > 0);
+
+  // Only show the rejection breakdown for the lead it was produced for. The
+  // mutation result outlives the dialog it came from, so without the id check
+  // one lead's reasons would be shown against another's.
+  const rejections =
+    lastResult && !lastResult.delivered && lastResult.leadId === lead.id
+      ? lastResult.coverage?.rejected || []
+      : [];
+
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <p className="text-xs text-gray-500 font-medium flex items-center gap-1.5">
+          <Handshake className="w-3.5 h-3.5" aria-hidden="true" />
+          Buyer routing
+        </p>
+        {lead.assigned_partner && (
+          <span className="text-xs text-gray-600">
+            Assigned to <strong className="text-gray-900">{lead.assigned_partner}</strong>
+          </span>
+        )}
+      </div>
+
+      {!hasConsent && (
+        <div className="rounded-lg bg-gray-50 border border-gray-200 p-3 mb-3">
+          <p className="text-sm text-gray-700">
+            This lead did not consent to being contacted, so it cannot be sold to a buyer.
+          </p>
+        </div>
+      )}
+
+      {hasConsent && !isSellable && (
+        <div className="rounded-lg bg-gray-50 border border-gray-200 p-3 mb-3">
+          <p className="text-sm text-gray-700">
+            Routed to <strong>{lead.monetization_route || "no route"}</strong>, which is not sold to
+            buyers. Affiliate leads earn through their outbound click; concierge leads are handled in-house.
+          </p>
+        </div>
+      )}
+
+      {hasConsent && isSellable && knowsBuyers && activeBuyers.length === 0 && (
+        <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 mb-3">
+          <p className="text-sm text-gray-700">
+            No active lead buyers are configured, so there is nowhere to send this lead.
+          </p>
+        </div>
+      )}
+
+      {canForward && (
+        <div className="flex flex-col sm:flex-row gap-2 mb-3">
+          {knowsBuyers && (
+            <Select value={targetBuyer} onValueChange={setTargetBuyer}>
+              <SelectTrigger className="sm:w-64">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="auto">Best matching buyer</SelectItem>
+                {activeBuyers.map((b) => (
+                  <SelectItem key={b.id} value={b.id}>
+                    {b.name}
+                    {b.price_per_lead != null ? ` — $${Number(b.price_per_lead).toFixed(2)}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <Button
+            size="sm"
+            onClick={() => onForward(targetBuyer === "auto" ? null : targetBuyer)}
+            disabled={isForwarding}
+            className="bg-[#0A5C8C] hover:bg-[#084a6f]"
+          >
+            {isForwarding
+              ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" aria-hidden="true" />
+              : <Send className="w-4 h-4 mr-1.5" aria-hidden="true" />}
+            Forward lead
+          </Button>
+        </div>
+      )}
+
+      {rejections.length > 0 && (
+        <div className="rounded-lg bg-gray-50 border border-gray-200 p-3 mb-3">
+          <p className="text-xs font-medium text-gray-700 mb-1.5">Why each buyer declined</p>
+          <ul className="space-y-1">
+            {rejections.map((r) => (
+              <li key={r.buyerId || r.name} className="text-xs text-gray-600">
+                <span className="font-medium text-gray-800">{r.name}</span>
+                {" — "}
+                {REJECTION_LABELS[r.reason] || r.reason}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {deliveries.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-gray-700">Deliveries</p>
+          {deliveries.map((d) => (
+            <div key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 p-3">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-gray-900">{d.buyer_name || "Unknown buyer"}</p>
+                <p className="text-xs text-gray-500">
+                  {d.status}
+                  {d.price_at_delivery != null && ` · $${Number(d.price_at_delivery).toFixed(2)}`}
+                  {d.delivered_at && ` · sent ${new Date(d.delivered_at).toLocaleDateString()}`}
+                  {d.responded_at && ` · answered ${new Date(d.responded_at).toLocaleDateString()}`}
+                </p>
+                {d.error && <p className="text-xs text-red-600 mt-0.5">{d.error}</p>}
+              </div>
+
+              {/* A buyer can only rule on a lead they actually received. */}
+              {(d.status === "delivered" || d.status === "pending") && (
+                <div className="flex gap-1.5 flex-shrink-0">
+                  <Button
+                    size="sm" variant="outline" disabled={isUpdating}
+                    onClick={() => onDeliveryStatus(d.id, "accepted")}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+                    Accepted
+                  </Button>
+                  <Button
+                    size="sm" variant="ghost" disabled={isUpdating}
+                    className="text-gray-500 hover:text-red-600"
+                    onClick={() => onDeliveryStatus(d.id, "rejected")}
+                  >
+                    Rejected
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

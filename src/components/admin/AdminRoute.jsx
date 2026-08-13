@@ -2,13 +2,24 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import AdminLayout from "./AdminLayout";
 
-// Define which roles can access which routes
+/**
+ * Which roles may open which admin route.
+ *
+ * This must stay in step with the sidebar in AdminLayout: a link an editor can
+ * see but not open is a worse experience than no link at all, and Leads was
+ * exactly that — listed in the nav for editors, and denied here because it had
+ * no entry and fell through to the admin-only default.
+ *
+ * Anything not listed defaults to admin-only, which is the safe direction to
+ * be wrong in for a route added later.
+ */
 const routePermissions = {
   "/admin": ["admin", "editor", "viewer"],
+  "/admin/leads": ["admin", "editor"],
+  "/admin/revenue": ["admin"],
+  "/admin/lead-buyers": ["admin"],
   "/admin/providers": ["admin", "editor"],
   "/admin/plans": ["admin", "editor"],
-  "/admin/business-plans": ["admin", "editor"],
-  "/admin/renewable-plans": ["admin", "editor"],
   "/admin/articles": ["admin", "editor"],
   "/admin/users": ["admin"],
   "/admin/affiliates": ["admin"],

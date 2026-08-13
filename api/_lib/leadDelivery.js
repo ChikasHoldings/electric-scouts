@@ -1,4 +1,5 @@
 import { selectBuyer, summarizeCoverage } from '../../src/lib/leadBuyerRouting.js';
+import { recordLeadSale } from './revenue.js';
 
 /**
  * Delivering a qualified lead to its buyer.
@@ -69,6 +70,77 @@ export async function alreadyDeliveredTo(supabase, leadId) {
   return (data || []).map((row) => row.buyer_id).filter(Boolean);
 }
 
+/** HTML-escape a value bound for the buyer's inbox. */
+function esc(value) {
+  if (value === null || value === undefined || value === '') return '—';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * The lead as a buyer reads it.
+ *
+ * A buyer paying per lead needs to act on it from their inbox — so the contact
+ * details and the qualification that justified the price are both in the body,
+ * not attached as JSON. The same fields the webhook receives, rendered.
+ */
+function buyerEmailHtml(payload) {
+  const row = (label, value) => `
+    <tr>
+      <td style="padding:8px 0;color:#6b7280;font-size:13px;width:170px;vertical-align:top;">${label}</td>
+      <td style="padding:8px 0;color:#111827;font-size:14px;font-weight:500;">${esc(value)}</td>
+    </tr>`;
+
+  const name = [payload.contact.first_name, payload.contact.last_name].filter(Boolean).join(' ');
+  const location = [payload.location.city, payload.location.state].filter(Boolean).join(', ');
+
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>New lead</title></head>
+<body style="margin:0;padding:24px;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
+  <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;margin:0 auto;background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;">
+    <tr><td style="background:#0A5C8C;padding:20px 28px;">
+      <p style="margin:0;color:#ffffff;font-size:17px;font-weight:600;">New qualified lead</p>
+      <p style="margin:4px 0 0;color:#bfdbfe;font-size:13px;">Electric Scouts &middot; ${esc(payload.route)}</p>
+    </td></tr>
+    <tr><td style="padding:24px 28px;">
+      <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.04em;">Contact</p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${row('Name', name)}
+        ${row('Email', payload.contact.email)}
+        ${row('Phone', payload.contact.phone)}
+      </table>
+
+      <p style="margin:22px 0 12px;font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.04em;">Location</p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${row('Service address', payload.location.service_address)}
+        ${row('City / State', location)}
+        ${row('ZIP', payload.location.zip)}
+      </table>
+
+      <p style="margin:22px 0 12px;font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.04em;">Profile</p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        ${row('Customer type', payload.profile.customer_type)}
+        ${row('Business name', payload.profile.business_name)}
+        ${row('Property type', payload.profile.property_type)}
+        ${row('Energy preference', payload.profile.energy_preference)}
+        ${row('Shopping intent', payload.profile.shopping_intent)}
+        ${row('Monthly usage', payload.profile.monthly_usage_kwh ? `${payload.profile.monthly_usage_kwh} kWh` : null)}
+        ${row('Monthly cost', payload.profile.monthly_cost ? `$${payload.profile.monthly_cost}` : null)}
+        ${row('Current provider', payload.profile.current_provider)}
+      </table>
+
+      <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #f3f4f6;font-size:12px;color:#9ca3af;line-height:1.6;">
+        Lead reference ${esc(payload.lead_id)} &middot; received ${esc(payload.received_at)}.
+        This customer consented to be contacted about electricity supply offers.
+      </p>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
 /**
  * Send the payload.
  *
@@ -83,23 +155,52 @@ async function deliver(buyer, payload, { sendEmail }) {
 
   if (buyer.delivery_method === 'webhook') {
     if (!buyer.webhook_url) return { ok: false, error: 'No webhook URL configured' };
-    const response = await fetch(buyer.webhook_url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) return { ok: false, error: `Webhook returned ${response.status}` };
-    return { ok: true, status: 'delivered' };
+
+    // Every transport failure has to come back as a value, never as a throw.
+    // The caller has already claimed the delivery row, and the unique
+    // (lead_id, buyer_id) constraint means a claim it never gets to mark
+    // 'failed' can never be retried — the sale would be wedged at 'pending'
+    // forever, looking like a lead in flight rather than one that needs
+    // attention. A timeout or a DNS failure is exactly that case.
+    try {
+      const response = await fetch(buyer.webhook_url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        // A buyer's endpoint that never answers must not hold this request
+        // open until the platform's own function times out.
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!response.ok) return { ok: false, error: `Webhook returned ${response.status}` };
+      return { ok: true, status: 'delivered' };
+    } catch (error) {
+      const reason = error?.name === 'TimeoutError' || error?.name === 'AbortError'
+        ? 'Webhook timed out after 10s'
+        : `Webhook request failed: ${error?.message || error}`;
+      return { ok: false, error: reason };
+    }
   }
 
   if (!buyer.delivery_email) return { ok: false, error: 'No delivery email configured' };
-  const sent = await sendEmail({
-    to: buyer.delivery_email,
-    subject: `New ${payload.profile.customer_type || 'electricity'} lead — ${payload.location.zip || 'unknown ZIP'}`,
-    payload,
-  });
-  if (!sent?.success) return { ok: false, error: sent?.error || 'Email send failed' };
-  return { ok: true, status: 'delivered' };
+
+  // Same reasoning as the webhook path: a throw here would strand the claimed
+  // delivery at 'pending' with no error and no way to retry it.
+  try {
+    const sent = await sendEmail({
+      to: buyer.delivery_email,
+      subject: `New ${payload.profile.customer_type || 'electricity'} lead — ${payload.location.zip || 'unknown ZIP'}`,
+      html: buyerEmailHtml(payload),
+      // Keyed on the pair, so a retry of the same sale never mails a buyer the
+      // same lead twice — the buyer-facing half of the no-double-sell rule.
+      idempotencyKey: `lead_delivery_${payload.lead_id}_${buyer.id}`,
+      eventType: 'lead_delivery',
+      leadId: payload.lead_id,
+    });
+    if (!sent?.success) return { ok: false, error: sent?.error || 'Email send failed' };
+    return { ok: true, status: 'delivered' };
+  } catch (error) {
+    return { ok: false, error: `Email send threw: ${error?.message || error}` };
+  }
 }
 
 /**
@@ -111,9 +212,20 @@ async function deliver(buyer, payload, { sendEmail }) {
  * @param {{sendEmail: Function, now?: Date}} deps
  * @returns {Promise<{delivered: boolean, buyer: object|null, reason?: string, coverage: object}>}
  */
-export async function routeLead(supabase, lead, route, { sendEmail, now = new Date() } = {}) {
-  const buyers = await loadActiveBuyers(supabase);
+export async function routeLead(supabase, lead, route, {
+  sendEmail,
+  now = new Date(),
+  buyerId = null,
+} = {}) {
+  const allBuyers = await loadActiveBuyers(supabase);
   const delivered = await alreadyDeliveredTo(supabase, lead.id);
+
+  // An admin forwarding to a named buyer still goes through the same eligibility
+  // rules — the choice narrows the candidate set, it does not bypass the
+  // targeting, the phone requirement, the score floor or the monthly cap a
+  // buyer negotiated. Overriding those by hand is how a buyer receives leads
+  // they have explicitly refused to pay for.
+  const buyers = buyerId ? allBuyers.filter((b) => b.id === buyerId) : allBuyers;
 
   const matchInput = {
     customerType: lead.customer_type,
@@ -123,7 +235,11 @@ export async function routeLead(supabase, lead, route, { sendEmail, now = new Da
     leadScore: lead.lead_score,
   };
 
-  const coverage = summarizeCoverage(buyers, matchInput, { now, alreadyDeliveredTo: delivered });
+  // Coverage is diagnostic, so it is always computed over EVERY active buyer,
+  // even when the admin narrowed delivery to one. Reporting "no buyers
+  // configured" because the single chosen buyer declined would send an operator
+  // to the wrong screen entirely.
+  const coverage = summarizeCoverage(allBuyers, matchInput, { now, alreadyDeliveredTo: delivered });
   const { buyer } = selectBuyer(buyers, matchInput, { now, alreadyDeliveredTo: delivered });
 
   if (!buyer) {
@@ -135,14 +251,20 @@ export async function routeLead(supabase, lead, route, { sendEmail, now = new Da
 
   // Claim the delivery BEFORE sending. If two requests race, the unique
   // constraint means only one wins the insert, so only one actually sends.
-  const { error: claimError } = await supabase.from('lead_deliveries').insert({
-    lead_id: lead.id,
-    buyer_id: buyer.id,
-    buyer_name: buyer.name,
-    route,
-    price_at_delivery: buyer.price_per_lead ?? null,
-    status: 'pending',
-  });
+  const { data: claimed, error: claimError } = await supabase
+    .from('lead_deliveries')
+    .insert({
+      lead_id: lead.id,
+      buyer_id: buyer.id,
+      buyer_name: buyer.name,
+      route,
+      // The price agreed at THIS moment. A buyer who renegotiates next quarter
+      // must not retroactively restate what this quarter's leads were sold for.
+      price_at_delivery: buyer.price_per_lead ?? null,
+      status: 'pending',
+    })
+    .select('id, lead_id, buyer_id, price_at_delivery')
+    .single();
 
   if (claimError) {
     // 23505 is the unique violation: this lead already went to this buyer, so
@@ -154,13 +276,14 @@ export async function routeLead(supabase, lead, route, { sendEmail, now = new Da
   }
 
   const result = await deliver(buyer, buyerPayload(lead, route), { sendEmail });
+  const deliveredAt = result.ok && result.status === 'delivered' ? new Date().toISOString() : null;
 
   await supabase
     .from('lead_deliveries')
     .update({
       status: result.ok ? result.status : 'failed',
       error: result.ok ? null : String(result.error).slice(0, 500),
-      delivered_at: result.ok && result.status === 'delivered' ? new Date().toISOString() : null,
+      delivered_at: deliveredAt,
     })
     .eq('lead_id', lead.id)
     .eq('buyer_id', buyer.id);
@@ -176,5 +299,29 @@ export async function routeLead(supabase, lead, route, { sendEmail, now = new Da
     );
   }
 
-  return { delivered: result.ok, buyer, reason: result.ok ? undefined : result.error, coverage };
+  // The sale goes on the ledger as PENDING, not as revenue. The buyer has the
+  // lead; they have not yet said they will pay for it. It becomes confirmed
+  // when an admin records their acceptance, and reversed if they reject it —
+  // so the earnings screen can never report a sale that was sent back.
+  //
+  // Recorded for a manual handover too, not only an automated send. A buyer on
+  // `manual` has still been matched at an agreed price, and most agreements
+  // start that way before an integration exists; omitting them would show
+  // "leads sold" on the revenue screen with nothing behind it in the ledger.
+  if (result.ok) {
+    await recordLeadSale(supabase, {
+      delivery: { ...claimed, delivered_at: deliveredAt },
+      buyer,
+      lead,
+    });
+  }
+
+  return {
+    delivered: result.ok,
+    buyer,
+    deliveryId: claimed?.id || null,
+    status: result.ok ? result.status : 'failed',
+    reason: result.ok ? undefined : result.error,
+    coverage,
+  };
 }

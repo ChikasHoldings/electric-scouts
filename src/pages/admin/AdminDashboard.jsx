@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "@/lib/AuthContext";
+import { summarizeRevenue } from "@/lib/revenue";
 import {
   ElectricityProvider,
   ElectricityPlan,
@@ -59,6 +61,11 @@ function StatCard({ title, value, icon: Icon, color, link, subtitle }) {
 }
 
 export default function AdminDashboard() {
+  const { profile } = useAuth();
+  // Revenue is an admin-only surface in the nav, so the dashboard must not be a
+  // side door to the same figure for a viewer.
+  const canSeeRevenue = profile?.role === "admin";
+
   const { data: providers = [], isLoading: loadingProviders } = useQuery({
     queryKey: ["admin-providers"],
     queryFn: () => ElectricityProvider.list(),
@@ -74,16 +81,48 @@ export default function AdminDashboard() {
     queryFn: () => Article.list(),
   });
 
-  // Leads query
-  const { data: leads = [], isLoading: loadingLeads } = useQuery({
+  /**
+   * Lead figures, counted rather than sampled.
+   *
+   * This previously fetched the 10 most recent leads and reported
+   * `leads.length` as the total, with "converted" counted over the same ten
+   * rows. Every lead number on the dashboard was therefore capped at 10 and
+   * silently wrong the moment the eleventh lead arrived. Counts come from the
+   * database now; the recent list stays a sample, because that is all it is.
+   */
+  const { data: leadStats = { total: 0, new: 0, converted: 0, recent: [] }, isLoading: loadingLeads } = useQuery({
     queryKey: ["admin-dashboard-leads"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(10);
-      return data || [];
+      const countOf = (build) =>
+        build(supabase.from("leads").select("id", { count: "exact", head: true }));
+
+      const [total, newCount, converted, recent] = await Promise.all([
+        countOf((q) => q),
+        countOf((q) => q.eq("status", "new")),
+        countOf((q) => q.eq("status", "converted")),
+        supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(5),
+      ]);
+
+      return {
+        total: total.count || 0,
+        new: newCount.count || 0,
+        converted: converted.count || 0,
+        recent: recent.data || [],
+      };
+    },
+  });
+
+  // Money actually earned, so the dashboard agrees with the revenue screen
+  // rather than offering a second, friendlier version of the same question.
+  const { data: earnings = { earned: 0, accrued: 0 }, isLoading: loadingEarnings } = useQuery({
+    queryKey: ["admin-dashboard-earnings"],
+    enabled: canSeeRevenue,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("revenue_events")
+        .select("amount, status, occurred_at, source, partner_name");
+      if (error) throw error;
+      return summarizeRevenue(data || []);
     },
   });
 
@@ -141,13 +180,12 @@ export default function AdminDashboard() {
   });
 
   const isLoading =
-    loadingProviders || loadingPlans || loadingArticles || loadingLeads || loadingUsers || loadingAffiliates;
+    loadingProviders || loadingPlans || loadingArticles || loadingLeads ||
+    loadingUsers || loadingAffiliates || (canSeeRevenue && loadingEarnings);
 
   const activeProviders = providers.filter((p) => p.is_active);
   const publishedArticles = articles.filter((a) => a.published);
-  const newLeads = leads.filter((l) => l.status === "new");
-  const convertedLeads = leads.filter((l) => l.status === "converted");
-  const recentLeads = leads.slice(0, 5);
+  const recentLeads = leadStats.recent;
 
   if (isLoading) {
     return (
@@ -187,8 +225,8 @@ export default function AdminDashboard() {
         />
         <StatCard
           title="Leads"
-          value={leads.length}
-          subtitle={`${newLeads.length} new`}
+          value={leadStats.total}
+          subtitle={`${leadStats.new} new`}
           icon={UserPlus}
           color="bg-purple-500"
           link="/admin/leads"
@@ -226,18 +264,20 @@ export default function AdminDashboard() {
             color="bg-teal-500"
             link="/admin/affiliates"
           />
-          <StatCard
-            title="Converted Leads"
-            value={convertedLeads.length}
-            subtitle={`${leads.length} total leads`}
-            icon={CheckCircle2}
-            color="bg-indigo-500"
-            link="/admin/leads"
-          />
+          {canSeeRevenue && (
+            <StatCard
+              title="Platform Earnings"
+              value={`$${earnings.earned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              subtitle={`$${earnings.accrued.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} accrued, not yet confirmed`}
+              icon={CheckCircle2}
+              color="bg-indigo-500"
+              link="/admin/revenue"
+            />
+          )}
           <StatCard
             title="New Leads"
-            value={newLeads.length}
-            subtitle="Awaiting follow-up"
+            value={leadStats.new}
+            subtitle={`${leadStats.converted} converted`}
             icon={AlertCircle}
             color="bg-rose-500"
             link="/admin/leads"
@@ -403,7 +443,7 @@ export default function AdminDashboard() {
                   </span>
                 </div>
                 <span className="text-lg font-bold text-purple-700">
-                  {newLeads.length}
+                  {leadStats.new}
                 </span>
               </div>
 

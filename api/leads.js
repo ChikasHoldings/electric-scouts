@@ -9,6 +9,7 @@ import {
   ADMIN_EMAILS,
 } from "./_lib/email.js";
 import { validateContact } from "../src/lib/contactValidation.js";
+import { routeLead } from "./_lib/leadDelivery.js";
 
 // ZIP prefix to state mapping for server-side resolution
 const ZIP_TO_STATE = {
@@ -353,6 +354,79 @@ async function writeLeadRow(payload, run) {
   return run(attempt);
 }
 
+/**
+ * Routes whose destination is a lead buyer.
+ *
+ * `affiliate` monetizes through the outbound click instead, and `concierge`
+ * is handled by a human, so neither is offered for sale. Sending an affiliate
+ * lead to a broker as well would sell a customer twice for one intention.
+ */
+const SELLABLE_ROUTES = new Set([
+  "residential_partner",
+  "commercial_partner",
+  "renewable_partner",
+]);
+
+/**
+ * States that record something that already happened, and must not be
+ * overwritten by a later routing attempt that finds nothing left to do.
+ */
+const TERMINAL_MONETIZATION = new Set(["delivered", "queued", "sold", "rejected"]);
+
+/**
+ * Offer a finished lead to a buyer, if it is one we may sell.
+ *
+ * Three gates, all of which must pass:
+ *
+ *   CONSENT      the customer explicitly agreed to be contacted. Selling
+ *                contact details without it is not a bug, it is a breach — so
+ *                this is checked here rather than trusted from upstream.
+ *   COMPLETED    a half-finished comparison is not a qualified lead, and a
+ *                buyer charged for one will stop buying.
+ *   SELLABLE     the router put it on a partner route.
+ *
+ * Never throws. A capture that succeeded must not turn into a 500 because a
+ * buyer's webhook was down — the lead is saved, visible in admin, and an
+ * operator can forward it by hand.
+ */
+async function maybeRouteLead(lead) {
+  try {
+    if (!lead?.id) return;
+    if (lead.consent_contact !== true) return;
+    if (lead.comparison_status !== "completed") return;
+    if (!SELLABLE_ROUTES.has(lead.monetization_route)) return;
+
+    const result = await routeLead(supabase, lead, lead.monetization_route, { sendEmail });
+
+    // Record where it went on the lead itself, so the admin list can show the
+    // outcome without joining deliveries for every row.
+    if (result.delivered && result.buyer) {
+      await supabase
+        .from("leads")
+        .update({
+          assigned_partner: result.buyer.name,
+          monetization_status: result.status === "delivered" ? "delivered" : "queued",
+        })
+        .eq("id", lead.id);
+    } else if (!result.buyer && !TERMINAL_MONETIZATION.has(lead.monetization_status)) {
+      // Nobody is configured to take it. Recorded as a state rather than left
+      // blank, because "no buyer covers this market" is a signal an admin acts
+      // on, and an empty field looks identical to "not tried yet".
+      //
+      // Guarded, because this runs on EVERY enrichment write. Once a lead has
+      // been delivered, the only remaining buyer is one already excluded as a
+      // duplicate, so the next write would find no match and downgrade a sold
+      // lead to "no_buyer" — erasing the sale from the admin list.
+      await supabase
+        .from("leads")
+        .update({ monetization_status: "no_buyer" })
+        .eq("id", lead.id);
+    }
+  } catch (error) {
+    console.error("Lead routing failed (lead is saved):", error?.message || error);
+  }
+}
+
 async function handleCreateLead(req, res) {
   try {
     const {
@@ -407,9 +481,15 @@ async function handleCreateLead(req, res) {
       if (source_page) updateData.source_page = source_page;
       updateData.last_activity_at = new Date().toISOString();
 
-      await writeLeadRow(updateData, (row) =>
-        supabase.from("leads").update(row).eq("id", existingLead.id)
+      const { data: updatedLead } = await writeLeadRow(updateData, (row) =>
+        supabase.from("leads").update(row).eq("id", existingLead.id).select().single()
       );
+
+      // Enrichment is where a lead usually becomes sellable: the visitor
+      // finishes the comparison and consents on a later write, not the first
+      // one. Routing only on insert would mean the qualified leads — the ones
+      // worth money — were the exact ones never offered to a buyer.
+      if (updatedLead) await maybeRouteLead(updatedLead);
 
       return res.status(200).json({
         success: true,
@@ -467,6 +547,10 @@ async function handleCreateLead(req, res) {
         leadId: lead.id,
       });
     }
+
+    // A lead that arrives already complete and consented — a single-shot
+    // submission rather than a progressive one — is sellable immediately.
+    await maybeRouteLead(lead);
 
     return res.status(200).json({
       success: true,

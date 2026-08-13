@@ -53,7 +53,44 @@ const emptyForm = {
   provider_id: "",
   offer_id: "",
   is_active: true,
+  // What this link is worth. Stored on the link because that is where the
+  // commercial agreement lives — changing what a partner pays is an edit here,
+  // never a code change.
+  commission_model: "none",
+  commission_amount: "",
+  network: "",
+  commission_notes: "",
 };
+
+/**
+ * What a link earns, at a glance.
+ *
+ * "Not configured" is shown rather than a blank or a zero, because those two
+ * read as "earns nothing by agreement" when the truth is usually "nobody has
+ * entered the terms yet" — which is a task, not a fact.
+ */
+function CommissionCell({ link }) {
+  const model = link.commission_model || "none";
+
+  if (model === "none") {
+    return <span className="text-xs text-gray-400">Not configured</span>;
+  }
+
+  const amount = Number(link.commission_amount);
+  const label = model === "revenue_share"
+    ? `${amount}% share`
+    : `$${amount.toFixed(2)} / ${model === "per_click" ? "click" : "signup"}`;
+
+  return (
+    <div>
+      <span className="text-sm font-medium text-gray-900">{label}</span>
+      {link.network && <p className="text-xs text-gray-500 mt-0.5">{link.network}</p>}
+      {model !== "per_click" && (
+        <p className="text-[11px] text-gray-400 mt-0.5">Recorded on conversion</p>
+      )}
+    </div>
+  );
+}
 
 function generateSlug(label) {
   return label
@@ -106,6 +143,7 @@ export default function AdminAffiliates() {
   const [form, setForm] = useState(emptyForm);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [copiedSlug, setCopiedSlug] = useState(null);
+  const [formError, setFormError] = useState("");
 
   const { data: links = [], isLoading } = useQuery({
     queryKey: ["admin-affiliates"],
@@ -207,6 +245,10 @@ export default function AdminAffiliates() {
       provider_id: link.provider_id || "",
       offer_id: link.offer_id || "",
       is_active: link.is_active,
+      commission_model: link.commission_model || "none",
+      commission_amount: link.commission_amount ?? "",
+      network: link.network || "",
+      commission_notes: link.commission_notes || "",
     });
     setDialogOpen(true);
   };
@@ -215,10 +257,29 @@ export default function AdminAffiliates() {
     setDialogOpen(false);
     setEditingLink(null);
     setForm(emptyForm);
+    setFormError("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const earns = form.commission_model && form.commission_model !== "none";
+    const rate = Number(form.commission_amount);
+
+    // A commission model with no rate would accrue nothing while looking
+    // configured — the most confusing possible state for a revenue screen, and
+    // exactly the sort of half-setting that makes an admin distrust the number.
+    if (earns && (!Number.isFinite(rate) || rate <= 0)) {
+      setFormError("Enter the rate this link pays, or set the model back to 'Earns nothing'.");
+      return;
+    }
+    if (form.commission_model === "revenue_share" && rate > 100) {
+      setFormError("Revenue share is a percentage, so it cannot exceed 100.");
+      return;
+    }
+
+    setFormError("");
+
     const payload = {
       slug: form.slug,
       target_url: form.target_url,
@@ -226,6 +287,12 @@ export default function AdminAffiliates() {
       provider_id: form.provider_id || null,
       offer_id: form.offer_id || null,
       is_active: form.is_active,
+      commission_model: form.commission_model || "none",
+      // Blank stays null rather than becoming 0: "no rate agreed" and "pays
+      // zero" are different facts, and only one of them is a configuration gap.
+      commission_amount: earns ? rate : null,
+      network: form.network?.trim() || null,
+      commission_notes: form.commission_notes?.trim() || null,
     };
 
     if (editingLink) {
@@ -373,6 +440,7 @@ export default function AdminAffiliates() {
                     <TableHead>Slug / Label</TableHead>
                     <TableHead>Provider / Offer</TableHead>
                     <TableHead>Target URL</TableHead>
+                    <TableHead>Commission</TableHead>
                     <TableHead className="text-center">Clicks</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -435,6 +503,9 @@ export default function AdminAffiliates() {
                           {link.target_url.length > 48 ? "..." : ""}
                           <ExternalLink className="w-3 h-3 flex-shrink-0" />
                         </a>
+                      </TableCell>
+                      <TableCell>
+                        <CommissionCell link={link} />
                       </TableCell>
                       <TableCell className="text-center">
                         <span className="inline-flex items-center gap-1 text-sm font-medium">
@@ -551,6 +622,71 @@ export default function AdminAffiliates() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            {/* ── Commission terms ── */}
+            <div className="rounded-lg border border-gray-200 bg-gray-50/60 p-4 space-y-4">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">Commission terms</p>
+                <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                  What this link earns. Only per-click accrues automatically —
+                  signups and revenue share are recorded from the network&rsquo;s
+                  own statement, because a click is not a conversion.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Model</Label>
+                  <Select
+                    value={form.commission_model}
+                    onValueChange={(v) => setForm({ ...form, commission_model: v })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Earns nothing</SelectItem>
+                      <SelectItem value="per_click">Per click</SelectItem>
+                      <SelectItem value="per_signup">Per signup</SelectItem>
+                      <SelectItem value="revenue_share">Revenue share</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>
+                    {form.commission_model === "revenue_share" ? "Share (%)" : "Amount ($)"}
+                  </Label>
+                  <Input
+                    inputMode="decimal"
+                    value={form.commission_amount}
+                    onChange={(e) => setForm({ ...form, commission_amount: e.target.value })}
+                    disabled={!form.commission_model || form.commission_model === "none"}
+                    placeholder={form.commission_model === "revenue_share" ? "e.g. 15" : "e.g. 2.50"}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Network</Label>
+                  <Input
+                    value={form.network}
+                    onChange={(e) => setForm({ ...form, network: e.target.value })}
+                    placeholder="e.g. Awin, Impact, CJ"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Notes</Label>
+                  <Input
+                    value={form.commission_notes}
+                    onChange={(e) => setForm({ ...form, commission_notes: e.target.value })}
+                    placeholder="Terms, cookie window, caps"
+                  />
+                </div>
+              </div>
+
+              {formError && (
+                <p role="alert" className="text-[13px] text-red-600">{formError}</p>
+              )}
             </div>
 
             <div className="flex items-center gap-3">
