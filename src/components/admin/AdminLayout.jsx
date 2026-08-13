@@ -21,6 +21,7 @@ import {
   ChevronDown,
   Home,
   UserCheck,
+  Gauge,
 } from "lucide-react";
 
 // Sidebar nav items ordered by business importance.
@@ -36,6 +37,10 @@ const navItems = [
   // pages that differed only by a filter, and which one you opened silently
   // decided how a plan got classified.
   { label: "Plans", path: "/admin/plans", icon: Zap, roles: ["admin", "editor"] },
+  // Delivery tariffs sit next to Plans because they finish the price a plan
+  // shows: without one, every plan in that market can only show a supply-only
+  // subtotal and no savings comparison.
+  { label: "Delivery Tariffs", path: "/admin/territories", icon: Gauge, roles: ["admin", "editor"] },
   { label: "Concierge", path: "/admin/concierge", icon: Home, roles: ["admin", "editor"] },
   { label: "Articles", path: "/admin/articles", icon: FileText, roles: ["admin", "editor"] },
   { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },

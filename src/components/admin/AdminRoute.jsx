@@ -21,6 +21,7 @@ const routePermissions = {
   "/admin/lead-buyers": ["admin"],
   "/admin/providers": ["admin", "editor"],
   "/admin/plans": ["admin", "editor"],
+  "/admin/territories": ["admin", "editor"],
   "/admin/articles": ["admin", "editor"],
   "/admin/users": ["admin"],
   "/admin/affiliates": ["admin"],

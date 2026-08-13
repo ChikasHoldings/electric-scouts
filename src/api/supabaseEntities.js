@@ -202,3 +202,15 @@ export const ConciergeRequest = createEntity('concierge_requests', {
   defaultOrder: 'created_at',
   defaultDirection: 'desc',
 });
+
+/**
+ * Utility delivery tariffs.
+ *
+ * Ordered by state so the admin list groups naturally by market — an operator
+ * working through delivery charges works a state at a time, not a creation
+ * timestamp at a time.
+ */
+export const UtilityTerritory = createEntity('utility_territories', {
+  defaultOrder: 'state',
+  defaultDirection: 'asc',
+});

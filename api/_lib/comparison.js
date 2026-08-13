@@ -9,8 +9,10 @@ import {
   selectHeadline,
   MONETIZATION,
   PRICING_COMPLETENESS,
+  MAX_RESULTS,
 } from "../../src/components/compare/engine/resultsContract.js";
 import { classifyMonetization } from "./referral.js";
+import { selectTerritory } from "../../src/lib/deliveryTariff.js";
 
 /**
  * The comparison service — the single authority for what a plan costs, where
@@ -150,10 +152,41 @@ export async function runComparison(supabase, body, options = {}) {
     eligible.filter((p) => linkByProvider.has(p.provider_id)).map((p) => p.id)
   );
 
-  // ── Price, score and rank ──
-  const { all } = rankPlans(eligible, session, { usageKwh, affiliateIds });
+  // ── The delivery tariff for this market ──
+  //
+  // A delivery charge belongs to a utility's service territory, not to a plan:
+  // every retailer selling into Oncor bills the same Oncor delivery charge. It
+  // is configured once per territory and resolved here, so one row makes every
+  // plan in that market fully priceable instead of the number having to be
+  // copied onto each of them.
+  //
+  // This table is admin-only under RLS and is read with the service role, so
+  // the customer sees the tariff's effect on their price without the tariff
+  // itself ever reaching the browser.
+  const { data: territories, error: territoryError } = await supabase
+    .from("utility_territories")
+    .select(
+      "id, name, state, billing_model, delivery_per_kwh_cents, fixed_monthly_delivery_charge, effective_from, effective_to, service_zip_prefixes, is_active"
+    )
+    .eq("is_active", true)
+    .eq("state", session.state);
 
-  const results = all.map((entry) => {
+  // A tariff lookup that fails must not fail the comparison: without it every
+  // plan simply prices supply-only, which is exactly the honest behaviour that
+  // applies when no tariff is configured.
+  if (territoryError) {
+    console.error("utility territory lookup failed:", territoryError.message);
+  }
+
+  const territory = selectTerritory(territories || [], {
+    state: session.state,
+    zip: session.zip,
+  });
+
+  // ── Price, score and rank ──
+  const { all } = rankPlans(eligible, session, { usageKwh, affiliateIds, territory });
+
+  const allResults = all.map((entry) => {
     const link = linkByProvider.get(entry.plan.provider_id) || null;
 
     return toResultDto(entry, {
@@ -174,7 +207,20 @@ export async function runComparison(supabase, body, options = {}) {
     });
   });
 
-  const { headline } = selectHeadline(results);
+  // ── Trim to the results worth reading ──
+  //
+  // Ranking has already decided what is best for this customer, so the cap
+  // keeps the top of that order and drops the tail. A Texas search matches 96
+  // plans; sending all 96 is not thoroughness, it is handing back the problem
+  // the customer came here to have solved.
+  //
+  // `eligible` deliberately keeps counting every plan that matched, not the
+  // number returned: "13 of 96 plans available in your area" is true and
+  // useful, whereas quietly reporting 13 as the total would misstate the
+  // market. The per-status counts describe the returned set, because they
+  // describe the results the customer is actually looking at.
+  const returned = allResults.slice(0, MAX_RESULTS);
+  const { headline } = selectHeadline(returned);
 
   return {
     ok: true,
@@ -183,18 +229,20 @@ export async function runComparison(supabase, body, options = {}) {
       customerType: session.customerType,
       usageKwh,
       counts: {
-        eligible: results.length,
-        complete: results.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.COMPLETE).length,
-        partial: results.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.PARTIAL).length,
-        unavailable: results.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.UNAVAILABLE).length,
-        renewable: results.filter((r) => r.isRenewable).length,
-        monetized: results.filter((r) => r.monetizationStatus !== MONETIZATION.UNAVAILABLE).length,
+        eligible: allResults.length,
+        returned: returned.length,
+        capped: allResults.length > returned.length,
+        complete: returned.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.COMPLETE).length,
+        partial: returned.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.PARTIAL).length,
+        unavailable: returned.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.UNAVAILABLE).length,
+        renewable: returned.filter((r) => r.isRenewable).length,
+        monetized: returned.filter((r) => r.monetizationStatus !== MONETIZATION.UNAVAILABLE).length,
       },
       // The headline set, by id. The full ranked array already carries
       // `isTopMatch`; this is the same fact in the form a consumer that only
       // wants the top three can use without filtering.
       topMatchIds: headline.map((r) => r.planId),
-      results,
+      results: returned,
     },
   };
 }
