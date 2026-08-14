@@ -36,6 +36,10 @@ export const EVENTS = {
   BILL_UPLOAD_STARTED: 'bill_upload_started',
   BILL_ANALYSIS_COMPLETED: 'bill_analysis_completed',
   BILL_ANALYSIS_FAILED: 'bill_analysis_failed',
+  // The visitor checked the figures read off their bill. This is the point the
+  // engine is allowed to draw savings conclusions from them, so the drop-off
+  // between analysis and confirmation is worth seeing on its own.
+  BILL_ANALYSIS_CONFIRMED: 'bill_analysis_confirmed',
   BILL_SKIPPED: 'bill_skipped',
   USAGE_SELECTED: 'usage_selected',
   SHOPPING_INTENT_SELECTED: 'shopping_intent_selected',
@@ -66,6 +70,11 @@ export const EVENTS = {
   RESULTS_SHOW_MORE: 'results_show_more',
   COMPARISON_NO_MATCH: 'comparison_no_match',
   COMPARISON_MATCHING_FAILED: 'comparison_matching_failed',
+  // Whether the comparison the contact step promised actually reached an
+  // inbox. Reported as a pair so a silent delivery outage is visible in the
+  // funnel rather than only in server logs.
+  COMPARISON_EMAIL_SENT: 'comparison_email_sent',
+  COMPARISON_EMAIL_FAILED: 'comparison_email_failed',
 
   // ── Results board ──
   RESULTS_MATCHING_STARTED: 'results_matching_started',

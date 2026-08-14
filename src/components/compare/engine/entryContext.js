@@ -178,7 +178,16 @@ function toParams(input) {
 }
 
 /** Parameters this module owns, and therefore the ones worth clearing after use. */
-export const ENTRY_PARAM_KEYS = ['zip', 'type', 'renewable', 'entry', 'usage', 'provider'];
+export const ENTRY_PARAM_KEYS = ['zip', 'type', 'renewable', 'entry', 'usage', 'cost', 'provider'];
+
+/**
+ * Bounds for a handed-over monthly bill.
+ *
+ * Matches the server's own `MONTHLY_COST_LIMITS`. The figure is re-validated
+ * there before it can reach a savings calculation, so this bound is about not
+ * seeding the questionnaire with nonsense rather than about trust.
+ */
+const HANDOFF_COST_LIMITS = { min: 1, max: 1000000 };
 
 /**
  * Read routing context off a /compare-rates URL into comparison state.
@@ -218,6 +227,24 @@ export function parseEntryParams(input) {
     seed.billAnalysisStatus = 'complete';
     seed.billConfidence = 'high';
     seed.billOffered = true;
+  }
+
+  // What they pay today, which is the other half of what the analyzer already
+  // established. Without it the engine has a usage figure and no bill to
+  // compare it against, so every result arrives with its savings line withheld
+  // for `no_current_bill` — the one thing a visitor coming from a bill analysis
+  // has most obviously already told us.
+  //
+  // Only meaningful alongside a usage figure: a cost with no usage cannot be
+  // turned into a comparable rate, and would sit in state doing nothing.
+  const cost = parseFloat(params.get('cost'));
+  if (
+    seed.monthlyUsageKwh &&
+    Number.isFinite(cost) &&
+    cost >= HANDOFF_COST_LIMITS.min &&
+    cost <= HANDOFF_COST_LIMITS.max
+  ) {
+    seed.monthlyCost = cost;
   }
 
   const provider = (params.get('provider') || '').trim();

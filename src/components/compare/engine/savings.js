@@ -22,6 +22,42 @@ function positive(value) {
 }
 
 /**
+ * May the customer's own bill figures be used to draw a conclusion?
+ *
+ * Extracted so every surface that reasons from the current bill — the savings
+ * line on a result, and the market benchmark the Bill Analyzer leads with —
+ * applies exactly the same rules. Two places deciding separately whether a bill
+ * is trustworthy is two places that can disagree about the same bill.
+ *
+ * @param {object} state comparison session
+ * @returns {{trusted: boolean, reason?: string, currentMonthly?: number}}
+ */
+export function currentBillTrust(state) {
+  const current = positive(state?.monthlyCost);
+
+  if (current === null) {
+    return { trusted: false, reason: 'no_current_bill' };
+  }
+
+  // A figure read off a bill with low confidence is not a basis for a savings
+  // claim. The customer confirming it upgrades confidence and unlocks this.
+  if (state?.billAnalysisStatus === 'complete' &&
+      state?.billConfidence &&
+      !TRUSTED_BILL_CONFIDENCE.has(state.billConfidence)) {
+    return { trusted: false, reason: 'bill_confidence_low' };
+  }
+
+  // A value the customer was asked to verify and has not yet verified.
+  if (Array.isArray(state?.unverifiedFields) &&
+      (state.unverifiedFields.includes('monthlyCost') ||
+       state.unverifiedFields.includes('monthlyUsageKwh'))) {
+    return { trusted: false, reason: 'unverified_inputs' };
+  }
+
+  return { trusted: true, currentMonthly: current };
+}
+
+/**
  * Compare a plan estimate against what the customer pays today.
  *
  * @param {object} estimate  from `estimateMonthlyCost`
@@ -33,29 +69,14 @@ function positive(value) {
  * }}
  */
 export function compareToCurrentBill(estimate, state) {
-  const current = positive(state?.monthlyCost);
-
   // ── Every reason we must stay silent ──
 
-  if (current === null) {
-    return { available: false, reason: 'no_current_bill' };
+  const trust = currentBillTrust(state);
+  if (!trust.trusted) {
+    return { available: false, reason: trust.reason };
   }
 
-  // A figure read off a bill with low confidence is not a basis for a savings
-  // claim. The customer confirming it upgrades confidence and unlocks this.
-  if (state?.billAnalysisStatus === 'complete' &&
-      state?.billConfidence &&
-      !TRUSTED_BILL_CONFIDENCE.has(state.billConfidence)) {
-    return { available: false, reason: 'bill_confidence_low' };
-  }
-
-  // A value the customer was asked to verify and has not yet verified.
-  if (Array.isArray(state?.unverifiedFields) &&
-      (state.unverifiedFields.includes('monthlyCost') ||
-       state.unverifiedFields.includes('monthlyUsageKwh'))) {
-    return { available: false, reason: 'unverified_inputs' };
-  }
-
+  const current = trust.currentMonthly;
   const estimated = positive(estimate?.amount);
   if (estimated === null) {
     return { available: false, reason: 'no_estimate' };

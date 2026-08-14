@@ -20,10 +20,19 @@ const supabase = createClient(
 
 // ─── Branded Footer ────────────────────────────────────────────────
 
-function brandedFooter(recipientEmail) {
+/**
+ * The footer every Electric Scouts email ends with.
+ *
+ * `reasonLine` states why this particular message was sent. It is a legal
+ * requirement that it be accurate, and a transactional comparison the customer
+ * asked for is not the same thing as having "signed up", so each caller says
+ * what actually happened rather than sharing one approximate sentence.
+ */
+export function brandedFooter(recipientEmail, reasonLine) {
   const unsubUrl = `${APP_BASE_URL}/api/unsubscribe?email=${encodeURIComponent(recipientEmail || '')}`;
   const year = new Date().getFullYear();
-  
+  const reason = reasonLine || "You're receiving this email because you signed up at Electric Scouts.";
+
   return `
   <!-- Branded Footer -->
   <tr><td style="padding:0;">
@@ -119,7 +128,7 @@ function brandedFooter(recipientEmail) {
           &copy; ${year} Electric Scouts. All rights reserved.
         </p>
         <p style="margin:0 0 8px;font-size:13px;color:#6b7280;line-height:1.6;">
-          You're receiving this email because you signed up at Electric Scouts.
+          ${reason}
         </p>
         <p style="margin:0;font-size:13px;line-height:1.6;">
           <a href="${unsubUrl}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a>
