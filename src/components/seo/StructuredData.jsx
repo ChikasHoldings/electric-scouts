@@ -28,8 +28,9 @@ export default function StructuredData({ schema, validate = true }) {
 }
 
 // Organization Schema - Site-wide. Shares one definition (and one @id) with the
-// prerenderer and SEOHead; the copy this replaced still advertised "40+
-// providers" and "Save up to $800/year", neither of which the catalog supports.
+// prerenderer and SEOHead. The copy this replaced advertised "40+ providers",
+// which the catalog contradicts; the supplier count now comes from the
+// snapshot. The savings claim it also carried is retained by product decision.
 export function OrganizationSchema() {
   return <StructuredData schema={standaloneOrganizationSchema()} />;
 }
