@@ -42,24 +42,27 @@ function StatCard({ title, value, icon: Icon, color, link, subtitle, loading }) 
     // so a row of four ended at four different heights.
     <Wrapper {...wrapperProps} className="block h-full">
       <Card className={`h-full flex flex-col hover:shadow-md transition-shadow ${link ? "cursor-pointer" : ""} group`}>
-        <CardContent className="p-6 flex flex-col flex-1">
+        {/* Vertical padding is trimmed relative to the horizontal, and the
+            icon and figure are tightened, so the tile is shorter without the
+            number or the gutter getting smaller. */}
+        <CardContent className="px-6 py-4 flex flex-col flex-1">
           {/* Title and icon share a row; the figure gets a row of its own.
               They used to sit side by side, which left the value competing for
               width with the icon — "$48,213.50" ran straight into it. */}
           <div className="flex items-start justify-between gap-3">
             <p className="text-sm font-medium text-gray-500 min-w-0">{title}</p>
-            <div className={`p-3 rounded-xl flex-shrink-0 ${color}`}>
-              <Icon className="w-6 h-6 text-white" aria-hidden="true" />
+            <div className={`p-2.5 rounded-xl flex-shrink-0 ${color}`}>
+              <Icon className="w-5 h-5 text-white" aria-hidden="true" />
             </div>
           </div>
 
           {loading ? (
-            <div className="h-9 mt-1 flex items-center" aria-live="polite" aria-busy="true">
+            <div className="h-8 mt-0.5 flex items-center" aria-live="polite" aria-busy="true">
               <span className="sr-only">Loading {title}</span>
               <span className="block h-6 w-16 rounded bg-gray-200 animate-pulse" aria-hidden="true" />
             </div>
           ) : (
-            <p className="text-3xl font-bold text-gray-900 mt-1 tabular-nums break-words">
+            <p className="text-3xl font-bold text-gray-900 mt-0.5 leading-tight tabular-nums break-words">
               {value}
             </p>
           )}
@@ -72,7 +75,7 @@ function StatCard({ title, value, icon: Icon, color, link, subtitle, loading }) 
           {link && (
             // mt-auto pins this to the bottom, so the "View all" rows across a
             // row of tiles line up regardless of how tall each subtitle ran.
-            <div className="mt-auto pt-4 flex items-center text-sm text-gray-500 group-hover:text-[#0A5C8C] transition-colors">
+            <div className="mt-auto pt-3 flex items-center text-sm text-gray-500 group-hover:text-[#0A5C8C] transition-colors">
               <span>View all</span>
               <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </div>

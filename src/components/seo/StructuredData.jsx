@@ -8,7 +8,10 @@ import { SITE_URL, absoluteUrl } from "@/seo/site";
  */
 export default function StructuredData({ schema, validate = true }) {
   // Validate schema in development
-  if (validate && process.env.NODE_ENV === 'development') {
+  // import.meta.env.DEV, not process.env.NODE_ENV: `process` does not exist in
+  // a browser. Vite happens to substitute it at build time, so this worked, but
+  // it only worked because of that substitution.
+  if (validate && import.meta.env.DEV) {
     const validation = validateSchema(schema);
     if (!validation.valid) {
       console.warn('⚠️ Schema Validation Warning:', validation.errors);

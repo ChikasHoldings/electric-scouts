@@ -194,7 +194,7 @@ export function validateMultipleSchemas(schemas) {
  * Log validation results to console (development only)
  */
 export function logValidationResults(schemas) {
-  if (process.env.NODE_ENV !== 'development') return;
+  if (!import.meta.env.DEV) return;
 
   console.group('📊 Schema Validation Results');
   

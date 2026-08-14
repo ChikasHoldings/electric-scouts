@@ -230,35 +230,10 @@ export default function AdminLayout({ children }) {
           ))}
         </nav>
 
-        {/* User info & logout — pinned to bottom */}
-        <div className="flex-shrink-0 p-3 border-t border-white/10">
-          <Link
-            to="/"
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/10 transition-all mb-2"
-          >
-            <ExternalLink className="w-4 h-4 flex-shrink-0" />
-            <span>View Site</span>
-          </Link>
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-              {initials}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
-                {profile?.full_name || "Admin"}
-              </p>
-              <p className="text-xs text-gray-400 truncate">{user?.email}</p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex-shrink-0"
-              title="Sign Out"
-              aria-label="Sign out"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        {/* No account footer here. Who you are signed in as, "View Site" and
+            "Sign Out" all live in the avatar menu, which the desktop top bar
+            and the mobile header both render — the sidebar was repeating them
+            a second time. The nav is the sidebar's whole job. */}
       </aside>
 
       {/* Main content */}
