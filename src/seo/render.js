@@ -20,6 +20,8 @@ import {
   buildCitySections,
   buildCompareHubSections,
   buildComparisonSections,
+  buildUtilityHubSections,
+  buildUtilitySections,
   buildProviderSections,
   buildStateSections,
   buildStaticSections,
@@ -51,6 +53,9 @@ export function ogImageFor(route) {
   if (path === '/compare' || path.startsWith('/compare/')) {
     return /-vs-.*-energy$|-energy-vs-/.test(path) ? '/images/og-providers.jpg' : '/images/og-compare.jpg';
   }
+  // A delivery territory is a place question, so it takes the service-areas
+  // image rather than the supplier one.
+  if (path === '/utilities' || path.startsWith('/utilities/')) return '/images/og-service-areas.jpg';
   if (path.startsWith('/providers') || path === '/all-providers') return '/images/og-providers.jpg';
   if (path.startsWith('/business')) return '/images/og-business.jpg';
   if (path.startsWith('/learn') || path === '/learning-center') return '/images/og-learn.jpg';
@@ -147,6 +152,8 @@ export function breadcrumbsFor(route) {
       return [home, { name: 'Providers', path: '/all-providers' }, { name: route.heading, path: route.path }];
     case 'comparison':
       return [home, { name: 'Comparisons', path: '/compare' }, { name: route.heading, path: route.path }];
+    case 'utility':
+      return [home, { name: 'Utilities', path: '/utilities' }, { name: route.utility.name, path: route.path }];
     case 'article':
       return [
         home,
@@ -293,6 +300,10 @@ function siteNav(states) {
     ['/all-providers', 'Electricity Providers'],
     ['/all-states', 'Electricity Rates by State'],
     ['/all-cities', 'Electricity Rates by City'],
+    // Same lesson as /compare: a cluster nothing links to is reachable only by
+    // sitemap, and the orphan check passes anyway because its pages link to
+    // each other.
+    ['/utilities', 'Electricity Utilities by Territory'],
     ['/bill-analyzer', 'Bill Analyzer'],
     ['/residential-electricity', 'Residential Electricity'],
     ['/business-electricity', 'Business Electricity'],
@@ -399,6 +410,10 @@ export function buildPageContent(route, context = {}) {
       return buildComparisonSections(route);
     case 'compare-hub':
       return buildCompareHubSections();
+    case 'utility':
+      return buildUtilitySections(route);
+    case 'utility-hub':
+      return buildUtilityHubSections();
     case 'article':
       return buildArticleSections(route);
     default:

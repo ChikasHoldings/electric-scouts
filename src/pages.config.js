@@ -58,6 +58,8 @@ const PAGE_LOADERS = {
   SitemapXML: () => import('./pages/SitemapXML'),
   TermsOfService: () => import('./pages/TermsOfService'),
   TexasElectricity: () => import('./pages/TexasElectricity'),
+  Utilities: () => import('./pages/Utilities'),
+  UtilityDetail: () => import('./pages/UtilityDetail'),
 };
 
 export const PAGES = {
@@ -86,6 +88,9 @@ const DYNAMIC_ROUTE_PAGES = [
   // The trailing slash matters: it keeps the hub at /compare matching the
   // registry entry below, and leaves /compare-rates alone.
   ['/compare/', 'CompareVersus'],
+  // Same shape as /compare: the hub matches the registry entry, the trailing
+  // slash sends territory pages to the hand-written route.
+  ['/utilities/', 'UtilityDetail'],
 ];
 
 /** Which registry page renders `pathname`, or null for the eager homepage. */

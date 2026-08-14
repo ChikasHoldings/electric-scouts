@@ -29,18 +29,20 @@ import {
   getAliasRoutes,
   getProviderRoutes,
   getComparisonRoutes,
+  getUtilityRoutes,
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS } from '../src/seo/articles.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
 import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket } from '../src/seo/market.js';
-import { buildCitySections, buildStateSections, buildProviderSections, buildComparisonSections } from '../src/seo/content.js';
+import { buildCitySections, buildStateSections, buildProviderSections, buildComparisonSections, buildUtilitySections } from '../src/seo/content.js';
 import { createResolver, parseHtml } from '../src/seo/audit.mjs';
 import { buildPageContent, renderBody } from '../src/seo/render.js';
 import { organizationSchema, standaloneOrganizationSchema } from '../src/seo/organization.js';
 import { getStates, getCities } from '../src/seo/locations.js';
 import { LOCATION_DATA } from '../src/components/location/locationData.js';
 import { comparisonsForProvider, comparisonsForState } from '../src/seo/comparisons.js';
+import { getUtilities, utilitiesForState } from '../src/seo/utilities.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -1406,6 +1408,147 @@ describe('comparison pages are neither thin nor near-duplicates', () => {
         assert.ok(!seen.has(value), `${route.path} shares its ${field} with ${seen.get(value)}`);
         seen.set(value, route.path);
       }
+    }
+  });
+});
+
+/* ==================================================================
+ * Utility territory pages
+ *
+ * A new cluster gets the same treatment the comparison cluster needed
+ * after the fact: linked in from the pages people land on, distinct from
+ * one another, and substantial enough to deserve indexing.
+ * ================================================================== */
+
+describe('utility territory pages', () => {
+  const utilities = getUtilities();
+
+  test('only utilities with real coverage are published', () => {
+    assert.ok(utilities.length > 0, 'no utilities published');
+    for (const utility of utilities) {
+      assert.ok(
+        utility.cities.length >= 3,
+        `${utility.path} publishes on ${utility.cities.length} cities — below the coverage bar`
+      );
+      assert.ok(utility.states.length > 0, `${utility.path} has no state market behind it`);
+    }
+  });
+
+  test('a shared municipal/deregulated territory is not published as one', () => {
+    // "Austin Energy / Oncor" describes a city split between a municipal
+    // utility and a deregulated one; which half an address falls in is a ZIP
+    // question a static page cannot answer.
+    for (const utility of utilities) {
+      assert.ok(!utility.name.includes('/'), `${utility.name} is a shared-territory label`);
+    }
+  });
+
+  test('every utility page carries substantial, distinct prose', () => {
+    const openings = new Map();
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { intro = [], sections = [] } = buildUtilitySections(route);
+      const words = [
+        ...intro,
+        ...sections.flatMap((s) => [s.heading, ...(s.paragraphs || []), ...(s.bullets || [])]),
+        ...sections.flatMap((s) => (s.faqs || []).flatMap((f) => [f.question, f.answer])),
+      ].join(' ').split(/\s+/).filter(Boolean).length;
+      assert.ok(words >= 300, `${route.path} has only ${words} words`);
+
+      const first = (intro[0] || '').trim();
+      assert.ok(first, `${route.path} has no opening sentence`);
+      assert.ok(
+        !openings.has(first),
+        `${route.path} opens identically to ${openings.get(first)}`
+      );
+      openings.set(first, route.path);
+    }
+  });
+
+  test('the delivery/supply explanation differs by regulatory model', () => {
+    // Texas has no utility default supply at all, the Northeast sells a
+    // regulated default, and Illinois and Ohio add municipal aggregation.
+    // Writing one explanation for all three would be both less accurate and
+    // the templated page this site keeps refusing to publish.
+    const byModel = new Map();
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { sections } = buildUtilitySections(route);
+      const explainer = sections.find((s) => s.bullets && !s.table);
+      assert.ok(explainer, `${route.path} has no delivery/supply explanation`);
+      byModel.set(route.utility.model, (byModel.get(route.utility.model) || 0) + 1);
+    }
+    assert.ok(byModel.size >= 3, `expected three regulatory models, saw ${byModel.size}`);
+  });
+
+  test('titles and descriptions fit what Google renders', () => {
+    for (const route of getUtilityRoutes()) {
+      assert.ok(route.title.length <= 70, `${route.path} title is ${route.title.length} chars`);
+      assert.ok(
+        route.description.length >= 70 && route.description.length <= 165,
+        `${route.path} description is ${route.description.length} chars`
+      );
+    }
+  });
+
+  test('every utility page is unique on title, description and heading', () => {
+    for (const field of ['title', 'description', 'heading']) {
+      const seen = new Map();
+      for (const route of getUtilityRoutes()) {
+        const value = route[field];
+        assert.ok(value, `${route.path} has no ${field}`);
+        assert.ok(!seen.has(value), `${route.path} shares its ${field} with ${seen.get(value)}`);
+        seen.set(value, route.path);
+      }
+    }
+  });
+
+  test('state pages link to the territories that deliver there', () => {
+    let checked = 0;
+    for (const route of getStateRoutes()) {
+      const territories = utilitiesForState(route.state.code);
+      if (!territories.length) continue;
+      const html = renderNav(route);
+      for (const utility of territories) {
+        checked += 1;
+        assert.ok(html.includes(`href="${utility.path}"`), `${route.path} does not link to ${utility.path}`);
+      }
+    }
+    assert.ok(checked > 0, 'no state/utility links were exercised');
+  });
+
+  test('the prerendered nav reaches the utility hub', () => {
+    const html = renderNav(getUtilityRoutes()[0]);
+    assert.ok(
+      /<nav aria-label="Primary">[\s\S]*href="\/utilities"[\s\S]*<\/nav>/.test(html),
+      'the primary nav has no link to /utilities, which islands the whole cluster'
+    );
+  });
+
+  test('every utility page is reachable from a state or city page', () => {
+    const inbound = new Set();
+    for (const route of [...getStateRoutes(), ...getCityRoutes()]) {
+      for (const match of renderNav(route).matchAll(/href="(\/utilities\/[^"]+)"/g)) {
+        inbound.add(match[1]);
+      }
+    }
+    for (const utility of utilities) {
+      assert.ok(inbound.has(utility.path), `${utility.path} has no inbound link from a state or city page`);
+    }
+  });
+
+  test('no utility page claims a delivery charge we do not hold', () => {
+    // We hold plan rates, not tariffs. A number presented as a delivery charge
+    // would be invented, and this is the family most likely to attract one.
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { intro = [], sections = [] } = buildUtilitySections(route);
+      const prose = [
+        ...intro,
+        ...sections.flatMap((s) => [...(s.paragraphs || []), ...(s.bullets || [])]),
+        ...sections.flatMap((s) => (s.faqs || []).map((f) => f.answer)),
+      ].join(' ');
+      assert.ok(
+        !/delivery (charge|rate)s? (of|is|are) [\d$]/i.test(prose),
+        `${route.path} states a delivery charge figure`
+      );
     }
   });
 });

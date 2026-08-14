@@ -19,6 +19,7 @@
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
 import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
+import { UTILITY_ROOT, getUtilities, utilitiesForState, utilityForCity } from './utilities.js';
 import {
   comparisonsForProvider,
   comparisonsForState,
@@ -323,6 +324,13 @@ export function buildCitySections(route, { citiesByState }) {
     ['/compare-rates', 'Compare plans for your ZIP code'],
     ['/bill-analyzer', 'Check your current bill for overcharges'],
   ];
+  /* The delivery utility, where we publish a page for it. This is the link a
+   * reader follows when they have worked out that the company on the bill is
+   * not the company setting the rate. */
+  const cityUtility = utilityForCity(city);
+  if (cityUtility) {
+    nextSteps.push([cityUtility.path, `What ${cityUtility.name} does and does not charge for`]);
+  }
   if (market?.businessPlans) {
     nextSteps.push(['/business-electricity', `Business electricity in ${stateName}`]);
   }
@@ -541,6 +549,9 @@ export function buildStateSections(route) {
     links: [
       ['/compare-rates', 'Compare plans for your ZIP code'],
       ['/compare', 'Compare suppliers head to head'],
+      // The delivery territories we publish for this state. A reader who knows
+      // their utility's name but not their supplier options starts there.
+      ...utilitiesForState(state.code).map((u) => [u.path, `${u.name} delivery territory`]),
       ['/all-states', 'See every deregulated state we cover'],
       ['/all-providers', 'Browse the supplier directory'],
       ['/learning-center', 'Read our electricity guides'],
@@ -2234,4 +2245,338 @@ export function buildArticleSections(route) {
       },
     ],
   };
+}
+
+/* ==================================================================
+ * Utility territories
+ *
+ * The reader arriving here believes their delivery utility sets their
+ * price. Everything on the page is arranged around correcting that and
+ * then answering what they actually wanted to know.
+ * ================================================================== */
+
+export function buildUtilitySections(route) {
+  const utility = route.utility;
+  if (!utility) return { intro: [route.description].filter(Boolean), sections: [] };
+
+  const { name, cities, states, multiState } = utility;
+  const stateNames = states.map((entry) => entry.name);
+  const sections = [];
+
+  const intro = [
+    utility.note,
+    multiState
+      ? `${name} delivers electricity in ${joinNames(stateNames)}. We cover ${cities.length} cities ` +
+        `across that territory, and because each state writes its own rules, what you can buy ` +
+        `changes at the border even though the wires company does not.`
+      : `${name} delivers electricity in ${stateNames[0]}, where we cover ${cities.length} of the ` +
+        `cities in its territory.`,
+  ].filter(Boolean);
+
+  /* The correction, first, because the rest of the page depends on it.
+   *
+   * Written per regulatory model rather than once with the name swapped. The
+   * three are genuinely different arrangements, and flattening them would be
+   * both less accurate and the templated page this site keeps refusing to
+   * publish: Texas has no utility supply rate to fall back on at all, the
+   * Northeast utilities sell a regulated default, and Illinois and Ohio add
+   * municipal aggregation on top of one. */
+  const short = utility.shortName || name;
+  if (utility.model === 'texas') {
+    sections.push({
+      heading: `What ${short} Bills You For, and What It Cannot Sell You`,
+      paragraphs: [
+        `Texas split the two jobs further than anywhere else in the country. ${name} owns the ` +
+          `poles, the wires and the meter, and it is not allowed to sell you electricity at all. ` +
+          `There is no ${short} rate to fall back on, no default tariff, no "staying put" option.`,
+        `That means every household in the territory has bought its energy from a retailer, ` +
+          `whether or not it remembers choosing one. If you have never shopped, you are on ` +
+          `whatever a retailer signed you up to — frequently a renewal that rolled over at a ` +
+          `higher rate than the one you agreed to.`,
+      ],
+      bullets: [
+        `${short} charges regulated delivery, identical across every retailer.`,
+        `A retail supplier sets the cents per kWh, and that is the only contestable half.`,
+        `Switching retailer changes no equipment and no service — ${short} still runs the wires.`,
+      ],
+    });
+  } else if (utility.model === 'aggregation') {
+    sections.push({
+      heading: `What ${short} Charges For, and the Two Ways Around It`,
+      paragraphs: [
+        `${name} delivers the power and bills you for it, at a regulated rate no supplier can ` +
+          `discount. The supply half — the energy itself — is contestable, and here there are two ` +
+          `routes rather than one.`,
+        `You can leave supply with ${short} at the regulated default price, or buy it from a ` +
+          `competing retailer. There is also a third possibility peculiar to this part of the ` +
+          `country: your municipality may have negotiated a supply contract on behalf of every ` +
+          `household in it, and enrolled you unless you opted out. Many people on an aggregation ` +
+          `rate have no idea they are on one.`,
+      ],
+      bullets: [
+        `${short} sets and bills delivery, which shopping cannot lower.`,
+        `Default supply from ${short} is the price a competitive offer has to beat.`,
+        `A municipal aggregation deal may already have replaced that default without your involvement.`,
+      ],
+    });
+  } else {
+    sections.push({
+      heading: `What ${short} Charges For, and What a Supplier Charges For`,
+      paragraphs: [
+        `Your bill has two halves. ${name} owns one of them and it cannot be shopped: delivery — ` +
+          `the poles and wires, the meter, the crew that restores power after a storm. Those ` +
+          `charges are set by the state regulator and are identical whoever supplies your energy.`,
+        `The other half is supply. ${short} sells that too, at a regulated default rate that ` +
+          `resets on a published schedule, and a competing retailer may beat it. That default is ` +
+          `the number worth knowing: it is what you pay by doing nothing, and the only fair ` +
+          `benchmark for any offer put in front of you.`,
+      ],
+      bullets: [
+        `${short} sets and bills delivery charges, which no supplier can discount.`,
+        `Its regulated default supply rate is the benchmark, not a rate you are stuck with.`,
+        `Switching supplier changes the supply rate only — same wires, same meter, same outage number.`,
+      ],
+    });
+  }
+
+  /* Cities, ordered cheapest first — the table a reader came for. */
+  if (cities.length) {
+    const spread = utility.highestCityRate != null && utility.lowestCityRate != null
+      ? Math.round((utility.highestCityRate - utility.lowestCityRate) * 10) / 10
+      : null;
+    sections.push({
+      heading: `Cities We Cover in the ${name} Territory`,
+      paragraphs: [
+        spread && spread >= 1
+          ? `Average residential rates across these ${cities.length} cities span ${spread}¢/kWh, ` +
+            `which is a wider gap than most people expect inside one delivery territory — ` +
+            `supply is priced locally even where delivery is not.`
+          : `Average residential rates across these ${cities.length} cities sit close together, ` +
+            `which is what a single delivery territory usually looks like. What separates two ` +
+            `households here is the supply contract each one signed, not where they live.`,
+      ],
+      table: {
+        columns: ['City', 'Average residential rate', 'Estimated monthly bill'],
+        rows: cities.map((city) => [
+          { text: `${city.name}, ${city.stateCode}`, path: city.path },
+          city.avgRate,
+          city.avgMonthlyBill,
+        ]),
+      },
+    });
+  }
+
+  /* What is actually buyable in the territory, from the plan snapshot. */
+  const withPlans = states.filter((entry) => entry.market?.plans > 0);
+  if (withPlans.length) {
+    sections.push({
+      heading: `Suppliers You Can Choose Instead`,
+      paragraphs: [
+        multiState
+          ? `Supply is licensed state by state, so the choice differs across the ${name} footprint ` +
+            `(${asOf}).`
+          : `These are the plans we hold for ${stateNames[0]}, any of which replaces the supply half ` +
+            `of a ${name} bill (${asOf}).`,
+      ],
+      table: {
+        columns: ['State', 'Plans we track', 'Suppliers', 'Cheapest', 'Median'],
+        rows: withPlans.map((entry) => [
+          { text: entry.name, path: entry.path },
+          String(entry.market.plans),
+          String(entry.market.providers),
+          formatRate(entry.market.minRate),
+          formatRate(entry.market.medianRate),
+        ]),
+      },
+      links: [
+        ['/compare-rates', 'Compare supply rates for your ZIP code'],
+        ['/all-providers', 'Every supplier we track'],
+      ],
+    });
+  }
+
+  sections.push({
+    heading: `${name} Questions`,
+    faqs: buildUtilityFaqs(utility),
+  });
+
+  sections.push({
+    heading: 'Next Steps',
+    links: [
+      ['/compare-rates', 'Compare plans for your ZIP code'],
+      ...states.map((entry) => [entry.path, `${entry.name} electricity rates`]),
+      ['/bill-analyzer', 'Check what your current bill is really costing'],
+      [UTILITY_ROOT, 'Other delivery territories'],
+    ],
+  });
+
+  return { intro, sections };
+}
+
+function buildUtilityFaqs(utility) {
+  const { name, states, cities, multiState } = utility;
+  const primary = states[0];
+  const cheapest = states
+    .filter((entry) => entry.market?.minRate != null)
+    .sort((a, b) => a.market.minRate - b.market.minRate)[0];
+  const faqs = [];
+
+  /* The lead question is the one the reader arrived with, and its honest answer
+   * differs by market, so it is written three ways rather than one. */
+  const short = utility.shortName || name;
+  if (utility.model === 'texas') {
+    faqs.push({
+      question: `Does ${short} set my electricity rate?`,
+      answer:
+        `No, and it cannot sell you electricity at all. ${name} is a delivery-only company: it ` +
+        `charges a regulated amount to carry power to your meter and that amount is the same ` +
+        `whoever supplies you. Texas has no utility default rate, so every household here buys ` +
+        `its energy from a retailer — including the households that never chose one.`,
+    });
+  } else if (utility.model === 'aggregation') {
+    faqs.push({
+      question: `Does ${short} set my electricity rate?`,
+      answer:
+        `Only the delivery part, which is regulated and identical across every supplier. The ` +
+        `supply part may be ${short}'s default rate, a retailer you chose, or a contract your ` +
+        `municipality signed on your behalf through an aggregation programme. All three arrive on ` +
+        `the same ${short} bill, which is why so few people know which one they are on.`,
+    });
+  } else {
+    faqs.push({
+      question: `Does ${short} set my electricity rate?`,
+      answer:
+        `It sets the delivery charge, which is regulated and identical whoever supplies you, and ` +
+        `it also sells supply at a default rate that resets on a published schedule. That default ` +
+        `is not a rate you are stuck with — it is the benchmark. A competing supplier either ` +
+        `beats it or is not worth signing.`,
+    });
+  }
+
+  if (cheapest?.market) {
+    faqs.push({
+      question: `What is the cheapest electricity rate in the ${name} area?`,
+      answer:
+        `The lowest supply rate we currently hold in ${cheapest.name} is ` +
+        `${formatRate(cheapest.market.minRate)}, against a median of ` +
+        `${formatRate(cheapest.market.medianRate)} across ${cheapest.market.plans} plans ` +
+        `(${asOf}). Delivery charges are added on top of whichever supply rate you pick, and they ` +
+        `do not change with the supplier.`,
+    });
+  }
+
+  faqs.push({
+    question: `Will switching supplier interrupt my ${short} service?`,
+    answer:
+      `No. Nothing physical changes and nobody visits the property. ${name} keeps delivering the ` +
+      `power, reading the meter and handling outages; only the company selling you the energy ` +
+      `changes, and it takes effect at your next meter read.`,
+  });
+
+  if (utility.model === 'aggregation') {
+    faqs.push({
+      question: `How do I tell whether I am on a municipal aggregation rate?`,
+      answer:
+        `Look at the supply line on your bill, not the delivery line. If it names a retailer you ` +
+        `do not remember choosing, your town most likely enrolled you through an aggregation ` +
+        `programme — legal, opt-out rather than opt-in, and not always cheaper than what you ` +
+        `could get yourself. You can leave it for any supplier on the market.`,
+    });
+  } else if (utility.model === 'texas') {
+    faqs.push({
+      question: `What happens if my contract ends and I do nothing?`,
+      answer:
+        `You are moved to a holdover or renewal rate, and it is frequently well above the one you ` +
+        `signed. Because there is no ${short} default to fall back to, nothing stops that rate ` +
+        `from being far higher than the market — the only protection is checking the end date and ` +
+        `shopping before it arrives.`,
+    });
+  }
+
+  if (multiState) {
+    faqs.push({
+      question: `Is the ${name} offer the same in every state it serves?`,
+      answer:
+        `No. ${name} delivers in ${joinNames(states.map((entry) => entry.name))}, but supply is ` +
+        `licensed and regulated separately in each one, so the plans available and the default ` +
+        `rate you are compared against both change at the state line.`,
+    });
+  }
+
+  faqs.push({
+    question: `Who do I call when the power goes out?`,
+    answer:
+      `${name}, always — including when a competing retailer supplies your energy. Outages are a ` +
+      `wires problem, and the wires stay with ${name} whoever you buy from.`,
+  });
+
+  if (primary && cities.length) {
+    faqs.push({
+      question: `Which cities does this cover?`,
+      answer:
+        `We cover ${cities.length} cities in the ${name} territory, from ` +
+        `${cities[0].name} to ${cities[cities.length - 1].name}. Availability is confirmed by ZIP ` +
+        `code rather than by city, because territory boundaries do not follow city limits.`,
+    });
+  }
+
+  return faqs;
+}
+
+/**
+ * The utility hub. Exists so every territory page has one crawlable inbound
+ * link from a page with its own reason to exist, and so a reader who does not
+ * know their utility's name can find it from their state.
+ */
+export function buildUtilityHubSections() {
+  const utilities = getUtilities();
+  const sections = [];
+
+  const covered = utilities.reduce((sum, utility) => sum + utility.cities.length, 0);
+  const intro = [
+    'Two companies appear on a deregulated electricity bill and they do very different jobs. ' +
+      'The delivery utility owns the wires and cannot be changed. The supplier sells the energy ' +
+      'and can be changed at any time, which is the whole reason this site exists.',
+    `These are the ${utilities.length} delivery territories where we cover enough of the market ` +
+      `to be useful — ${covered} cities in total. If yours is not here, its state page carries the ` +
+      `same plan data.`,
+  ];
+
+  sections.push({
+    heading: 'Delivery Territories We Cover',
+    paragraphs: [
+      'Ordered by how much of each territory we cover. Rate spans are the average residential ' +
+        'rates in the cities listed, not delivery charges — those are regulated and we do not hold them.',
+    ],
+    table: {
+      columns: ['Utility', 'States', 'Cities we cover', 'City rate range'],
+      rows: utilities.map((utility) => [
+        { text: utility.name, path: utility.path },
+        utility.stateCodes.map((code) => STATE_NAMES[code]).join(', '),
+        String(utility.cities.length),
+        utility.lowestCityRate != null
+          ? `${formatRate(utility.lowestCityRate)} – ${formatRate(utility.highestCityRate)}`
+          : '—',
+      ]),
+    },
+  });
+
+  sections.push({
+    heading: 'Why the Distinction Matters',
+    paragraphs: [
+      'Most people searching for their utility by name are trying to find out what they will pay, ' +
+        'and are looking at the wrong company. The utility charge is regulated, identical across ' +
+        'every supplier, and not something shopping can lower. The supply rate is none of those ' +
+        'things — it varies by a factor of two between the cheapest and most expensive plans in ' +
+        'some of the markets we track.',
+    ],
+    links: [
+      ['/compare-rates', 'Compare supply rates for your ZIP code'],
+      ['/all-states', 'Electricity rates by state'],
+      ['/all-cities', 'Electricity rates by city'],
+      ['/bill-analyzer', 'See what your current bill is really costing'],
+    ],
+  });
+
+  return { intro, sections };
 }
