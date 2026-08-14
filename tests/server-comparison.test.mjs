@@ -988,6 +988,32 @@ describe('the comparison email cannot disagree with the page', () => {
     assert.doesNotMatch(pageSource, /costSortKey/);
   });
 
+  test('the page actually sends the comparison it promises to email', () => {
+    // The contact step tells the visitor "We'll email your comparison". For as
+    // long as this page existed, nothing did: the endpoint was reachable only
+    // from the two legacy quote pages. A promise made in order to obtain an
+    // email address has to be kept by the code that made it.
+    assert.match(pageSource, /We&rsquo;ll email your comparison/,
+      'the promise is still on the page');
+    assert.match(pageSource, /fetch\("\/api\/send-comparison-results"/,
+      'and something has to keep it');
+  });
+
+  test('the emailed comparison carries inputs and ids, never economics', () => {
+    // Same boundary as the request the page already makes for its results.
+    const body = pageSource.slice(
+      pageSource.indexOf('/api/send-comparison-results'),
+      pageSource.indexOf('/api/send-comparison-results') + 1800
+    );
+    for (const forbidden of [
+      'estimatedMonthlyCost', 'supplyEstimate', 'matchScore', 'potentialSavings',
+      'trackedOutboundRoute', 'affiliateUrl', 'rank',
+    ]) {
+      assert.ok(!body.includes(`${forbidden}:`), `${forbidden} is being posted to the email endpoint`);
+    }
+    assert.match(body, /planIds:/, 'the plans on screen are named by id alone');
+  });
+
   test('both surfaces describe the same result identically', async () => {
     // The parity guarantee in one assertion: given one comparison, the figure
     // and the wording the page shows and the email prints come from the same
@@ -1017,5 +1043,80 @@ describe('the comparison email cannot disagree with the page', () => {
     assert.equal(describeResultPrice(partial).basis, 'supply');
     assert.equal(partial.potentialSavings, null,
       'the email must not invent a saving the page is withholding');
+  });
+
+  /* ── The Bill Analyzer, held to the same boundary ──────────────── */
+
+  const analyzerSource = codeOf('../src/pages/BillAnalyzer.jsx');
+  const reportSource = codeOf('../api/send-report.js');
+  const extractSource = codeOf('../api/extract-data.js');
+
+  test('the analyzer no longer prices, scores or ranks anything itself', () => {
+    // Every formula that used to live on this page, named exactly.
+    assert.doesNotMatch(analyzerSource, /rate_per_kwh\s*\/\s*100/);
+    assert.doesNotMatch(analyzerSource, /ratePerKwh\s*\/\s*100/);
+    assert.doesNotMatch(analyzerSource, /monthlySavings/);
+    assert.doesNotMatch(analyzerSource, /annualSavings/);
+    assert.doesNotMatch(analyzerSource, /estimatedCost/);
+    assert.doesNotMatch(analyzerSource, /percentileScore|rangeScore|avgBonus/);
+  });
+
+  test('the analyzer no longer lists plans straight from the table', () => {
+    // `ElectricityPlan.list()` applies neither the plan's own is_active nor its
+    // provider's, which is how deactivated inventory reached the public page.
+    assert.doesNotMatch(analyzerSource, /ElectricityPlan/);
+    assert.doesNotMatch(analyzerSource, /ElectricityProvider/);
+    assert.match(analyzerSource, /\/api\/comparison/);
+  });
+
+  test('the analyzer no longer builds provider links in the browser', () => {
+    assert.doesNotMatch(analyzerSource, /getAffiliateUrl/);
+    assert.doesNotMatch(analyzerSource, /affiliate_url/);
+    assert.doesNotMatch(analyzerSource, /website_url/);
+    assert.match(analyzerSource, /trackedOutboundRoute/);
+  });
+
+  test('the analyzer keeps no account identity from a bill', () => {
+    for (const field of ['customer_name', 'service_address', 'account_number']) {
+      assert.doesNotMatch(analyzerSource, new RegExp(field), `${field} is still handled`);
+    }
+  });
+
+  test('the extraction service refuses to return account identity', () => {
+    // A property of the service rather than of one caller's discipline: every
+    // response path runs through the same redaction.
+    assert.match(extractSource, /IDENTITY_FIELDS/);
+    assert.match(extractSource, /withoutIdentity\(/);
+    // And the raw model output is no longer echoed back on a parse failure,
+    // which was a way around the redaction.
+    assert.doesNotMatch(extractSource, /raw:\s*content/);
+  });
+
+  test('the report email reads no economics from the request body', () => {
+    // The fields the old endpoint rendered straight from the client.
+    assert.doesNotMatch(reportSource, /plan\.affiliateUrl/);
+    assert.doesNotMatch(reportSource, /affiliateUrl\s*\|\|/);
+    assert.doesNotMatch(reportSource, /recommendations/);
+    assert.doesNotMatch(reportSource, /req\.body\?\.savingsScore/);
+    assert.doesNotMatch(
+      reportSource,
+      /const\s*\{[^}]*\b(recommendations|savingsScore|overpaymentPercent|billData)\b[^}]*\}\s*=\s*req\.body/
+    );
+  });
+
+  test('the report email routes through the shared comparison service', () => {
+    assert.match(reportSource, /runComparison\(/);
+    assert.match(reportSource, /selectHeadline\(/);
+    assert.match(reportSource, /describeResultPrice\(/);
+    assert.match(reportSource, /pricingCaveatText\(/);
+    assert.match(reportSource, /req\.body\?\.planIds/);
+  });
+
+  test('the report email states no savings the comparison did not produce', () => {
+    // The single annual figure comes from the server benchmark, and the
+    // per-plan lines from each result's own signed difference.
+    assert.match(reportSource, /comparison\.benchmark/);
+    assert.match(reportSource, /benchmark\.available\s*\?\s*benchmark\.annualOverpayment\s*:\s*0/);
+    assert.match(reportSource, /result\.monthlyDifference === null/);
   });
 });

@@ -50,7 +50,7 @@ export const STATIC_ROUTES = [
     page: "BillAnalyzer",
     path: "/bill-analyzer",
     title: "Electricity Bill Analyzer | Electric Scouts",
-    description: "Upload an electricity bill and see the rate you are actually paying once base charges and usage credits are counted, then compare it against current plans.",
+    description: "Upload an electricity bill and see the rate you really pay once base charges, delivery and credits are counted, then compare it against plans sold at your address.",
     priority: 0.9,
     changefreq: "weekly",
   },

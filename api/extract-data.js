@@ -1,5 +1,35 @@
 const openaiApiKey = process.env.OPENAI_API_KEY;
 
+/**
+ * Fields that never leave this endpoint, whatever was asked for.
+ *
+ * An electricity bill carries the account holder's name, their service address
+ * and their utility account number. The comparison needs none of them — it
+ * needs usage, charges, rate and contract characteristics — and the engine's
+ * own mapper has always dropped them. Dropping them here as well makes it a
+ * property of the extraction service rather than of one caller's discipline:
+ * a future prompt that asks for an account number still cannot return one, so
+ * it cannot end up in session storage, on a results page, or in an email.
+ */
+const IDENTITY_FIELDS = [
+  'account_number',
+  'customer_name',
+  'service_address',
+  'customer_address',
+  'billing_address',
+  'meter_number',
+  'phone',
+  'phone_number',
+];
+
+/** Strip account identity from an extraction before it is returned. */
+function withoutIdentity(output) {
+  if (!output || typeof output !== 'object') return output;
+  const clean = { ...output };
+  for (const field of IDENTITY_FIELDS) delete clean[field];
+  return clean;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -26,8 +56,12 @@ export default async function handler(req, res) {
     let prompt;
 
     if (json_schema && json_schema.properties) {
-      // Build a precise prompt from the schema so field names match exactly
+      // Build a precise prompt from the schema so field names match exactly.
+      // Identity fields are dropped from the request as well as the response —
+      // asking the model for an account number and then discarding it wastes
+      // tokens and puts the value through the API for no reason.
       const fields = Object.entries(json_schema.properties)
+        .filter(([key]) => !IDENTITY_FIELDS.includes(key))
         .map(([key, val]) => `  "${key}": ${val.description || val.type}`)
         .join('\n');
 
@@ -47,10 +81,11 @@ IMPORTANT INSTRUCTIONS:
     } else if (extraction_prompt) {
       prompt = extraction_prompt;
     } else {
+      // The default contract deliberately asks for energy figures only. The
+      // ZIP code is the exception, and it is here because serviceability is
+      // decided by utility territory — it locates the meter, not the person.
       prompt = `You are analyzing an electricity bill document. Extract the following and return as a JSON object with these exact field names:
 {
-  "customer_name": (string, the customer/account holder name on the bill),
-  "service_address": (string, the full service address where electricity is delivered),
   "monthly_usage_kwh": (number, monthly electricity usage in kWh),
   "monthly_cost": (number, total monthly cost in dollars),
   "rate_per_kwh": (number, rate per kWh in cents),
@@ -58,15 +93,13 @@ IMPORTANT INSTRUCTIONS:
   "provider_name": (string, current electricity provider/company name, usually at the top of the bill),
   "plan_name": (string, current plan/product name, or null if unknown),
   "zip_code": (string, service address ZIP code),
-  "account_number": (string, the account or customer number),
   "billing_period": (string, the billing period dates, e.g. "Dec 5 - Jan 6, 2026")
 }
 IMPORTANT:
 - For monthly_usage_kwh: Look for "kWh Used", "Total Usage", "Energy Used", or similar.
 - For monthly_cost: Look for "Total Amount Due", "Total Charges", "Amount Due", or the final bill total.
 - For rate_per_kwh: Look for "Price per kWh", "Energy Charge Rate", or calculate from total cost / usage. Express in CENTS (e.g., 12.5 for 12.5¢/kWh).
-- For customer_name: Look for "Name", "Customer", "Account Holder" on the bill.
-- For service_address: Look for "Service Address", "Delivery Address", or the address where electricity is delivered.
+- Do NOT return the account holder's name, the account number, or the street address. Only the ZIP code is needed.
 - If a field cannot be determined, use null for strings and 0 for numbers.
 - Return JSON only, no explanation or markdown.`;
     }
@@ -150,38 +183,43 @@ IMPORTANT:
     const content = data.choices?.[0]?.message?.content || '{}';
 
     try {
-      const extracted = JSON.parse(content);
-      
+      // Redacted before anything else touches it, so no branch below can
+      // return account identity by forgetting to strip it.
+      const extracted = withoutIdentity(JSON.parse(content));
+
       // Validate that we got at least some meaningful data
-      const hasData = extracted.monthly_usage_kwh > 0 || 
-                      extracted.monthly_cost > 0 || 
+      const hasData = extracted.monthly_usage_kwh > 0 ||
+                      extracted.monthly_cost > 0 ||
                       extracted.provider_name;
-      
+
       if (!hasData) {
-        console.warn('Extraction returned no meaningful data:', extracted);
-        return res.json({ 
-          status: 'success', 
+        // The document itself is never logged — only that it yielded nothing.
+        console.warn('Extraction returned no meaningful data');
+        return res.json({
+          status: 'success',
           output: extracted,
           warning: 'Limited data could be extracted from this document'
         });
       }
-      
+
       return res.json({ status: 'success', output: extracted });
-    } catch (parseErr) {
-      console.error('Failed to parse AI response as JSON:', content);
-      
+    } catch {
+      // The raw content is not logged and not returned: on a parse failure it
+      // is unvalidated model output derived from someone's bill, and echoing it
+      // back to the browser was a way for identity fields to escape redaction.
+      console.error('Failed to parse AI extraction response as JSON');
+
       // Try to extract JSON from the response if it's wrapped in markdown
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         try {
-          const extracted = JSON.parse(jsonMatch[0]);
-          return res.json({ status: 'success', output: extracted });
+          return res.json({ status: 'success', output: withoutIdentity(JSON.parse(jsonMatch[0])) });
         } catch {
           // Fall through to error
         }
       }
-      
-      return res.json({ status: 'error', output: null, raw: content, error: 'Failed to parse extraction result' });
+
+      return res.json({ status: 'error', output: null, error: 'Failed to parse extraction result' });
     }
   } catch (error) {
     console.error('Data extraction error:', error);

@@ -35,7 +35,7 @@ import {
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS } from '../src/seo/articles.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
-import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket } from '../src/seo/market.js';
+import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket, providersInState, renewableProvidersInState } from '../src/seo/market.js';
 import { buildCitySections, buildStateSections, buildProviderSections, buildComparisonSections, buildUtilitySections } from '../src/seo/content.js';
 import { createResolver, parseHtml } from '../src/seo/audit.mjs';
 import { buildPageContent, renderBody } from '../src/seo/render.js';
@@ -1752,6 +1752,93 @@ describe('every page family accumulates internal links', () => {
       assert.ok(rivals, `${route.path} names no overlapping suppliers`);
       for (const [path] of rivals.links) {
         assert.notEqual(path, route.path, `${route.path} lists itself as a rival`);
+      }
+    }
+  });
+});
+
+/* ==================================================================
+ * Market figures in the React UI
+ *
+ * The prerendered pages were corrected first, which left the React pages
+ * quoting a different set of numbers to the same visitor. Every figure
+ * below had drifted: state pages claimed 2-3x the suppliers we hold, and
+ * the savings calculator computed against a hand-kept rate table whose
+ * "cheapest" Connecticut rate was 23.5¢/kWh against a real 9.8¢.
+ * ================================================================== */
+
+describe('the React pages quote the same market figures as the prerendered ones', () => {
+  const STATE_PAGES = {
+    CT: 'Connecticut', IL: 'Illinois', ME: 'Maine', MD: 'Maryland',
+    MA: 'Massachusetts', NH: 'NewHampshire', NJ: 'NewJersey', NY: 'NewYork',
+    OH: 'Ohio', PA: 'Pennsylvania', RI: 'RhodeIsland', TX: 'Texas',
+  };
+
+  function pageSource(file) {
+    return fs.readFileSync(path.join(ROOT, `src/pages/${file}Electricity.jsx`), 'utf8');
+  }
+
+  test('no state page carries a hardcoded supplier count or rate', () => {
+    for (const [code, file] of Object.entries(STATE_PAGES)) {
+      const source = pageSource(file);
+      for (const field of ['providerCount', 'avgRate', 'avgMonthlyBill', 'avgSavings']) {
+        assert.ok(
+          !new RegExp(`\\n\\s*${field}:\\s*["'\\d]`).test(source),
+          `${file}Electricity.jsx has a hardcoded ${field} — it should come from the snapshot`
+        );
+      }
+      assert.ok(
+        source.includes(`getStateMarket("${code}")`),
+        `${file}Electricity.jsx does not read the market snapshot`
+      );
+    }
+  });
+
+  test('no state page names a supplier that does not sell there', () => {
+    // The hand-kept lists named Liberty Power, Residents Energy, NextEra and
+    // others we hold no plans from, in 11 of the 12 states. Clicking one led
+    // nowhere.
+    for (const [code, file] of Object.entries(STATE_PAGES)) {
+      const source = pageSource(file);
+      assert.ok(
+        !/\n\s*topProviders:\s*\[/.test(source),
+        `${file}Electricity.jsx still carries a hand-kept topProviders list`
+      );
+      assert.ok(
+        source.includes(`providersInState("${code}")`),
+        `${file}Electricity.jsx does not source its supplier list from the snapshot`
+      );
+    }
+  });
+
+  test('the savings calculator computes against real plan rates', () => {
+    const source = fs.readFileSync(path.join(ROOT, 'src/pages/SavingsCalculator.jsx'), 'utf8');
+    assert.ok(
+      !source.includes('stateData.topProviders'),
+      'the calculator still derives market rates from the hand-kept provider table'
+    );
+    assert.ok(
+      source.includes('getStateMarket(stateCode)'),
+      'the calculator does not read the market snapshot'
+    );
+  });
+
+  test('every state we publish has the snapshot fields these pages read', () => {
+    for (const code of Object.keys(STATE_PAGES)) {
+      const market = getStateMarket(code);
+      assert.ok(market, `${code} has no market data`);
+      for (const field of ['providers', 'plans', 'minRate', 'medianRate']) {
+        assert.ok(market[field] != null, `${code} market is missing ${field}`);
+      }
+      assert.ok(providersInState(code).length > 0, `${code} lists no suppliers`);
+    }
+  });
+
+  test('renewable supplier lists name only suppliers selling in that state', () => {
+    for (const code of Object.keys(STATE_PAGES)) {
+      const inState = new Set(providersInState(code));
+      for (const name of renewableProvidersInState(code)) {
+        assert.ok(inState.has(name), `${code} lists ${name} as renewable but it has no plans there`);
       }
     }
   });

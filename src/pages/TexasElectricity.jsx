@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, Zap, DollarSign, Award, ChevronDown, ArrowRight, Building2, ExternalLink } from "lucide-react";
-import { getStateMarket } from "@/seo/market.js";
+import { formatRate, getStateMarket, providersInState, renewableProvidersInState } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 
@@ -45,15 +45,16 @@ export default function TexasElectricity() {
   // Plan counts and supplier counts come from the checked-in market
   // snapshot, so this page and its prerendered twin quote the same figures.
   const stateMarket = getStateMarket("TX");
+  // Supplier names from the snapshot. This page also fetches provider records
+  // live (above) for the cards; these names are the authoritative set for
+  // filtering and for the copy, and they match what the prerendered twin says.
+  const snapshotProviders = providersInState("TX");
+  const renewableHere = renewableProvidersInState("TX");
 
   const stateData = {
     name: "Texas",
     fullName: "Texas",
     urlSlug: "texas-electricity",
-    avgSavings: 800,
-    providerCount: 45,
-    avgRate: "9.2¢/kWh",
-    avgMonthlyBill: "$132",
     topCities: [
       { name: "Houston", population: "2.3M" },
       { name: "Dallas", population: "1.3M" },
@@ -76,7 +77,6 @@ export default function TexasElectricity() {
       { name: "Waco", population: "138K" },
       { name: "Carrollton", population: "139K" }
     ],
-    topProviders: ["TXU Energy", "Reliant Energy", "Gexa Energy", "Direct Energy", "Green Mountain Energy", "Frontier Utilities"],
     faqs: [
       {
         id: 1,
@@ -91,12 +91,12 @@ export default function TexasElectricity() {
       {
         id: 3,
         question: "What are the best electricity providers in Texas?",
-        answer: "Top-rated Texas electricity providers include TXU Energy, Reliant Energy, Gexa Energy, Direct Energy, Green Mountain Energy, and Frontier Utilities. The best provider for you depends on your usage, preferred contract length, and whether you want renewable energy options."
+        answer: `We do not rank suppliers, because "best" depends on what you are optimising for. What we can tell you is what is actually on sale: ${stateMarket?.providers ?? 0} suppliers with at least one active Texas plan, among them ${snapshotProviders.slice(0, 4).join(", ")}. Compare them on rate, contract length and exit fee rather than on brand.`
       },
       {
         id: 4,
         question: "Can I get renewable energy in Texas?",
-        answer: "Yes! Texas is a leader in wind energy production, and many providers offer 100% renewable energy plans at competitive rates. Companies like Green Mountain Energy, Gexa Energy, and Direct Energy offer green plans that support Texas wind and solar farms."
+        answer: `Yes. ${stateMarket?.renewablePlans ?? 0} of the ${stateMarket?.plans ?? 0} Texas plans we track are backed by 100% renewable energy${renewableHere.length ? `, from suppliers including ${renewableHere.slice(0, 3).join(", ")}` : ""}. Renewable supply in a competitive market is normally matched with renewable energy certificates rather than a dedicated line to a wind farm.`
       }
     ]
   };
@@ -111,7 +111,10 @@ export default function TexasElectricity() {
 
   // Filter plans to only show those from providers in our database
   // This ensures data consistency and accuracy
-  const validProviderNames = stateData.topProviders;
+  // Was stateData.topProviders — a hand-kept list of six names. Any Texas
+  // supplier missing from it had its plans filtered out of this page entirely,
+  // which is why the page could show fewer plans than the market has.
+  const validProviderNames = snapshotProviders;
   const statePlans = allPlans.filter(plan => 
     validProviderNames.includes(plan.provider_name)
   );
@@ -160,8 +163,8 @@ export default function TexasElectricity() {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.avgRate}</div>
-                <div className="text-sm text-blue-100">Avg. Rate</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.medianRate != null ? formatRate(stateMarket.medianRate) : "—"}</div>
+                <div className="text-sm text-blue-100">Median Plan Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
@@ -172,8 +175,8 @@ export default function TexasElectricity() {
                 <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>
-                <div className="text-sm text-blue-100">Avg. Bill</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.minRate != null ? formatRate(stateMarket.minRate) : "—"}</div>
+                <div className="text-sm text-blue-100">Cheapest Plan</div>
               </div>
             </div>
 

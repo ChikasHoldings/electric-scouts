@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Building2, Home, Leaf, MapPin } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -107,6 +107,11 @@ export default function CompareRates() {
   });
   const [sort, setSort] = useState("best");
   const [matchingFailed, setMatchingFailed] = useState(false);
+  // Bumped by Retry. The matching effect keys on it so a retry genuinely
+  // restarts the run: setting `view` back to the value it already holds is a
+  // no-op React bails out of, which left Retry resetting the failure flag and
+  // then waiting on a timer that was never scheduled.
+  const [matchAttempt, setMatchAttempt] = useState(0);
   const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
 
   // ── Session bootstrap ──
@@ -307,7 +312,12 @@ export default function CompareRates() {
     ]
   );
 
-  const { data: comparison, isLoading: plansQueryLoading, isError: plansError } = useQuery({
+  const {
+    data: comparison,
+    isLoading: plansQueryLoading,
+    isError: plansError,
+    refetch: refetchComparison,
+  } = useQuery({
     // Every input that can change a price, a rank or a score is in the key, so
     // a customer who corrects their usage gets a recomputed comparison rather
     // than a cached one that no longer describes them.
@@ -347,6 +357,11 @@ export default function CompareRates() {
   // The plans query is what "ready" means here. If it has not settled by the
   // time the minimum elapses, the screen stays up rather than revealing a
   // half-populated board — real work is never cut off by the clock.
+  //
+  // A failed catalog query is reported as a failure rather than as an empty
+  // result. Letting it fall through to the results board told the customer
+  // "we don't have an instant match for 77002 yet" — a claim about their
+  // market — when what actually happened was that our own request errored.
   useEffect(() => {
     if (view !== "matching") return undefined;
 
@@ -355,7 +370,11 @@ export default function CompareRates() {
 
     const check = () => {
       const elapsed = Date.now() - startedAt;
-      const { phase } = resolveAnalysisPhase({ elapsedMs: elapsed, ready: !plansLoading });
+      const { phase } = resolveAnalysisPhase({
+        elapsedMs: elapsed,
+        ready: !plansLoading,
+        failed: plansError,
+      });
 
       if (phase === "complete") {
         setView("results");
@@ -371,7 +390,9 @@ export default function CompareRates() {
 
     check();
     return () => clearTimeout(timer);
-  }, [view, plansLoading]);
+    // `plansError` is a dependency, not just a read: a retry that succeeds has
+    // to be able to move the screen off the failure state.
+  }, [view, plansLoading, plansError, matchAttempt]);
 
   // Usage is resolved server-side for pricing; this copy is for display only —
   // "estimated at 1,500 kWh a month" — and the server echoes back the figure it
@@ -407,6 +428,74 @@ export default function CompareRates() {
     // Re-persisting on these transitions keeps the record current without
     // writing on every keystroke.
   }, [state.email, state.phone, view, routing.route]);  
+
+  // ── The email the flow promised ──
+  //
+  // The contact step tells the visitor "We'll email your comparison", and for
+  // as long as this page has existed nothing sent one: /api/send-comparison-
+  // results was reachable only from the two legacy quote pages. A promise made
+  // to get an email address and then not kept is the worst kind of gap, because
+  // the visitor has no way to notice it is us that failed rather than their spam
+  // filter.
+  //
+  // The request carries qualification inputs and the ids on screen — never
+  // prices, ranks or links. The endpoint re-runs the same comparison service
+  // this page called, so the inbox and the board quote the same figures for the
+  // same plan.
+  const emailedRef = useRef(null);
+  useEffect(() => {
+    if (view !== "results" || !state.email || results.length === 0) return;
+    // Business supply is quoted rather than listed, so the commercial branch
+    // ends in a handover, not a price list — and must not be emailed one.
+    if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) return;
+
+    // One send per session per email. The effect re-runs on every results
+    // render, and React's development double-invoke would otherwise post twice.
+    const sendKey = `${state.sessionId || ""}:${state.email}`;
+    if (emailedRef.current === sendKey) return;
+    emailedRef.current = sendKey;
+
+    fetch("/api/send-comparison-results", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: state.email,
+        name: state.firstName,
+        zipCode: state.zip,
+        cityName: state.city,
+        state: state.state,
+        comparisonType: state.energyPreference === "renewable" ? "renewable" : "residential",
+        energyPreference: state.energyPreference,
+        shoppingIntent: state.shoppingIntent,
+        usageRange: state.usageRange,
+        monthlyUsageKwh: state.monthlyUsageKwh,
+        monthlyCost: state.monthlyCost,
+        billAnalysisStatus: state.billAnalysisStatus,
+        billConfidence: state.billConfidence,
+        unverifiedFields: state.unverifiedFields,
+        sessionId: state.sessionId,
+        entryContext: state.entryContext,
+        attribution: state.attribution,
+        // The plans actually on screen, so a filtered view is what arrives.
+        // The server treats these as a narrowing filter over its own results;
+        // an id it does not recognise selects nothing.
+        planIds: results.map((r) => r.planId),
+      }),
+    })
+      .then((response) => {
+        track(
+          response.ok ? EVENTS.COMPARISON_EMAIL_SENT : EVENTS.COMPARISON_EMAIL_FAILED,
+          { session_id: state.sessionId }
+        );
+        // A failed send is allowed to be retried by a later results render
+        // rather than being permanently marked as done.
+        if (!response.ok) emailedRef.current = null;
+      })
+      .catch(() => {
+        emailedRef.current = null;
+        track(EVENTS.COMPARISON_EMAIL_FAILED, { session_id: state.sessionId });
+      });
+  }, [view, state.email, results]);
 
   useEffect(() => {
     if (view !== "results") return;
@@ -461,8 +550,11 @@ export default function CompareRates() {
             <AnalysisFailed
               onRetry={() => {
                 setMatchingFailed(false);
-                setView("question");
-                setView("matching");
+                // Re-run the request as well as the screen. Without this the
+                // retry button restarted a five-second animation over the same
+                // cached error and landed back on the same failure.
+                refetchComparison();
+                setMatchAttempt((n) => n + 1);
                 track(EVENTS.COMPARISON_ANALYSIS_STARTED, { retry: true });
               }}
               onConcierge={() => {

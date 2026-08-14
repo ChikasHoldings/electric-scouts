@@ -3,7 +3,8 @@ import {
 } from "../../src/components/compare/engine/eligibility.js";
 import { parseComparisonRequest } from "../../src/components/compare/engine/comparisonRequest.js";
 import { rankPlans } from "../../src/components/compare/engine/ranking.js";
-import { compareToCurrentBill } from "../../src/components/compare/engine/savings.js";
+import { compareToCurrentBill, currentBillTrust } from "../../src/components/compare/engine/savings.js";
+import { benchmarkCurrentRate } from "../../src/components/compare/engine/rateBenchmark.js";
 import {
   toResultDto,
   selectHeadline,
@@ -222,12 +223,31 @@ export async function runComparison(supabase, body, options = {}) {
   const returned = allResults.slice(0, MAX_RESULTS);
   const { headline } = selectHeadline(returned);
 
+  // ── Where this customer's current bill sits in their market ──
+  //
+  // Drawn from the full eligible set rather than the returned slice: "cheaper
+  // than 62 of the 96 plans sold in your area" is a statement about the market,
+  // and truncating the list for readability must not shrink the market it is
+  // measured against.
+  //
+  // Gated on the same trust rules as the per-result savings line, so a bill we
+  // are not willing to draw a savings figure from cannot produce a headline
+  // score either.
+  const trust = currentBillTrust(session);
+  const benchmark = trust.trusted
+    ? benchmarkCurrentRate(allResults, {
+      currentMonthlyCost: trust.currentMonthly,
+      usageKwh,
+    })
+    : { available: false, reason: trust.reason };
+
   return {
     ok: true,
     comparison: {
       state: session.state,
       customerType: session.customerType,
       usageKwh,
+      benchmark,
       counts: {
         eligible: allResults.length,
         returned: returned.length,

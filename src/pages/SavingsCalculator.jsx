@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Zap, TrendingDown, Award, Leaf, ArrowRight, Calculator } from "lucide-react";
 import { getStateData } from "../components/location/locationData";
+import { getStateMarket, providersInState, renewableProvidersInState } from "@/seo/market.js";
 import { validateZipCode } from "../components/compare/stateData";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -40,17 +41,26 @@ export default function SavingsCalculator() {
     const userCurrentRate = parseFloat(currentRate);
     const userUsage = parseFloat(monthlyUsage);
 
-    // Calculate average market rate from top providers
-    const avgMarketRate = stateData.topProviders.reduce((sum, p) => {
-      return sum + parseFloat(p.avgRate.replace('¢/kWh', ''));
-    }, 0) / stateData.topProviders.length;
+    // Market rates come from the plan snapshot — the same figures every other
+    // page on the site quotes. They used to be averaged from a hand-kept table
+    // of provider rates in locationData.js, and those numbers were nowhere near
+    // the market: the "best" rate it found for Connecticut was 23.5¢/kWh
+    // against a cheapest tracked plan of 9.8¢, so the tool told people they
+    // could save a fraction of what was actually on the table.
+    const market = getStateMarket(stateCode);
+    if (!market) return;
+    // Shaped {name} because the results card renders p.name.
+    const suppliersHere = providersInState(stateCode).map((name) => ({ name }));
+    const renewableHere = renewableProvidersInState(stateCode).map((name) => ({ name }));
+    const avgMarketRate = market.medianRate;
 
     // Calculate current annual cost
     const currentMonthlyCost = (userCurrentRate * userUsage) / 100;
     const currentAnnualCost = currentMonthlyCost * 12;
 
-    // Calculate potential new cost with best market rate
-    const bestMarketRate = Math.min(...stateData.topProviders.map(p => parseFloat(p.avgRate.replace('¢/kWh', ''))));
+    // The cheapest plan we actually hold in the state, which is what a shopper
+    // could switch to today.
+    const bestMarketRate = market.minRate;
     const potentialMonthlyCost = (bestMarketRate * userUsage) / 100;
     const potentialAnnualCost = potentialMonthlyCost * 12;
 
@@ -71,20 +81,20 @@ export default function SavingsCalculator() {
           ? "Your high usage makes a fixed-rate plan ideal for budget certainty and protection from market volatility."
           : "Your current rate is above market average. Lock in a lower fixed rate now.",
         savingsPotential: "High",
-        providers: stateData.topProviders.filter(p => p.specialty.toLowerCase().includes('fixed')).slice(0, 2)
+        providers: suppliersHere.slice(0, 2)
       });
     }
 
     // Green energy recommendation (based on state trends)
-    if (['MA', 'NY', 'CA', 'CT', 'RI'].includes(stateCode) || userUsage < 700) {
+    // Offered where the state actually has renewable plans, rather than from a
+    // hardcoded list that included California — a state this site does not cover.
+    if (renewableHere.length > 0) {
       recommendations.push({
         type: "Green Energy",
         icon: Leaf,
         reason: "100% renewable plans in your area are competitively priced and help reduce carbon footprint without premium costs.",
         savingsPotential: "Medium",
-        providers: stateData.topProviders.filter(p => 
-          p.specialty.toLowerCase().includes('renewable') || p.specialty.toLowerCase().includes('green')
-        ).slice(0, 2)
+        providers: renewableHere.slice(0, 2)
       });
     }
 
@@ -95,7 +105,7 @@ export default function SavingsCalculator() {
         icon: TrendingDown,
         reason: "Market rates in your area are competitive. A variable plan could offer lower introductory rates with flexibility.",
         savingsPotential: "Medium-High",
-        providers: stateData.topProviders.slice(0, 2)
+        providers: suppliersHere.slice(0, 2)
       });
     }
 
@@ -106,9 +116,7 @@ export default function SavingsCalculator() {
         icon: Award,
         reason: "Your high consumption qualifies for volume discounts. 24-36 month contracts offer the best per-kWh rates.",
         savingsPotential: "Very High",
-        providers: stateData.topProviders.filter(p => 
-          p.specialty.toLowerCase().includes('long-term') || p.specialty.toLowerCase().includes('contract')
-        ).slice(0, 2)
+        providers: suppliersHere.slice(0, 2)
       });
     }
 
@@ -127,7 +135,7 @@ export default function SavingsCalculator() {
         icon: Zap,
         reason: "Shop around for competitive rates in your area to maximize savings.",
         savingsPotential: "Medium",
-        providers: stateData.topProviders.slice(0, 2)
+        providers: suppliersHere.slice(0, 2)
       }]
     });
   };
