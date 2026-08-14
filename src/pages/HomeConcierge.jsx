@@ -13,6 +13,7 @@ import {
   MapPin, User, Building, Lock, Tv, Wrench, Loader2, ChevronLeft, ChevronRight as ChevronRightIcon
 } from "lucide-react";
 import SEOHead, { getOrganizationSchema } from "@/components/SEOHead";
+import { MARKET_TOTALS } from "@/seo/market";
 
 export default function HomeConcierge() {
   const { toast } = useToast();
@@ -140,7 +141,7 @@ export default function HomeConcierge() {
   };
 
   const services = [
-    { key: "electricity", icon: Zap, name: "Electricity", color: "from-yellow-500 to-orange-500", description: "Compare 40+ providers for the best rates" },
+    { key: "electricity", icon: Zap, name: "Electricity", color: "from-yellow-500 to-orange-500", description: `Compare ${MARKET_TOTALS.providersWithPlans} suppliers for the best rates` },
     { key: "internet", icon: Wifi, name: "Internet", color: "from-blue-500 to-cyan-500", description: "Fiber, cable, and wireless options" },
     { key: "water_gas", icon: Droplet, name: "Water & Gas", color: "from-cyan-500 to-teal-500", description: "Local utility setup and coordination" },
     { key: "phone_tv", icon: Tv, name: "Phone & TV", color: "from-purple-500 to-pink-500", description: "Streaming, cable, and phone bundles" },
@@ -168,7 +169,7 @@ export default function HomeConcierge() {
   ];
 
   const faqs = [
-    { id: 1, question: "What utilities does the concierge service cover?", answer: "We help set up electricity, internet, water, gas, phone, and TV. For electricity in deregulated markets, we compare rates from 40+ providers. We also connect you with trusted partners for home security, insurance, moving, and home warranty services." },
+    { id: 1, question: "What utilities does the concierge service cover?", answer: "We help set up electricity, internet, water, gas, phone, and TV. For electricity in deregulated markets, we compare rates from every supplier we track in your market. We also connect you with trusted partners for home security, insurance, moving, and home warranty services." },
     { id: 2, question: "How much does the concierge service cost?", answer: "Our Home Concierge service is completely free! We're compensated by service providers when you choose their plans, so you pay nothing extra. In fact, we often help you save money by finding better rates." },
     { id: 3, question: "How far in advance should I contact you?", answer: "We recommend 2-3 weeks before your move-in date. This gives us time to research providers, compare rates, and schedule services. We can also handle last-minute requests when possible." },
     { id: 4, question: "What if I only need help with one utility?", answer: "That's perfectly fine! Many customers use us specifically for electricity since deregulated markets have dozens of confusing options. Whatever level of help you need, we're here to assist at no cost." },

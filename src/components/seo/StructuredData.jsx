@@ -1,5 +1,6 @@
 import { validateSchema } from "./schemaValidator";
 import { SITE_URL, absoluteUrl } from "@/seo/site";
+import { standaloneOrganizationSchema } from "@/seo/organization";
 
 /**
  * StructuredData Component
@@ -26,32 +27,11 @@ export default function StructuredData({ schema, validate = true }) {
   );
 }
 
-// Organization Schema - Site-wide
+// Organization Schema - Site-wide. Shares one definition (and one @id) with the
+// prerenderer and SEOHead; the copy this replaced still advertised "40+
+// providers" and "Save up to $800/year", neither of which the catalog supports.
 export function OrganizationSchema() {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Electric Scouts",
-    "url": SITE_URL,
-    "logo": `${SITE_URL}/images/logo-header.png`,
-    "description": "Compare electricity rates from 40+ providers across 12 deregulated states. Save up to $800/year on your electricity bill.",
-    "sameAs": [
-      "https://facebook.com/electricscouts",
-      "https://twitter.com/electricscouts",
-      "https://linkedin.com/company/electricscouts"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "Customer Service",
-      "email": "support@electricscouts.com",
-      "areaServed": ["TX", "IL", "OH", "PA", "NY", "NJ", "MD", "MA", "ME", "NH", "RI", "CT"]
-    }
-    // No aggregateRating: Electric Scouts publishes no verifiable first-party
-    // review data, and self-serving invented ratings breach Google's structured
-    // data policy (and risk a manual action).
-  };
-
-  return <StructuredData schema={schema} />;
+  return <StructuredData schema={standaloneOrganizationSchema()} />;
 }
 
 // Breadcrumb Schema Generator

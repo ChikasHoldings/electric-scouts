@@ -5,6 +5,7 @@ import { getProviderPageUrl } from "@/utils/providerSlug";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Menu, X, ArrowUp, MapPin, Building, Building2, Home as HomeIcon, FileText, Leaf, Search } from "lucide-react";
+import { MARKET_TOTALS } from "@/seo/market";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ExitIntentPopup from "./components/ExitIntentPopup";
 import EmailCapture from "./components/EmailCapture";
@@ -22,6 +23,40 @@ const navItems = [
   { label: "Commercial", page: "BusinessElectricity", icon: Building2, iconColor: "text-indigo-600" },
   { label: "Renewable Energy", page: "RenewableEnergy", icon: Leaf, iconColor: "text-green-600" },
   { label: "Bill Analyzer", page: "BillAnalyzer", icon: FileText, iconColor: "text-orange-600" }
+];
+
+/**
+ * The footer's head-to-head links.
+ *
+ * These replace a "Plan Types" column whose five entries pointed at
+ * /compare-rates?planType=fixed and three more query-string variants of the
+ * same self-canonicalizing page. That column asked crawlers to walk parameter
+ * permutations of a URL that consolidates onto itself, so it earned nothing and
+ * spent crawl budget; worse, it aimed real switching intent — "fixed or
+ * variable?", "12 or 24 months?" — at a filter state rather than at a page that
+ * answers the question.
+ *
+ * It is also the site's only editorial link into /compare. Without it the whole
+ * comparison cluster is an island: the pages link to each other, so a per-page
+ * orphan check passes, while nothing on the established site links in and the
+ * only route to them is the sitemap.
+ *
+ * Held as a literal rather than sliced from the registry at runtime because
+ * Layout renders on every page, and importing src/seo/comparisons.js here would
+ * rebuild all 22 comparisons in the browser to render six links. The anti-drift
+ * guarantee moves to build time instead: tests/seo.test.mjs asserts every path
+ * below is a published, indexable comparison, so a retired matchup fails the
+ * build rather than leaving a dead link.
+ */
+const COMPARE_ROOT = "/compare";
+
+const FOOTER_COMPARISONS = [
+  { label: "TXU Energy vs Reliant Energy", path: "/compare/txu-energy-vs-reliant-energy" },
+  { label: "Constellation vs Direct Energy", path: "/compare/constellation-energy-vs-direct-energy" },
+  { label: "CleanChoice vs Inspire Energy", path: "/compare/cleanchoice-energy-vs-inspire-clean-energy" },
+  { label: "Fixed vs Variable Plans", path: "/compare/fixed-vs-variable-electricity-plans" },
+  { label: "12-Month vs 24-Month Plans", path: "/compare/12-month-vs-24-month-electricity-plans" },
+  { label: "Renewable vs Standard Plans", path: "/compare/renewable-vs-standard-electricity-plans" },
 ];
 
 const topStates = [
@@ -435,7 +470,7 @@ export default function Layout({ children, currentPageName }) {
                 </picture>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                Compare electricity rates from 40+ providers nationwide. Save up to $800/year.
+                Compare electricity rates from {MARKET_TOTALS.providersWithPlans} suppliers across {MARKET_TOTALS.states} deregulated states.
               </p>
               <div className="flex gap-2">
                 <a href="https://facebook.com/electricscouts" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
@@ -528,24 +563,21 @@ export default function Layout({ children, currentPageName }) {
               </div>
             </div>
 
-            {/* Plan Types */}
+            {/* Head-to-head comparisons */}
             <div>
-              <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Plan Types</h3>
+              <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Compare Head to Head</h3>
               <div className="space-y-2">
-                <Link to={createPageUrl("CompareRates") + "?planType=fixed"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Fixed Rate Plans
-                </Link>
-                <Link to={createPageUrl("CompareRates") + "?planType=variable"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Variable Rate Plans
-                </Link>
-                <Link to={createPageUrl("RenewableEnergy")} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  Renewable Energy
-                </Link>
-                <Link to={createPageUrl("CompareRates") + "?contract=12"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  12 Month Plans
-                </Link>
-                <Link to={createPageUrl("CompareRates") + "?contract=24"} className="block text-gray-400 hover:text-white text-sm transition-colors">
-                  24 Month Plans
+                {FOOTER_COMPARISONS.map((comparison) => (
+                  <Link
+                    key={comparison.path}
+                    to={comparison.path}
+                    className="block text-gray-400 hover:text-white text-sm transition-colors"
+                  >
+                    {comparison.label}
+                  </Link>
+                ))}
+                <Link to={COMPARE_ROOT} className="block text-[#FF6B35] hover:text-[#FF8C5A] text-sm transition-colors font-medium">
+                  All Comparisons →
                 </Link>
               </div>
             </div>
@@ -605,7 +637,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="mb-6">
               <h3 className="text-white text-sm font-bold mb-3 uppercase tracking-wider">Compare Electricity Providers</h3>
               <p className="text-gray-400 text-xs leading-relaxed max-w-5xl">
-                Our directory includes 40+ energy providers — from household names like TXU Energy, Reliant, and Constellation to competitive newcomers like Rhythm Energy, Chariot Energy, and Octopus Energy. Browse fixed-rate plans, variable options, 100% renewable offerings, and month-to-month contracts. Every listing shows the rate per kWh, estimated monthly cost, contract length, green energy percentage, and real customer ratings — all in a single view.
+                Our directory includes {MARKET_TOTALS.providersWithPlans} energy suppliers — from household names like TXU Energy, Reliant, and Constellation to competitive newcomers like Rhythm Energy, Chariot Energy, and Octopus Energy. Browse fixed-rate plans, variable options, 100% renewable offerings, and month-to-month contracts. Every listing shows the rate per kWh, estimated monthly cost, contract length, and green energy percentage — all in a single view.
               </p>
             </div>
             <div>

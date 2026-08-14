@@ -460,7 +460,7 @@ export default function ProviderDetails() {
                 Ready to Switch to {providerName}?
               </h2>
               <p className="text-base text-blue-100 mb-2">
-                Compare all {providerName} plans with 40+ other providers in your area
+                Compare all {providerName} plans against the other suppliers in your area
               </p>
               <p className="text-sm text-blue-200">
                 Enter your ZIP code to see personalized rates and savings

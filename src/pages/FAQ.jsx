@@ -26,7 +26,7 @@ const faqCategories = [
       {
         id: 3,
         question: "How do I compare electricity rates?",
-        answer: "Simply enter your ZIP code and monthly usage on our comparison tool. We'll show you available plans from 40+ providers in your state, sorted by rate. You can filter by plan type, contract length, and renewable energy options. Each plan shows the estimated monthly cost based on your usage. Our tool works across all 12 deregulated states."
+        answer: "Simply enter your ZIP code and monthly usage on our comparison tool. We'll show you available plans from the suppliers selling in your state, sorted by rate. You can filter by plan type, contract length, and renewable energy options. Each plan shows the estimated monthly cost based on your usage. Our tool works across all 12 deregulated states."
       },
       {
         id: 4,

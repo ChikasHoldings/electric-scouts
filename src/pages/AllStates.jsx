@@ -8,6 +8,7 @@ import { Search, MapPin, CheckCircle, Zap, TrendingDown } from "lucide-react";
 import { getAllDeregulatedStates, validateZipCode } from "../components/compare/stateData";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import { MARKET_TOTALS } from "@/seo/market";
 
 export default function AllStates() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -136,8 +137,8 @@ export default function AllStates() {
               <div className="text-xs text-gray-600">Residents Served</div>
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-[#0A5C8C] mb-1">40+</div>
-              <div className="text-xs text-gray-600">Providers Available</div>
+              <div className="text-xl sm:text-2xl font-bold text-[#0A5C8C] mb-1">{MARKET_TOTALS.providersWithPlans}</div>
+              <div className="text-xs text-gray-600">Suppliers Tracked</div>
             </div>
             <div>
               <div className="text-xl sm:text-2xl font-bold text-[#0A5C8C] mb-1">$700</div>

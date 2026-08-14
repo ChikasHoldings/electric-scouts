@@ -44,12 +44,35 @@ function providerEntries(names) {
 }
 
 /**
- * Savings claims are filtered out of state key facts. The figures are internal
- * estimates, and repeating them as fact in crawlable copy is the kind of
- * unverifiable claim this rebuild is meant to remove.
+ * Key facts we cannot stand behind, dropped before a state's copy is published.
+ *
+ * Three kinds, all from the hand-maintained LOCATION_DATA table:
+ *
+ *   1. Savings figures. Internal estimates, repeated as fact.
+ *   2. Supplier counts. Every state carried one and every one disagreed with
+ *      the snapshot — Texas claimed "Over 100 retail electric providers" against
+ *      22 in the catalog, Pennsylvania "50+" against 15, Rhode Island "15+"
+ *      against 8. Whether or not a state really has that many licensed REPs,
+ *      the page has no source for it and prints it directly above the number we
+ *      can source, so the page contradicts itself.
+ *   3. Average residential rates. These are utility default averages; the site
+ *      holds plan rates, which is a different measure. Printed unlabelled next
+ *      to our median they read as the same figure disagreeing with itself —
+ *      Illinois said 14.3¢/kWh beside a snapshot median of 8.99¢.
+ *
+ * What survives is the durable, checkable material: when the state deregulated,
+ * which utilities still handle delivery, and how switching works. The counts and
+ * rates a reader wants are still on the page, from the snapshot, labelled with
+ * the scope they actually have.
  */
+const UNSOURCED_FACT = [
+  /saving/i,
+  /\b(over\s+)?\d+\+?\s+[a-z ]*\b(suppliers?|providers?)\b/i,
+  /average\s+residential\s+rate/i,
+];
+
 function factualKeyFacts(keyFacts = []) {
-  return keyFacts.filter((fact) => !/saving/i.test(fact));
+  return keyFacts.filter((fact) => !UNSOURCED_FACT.some((pattern) => pattern.test(fact)));
 }
 
 /**

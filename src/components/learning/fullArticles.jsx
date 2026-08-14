@@ -89,7 +89,7 @@ export const fullArticles = {
 
 <h2>Real Example: How Deregulation Saves Money</h2>
 
-<p>Meet the Martinez family in <a href="/city-rates?city=Houston">Houston</a>. Before deregulation, they paid whatever rate their utility charged with no alternatives. After Texas opened its market in 2002, they started comparing plans annually using tools like our <a href="/compare-rates">free rate comparison service</a>.</p>
+<p>Meet the Martinez family in <a href="/electricity-rates/texas/houston">Houston</a>. Before deregulation, they paid whatever rate their utility charged with no alternatives. After Texas opened its market in 2002, they started comparing plans annually using tools like our <a href="/compare-rates">free rate comparison service</a>.</p>
 
 <p>Last year, they were paying 12.5¢ per kWh on an expired contract - a common mistake that costs consumers millions collectively. After just 15 minutes of comparison shopping, they found a highly-rated plan at 9.2¢ per kWh. With their average usage of 1,500 kWh monthly:</p>
 
@@ -174,7 +174,7 @@ Competitive supplier: 8.7¢/kWh = $63/month<br>
 
 <p>If you live in one of the 12 deregulated states, you have immediate access to competitive electricity rates. Even in partially deregulated states like New York or Maryland, most metropolitan areas have excellent provider choice.</p>
 
-<p><strong>Check your eligibility:</strong> Enter your <a href="/compare-rates">ZIP code in our comparison tool</a> to see if competitive electricity is available at your address. Major cities like <a href="/city-rates?city=Dallas">Dallas</a>, <a href="/city-rates?city=Philadelphia">Philadelphia</a>, <a href="/city-rates?city=Chicago">Chicago</a>, and <a href="/city-rates?city=Columbus">Columbus</a> have robust competitive markets.</p>
+<p><strong>Check your eligibility:</strong> Enter your <a href="/compare-rates">ZIP code in our comparison tool</a> to see if competitive electricity is available at your address. Major cities like <a href="/electricity-rates/texas/dallas">Dallas</a>, <a href="/electricity-rates/pennsylvania/philadelphia">Philadelphia</a>, <a href="/electricity-rates/illinois/chicago">Chicago</a>, and <a href="/electricity-rates/ohio/columbus">Columbus</a> have robust competitive markets.</p>
 
 <p>For states without deregulation (like California, Florida, or North Carolina), residents remain with traditional utility monopolies. However, you can still reduce your electricity consumption through efficiency measures to lower bills.</p>
 
@@ -219,7 +219,7 @@ A: Yes! Renters have the same right as homeowners to choose electricity provider
 
 <p>The process is simple: <a href="/compare-rates">compare rates online</a>, read the contract terms, and enroll. Your utility continues delivering power reliably while your new provider bills you at a lower rate. That's the power of energy choice.</p>
 
-<p>Whether you're in a major metro area like <a href="/city-rates?city=Houston">Houston</a>, <a href="/city-rates?city=Philadelphia">Philadelphia</a>, or <a href="/city-rates?city=Chicago">Chicago</a>, or a smaller market, deregulation puts competitive pressure on providers to offer you the best possible rates. The families and businesses that save the most aren't lucky - they're simply informed and proactive about shopping their electricity annually.</p>
+<p>Whether you're in a major metro area like <a href="/electricity-rates/texas/houston">Houston</a>, <a href="/electricity-rates/pennsylvania/philadelphia">Philadelphia</a>, or <a href="/electricity-rates/illinois/chicago">Chicago</a>, or a smaller market, deregulation puts competitive pressure on providers to offer you the best possible rates. The families and businesses that save the most aren't lucky - they're simply informed and proactive about shopping their electricity annually.</p>
 
 <p>Don't let inertia cost you hundreds of dollars every year. Take 20 minutes to understand your options, compare what's available, and make an active choice rather than passively accepting default rates. The electricity market works for those who engage with it.</p>
 
@@ -235,7 +235,7 @@ A: Yes! Renters have the same right as homeowners to choose electricity provider
     content: `
 <h2>Why Comparing Electricity Rates Actually Matters</h2>
 
-<p>Sarah from <a href="/city-rates?city=Dallas">Dallas</a> discovered she was paying 13.8¢ per kWh without realizing it. When she finally spent 20 minutes comparing electricity rates online, she found a plan at 9.4¢ per kWh from a top-rated provider.</p>
+<p>Sarah from <a href="/electricity-rates/texas/dallas">Dallas</a> discovered she was paying 13.8¢ per kWh without realizing it. When she finally spent 20 minutes comparing electricity rates online, she found a plan at 9.4¢ per kWh from a top-rated provider.</p>
 
 <p>With her 2,000 kWh monthly usage, that rate difference saves her <strong>$88 per month or $1,056 per year</strong>. That's a vacation. That's a new laptop. That's dinner out twice a month for a year. And all it cost was 20 minutes of her time.</p>
 
@@ -321,7 +321,7 @@ Energy: 9.5¢ + TDU delivery: 4.5¢ + Base charge: $9.95÷1000kWh = 1¢<br>
 <h2>Real-World Comparison Examples</h2>
 
 <p><strong>Houston Family (1,500 kWh monthly):</strong><br>
-Compared 40+ <a href="/texas-electricity">Texas providers</a><br>
+Compared every <a href="/texas-electricity">Texas provider</a> we track<br>
 Found rate: 9.1¢/kWh (was paying 12.5¢)<br>
 <strong>Savings: $612/year</strong></p>
 
@@ -421,7 +421,7 @@ Found rate: 8.2¢/kWh (was paying 10.9¢)<br>
 
 <p><strong>Case Study 1: The Johnson Family (Fixed Rate Winner)</strong></p>
 
-<p>Location: <a href="/city-rates?city=Houston">Houston, TX</a><br>
+<p>Location: <a href="/electricity-rates/texas/houston">Houston, TX</a><br>
 Usage: 1,650 kWh monthly average<br>
 Situation: Homeowners, stable employment, planning to stay 5+ years</p>
 
@@ -459,7 +459,7 @@ Situation: Homeowners, stable employment, planning to stay 5+ years</p>
 
 <p><strong>Case Study 2: The Davis Household (Variable Rate Struggle)</strong></p>
 
-<p>Location: <a href="/city-rates?city=Dallas">Dallas, TX</a><br>
+<p>Location: <a href="/electricity-rates/texas/dallas">Dallas, TX</a><br>
 Usage: 1,800 kWh monthly average<br>
 Situation: Chose variable rate for "flexibility"</p>
 
@@ -1667,7 +1667,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 </table>
 <p><em>Note: Average monthly bills are estimated based on the average residential electricity rate and an assumed average monthly consumption of 865 kWh.</em></p>
 <h2>States with the Highest and Lowest Electric Bills</h2>
-<p>As the data reveals, there is a significant disparity in the <strong>average electric bill</strong> from state to state. Hawaii, California, and several New England states consistently rank among the most expensive. This is often due to a combination of factors, including reliance on imported fuels, ambitious renewable energy mandates, and high costs of living. For example, you can check the rates in a specific city like <a href="/city-rates?city=houston-tx">Houston</a> to see local differences.</p>
+<p>As the data reveals, there is a significant disparity in the <strong>average electric bill</strong> from state to state. Hawaii, California, and several New England states consistently rank among the most expensive. This is often due to a combination of factors, including reliance on imported fuels, ambitious renewable energy mandates, and high costs of living. For example, you can check the rates in a specific city like <a href="/electricity-rates/texas/houston">Houston</a> to see local differences.</p>
 <p>On the other end of the spectrum, states like North Dakota, Nebraska, and Missouri enjoy some of the lowest electricity costs in the nation. This is typically attributed to abundant local energy resources, such as coal and natural gas, and a lower overall cost of living.</p>
 <h2>How to Lower Your Electric Bill: Actionable Tips</h2>
 <p>Regardless of where you live, there are always steps you can take to reduce your electricity consumption and lower your monthly bill. Here are some practical tips:</p>
@@ -1713,7 +1713,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 <p>With your preparation complete, you're ready to find a new provider. The process to <strong>switch electricity</strong> is surprisingly simple and can be completed in under an hour. There is no need to call your old company to cancel, and best of all, your power will not be interrupted. Follow these five steps to a lower electricity bill.</p>
 <ol>
     <li><strong>Step 1: Analyze Your Energy Needs:</strong> Consider your lifestyle. Do you work from home? Is your home large or small? Do you have a pool? Your usage patterns will help you decide between plans that offer free nights, weekends, or a simple, flat rate.</li>
-    <li><strong>Step 2: Compare Providers and Plans:</strong> This is where the magic happens. Instead of visiting dozens of websites, you can use a single, powerful tool to see your options side-by-side. Our free <a href=\"/compare-rates\">electricity comparison tool</a> allows you to filter plans by rate, contract length, renewable energy content, and more. Enter your ZIP code to see real-time rates available in your area, for example, you can check <a href=\"/city-rates?city=houston-tx\">rates in Houston</a>.</li>
+    <li><strong>Step 2: Compare Providers and Plans:</strong> This is where the magic happens. Instead of visiting dozens of websites, you can use a single, powerful tool to see your options side-by-side. Our free <a href=\"/compare-rates\">electricity comparison tool</a> allows you to filter plans by rate, contract length, renewable energy content, and more. Enter your ZIP code to see real-time rates available in your area, for example, you can check <a href=\"/electricity-rates/texas/houston\">rates in Houston</a>.</li>
     <li><strong>Step 3: Scrutinize the Electricity Facts Label (EFL):</strong> Once you’ve narrowed down your choices, it’s crucial to read the Electricity Facts Label (EFL) for each plan. This standardized document is the \"nutrition label\" for an electricity plan. It details the exact price per kWh at different usage levels, discloses any base charges or delivery fees, and lists the contract length and percentage of renewable energy. Don't skip this step!</li>
     <li><strong>Step 4: Sign Up for Your New Plan:</strong> After you've chosen the perfect plan, the enrollment process is straightforward. You'll provide your ESI ID, service address, and other basic information on the new provider's secure online form. It typically takes just a few minutes.</li>
     <li><strong>Step 5: Confirmation and Transition:</strong> Once you submit your enrollment, your new provider takes over. They will coordinate with your local utility and your old provider to handle the switch. You will receive a confirmation email and a final bill from your old provider. The switch usually occurs within 7 business days, and you can enjoy the savings without any interruption to your service.</li>
@@ -1787,7 +1787,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 <p>With dozens of providers vying for your business, it can be tough to know who to trust. We've done the heavy lifting for you by vetting and listing all reputable providers. You can see a full list at our <a href=\"/all-providers\">all providers page</a>. While the \"best\" provider depends on your individual needs, some consistently offer competitive rates and excellent customer service. We recommend checking out providers like Gexa Energy, 4Change Energy, and TXU Energy, but always compare your specific options before committing.</p>
 
 <h2>Finding the Best Electricity Rates in Major Texas Cities</h2>
-<p><strong>Texas electricity rates</strong> can vary depending on your location. Transmission and distribution fees, which are set by your local utility (like CenterPoint in Houston or Oncor in Dallas), are a key part of your bill. Here’s a look at some sample rates you might find in major Texas cities. For the most up-to-date rates in your city, be sure to use our comparison tool. For example, you can find specific rates for Houston at <a href=\"/city-rates?city=houston-tx\">/city-rates?city=houston-tx</a>.</p>
+<p><strong>Texas electricity rates</strong> can vary depending on your location. Transmission and distribution fees, which are set by your local utility (like CenterPoint in Houston or Oncor in Dallas), are a key part of your bill. Here’s a look at some sample rates you might find in major Texas cities. For the most up-to-date rates in your city, be sure to use our comparison tool. For example, you can find specific <a href=\"/electricity-rates/texas/houston\">electricity rates in Houston</a>.</p>
 
 <table class=\"table-auto w-full my-8 text-left\">
   <thead>
@@ -1910,7 +1910,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
     <li><strong>Students:</strong> College students often have limited income and no credit history, making them ideal candidates for plans that don’t require a deposit or credit check.</li>
     <li><strong>Individuals with Low or No Credit:</strong> If you have a challenging credit history, these plans provide a straightforward path to getting electricity without being penalized for past financial issues.</li>
     <li><strong>Budget-Conscious Consumers:</strong> Anyone who wants to take a hands-on approach to managing their expenses will appreciate the transparency and control of a pay-as-you-go system. You can analyze your usage patterns with our <a href=\"/bill-analyzer\">Bill Analyzer</a> tool.</li>
-    <li><strong>Residents of Texas:</strong> The deregulated energy market in Texas has led to intense competition, with many providers offering attractive <strong>no deposit electricity plans</strong>. Whether you live in Houston, Dallas, or another city, you have options. Explore rates for your area, such as <a href=\"/city-rates?city=houston-tx\">electricity rates in Houston</a>, to find a plan that works for you. For a broader overview, check out our guide to <a href=\"/texas-electricity\">Texas electricity</a>.</li>
+    <li><strong>Residents of Texas:</strong> The deregulated energy market in Texas has led to intense competition, with many providers offering attractive <strong>no deposit electricity plans</strong>. Whether you live in Houston, Dallas, or another city, you have options. Explore rates for your area, such as <a href=\"/electricity-rates/texas/houston\">electricity rates in Houston</a>, to find a plan that works for you. For a broader overview, check out our guide to <a href=\"/texas-electricity\">Texas electricity</a>.</li>
 </ul>
 
 <h2>Finding the Right No Deposit Electricity Provider</h2>
@@ -2013,7 +2013,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 <li><strong>Seasonal Trends:</strong> Is your usage highest in the summer (A/C) or winter (heating)?</li>
 <li><strong>Year-Over-Year Comparison:</strong> Is your usage increasing or decreasing compared to the same month last year?</li>
 </ul>
-<p>Understanding your usage patterns helps you make informed decisions. For example, if your usage is high and consistent, a fixed-rate plan might be best. If it fluctuates, a variable-rate or time-of-use plan could be more advantageous. For those in cities like Houston, you can check specific <a href="/city-rates?city=houston-tx">city rates</a> to see how your usage compares.</p>
+<p>Understanding your usage patterns helps you make informed decisions. For example, if your usage is high and consistent, a fixed-rate plan might be best. If it fluctuates, a variable-rate or time-of-use plan could be more advantageous. For those in cities like Houston, you can check specific <a href="/electricity-rates/texas/houston">city rates</a> to see how your usage compares.</p>
 <h2>How to Use This Information to Save Money</h2>
 <p>Now that you have a clearer <strong>electricity bill explained</strong>, you can take action.</p>
 <ol>
@@ -2073,7 +2073,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 </tr>
 </tbody>
 </table>
-<p>It's always a good idea to compare rates from multiple providers. For example, you can check out the rates for your specific city, like <a href=\"/city-rates?city=houston-tx\">Houston</a>, to get the most accurate information.</p>
+<p>It's always a good idea to compare rates from multiple providers. For example, you can check out the rates for your specific city, like <a href=\"/electricity-rates/texas/houston\">Houston</a>, to get the most accurate information.</p>
 <h2>The Rise of Renewable Energy in Apartment Living</h2>
 <p>Even as a renter, you can make a positive impact on the environment by choosing a renewable energy plan. Many providers now offer plans that are backed by 100% renewable energy sources like wind and solar. These plans are often competitively priced and can be a great way to reduce your carbon footprint. To learn more about your options, visit our <a href=\"/renewable-energy\">renewable energy page</a>.</p>
 <h2>Tips for Lowering Your Apartment Electricity Bill</h2>
@@ -2104,7 +2104,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
     tags: ["solar energy", "solar vs electricity cost", "solar panel savings", "renewable energy", "electricity costs"],
     content: `
 <h2>The Unpredictable Reality of Traditional Electricity Costs</h2>
-<p>For decades, homeowners have been at the mercy of utility companies, facing a relentless upward trend in electricity prices. These rising costs aren't arbitrary; they're driven by a combination of factors, including volatile fossil fuel markets, aging grid infrastructure, and increasing demand. Relying on <strong>traditional electricity</strong> is like renting your power—you're subject to your landlord's unpredictable rate hikes with no equity to show for it. Homeowners in <a href="/city-rates?city=houston-tx">Houston, TX</a> and across the country are feeling the squeeze. Our <a href="/bill-analyzer">bill analyzer</a> tool can help you understand your current spending.</p>
+<p>For decades, homeowners have been at the mercy of utility companies, facing a relentless upward trend in electricity prices. These rising costs aren't arbitrary; they're driven by a combination of factors, including volatile fossil fuel markets, aging grid infrastructure, and increasing demand. Relying on <strong>traditional electricity</strong> is like renting your power—you're subject to your landlord's unpredictable rate hikes with no equity to show for it. Homeowners in <a href="/electricity-rates/texas/houston">Houston, TX</a> and across the country are feeling the squeeze. Our <a href="/bill-analyzer">bill analyzer</a> tool can help you understand your current spending.</p>
 
 <h2>The Financial Case for Solar Energy in 2026</h2>
 <p>Enter <strong>solar energy</strong>, a powerful alternative that puts homeowners back in control. By installing solar panels, you're not just adopting a greener lifestyle; you're making a long-term financial investment. The upfront cost of a solar system, which has become increasingly affordable, is a fixed investment that shields you from the unpredictable price hikes of traditional electricity. Think of it as owning your power source, rather than renting it. Explore your options with our <a href="/savings-calculator">savings calculator</a>.</p>
@@ -2177,7 +2177,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 <p>A new and significant factor influencing the <strong>energy prices 2026</strong> landscape is the explosive growth of artificial intelligence (AI) and the data centers that power it. These facilities are incredibly energy-intensive, and their proliferation is creating new pockets of high electricity demand across the country. This increased demand is straining local and regional grids, leading to price hikes for all consumers in affected areas. Some analysts project that data centers could account for a substantial portion of new electricity demand over the next decade, a factor that was not on the radar just a few years ago. This emerging trend underscores the need for strategic grid planning and investment to accommodate this new load without overburdening consumers.</p>
 
 <h2>State-by-State Variations: A Look at Texas</h2>
-<p>It is important to remember that electricity prices vary significantly by state and even by city. Deregulated markets like Texas offer both unique challenges and opportunities for consumers. The Texas electricity market is highly competitive, with numerous providers vying for customers. This competition can lead to innovative pricing plans and lower rates for savvy shoppers. However, the state is also susceptible to price volatility, as seen during extreme weather events. For residents of the Lone Star State, it is especially important to stay on top of market trends and compare rates frequently. For example, residents of Houston can find specific information on our <a href="/city-rates?city=houston-tx">Houston electricity rates</a> page. To learn more about the specifics of the Texas market, visit our dedicated <a href="/texas-electricity">Texas electricity</a> page.</p>
+<p>It is important to remember that electricity prices vary significantly by state and even by city. Deregulated markets like Texas offer both unique challenges and opportunities for consumers. The Texas electricity market is highly competitive, with numerous providers vying for customers. This competition can lead to innovative pricing plans and lower rates for savvy shoppers. However, the state is also susceptible to price volatility, as seen during extreme weather events. For residents of the Lone Star State, it is especially important to stay on top of market trends and compare rates frequently. For example, residents of Houston can find specific information on our <a href="/electricity-rates/texas/houston">Houston electricity rates</a> page. To learn more about the specifics of the Texas market, visit our dedicated <a href="/texas-electricity">Texas electricity</a> page.</p>
 
 <h2>Actionable Steps for Consumers to Mitigate Costs</h2>
 <p>While the <strong>electricity rates forecast</strong> indicates a challenging period ahead, consumers are not powerless. There are several practical steps you can take to manage and reduce your electricity bills. Start by implementing energy efficiency measures in your home, such as sealing air leaks, upgrading to energy-efficient appliances, and using a programmable thermostat. Our <a href="/savings-calculator">Savings Calculator</a> can help you estimate your potential savings from these actions. Most importantly, take advantage of your power to choose your electricity provider in deregulated markets. By regularly comparing rates and plans, you can ensure you are not overpaying for electricity. Electric Scouts makes this easy with our powerful comparison engine.</p>
@@ -2283,7 +2283,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 
 <h2>Potential Savings from Thermostat Adjustments</h2>
 
-<p>The table below shows the potential annual savings from adjusting your thermostat by a few degrees. These savings are based on a typical home in <a href="/city-rates?city=houston-tx">Houston, TX</a>.</p>
+<p>The table below shows the potential annual savings from adjusting your thermostat by a few degrees. These savings are based on a typical home in <a href="/electricity-rates/texas/houston">Houston, TX</a>.</p>
 
 <table>
     <thead>
@@ -2390,7 +2390,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
     <tr>
       <td><a href="/texas-electricity">Texas</a></td>
       <td>Fully Deregulated</td>
-      <td>Most of the state has a mandatory-choice market. Check your specific location, for example, <a href="/city-rates?city=houston-tx">Houston</a>.</td>
+      <td>Most of the state has a mandatory-choice market. Check your specific location, for example, <a href="/electricity-rates/texas/houston">Houston</a>.</td>
     </tr>
     <tr>
       <td>Ohio</td>

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { SITE_URL, absoluteUrl } from "@/seo/site";
+import { standaloneOrganizationSchema } from "@/seo/organization";
 
 /**
  * Injects per-page metadata into <head>. Every prop is optional; a page passes
@@ -200,28 +201,11 @@ export default function SEOHead({
   return null;
 }
 
-// Helper function to generate Organization schema
-export const getOrganizationSchema = () => ({
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Electric Scouts",
-  "url": SITE_URL,
-  "logo": `${SITE_URL}/images/logo-header.png`,
-  "description": "Compare electricity plans from competing suppliers across 12 deregulated US states.",
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "contactType": "Customer Service",
-    "email": "support@electricscouts.com",
-    "areaServed": ["US"],
-    "availableLanguage": ["English"]
-  },
-  "sameAs": [
-    "https://facebook.com/electricscouts",
-    "https://twitter.com/electricscouts",
-    "https://linkedin.com/company/electricscouts",
-    "https://instagram.com/electricscouts"
-  ]
-});
+// Organization schema, from the one definition the prerenderer also uses. This
+// component appends its JSON-LD next to the block the prerenderer already
+// wrote, so a rendered page carries two Organization nodes; sharing an @id is
+// what tells Google they are one entity rather than two.
+export const getOrganizationSchema = () => standaloneOrganizationSchema();
 
 // Helper function to generate Service schema
 export const getServiceSchema = (state) => ({

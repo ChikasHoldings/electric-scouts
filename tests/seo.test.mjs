@@ -28,13 +28,18 @@ import {
   getNoindexRoutes,
   getAliasRoutes,
   getProviderRoutes,
+  getComparisonRoutes,
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS } from '../src/seo/articles.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
-import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, getStateMarket } from '../src/seo/market.js';
+import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket } from '../src/seo/market.js';
 import { buildCitySections, buildStateSections, buildProviderSections } from '../src/seo/content.js';
 import { createResolver, parseHtml } from '../src/seo/audit.mjs';
+import { buildPageContent, renderBody } from '../src/seo/render.js';
+import { organizationSchema, standaloneOrganizationSchema } from '../src/seo/organization.js';
+import { getStates, getCities } from '../src/seo/locations.js';
+import { LOCATION_DATA } from '../src/components/location/locationData.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -1121,5 +1126,152 @@ describe('market snapshot backs the published pages', () => {
       assert.ok(m.residentialPlans + m.businessPlans <= m.plans, `${route.state.code}: plan counts exceed the total`);
       assert.ok(m.renewablePlans <= m.plans, `${route.state.code}: more renewable plans than plans`);
     }
+  });
+});
+
+/* ==================================================================
+ * Internal linking into the comparison cluster
+ *
+ * The /compare pages link to each other, which is enough to satisfy a
+ * per-page orphan check while nothing on the rest of the site links in.
+ * These guard the two links that connect the cluster: the prerendered nav
+ * (what a crawler follows) and the footer column (what a reader clicks).
+ * ================================================================== */
+
+const navContext = (() => {
+  const citiesByState = {};
+  for (const city of getCities()) (citiesByState[city.stateCode] ||= []).push(city);
+  return { states: getStates(), citiesByState, articles: [] };
+})();
+
+/** The prerendered body for a route, which is where the crawlable nav lives. */
+function renderNav(route) {
+  return renderBody(route, buildPageContent(route, navContext), navContext);
+}
+
+describe('the comparison cluster is linked from the rest of the site', () => {
+  test('the prerendered site nav links to the comparison hub', () => {
+    const html = renderNav(getComparisonRoutes()[0]);
+    assert.ok(
+      /<nav aria-label="Primary">[\s\S]*href="\/compare"[\s\S]*<\/nav>/.test(html),
+      'the primary nav has no link to /compare, which islands all 23 comparison pages'
+    );
+  });
+
+  test('every state page can reach the hub', () => {
+    for (const route of getStateRoutes().slice(0, 3)) {
+      const html = renderNav(route);
+      assert.ok(html.includes('href="/compare"'), `${route.path} does not link to /compare`);
+    }
+  });
+
+  test('every footer comparison link is a published, indexable page', () => {
+    const source = fs.readFileSync(path.join(ROOT, 'src/Layout.jsx'), 'utf8');
+    const block = source.match(/const FOOTER_COMPARISONS = \[([\s\S]*?)\];/);
+    assert.ok(block, 'FOOTER_COMPARISONS not found in src/Layout.jsx');
+
+    const paths = [...block[1].matchAll(/path:\s*"([^"]+)"/g)].map((m) => m[1]);
+    assert.ok(paths.length >= 4, 'the footer should carry a useful number of matchups');
+
+    const published = new Set(getIndexableRoutes({ providers: getPublishableProviders() }).map((r) => r.path));
+    for (const p of paths) {
+      assert.ok(
+        published.has(p),
+        `footer links to ${p}, which is not a published indexable route — a retired matchup must be replaced, not left dangling`
+      );
+    }
+  });
+
+  test('the footer does not point crawlers at query-string filter states', () => {
+    const source = fs.readFileSync(path.join(ROOT, 'src/Layout.jsx'), 'utf8');
+    assert.ok(
+      !/createPageUrl\("CompareRates"\)\s*\+\s*"\?/.test(source),
+      'the footer builds a /compare-rates?... link again; those consolidate onto a page that self-canonicalizes'
+    );
+  });
+});
+
+/* ==================================================================
+ * One Organization entity
+ * ================================================================== */
+
+describe('the Organization entity is declared once', () => {
+  test('the prerendered graph and the React helper are the same node', () => {
+    const graphNode = organizationSchema();
+    const standalone = standaloneOrganizationSchema();
+    assert.equal(standalone['@id'], graphNode['@id']);
+    assert.equal(standalone.description, graphNode.description);
+    assert.deepEqual(standalone.sameAs, graphNode.sameAs);
+    assert.equal(standalone['@context'], 'https://schema.org');
+  });
+
+  test('its description is counted from the snapshot, not asserted', () => {
+    const { description } = organizationSchema();
+    assert.ok(
+      description.includes(String(MARKET_TOTALS.providersWithPlans)),
+      'the Organization description should carry the snapshot supplier count'
+    );
+    assert.ok(!/40\+/.test(description), 'the unsupported "40+" claim is back in the Organization schema');
+  });
+
+  test('no aggregateRating is published', () => {
+    assert.equal(organizationSchema().aggregateRating, undefined);
+  });
+});
+
+/* ==================================================================
+ * Unsourced state claims stay out of crawlable copy
+ * ================================================================== */
+
+describe('state key facts carry nothing the snapshot contradicts', () => {
+  // Only the hand-maintained LOCATION_DATA facts are in question here. Bullets
+  // counted from the snapshot legitimately say things like "12 plans backed by
+  // 100% renewable energy, from 9 suppliers" — that figure has a source, and a
+  // blanket pattern match would reject it along with the invented ones. So the
+  // assertion is exact: these specific strings must not reach the page.
+  const UNSOURCED = [
+    /saving/i,
+    /\b(over\s+)?\d+\+?\s+[a-z ]*\b(suppliers?|providers?)\b/i,
+    /average\s+residential\s+rate/i,
+  ];
+
+  test('no hand-written state fact contradicting the snapshot is published', () => {
+    let checked = 0;
+    for (const route of getStateRoutes()) {
+      const authored = LOCATION_DATA[route.state.code]?.marketInsights?.keyFacts || [];
+      const rejected = authored.filter((fact) => UNSOURCED.some((p) => p.test(fact)));
+      const { sections = [] } = buildStateSections(route);
+      const rendered = sections.flatMap((section) => section.bullets || []);
+      for (const fact of rejected) {
+        checked += 1;
+        assert.ok(
+          !rendered.includes(fact),
+          `${route.path} publishes an unsourced claim: "${fact}"`
+        );
+      }
+    }
+    assert.ok(checked > 0, 'no unsourced facts were exercised — the fixture changed shape');
+  });
+
+  test('every state still publishes the durable facts', () => {
+    for (const route of getStateRoutes()) {
+      const { sections = [] } = buildStateSections(route);
+      const rendered = sections.flatMap((section) => section.bullets || []);
+      assert.ok(rendered.length > 0, `${route.path} lost all of its key facts to filtering`);
+    }
+  });
+});
+
+/* ==================================================================
+ * Legacy query-string routes are not linked from published copy
+ * ================================================================== */
+
+describe('published copy does not link to noindex legacy routes', () => {
+  test('no article links to /city-rates?city=', () => {
+    const articles = fs.readFileSync(path.join(ROOT, 'src/components/learning/fullArticles.jsx'), 'utf8');
+    assert.ok(
+      !articles.includes('/city-rates?city='),
+      'article copy links to the noindex /city-rates route; use the clean /electricity-rates/:state/:city URL'
+    );
   });
 });
