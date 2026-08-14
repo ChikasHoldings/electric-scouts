@@ -172,6 +172,8 @@ export function buildCitySections(route, { citiesByState }) {
   const sections = [];
   const stateName = city.stateName;
   const siblings = (citiesByState[city.stateCode] || []).filter((other) => other.path !== city.path);
+  // Resolved once: used both in the coverage section and in Next Steps.
+  const cityUtility = utilityForCity(city);
 
   /* Intro: the city's own description, then what we track in its market. */
   const intro = [city.description];
@@ -278,9 +280,12 @@ export function buildCitySections(route, { citiesByState }) {
     sections.push({
       heading: `What ${city.name} Households Can Buy`,
       paragraphs: [
-        `${stateName} plans are sold statewide, so a ${city.name} address can generally take any ` +
-          `${stateName} offer: ${joinNames(options)}. Which of them reach your meter depends on ` +
-          `your utility territory, so the list narrows once you enter a ZIP code.`,
+        // Deliberately short. The full breakdown belongs on the state page and
+        // is linked below; restating it on all 144 city pages was both
+        // redundant with that page and the reason same-state cities read alike.
+        `Supply is sold statewide, so a ${city.name} address can take any ${stateName} offer — ` +
+          `${joinNames(options, 2)} among them. Which reach your meter depends on your utility ` +
+          `territory, which a ZIP code settles.`,
       ],
       links: [
         [city.statePath, `Full breakdown of ${stateName} plans and suppliers`],
@@ -289,26 +294,47 @@ export function buildCitySections(route, { citiesByState }) {
     });
   }
 
-  /* Neighbourhoods and ZIPs — unique to the city, and how people search. */
+  /* Neighbourhoods and ZIPs — unique to the city, and how people search.
+   *
+   * These carry more weight than their length suggests. Two cities in the same
+   * state that happen to share a headline rate produce identical copy
+   * everywhere else on the page: the same market paragraph, the same comparison
+   * against the same median, the same table. Lakewood and Parma both sit in
+   * Cuyahoga County at 9.5¢/kWh, and before this the only things separating
+   * their pages were a name and a population. The district names are the one
+   * field in the city table that belongs to the city alone. */
   const coverage = [];
-  if (city.zipCodes.length) {
-    coverage.push(`ZIP codes covered include ${city.zipCodes.slice(0, 10).join(', ')}.`);
-  }
   const neighborhoods = insights?.topZips && !city.zipCodes.length ? [] : city.neighborhoods || [];
   if (neighborhoods.length) {
-    coverage.push(`Coverage spans ${joinNames(neighborhoods, 8)}.`);
+    coverage.push(
+      `Within ${city.name} we cover ${joinNames(neighborhoods, 8)} — supply is sold across the ` +
+        `whole city, so the plan available in one district is available in the next.`
+    );
+  }
+  if (city.zipCodes.length) {
+    coverage.push(
+      `ZIP codes covered include ${city.zipCodes.slice(0, 10).join(', ')}. Availability is settled ` +
+        `by ZIP rather than by city name, because utility territory boundaries do not follow city limits.`
+    );
+  }
+  if (cityUtility) {
+    coverage.push(
+      `Delivery in ${city.name} is handled by ${cityUtility.name}, which charges a regulated rate ` +
+        `no supplier can discount. Everything above is the supply half — the part you choose.`
+    );
   }
   if (coverage.length) {
     sections.push({
       heading: `Areas and ZIP Codes We Cover in ${city.name}`,
       paragraphs: coverage,
+      links: cityUtility ? [[cityUtility.path, `What ${cityUtility.name} does and does not charge for`]] : undefined,
     });
   }
 
   /* FAQs built from this city's own figures. */
   sections.push({
     heading: `${city.name} Electricity Questions`,
-    faqs: buildCityFaqs(city, market, insights),
+    faqs: buildCityFaqs(city, market, insights, cityUtility),
   });
 
   /* Nearby cities. */
@@ -327,7 +353,6 @@ export function buildCitySections(route, { citiesByState }) {
   /* The delivery utility, where we publish a page for it. This is the link a
    * reader follows when they have worked out that the company on the bill is
    * not the company setting the rate. */
-  const cityUtility = utilityForCity(city);
   if (cityUtility) {
     nextSteps.push([cityUtility.path, `What ${cityUtility.name} does and does not charge for`]);
   }
@@ -337,72 +362,97 @@ export function buildCitySections(route, { citiesByState }) {
   if (market?.renewablePlans) {
     nextSteps.push(['/renewable-compare-rates', 'Compare 100% renewable plans']);
   }
+  /* Nearest siblings by rate rather than the same alphabetical list on every
+   * page. Two cities in one state used to end on an identical block of links;
+   * this at least points each one somewhere slightly different, and a reader
+   * comparing their own city against a similar one is better served than by a
+   * link to whichever city sorts first. */
+  const localRate = parseRate(city.avgRate);
+  if (localRate !== null && siblings.length) {
+    const nearest = siblings
+      .map((other) => ({ other, gap: Math.abs((parseRate(other.avgRate) ?? localRate) - localRate) }))
+      .sort((a, b) => a.gap - b.gap)
+      .slice(0, 2);
+    for (const { other } of nearest) {
+      nextSteps.push([other.path, `${other.name} rates, the closest we cover to ${city.name}`]);
+    }
+  }
   nextSteps.push(['/all-cities', 'Browse every city we cover']);
   sections.push({ heading: 'Next Steps', links: nextSteps });
 
   return { intro, sections };
 }
 
-function buildCityFaqs(city, market, insights) {
+/**
+ * Questions only a city page can answer.
+ *
+ * The set this replaced asked five, of which four were about the state: how
+ * many suppliers it has, how many plans are renewable, what the cheapest green
+ * rate is. Those answers are identical for every city in the state and they are
+ * already on the state page, which is where a reader looking for them would
+ * land. On a city page they were 182 words of the ~480 on the page, and the
+ * single largest reason two Ohio cities read 70% the same.
+ *
+ * What is left is anchored to the city: the districts it covers, the company
+ * that delivers there, and how its own average sits against the state. Fewer
+ * questions, none of them borrowed.
+ */
+function buildCityFaqs(city, market, insights, utility) {
   const faqs = [];
 
-  if (market?.providers) {
+  if (city.neighborhoods?.length) {
     faqs.push({
-      question: `How many electricity suppliers can ${city.name} residents choose from?`,
+      question: `Which parts of ${city.name} can compare electricity plans?`,
       answer:
-        `Electric Scouts tracks ${market.providers} suppliers with at least one active ` +
-        `${city.stateName} plan ${asOf}, covering ${market.plans} plans. Not every supplier sells ` +
-        `to every address, so enter a ${city.name} ZIP code to see the ones that can serve you.`,
+        `All of them. Our ${city.name} coverage spans ${joinNames(city.neighborhoods, 6)}, and ` +
+        `supply is sold city-wide rather than district by district — the plans offered in one ` +
+        `neighbourhood are the plans offered in the next. What varies within ${city.name} is the ` +
+        `utility territory a given address falls in, which is settled by ZIP code.`,
     });
   }
 
-  if (city.avgRate && city.avgMonthlyBill) {
-    faqs.push({
-      question: `What is the average electricity rate in ${city.name}?`,
-      answer:
-        `The average residential rate we show for ${city.name} is ${city.avgRate}, which works out ` +
-        `to roughly ${city.avgMonthlyBill} a month for typical usage. That is an area average — the ` +
-        `rate you are offered depends on the plan, contract length and your usage.`,
-    });
-  }
-
-  if (insights?.utilityCompany) {
+  const deliverer = utility?.name || insights?.utilityCompany;
+  if (deliverer) {
     faqs.push({
       question: `Who delivers electricity in ${city.name}?`,
       answer:
-        `${insights.utilityCompany} operates the distribution network in ${city.name}. It delivers ` +
-        `power and handles outages regardless of which supplier you buy from, so switching suppliers ` +
-        `does not change who maintains your service.`,
+        `${deliverer} operates the distribution network in ${city.name}. It delivers the power, ` +
+        `reads the meter and handles outages no matter which supplier you buy from, and its ` +
+        `charges are regulated — no supplier can discount them. Switching changes the supply half ` +
+        `of the bill and nothing else, so your service is unaffected.`,
     });
-  }
-
-  if (market?.renewablePlans) {
-    const green = parseRate(market.minRenewableRate);
-    const local = parseRate(city.avgRate);
-    const versusLocal =
-      green !== null && local !== null
-        ? green <= local
-          ? ` That is below the ${city.avgRate} ${city.name} average, so going green here does not have to cost more.`
-          : ` That sits above the ${city.avgRate} ${city.name} average, so a green plan here is likely to carry a premium.`
-        : '';
+  } else {
     faqs.push({
-      question: `Can I get a 100% renewable electricity plan in ${city.name}?`,
+      question: `Will my power be interrupted if I switch suppliers in ${city.name}?`,
       answer:
-        `Yes. ${market.renewablePlans} of the ${market.plans} ${city.stateName} plans we track are ` +
-        `backed by 100% renewable energy, from ${market.renewableProviders} suppliers, starting at ` +
-        `${formatRate(market.minRenewableRate)}.${versusLocal}`,
+        `No. Your local utility keeps delivering the electricity and maintaining the lines. ` +
+        `Switching changes only the company selling you the supply portion of the bill, and it ` +
+        `takes effect at your next meter read.`,
     });
   }
 
-  faqs.push({
-    question: `Will my power be interrupted if I switch suppliers in ${city.name}?`,
-    answer:
-      insights?.utilityCompany
-        ? `No. ${insights.utilityCompany} continues to deliver your electricity and maintain the ` +
-          `lines. Switching changes only the company that sells you the supply portion of your bill.`
-        : `No. Your local utility continues to deliver electricity and maintain the lines. Switching ` +
-          `changes only the company that sells you the supply portion of your bill.`,
-  });
+  const local = parseRate(city.avgRate);
+  const median = market?.medianRate ?? null;
+  if (local !== null && median !== null) {
+    const gap = Math.round(Math.abs(local - median) * 100) / 100;
+    const above = local > median;
+    faqs.push({
+      question: `Is electricity in ${city.name} more expensive than the rest of ${city.stateName}?`,
+      answer:
+        gap < 0.05
+          ? `Barely distinguishable. The ${city.name} average of ${city.avgRate} sits within a ` +
+            `hundredth of a cent of the ${formatRate(median)} median across the ` +
+            `${market.plans} ${city.stateName} plans we track, so location is not what decides ` +
+            `your bill here — the plan you sign is.`
+          : `The ${city.name} average of ${city.avgRate} runs ${formatRate(gap)} ` +
+            `${above ? 'above' : 'below'} the ${formatRate(median)} median across the ` +
+            `${market.plans} ${city.stateName} plans we track. ${above
+              ? 'An area average is not a quote, though — the cheapest plan on the market is ' +
+                'available here too, and it is well under this figure.'
+              : 'That is the area average rather than an offer, and the spread between the ' +
+                'cheapest and dearest plan on the market is wider than the gap between cities.'}`,
+    });
+  }
 
   return faqs;
 }

@@ -42,7 +42,7 @@ import { organizationSchema, standaloneOrganizationSchema } from '../src/seo/org
 import { getStates, getCities } from '../src/seo/locations.js';
 import { LOCATION_DATA } from '../src/components/location/locationData.js';
 import { comparisonsForProvider, comparisonsForState } from '../src/seo/comparisons.js';
-import { getUtilities, utilitiesForState } from '../src/seo/utilities.js';
+import { getUtilities, utilitiesForState, utilityForCity } from '../src/seo/utilities.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -1550,5 +1550,109 @@ describe('utility territory pages', () => {
         `${route.path} states a delivery charge figure`
       );
     }
+  });
+});
+
+/* ==================================================================
+ * City pages must not read as copies of each other
+ *
+ * 81 of the 144 cities share their headline rate with a same-state
+ * sibling, and when the state and the rate both match, every sentence
+ * derived from them matches too. Lakewood and Parma — same county, same
+ * 9.5¢/kWh — once shared 70% of their main content.
+ *
+ * The fix was to stop restating state-level material in full on every city
+ * page and to publish the fields that belong to the city alone. This pins
+ * the result: the shared portion is bounded, and the local material has to
+ * be there.
+ * ================================================================== */
+
+describe('city pages are distinct from their same-state siblings', () => {
+  const cities = getCities();
+
+  /** 5-gram Jaccard over a page's prose, the same measure the audit uses. */
+  function shingles(text) {
+    const words = String(text).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+    const out = new Set();
+    for (let i = 0; i + 5 <= words.length; i++) out.add(words.slice(i, i + 5).join(' '));
+    return out;
+  }
+  function similarity(a, b) {
+    let shared = 0;
+    for (const gram of a) if (b.has(gram)) shared += 1;
+    return shared / (a.size + b.size - shared || 1);
+  }
+  function prose(city) {
+    const citiesByState = { [city.stateCode]: cities.filter((c) => c.stateCode === city.stateCode) };
+    const { intro = [], sections = [] } = buildCitySections({ city }, { citiesByState });
+    return [
+      ...intro,
+      ...sections.flatMap((s) => [s.heading, ...(s.paragraphs || []), ...(s.bullets || [])]),
+      ...sections.flatMap((s) => (s.faqs || []).flatMap((f) => [f.question, f.answer])),
+    ].join(' ');
+  }
+
+  test('every city publishes the districts only it covers', () => {
+    // getCities() used to drop `neighborhoods`, so the one sentence naming
+    // them read `undefined` and never rendered on any of the 144 pages.
+    for (const city of cities) {
+      assert.ok(
+        Array.isArray(city.neighborhoods) && city.neighborhoods.length > 0,
+        `${city.path} carries no neighbourhoods — the field is being dropped again`
+      );
+    }
+    for (const city of cities.slice(0, 12)) {
+      const text = prose(city);
+      assert.ok(
+        city.neighborhoods.some((area) => text.includes(area)),
+        `${city.path} does not name any of its own districts`
+      );
+    }
+  });
+
+  test('same-rate siblings do not read as one page', () => {
+    // The hardest case in the data: same state, same headline rate, so every
+    // figure-derived sentence is identical and only local material separates
+    // them. Bounded rather than eliminated — going below this needs city-level
+    // rate data we do not hold, and inventing it is not an option.
+    const byState = new Map();
+    for (const city of cities) {
+      if (!byState.has(city.stateCode)) byState.set(city.stateCode, []);
+      byState.get(city.stateCode).push(city);
+    }
+
+    let worst = 0;
+    let worstPair = null;
+    let compared = 0;
+    for (const group of byState.values()) {
+      for (let i = 0; i < group.length; i++) {
+        for (let j = i + 1; j < group.length; j++) {
+          if (group[i].avgRate !== group[j].avgRate) continue;
+          compared += 1;
+          const value = similarity(shingles(prose(group[i])), shingles(prose(group[j])));
+          if (value > worst) {
+            worst = value;
+            worstPair = `${group[i].path} ~ ${group[j].path}`;
+          }
+        }
+      }
+    }
+
+    assert.ok(compared > 0, 'no same-rate sibling pairs were exercised');
+    assert.ok(
+      worst < 0.68,
+      `${worstPair} is ${worst.toFixed(3)} similar — city pages are drifting back toward templates`
+    );
+  });
+
+  test('a city page still points at its own utility where we publish one', () => {
+    let checked = 0;
+    for (const city of cities) {
+      const utility = utilityForCity(city);
+      if (!utility) continue;
+      checked += 1;
+      assert.ok(prose(city).includes(utility.name), `${city.path} does not name ${utility.name}`);
+    }
+    assert.ok(checked > 0, 'no city/utility pairs were exercised');
   });
 });
