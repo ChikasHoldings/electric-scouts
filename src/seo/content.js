@@ -19,7 +19,15 @@
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
 import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
-import { getPlanComparisons, getProviderComparisons } from './comparisons.js';
+import { UTILITY_ROOT, getUtilities, utilitiesForState, utilityForCity } from './utilities.js';
+import { articlesForState, relatedArticles } from './articleLinks.js';
+import {
+  comparisonsForProvider,
+  comparisonsForState,
+  getPlanComparisons,
+  getProviderComparisons,
+  providerStateData,
+} from './comparisons.js';
 import {
   MARKET_GENERATED_AT,
   compareToStateMedian,
@@ -41,6 +49,12 @@ const publishableSlugs = new Map(getPublishableProviders().map((p) => [p.name, p
  */
 function providerEntries(names) {
   return names.map((name) => ({ name, path: publishableSlugs.get(name) ? `/providers/${publishableSlugs.get(name)}` : null }));
+}
+
+/** Whole percent, or null when the denominator makes the figure meaningless. */
+function pctOf(part, whole) {
+  if (!whole || part == null) return null;
+  return Math.round((part / whole) * 100);
 }
 
 /**
@@ -159,6 +173,8 @@ export function buildCitySections(route, { citiesByState }) {
   const sections = [];
   const stateName = city.stateName;
   const siblings = (citiesByState[city.stateCode] || []).filter((other) => other.path !== city.path);
+  // Resolved once: used both in the coverage section and in Next Steps.
+  const cityUtility = utilityForCity(city);
 
   /* Intro: the city's own description, then what we track in its market. */
   const intro = [city.description];
@@ -265,9 +281,12 @@ export function buildCitySections(route, { citiesByState }) {
     sections.push({
       heading: `What ${city.name} Households Can Buy`,
       paragraphs: [
-        `${stateName} plans are sold statewide, so a ${city.name} address can generally take any ` +
-          `${stateName} offer: ${joinNames(options)}. Which of them reach your meter depends on ` +
-          `your utility territory, so the list narrows once you enter a ZIP code.`,
+        // Deliberately short. The full breakdown belongs on the state page and
+        // is linked below; restating it on all 144 city pages was both
+        // redundant with that page and the reason same-state cities read alike.
+        `Supply is sold statewide, so a ${city.name} address can take any ${stateName} offer — ` +
+          `${joinNames(options, 2)} among them. Which reach your meter depends on your utility ` +
+          `territory, which a ZIP code settles.`,
       ],
       links: [
         [city.statePath, `Full breakdown of ${stateName} plans and suppliers`],
@@ -276,26 +295,47 @@ export function buildCitySections(route, { citiesByState }) {
     });
   }
 
-  /* Neighbourhoods and ZIPs — unique to the city, and how people search. */
+  /* Neighbourhoods and ZIPs — unique to the city, and how people search.
+   *
+   * These carry more weight than their length suggests. Two cities in the same
+   * state that happen to share a headline rate produce identical copy
+   * everywhere else on the page: the same market paragraph, the same comparison
+   * against the same median, the same table. Lakewood and Parma both sit in
+   * Cuyahoga County at 9.5¢/kWh, and before this the only things separating
+   * their pages were a name and a population. The district names are the one
+   * field in the city table that belongs to the city alone. */
   const coverage = [];
-  if (city.zipCodes.length) {
-    coverage.push(`ZIP codes covered include ${city.zipCodes.slice(0, 10).join(', ')}.`);
-  }
   const neighborhoods = insights?.topZips && !city.zipCodes.length ? [] : city.neighborhoods || [];
   if (neighborhoods.length) {
-    coverage.push(`Coverage spans ${joinNames(neighborhoods, 8)}.`);
+    coverage.push(
+      `Within ${city.name} we cover ${joinNames(neighborhoods, 8)} — supply is sold across the ` +
+        `whole city, so the plan available in one district is available in the next.`
+    );
+  }
+  if (city.zipCodes.length) {
+    coverage.push(
+      `ZIP codes covered include ${city.zipCodes.slice(0, 10).join(', ')}. Availability is settled ` +
+        `by ZIP rather than by city name, because utility territory boundaries do not follow city limits.`
+    );
+  }
+  if (cityUtility) {
+    coverage.push(
+      `Delivery in ${city.name} is handled by ${cityUtility.name}, which charges a regulated rate ` +
+        `no supplier can discount. Everything above is the supply half — the part you choose.`
+    );
   }
   if (coverage.length) {
     sections.push({
       heading: `Areas and ZIP Codes We Cover in ${city.name}`,
       paragraphs: coverage,
+      links: cityUtility ? [[cityUtility.path, `What ${cityUtility.name} does and does not charge for`]] : undefined,
     });
   }
 
   /* FAQs built from this city's own figures. */
   sections.push({
     heading: `${city.name} Electricity Questions`,
-    faqs: buildCityFaqs(city, market, insights),
+    faqs: buildCityFaqs(city, market, insights, cityUtility),
   });
 
   /* Nearby cities. */
@@ -311,11 +351,32 @@ export function buildCitySections(route, { citiesByState }) {
     ['/compare-rates', 'Compare plans for your ZIP code'],
     ['/bill-analyzer', 'Check your current bill for overcharges'],
   ];
+  /* The delivery utility, where we publish a page for it. This is the link a
+   * reader follows when they have worked out that the company on the bill is
+   * not the company setting the rate. */
+  if (cityUtility) {
+    nextSteps.push([cityUtility.path, `What ${cityUtility.name} does and does not charge for`]);
+  }
   if (market?.businessPlans) {
     nextSteps.push(['/business-electricity', `Business electricity in ${stateName}`]);
   }
   if (market?.renewablePlans) {
     nextSteps.push(['/renewable-compare-rates', 'Compare 100% renewable plans']);
+  }
+  /* Nearest siblings by rate rather than the same alphabetical list on every
+   * page. Two cities in one state used to end on an identical block of links;
+   * this at least points each one somewhere slightly different, and a reader
+   * comparing their own city against a similar one is better served than by a
+   * link to whichever city sorts first. */
+  const localRate = parseRate(city.avgRate);
+  if (localRate !== null && siblings.length) {
+    const nearest = siblings
+      .map((other) => ({ other, gap: Math.abs((parseRate(other.avgRate) ?? localRate) - localRate) }))
+      .sort((a, b) => a.gap - b.gap)
+      .slice(0, 2);
+    for (const { other } of nearest) {
+      nextSteps.push([other.path, `${other.name} rates, the closest we cover to ${city.name}`]);
+    }
   }
   nextSteps.push(['/all-cities', 'Browse every city we cover']);
   sections.push({ heading: 'Next Steps', links: nextSteps });
@@ -323,66 +384,76 @@ export function buildCitySections(route, { citiesByState }) {
   return { intro, sections };
 }
 
-function buildCityFaqs(city, market, insights) {
+/**
+ * Questions only a city page can answer.
+ *
+ * The set this replaced asked five, of which four were about the state: how
+ * many suppliers it has, how many plans are renewable, what the cheapest green
+ * rate is. Those answers are identical for every city in the state and they are
+ * already on the state page, which is where a reader looking for them would
+ * land. On a city page they were 182 words of the ~480 on the page, and the
+ * single largest reason two Ohio cities read 70% the same.
+ *
+ * What is left is anchored to the city: the districts it covers, the company
+ * that delivers there, and how its own average sits against the state. Fewer
+ * questions, none of them borrowed.
+ */
+function buildCityFaqs(city, market, insights, utility) {
   const faqs = [];
 
-  if (market?.providers) {
+  if (city.neighborhoods?.length) {
     faqs.push({
-      question: `How many electricity suppliers can ${city.name} residents choose from?`,
+      question: `Which parts of ${city.name} can compare electricity plans?`,
       answer:
-        `Electric Scouts tracks ${market.providers} suppliers with at least one active ` +
-        `${city.stateName} plan ${asOf}, covering ${market.plans} plans. Not every supplier sells ` +
-        `to every address, so enter a ${city.name} ZIP code to see the ones that can serve you.`,
+        `All of them. Our ${city.name} coverage spans ${joinNames(city.neighborhoods, 6)}, and ` +
+        `supply is sold city-wide rather than district by district — the plans offered in one ` +
+        `neighbourhood are the plans offered in the next. What varies within ${city.name} is the ` +
+        `utility territory a given address falls in, which is settled by ZIP code.`,
     });
   }
 
-  if (city.avgRate && city.avgMonthlyBill) {
-    faqs.push({
-      question: `What is the average electricity rate in ${city.name}?`,
-      answer:
-        `The average residential rate we show for ${city.name} is ${city.avgRate}, which works out ` +
-        `to roughly ${city.avgMonthlyBill} a month for typical usage. That is an area average — the ` +
-        `rate you are offered depends on the plan, contract length and your usage.`,
-    });
-  }
-
-  if (insights?.utilityCompany) {
+  const deliverer = utility?.name || insights?.utilityCompany;
+  if (deliverer) {
     faqs.push({
       question: `Who delivers electricity in ${city.name}?`,
       answer:
-        `${insights.utilityCompany} operates the distribution network in ${city.name}. It delivers ` +
-        `power and handles outages regardless of which supplier you buy from, so switching suppliers ` +
-        `does not change who maintains your service.`,
+        `${deliverer} operates the distribution network in ${city.name}. It delivers the power, ` +
+        `reads the meter and handles outages no matter which supplier you buy from, and its ` +
+        `charges are regulated — no supplier can discount them. Switching changes the supply half ` +
+        `of the bill and nothing else, so your service is unaffected.`,
     });
-  }
-
-  if (market?.renewablePlans) {
-    const green = parseRate(market.minRenewableRate);
-    const local = parseRate(city.avgRate);
-    const versusLocal =
-      green !== null && local !== null
-        ? green <= local
-          ? ` That is below the ${city.avgRate} ${city.name} average, so going green here does not have to cost more.`
-          : ` That sits above the ${city.avgRate} ${city.name} average, so a green plan here is likely to carry a premium.`
-        : '';
+  } else {
     faqs.push({
-      question: `Can I get a 100% renewable electricity plan in ${city.name}?`,
+      question: `Will my power be interrupted if I switch suppliers in ${city.name}?`,
       answer:
-        `Yes. ${market.renewablePlans} of the ${market.plans} ${city.stateName} plans we track are ` +
-        `backed by 100% renewable energy, from ${market.renewableProviders} suppliers, starting at ` +
-        `${formatRate(market.minRenewableRate)}.${versusLocal}`,
+        `No. Your local utility keeps delivering the electricity and maintaining the lines. ` +
+        `Switching changes only the company selling you the supply portion of the bill, and it ` +
+        `takes effect at your next meter read.`,
     });
   }
 
-  faqs.push({
-    question: `Will my power be interrupted if I switch suppliers in ${city.name}?`,
-    answer:
-      insights?.utilityCompany
-        ? `No. ${insights.utilityCompany} continues to deliver your electricity and maintain the ` +
-          `lines. Switching changes only the company that sells you the supply portion of your bill.`
-        : `No. Your local utility continues to deliver electricity and maintain the lines. Switching ` +
-          `changes only the company that sells you the supply portion of your bill.`,
-  });
+  const local = parseRate(city.avgRate);
+  const median = market?.medianRate ?? null;
+  if (local !== null && median !== null) {
+    const gap = Math.round(Math.abs(local - median) * 100) / 100;
+    const above = local > median;
+    faqs.push({
+      question: `Is electricity in ${city.name} more expensive than the rest of ${city.stateName}?`,
+      answer:
+        gap < 0.05
+          ? `Barely distinguishable. The ${city.name} average of ${city.avgRate} sits within a ` +
+            `hundredth of a cent of the ${formatRate(median)} median across the ` +
+            `${market.plans} ${city.stateName} plans we track, so location is not what decides ` +
+            `your bill here — the plan you sign is.`
+          : `The ${city.name} average of ${city.avgRate} runs ${formatRate(gap)} ` +
+            `${above ? 'above' : 'below'} the ${formatRate(median)} median across the ` +
+            `${market.plans} ${city.stateName} plans we track. ${above
+              ? 'An area average is not a quote, though — the cheapest plan on the market is ' +
+                'available here too, and it is well under this figure.'
+              : 'That is the area average rather than an offer, and the spread between the ' +
+                'cheapest and dearest plan on the market is wider than the gap between cities.'}`,
+    });
+  }
 
   return faqs;
 }
@@ -391,7 +462,7 @@ function buildCityFaqs(city, market, insights) {
  * State pages
  * ------------------------------------------------------------------ */
 
-export function buildStateSections(route) {
+export function buildStateSections(route, context = {}) {
   const { state } = route;
   const market = getStateMarket(state.code);
   const location = LOCATION_DATA[state.code];
@@ -499,6 +570,40 @@ export function buildStateSections(route) {
     });
   }
 
+  /* Matchups fought in this state.
+   *
+   * Only the pairs that actually overlap here, which is what makes this
+   * different from a generic "see also" block: a reader in Ohio is shown the
+   * suppliers competing for their address, not the Texas-only pairs. The
+   * registry drops a matchup as soon as its two suppliers stop sharing a
+   * state, so this list cannot outlive the pages it points at. */
+  const stateMatchups = comparisonsForState(state.code);
+  if (stateMatchups.length) {
+    sections.push({
+      heading: `Supplier Matchups in ${state.name}`,
+      paragraphs: [
+        `${stateMatchups.length === 1 ? 'One pair of suppliers in' : `These ${stateMatchups.length} pairs of suppliers in`} ` +
+          `${state.name} sell against each other closely enough to be worth comparing directly. ` +
+          `Each page counts rates, plan mix and exit fees for both sides in ${state.name} ${asOf}.`,
+      ],
+      links: stateMatchups.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
+  /* Guides written about this state. 26 of the 73 name a state we publish,
+   * and those are the ones worth linking from it — a guide that mentions
+   * Texas in passing is not a Texas guide. */
+  const stateArticles = articlesForState(state.code, context.fullArticles);
+  if (stateArticles.length) {
+    sections.push({
+      heading: `Guides for ${state.name}`,
+      paragraphs: [
+        `Written for ${state.name} specifically, rather than for deregulated markets in general.`,
+      ],
+      links: stateArticles.map((entry) => [entry.path, entry.title]),
+    });
+  }
+
   sections.push({
     heading: `${state.name} Electricity Questions`,
     faqs: buildStateFaqs(state, market, insights),
@@ -508,6 +613,10 @@ export function buildStateSections(route) {
     heading: 'Next Steps',
     links: [
       ['/compare-rates', 'Compare plans for your ZIP code'],
+      ['/compare', 'Compare suppliers head to head'],
+      // The delivery territories we publish for this state. A reader who knows
+      // their utility's name but not their supplier options starts there.
+      ...utilitiesForState(state.code).map((u) => [u.path, `${u.name} delivery territory`]),
       ['/all-states', 'See every deregulated state we cover'],
       ['/all-providers', 'Browse the supplier directory'],
       ['/learning-center', 'Read our electricity guides'],
@@ -588,6 +697,111 @@ export function buildProviderSections(route) {
     });
   }
 
+  /* Where this supplier sits in each market it sells into.
+   *
+   * The single most useful thing we can say about a supplier is not what it
+   * charges but whether that is cheap, and only a site holding the whole
+   * catalog can answer it. Every figure is a comparison of two numbers we
+   * already publish — the supplier's own entry rate, and the market it is sold
+   * into — so nothing here is asserted.
+   *
+   * It also puts a check on the supplier-written descriptions above it. Discount
+   * Power's says it "offers some of the lowest electricity rates in Texas" while
+   * its cheapest plan opens at 15.5¢ against a Texas median of 14.35¢. The
+   * description is the supplier's claim; this table is ours. */
+  const perState = providerStateData(provider.name);
+  const positions = (provider.planStates || [])
+    .map((code) => {
+      const own = perState[code];
+      const market = getStateMarket(code);
+      if (!own || !market || own.minRate == null || market.minRate == null) return null;
+      return { code, name: STATE_NAMES[code], path: STATE_PAGE_PATHS[code], own, market };
+    })
+    .filter(Boolean);
+
+  if (positions.length) {
+    const cheaperThanMedian = positions.filter((row) => row.own.minRate <= row.market.medianRate);
+    const marketLeader = positions.filter((row) => row.own.minRate <= row.market.minRate);
+
+    const verdict =
+      marketLeader.length > 0
+        ? `${provider.name} holds the cheapest plan we track in ` +
+          `${joinNames(marketLeader.map((row) => row.name), 3)}.`
+        : cheaperThanMedian.length === positions.length
+          ? `${provider.name} opens below the median in every market where we hold its plans, ` +
+            `though not at the very bottom of any of them.`
+          : cheaperThanMedian.length === 0
+            ? `${provider.name} opens above the median rate in ${positions.length === 1 ? 'that market' : 'every market where we hold its plans'}, ` +
+              `so it is competing on something other than headline price — contract length, ` +
+              `renewable supply or exit terms.`
+            : `${provider.name} opens below the median in ` +
+              `${joinNames(cheaperThanMedian.map((row) => row.name), 3)} and above it elsewhere, ` +
+              `which is the usual pattern: suppliers price by utility territory, not by brand.`;
+
+    sections.push({
+      heading: `How ${provider.name} Prices Against the Market`,
+      paragraphs: [
+        `A rate means little on its own. These are ${provider.name}'s cheapest plans set against ` +
+          `every plan we hold in the same state (${asOf}).`,
+        verdict,
+      ],
+      table: {
+        columns: ['State', `${provider.name} from`, 'Cheapest we track', 'State median'],
+        rows: positions.map((row) => [
+          { text: row.name, path: row.path },
+          formatRate(row.own.minRate),
+          formatRate(row.market.minRate),
+          formatRate(row.market.medianRate),
+        ]),
+      },
+    });
+
+    /* Plan mix against the market, where the supplier differs from it. A
+     * supplier that matches its market on every count gets no bullets rather
+     * than a list saying it is unremarkable. */
+    const mix = [];
+    const totalPlans = positions.reduce((sum, row) => sum + (row.own.plans || 0), 0);
+    const marketPlans = positions.reduce((sum, row) => sum + (row.market.plans || 0), 0);
+    const share = pctOf(totalPlans, marketPlans);
+    if (share !== null && share >= 1) {
+      mix.push(
+        `${provider.name} accounts for ${share}% of the plans we track in the markets it sells into.`
+      );
+    }
+    const ownRenewable = pctOf(provider.renewablePlans, provider.plans);
+    const marketRenewable = pctOf(
+      positions.reduce((sum, row) => sum + (row.market.renewablePlans || 0), 0),
+      marketPlans
+    );
+    if (ownRenewable !== null && marketRenewable !== null && Math.abs(ownRenewable - marketRenewable) >= 10) {
+      mix.push(
+        ownRenewable > marketRenewable
+          ? `${ownRenewable}% of its plans are 100% renewable, against ${marketRenewable}% across those markets.`
+          : `${ownRenewable}% of its plans are 100% renewable, below the ${marketRenewable}% typical of those markets.`
+      );
+    }
+    const ownNoEtf = pctOf(provider.noEtfPlans, provider.plans);
+    const marketNoEtf = pctOf(
+      positions.reduce((sum, row) => sum + (row.market.noEtfPlans || 0), 0),
+      marketPlans
+    );
+    if (ownNoEtf !== null && marketNoEtf !== null && Math.abs(ownNoEtf - marketNoEtf) >= 10) {
+      mix.push(
+        ownNoEtf > marketNoEtf
+          ? `${ownNoEtf}% carry no early termination fee, against ${marketNoEtf}% across those markets — ` +
+            `unusually easy to leave.`
+          : `${ownNoEtf}% carry no early termination fee, against ${marketNoEtf}% across those markets, ` +
+            `so check the exit fee before enrolling.`
+      );
+    }
+    if (mix.length) {
+      sections.push({
+        heading: `${provider.name} Against the Rest of the Market`,
+        bullets: mix,
+      });
+    }
+  }
+
   if (stateLinks.length) {
     sections.push({
       heading: `Where ${provider.name} Plans Are Available`,
@@ -611,6 +825,75 @@ export function buildProviderSections(route) {
           `from the supplier directory.`,
       ],
       links: extraStates.map((code) => [STATE_PAGE_PATHS[code], `${STATE_NAMES[code]} electricity rates`]),
+    });
+  }
+
+  /* Head-to-head pages featuring this supplier.
+   *
+   * These links are the reason the /compare cluster is worth publishing. A
+   * matchup page answers "which of these two" — the question a reader has
+   * immediately after reading one supplier's page — so the supplier page is
+   * where the link belongs. Without it every matchup had exactly one inbound
+   * link, from the hub, and nothing pointed at it from the pages people
+   * actually land on. */
+  const matchups = comparisonsForProvider(provider.slug);
+  if (matchups.length) {
+    const opponents = matchups.map((entry) =>
+      entry.a.slug === provider.slug ? entry.b.name : entry.a.name
+    );
+    sections.push({
+      heading: `${provider.name} Compared Head to Head`,
+      paragraphs: [
+        `We hold side-by-side comparisons of ${provider.name} against ` +
+          `${joinNames(opponents, 3)} — rates, plan counts, contract terms and exit fees, ` +
+          `counted in every state where both are sold.`,
+      ],
+      links: matchups.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
+  /* Suppliers competing for the same customer.
+   *
+   * A supplier with no curated matchup was reachable only from its state page
+   * and the directory — two inbound links, against a median of seven across
+   * the family. These are not matchups (no editorial judgement, no comparison
+   * tables); they are the answer to "who else sells where this one sells",
+   * which is the next question after reading a supplier profile, and they give
+   * the smaller suppliers a route in from the larger ones.
+   *
+   * Ranked by shared footprint, then by closeness in catalog size rather than
+   * by absolute size. Sorting by size put the same handful of national
+   * suppliers on all 35 pages and left the small Texas-only ones with two
+   * inbound links each — they shared states with the giants but never appeared
+   * in a giant's own list. Closeness fixes both halves of that: it links small
+   * suppliers to each other, and it is the more useful comparison anyway.
+   * Weighing a five-plan retailer against a forty-one-plan national is not the
+   * choice a reader on this page is making. */
+  const rivals = getPublishableProviders()
+    .filter((other) => other.slug !== provider.slug && other.plans > 0)
+    .map((other) => ({
+      other,
+      shared: (other.planStates || []).filter((code) => (provider.planStates || []).includes(code)).length,
+      sizeGap: Math.abs((other.plans || 0) - (provider.plans || 0)),
+    }))
+    .filter((entry) => entry.shared > 0)
+    .sort((a, b) => b.shared - a.shared || a.sizeGap - b.sizeGap)
+    .slice(0, 6);
+
+  if (rivals.length) {
+    sections.push({
+      heading: `Other Suppliers Selling Where ${provider.name} Does`,
+      paragraphs: [
+        `${provider.name} is not the only option at these addresses. Each of these sells into at ` +
+          `least one of the same states, so they are the suppliers a ${provider.name} quote is ` +
+          `really being weighed against.`,
+      ],
+      links: rivals.map(({ other, shared }) => [
+        `/providers/${other.slug}`,
+        shared === 1
+          ? `${other.name} — also sold in ${STATE_NAMES[(other.planStates || []).find((code) => (provider.planStates || []).includes(code))]}`
+          : `${other.name} — overlaps in ${shared} states`,
+      ]),
     });
   }
 
@@ -1827,6 +2110,27 @@ function providerVersusSections(comparison) {
 
   sections.push({ heading: `${a.name} vs ${b.name}: Common Questions`, faqs });
 
+  /* Sideways links to the other matchups either supplier appears in.
+   *
+   * Someone comparing two suppliers has usually not narrowed it to exactly
+   * these two, so the next question is almost always "and how does one of them
+   * do against a third". Linking those pages from here is what turns the
+   * cluster into something a reader can walk, rather than a set of leaves that
+   * all hang off the hub and dead-end. */
+  const related = [...comparisonsForProvider(a.slug), ...comparisonsForProvider(b.slug)]
+    .filter((entry) => entry.slug !== comparison.slug)
+    .filter((entry, index, list) => list.findIndex((other) => other.slug === entry.slug) === index);
+  if (related.length) {
+    sections.push({
+      heading: 'Other Matchups With These Suppliers',
+      paragraphs: [
+        `If one of these two is on your shortlist but the other is not, these compare the same ` +
+          `supplier against a different competitor, on the same figures.`,
+      ],
+      links: related.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
   sections.push({
     heading: 'Check Both at Your Address',
     paragraphs: [
@@ -1879,7 +2183,77 @@ function planVersusSections(comparison) {
     },
   });
 
+  /* Where the split is most lopsided.
+   *
+   * The state table above shows every market, which is thorough and hard to
+   * read — 12 rows of two numbers do not tell you where the choice actually
+   * matters. These are the markets at either end, named, so the page says
+   * something a reader can act on rather than leaving them to scan. Only for
+   * countable comparisons: "offered / not offered" has no extremes to find. */
+  if (unit === 'plans') {
+    const scored = rows
+      .map((row) => ({ ...row, a: Number(row.a) || 0, b: Number(row.b) || 0 }))
+      .filter((row) => row.a + row.b > 0);
+    const widestA = [...scored].sort((x, y) => y.a - y.b - (x.a - x.b))[0];
+    const widestB = [...scored].sort((x, y) => y.b - y.a - (x.b - x.a))[0];
+    const bullets = [];
+    if (widestA && widestA.a > widestA.b) {
+      bullets.push(
+        `${widestA.name} leans hardest toward ${a.short.toLowerCase()}: ${widestA.a} of them ` +
+          `against ${widestA.b} ${b.short.toLowerCase()}.`
+      );
+    }
+    if (widestB && widestB.b > widestB.a && widestB.name !== widestA?.name) {
+      bullets.push(
+        `${widestB.name} goes the other way: ${widestB.b} ${b.short.toLowerCase()} ` +
+          `against ${widestB.a} ${a.short.toLowerCase()}.`
+      );
+    }
+    const balanced = scored.filter((row) => row.a > 0 && row.b > 0);
+    if (balanced.length) {
+      bullets.push(
+        `${balanced.length} of the ${scored.length} markets carry both, so in most states this is ` +
+          `a real choice rather than a decision the market makes for you.`
+      );
+    }
+    const absent = scored.filter((row) => row.a === 0 || row.b === 0);
+    if (absent.length) {
+      bullets.push(
+        `In ${joinNames(absent.map((row) => row.name), 4)} one side is not sold at all, ` +
+          `so the comparison there is academic.`
+      );
+    }
+    if (bullets.length) {
+      sections.push({
+        heading: 'Where the Balance Tips',
+        paragraphs: [
+          `The state table is the full picture; these are the markets worth noticing in it.`,
+        ],
+        bullets,
+        links: [widestA, widestB]
+          .filter(Boolean)
+          .filter((row, index, list) => list.findIndex((other) => other.name === row.name) === index)
+          .map((row) => [row.path, `${row.name} electricity rates`]),
+      });
+    }
+  }
+
   sections.push({ heading: 'Questions People Ask', faqs });
+
+  /* The other plan-shape questions. Someone weighing fixed against variable is
+   * usually also deciding a term length and whether an exit fee matters — the
+   * shapes are chosen together, so the pages should link together. */
+  const otherShapes = getPlanComparisons().filter((entry) => entry.slug !== comparison.slug);
+  if (otherShapes.length) {
+    sections.push({
+      heading: 'The Other Choices You Are Making',
+      paragraphs: [
+        `Plan shape is not one decision but several, taken at the same time. These cover the rest ` +
+          `of them, counted from the same catalog.`,
+      ],
+      links: otherShapes.map((entry) => [entry.path, entry.heading]),
+    });
+  }
 
   sections.push({
     heading: 'See What Is Available Where You Live',
@@ -1967,18 +2341,376 @@ export function buildCompareHubSections() {
  * Articles
  * ------------------------------------------------------------------ */
 
-export function buildArticleSections(route) {
+/**
+ * @param {Record<string, any>} route
+ * @param {{articles?: Record<string, any>}} [context] the raw article map, which
+ *   carries the tags the related-guide links are scored on
+ */
+export function buildArticleSections(route, context = {}) {
+  const { articles } = context;
+  const sections = [];
+
+  /* Guides on the same subject.
+   *
+   * These 73 pages are the best content on the site and were the worst
+   * linked — a median of one inbound link each, from /learning-center, and
+   * every one of them ending with the same three hub links. Nothing pointed
+   * from one guide to another, so none of them passed any authority to the
+   * others and none of them accumulated any. */
+  const related = route.id && articles ? relatedArticles(route.id, articles) : [];
+  if (related.length) {
+    sections.push({
+      heading: 'Related Guides',
+      links: related.map((entry) => [entry.path, entry.title]),
+    });
+  }
+
+  sections.push({
+    heading: 'Keep Reading',
+    links: [
+      ['/learning-center', 'All electricity guides'],
+      ['/compare-rates', 'Compare plans for your ZIP code'],
+      ['/compare', 'Compare suppliers head to head'],
+      ['/all-states', 'How your state market works'],
+    ],
+  });
+
   return {
     intro: route.description ? [route.description] : [],
-    sections: [
-      {
-        heading: 'Keep Reading',
-        links: [
-          ['/learning-center', 'All electricity guides'],
-          ['/compare-rates', 'Compare plans for your ZIP code'],
-          ['/all-states', 'How your state market works'],
-        ],
-      },
-    ],
+    sections,
   };
+}
+
+/* ==================================================================
+ * Utility territories
+ *
+ * The reader arriving here believes their delivery utility sets their
+ * price. Everything on the page is arranged around correcting that and
+ * then answering what they actually wanted to know.
+ * ================================================================== */
+
+export function buildUtilitySections(route) {
+  const utility = route.utility;
+  if (!utility) return { intro: [route.description].filter(Boolean), sections: [] };
+
+  const { name, cities, states, multiState } = utility;
+  const stateNames = states.map((entry) => entry.name);
+  const sections = [];
+
+  const intro = [
+    utility.note,
+    multiState
+      ? `${name} delivers electricity in ${joinNames(stateNames)}. We cover ${cities.length} cities ` +
+        `across that territory, and because each state writes its own rules, what you can buy ` +
+        `changes at the border even though the wires company does not.`
+      : `${name} delivers electricity in ${stateNames[0]}, where we cover ${cities.length} of the ` +
+        `cities in its territory.`,
+  ].filter(Boolean);
+
+  /* The correction, first, because the rest of the page depends on it.
+   *
+   * Written per regulatory model rather than once with the name swapped. The
+   * three are genuinely different arrangements, and flattening them would be
+   * both less accurate and the templated page this site keeps refusing to
+   * publish: Texas has no utility supply rate to fall back on at all, the
+   * Northeast utilities sell a regulated default, and Illinois and Ohio add
+   * municipal aggregation on top of one. */
+  const short = utility.shortName || name;
+  if (utility.model === 'texas') {
+    sections.push({
+      heading: `What ${short} Bills You For, and What It Cannot Sell You`,
+      paragraphs: [
+        `Texas split the two jobs further than anywhere else in the country. ${name} owns the ` +
+          `poles, the wires and the meter, and it is not allowed to sell you electricity at all. ` +
+          `There is no ${short} rate to fall back on, no default tariff, no "staying put" option.`,
+        `That means every household in the territory has bought its energy from a retailer, ` +
+          `whether or not it remembers choosing one. If you have never shopped, you are on ` +
+          `whatever a retailer signed you up to — frequently a renewal that rolled over at a ` +
+          `higher rate than the one you agreed to.`,
+      ],
+      bullets: [
+        `${short} charges regulated delivery, identical across every retailer.`,
+        `A retail supplier sets the cents per kWh, and that is the only contestable half.`,
+        `Switching retailer changes no equipment and no service — ${short} still runs the wires.`,
+      ],
+    });
+  } else if (utility.model === 'aggregation') {
+    sections.push({
+      heading: `What ${short} Charges For, and the Two Ways Around It`,
+      paragraphs: [
+        `${name} delivers the power and bills you for it, at a regulated rate no supplier can ` +
+          `discount. The supply half — the energy itself — is contestable, and here there are two ` +
+          `routes rather than one.`,
+        `You can leave supply with ${short} at the regulated default price, or buy it from a ` +
+          `competing retailer. There is also a third possibility peculiar to this part of the ` +
+          `country: your municipality may have negotiated a supply contract on behalf of every ` +
+          `household in it, and enrolled you unless you opted out. Many people on an aggregation ` +
+          `rate have no idea they are on one.`,
+      ],
+      bullets: [
+        `${short} sets and bills delivery, which shopping cannot lower.`,
+        `Default supply from ${short} is the price a competitive offer has to beat.`,
+        `A municipal aggregation deal may already have replaced that default without your involvement.`,
+      ],
+    });
+  } else {
+    sections.push({
+      heading: `What ${short} Charges For, and What a Supplier Charges For`,
+      paragraphs: [
+        `Your bill has two halves. ${name} owns one of them and it cannot be shopped: delivery — ` +
+          `the poles and wires, the meter, the crew that restores power after a storm. Those ` +
+          `charges are set by the state regulator and are identical whoever supplies your energy.`,
+        `The other half is supply. ${short} sells that too, at a regulated default rate that ` +
+          `resets on a published schedule, and a competing retailer may beat it. That default is ` +
+          `the number worth knowing: it is what you pay by doing nothing, and the only fair ` +
+          `benchmark for any offer put in front of you.`,
+      ],
+      bullets: [
+        `${short} sets and bills delivery charges, which no supplier can discount.`,
+        `Its regulated default supply rate is the benchmark, not a rate you are stuck with.`,
+        `Switching supplier changes the supply rate only — same wires, same meter, same outage number.`,
+      ],
+    });
+  }
+
+  /* Cities, ordered cheapest first — the table a reader came for. */
+  if (cities.length) {
+    const spread = utility.highestCityRate != null && utility.lowestCityRate != null
+      ? Math.round((utility.highestCityRate - utility.lowestCityRate) * 10) / 10
+      : null;
+    sections.push({
+      heading: `Cities We Cover in the ${name} Territory`,
+      paragraphs: [
+        spread && spread >= 1
+          ? `Average residential rates across these ${cities.length} cities span ${spread}¢/kWh, ` +
+            `which is a wider gap than most people expect inside one delivery territory — ` +
+            `supply is priced locally even where delivery is not.`
+          : `Average residential rates across these ${cities.length} cities sit close together, ` +
+            `which is what a single delivery territory usually looks like. What separates two ` +
+            `households here is the supply contract each one signed, not where they live.`,
+      ],
+      table: {
+        columns: ['City', 'Average residential rate', 'Estimated monthly bill'],
+        rows: cities.map((city) => [
+          { text: `${city.name}, ${city.stateCode}`, path: city.path },
+          city.avgRate,
+          city.avgMonthlyBill,
+        ]),
+      },
+    });
+  }
+
+  /* What is actually buyable in the territory, from the plan snapshot. */
+  const withPlans = states.filter((entry) => entry.market?.plans > 0);
+  if (withPlans.length) {
+    sections.push({
+      heading: `Suppliers You Can Choose Instead`,
+      paragraphs: [
+        multiState
+          ? `Supply is licensed state by state, so the choice differs across the ${name} footprint ` +
+            `(${asOf}).`
+          : `These are the plans we hold for ${stateNames[0]}, any of which replaces the supply half ` +
+            `of a ${name} bill (${asOf}).`,
+      ],
+      table: {
+        columns: ['State', 'Plans we track', 'Suppliers', 'Cheapest', 'Median'],
+        rows: withPlans.map((entry) => [
+          { text: entry.name, path: entry.path },
+          String(entry.market.plans),
+          String(entry.market.providers),
+          formatRate(entry.market.minRate),
+          formatRate(entry.market.medianRate),
+        ]),
+      },
+      links: [
+        ['/compare-rates', 'Compare supply rates for your ZIP code'],
+        ['/all-providers', 'Every supplier we track'],
+      ],
+    });
+  }
+
+  sections.push({
+    heading: `${name} Questions`,
+    faqs: buildUtilityFaqs(utility),
+  });
+
+  sections.push({
+    heading: 'Next Steps',
+    links: [
+      ['/compare-rates', 'Compare plans for your ZIP code'],
+      ...states.map((entry) => [entry.path, `${entry.name} electricity rates`]),
+      ['/bill-analyzer', 'Check what your current bill is really costing'],
+      [UTILITY_ROOT, 'Other delivery territories'],
+    ],
+  });
+
+  return { intro, sections };
+}
+
+function buildUtilityFaqs(utility) {
+  const { name, states, cities, multiState } = utility;
+  const primary = states[0];
+  const cheapest = states
+    .filter((entry) => entry.market?.minRate != null)
+    .sort((a, b) => a.market.minRate - b.market.minRate)[0];
+  const faqs = [];
+
+  /* The lead question is the one the reader arrived with, and its honest answer
+   * differs by market, so it is written three ways rather than one. */
+  const short = utility.shortName || name;
+  if (utility.model === 'texas') {
+    faqs.push({
+      question: `Does ${short} set my electricity rate?`,
+      answer:
+        `No, and it cannot sell you electricity at all. ${name} is a delivery-only company: it ` +
+        `charges a regulated amount to carry power to your meter and that amount is the same ` +
+        `whoever supplies you. Texas has no utility default rate, so every household here buys ` +
+        `its energy from a retailer — including the households that never chose one.`,
+    });
+  } else if (utility.model === 'aggregation') {
+    faqs.push({
+      question: `Does ${short} set my electricity rate?`,
+      answer:
+        `Only the delivery part, which is regulated and identical across every supplier. The ` +
+        `supply part may be ${short}'s default rate, a retailer you chose, or a contract your ` +
+        `municipality signed on your behalf through an aggregation programme. All three arrive on ` +
+        `the same ${short} bill, which is why so few people know which one they are on.`,
+    });
+  } else {
+    faqs.push({
+      question: `Does ${short} set my electricity rate?`,
+      answer:
+        `It sets the delivery charge, which is regulated and identical whoever supplies you, and ` +
+        `it also sells supply at a default rate that resets on a published schedule. That default ` +
+        `is not a rate you are stuck with — it is the benchmark. A competing supplier either ` +
+        `beats it or is not worth signing.`,
+    });
+  }
+
+  if (cheapest?.market) {
+    faqs.push({
+      question: `What is the cheapest electricity rate in the ${name} area?`,
+      answer:
+        `The lowest supply rate we currently hold in ${cheapest.name} is ` +
+        `${formatRate(cheapest.market.minRate)}, against a median of ` +
+        `${formatRate(cheapest.market.medianRate)} across ${cheapest.market.plans} plans ` +
+        `(${asOf}). Delivery charges are added on top of whichever supply rate you pick, and they ` +
+        `do not change with the supplier.`,
+    });
+  }
+
+  faqs.push({
+    question: `Will switching supplier interrupt my ${short} service?`,
+    answer:
+      `No. Nothing physical changes and nobody visits the property. ${name} keeps delivering the ` +
+      `power, reading the meter and handling outages; only the company selling you the energy ` +
+      `changes, and it takes effect at your next meter read.`,
+  });
+
+  if (utility.model === 'aggregation') {
+    faqs.push({
+      question: `How do I tell whether I am on a municipal aggregation rate?`,
+      answer:
+        `Look at the supply line on your bill, not the delivery line. If it names a retailer you ` +
+        `do not remember choosing, your town most likely enrolled you through an aggregation ` +
+        `programme — legal, opt-out rather than opt-in, and not always cheaper than what you ` +
+        `could get yourself. You can leave it for any supplier on the market.`,
+    });
+  } else if (utility.model === 'texas') {
+    faqs.push({
+      question: `What happens if my contract ends and I do nothing?`,
+      answer:
+        `You are moved to a holdover or renewal rate, and it is frequently well above the one you ` +
+        `signed. Because there is no ${short} default to fall back to, nothing stops that rate ` +
+        `from being far higher than the market — the only protection is checking the end date and ` +
+        `shopping before it arrives.`,
+    });
+  }
+
+  if (multiState) {
+    faqs.push({
+      question: `Is the ${name} offer the same in every state it serves?`,
+      answer:
+        `No. ${name} delivers in ${joinNames(states.map((entry) => entry.name))}, but supply is ` +
+        `licensed and regulated separately in each one, so the plans available and the default ` +
+        `rate you are compared against both change at the state line.`,
+    });
+  }
+
+  faqs.push({
+    question: `Who do I call when the power goes out?`,
+    answer:
+      `${name}, always — including when a competing retailer supplies your energy. Outages are a ` +
+      `wires problem, and the wires stay with ${name} whoever you buy from.`,
+  });
+
+  if (primary && cities.length) {
+    faqs.push({
+      question: `Which cities does this cover?`,
+      answer:
+        `We cover ${cities.length} cities in the ${name} territory, from ` +
+        `${cities[0].name} to ${cities[cities.length - 1].name}. Availability is confirmed by ZIP ` +
+        `code rather than by city, because territory boundaries do not follow city limits.`,
+    });
+  }
+
+  return faqs;
+}
+
+/**
+ * The utility hub. Exists so every territory page has one crawlable inbound
+ * link from a page with its own reason to exist, and so a reader who does not
+ * know their utility's name can find it from their state.
+ */
+export function buildUtilityHubSections() {
+  const utilities = getUtilities();
+  const sections = [];
+
+  const covered = utilities.reduce((sum, utility) => sum + utility.cities.length, 0);
+  const intro = [
+    'Two companies appear on a deregulated electricity bill and they do very different jobs. ' +
+      'The delivery utility owns the wires and cannot be changed. The supplier sells the energy ' +
+      'and can be changed at any time, which is the whole reason this site exists.',
+    `These are the ${utilities.length} delivery territories where we cover enough of the market ` +
+      `to be useful — ${covered} cities in total. If yours is not here, its state page carries the ` +
+      `same plan data.`,
+  ];
+
+  sections.push({
+    heading: 'Delivery Territories We Cover',
+    paragraphs: [
+      'Ordered by how much of each territory we cover. Rate spans are the average residential ' +
+        'rates in the cities listed, not delivery charges — those are regulated and we do not hold them.',
+    ],
+    table: {
+      columns: ['Utility', 'States', 'Cities we cover', 'City rate range'],
+      rows: utilities.map((utility) => [
+        { text: utility.name, path: utility.path },
+        utility.stateCodes.map((code) => STATE_NAMES[code]).join(', '),
+        String(utility.cities.length),
+        utility.lowestCityRate != null
+          ? `${formatRate(utility.lowestCityRate)} – ${formatRate(utility.highestCityRate)}`
+          : '—',
+      ]),
+    },
+  });
+
+  sections.push({
+    heading: 'Why the Distinction Matters',
+    paragraphs: [
+      'Most people searching for their utility by name are trying to find out what they will pay, ' +
+        'and are looking at the wrong company. The utility charge is regulated, identical across ' +
+        'every supplier, and not something shopping can lower. The supply rate is none of those ' +
+        'things — it varies by a factor of two between the cheapest and most expensive plans in ' +
+        'some of the markets we track.',
+    ],
+    links: [
+      ['/compare-rates', 'Compare supply rates for your ZIP code'],
+      ['/all-states', 'Electricity rates by state'],
+      ['/all-cities', 'Electricity rates by city'],
+      ['/bill-analyzer', 'See what your current bill is really costing'],
+    ],
+  });
+
+  return { intro, sections };
 }

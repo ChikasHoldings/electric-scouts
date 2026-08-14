@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp } from "lucide-react";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
+import { comparisonsForProvider } from "@/seo/comparisons";
+import { GitCompareArrows } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
@@ -58,6 +60,7 @@ export default function ProviderDetails() {
 
   const providerFromDB = providers.find(p => p.name === providerName);
   const providerLogo = providerFromDB ? getProviderLogoUrl(providerFromDB) : null;
+
   
   const providerInfo = providerFromDB ? {
     name: providerFromDB.name,
@@ -115,6 +118,8 @@ export default function ProviderDetails() {
     `Contract terms, renewable options and how they compare with other suppliers.`;
 
   const providerSlug = generateProviderSlug(providerName);
+  // Matchups featuring this supplier, keyed by the same slug the URL uses.
+  const headToHead = providerSlug ? comparisonsForProvider(providerSlug) : [];
   const breadcrumbData = getBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Providers", url: "/all-providers" },
@@ -451,6 +456,51 @@ export default function ProviderDetails() {
             </Card>
           )}
         </section>
+
+        {/* Head-to-head comparisons.
+            Mirrors the section the prerenderer writes for this page, so the
+            links a crawler reads before hydration are the same ones a reader
+            sees after it. Sourced from the comparison registry, so a matchup
+            that stops qualifying disappears here in the same build it
+            disappears from the sitemap. */}
+        {headToHead.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {providerName} Compared Head to Head
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Side by side against the suppliers it competes with, on rates, plan mix,
+              contract terms and exit fees.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {headToHead.map((entry) => {
+                const opponent = entry.a.slug === providerSlug ? entry.b : entry.a;
+                return (
+                  <Link key={entry.slug} to={entry.path} className="block group">
+                    <Card className="border-2 h-full hover:border-[#0A5C8C] hover:shadow-lg transition-all">
+                      <CardContent className="p-5 flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                          <GitCompareArrows className="w-5 h-5 text-[#0A5C8C]" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-gray-900 group-hover:text-[#0A5C8C] transition-colors">
+                            {providerName} vs {opponent.name}
+                          </h3>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {entry.sharedStates.length === 1
+                              ? `Both sold in ${entry.sharedStates[0].name}`
+                              : `Both sold in ${entry.sharedStates.length} states`}
+                          </p>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#0A5C8C] ml-auto flex-shrink-0 mt-1" />
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* CTA Section */}
         <section className="bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] rounded-2xl p-8 md:p-10 text-white">

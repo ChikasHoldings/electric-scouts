@@ -68,6 +68,11 @@ export function getCities() {
         providers: value.providers,
         description: value.description,
         zipCodes: Array.isArray(value.zipCodes) ? value.zipCodes : [],
+        // Six named districts per city, and the only field in this table that
+        // is unique to the city rather than shared with its state. It was being
+        // dropped here, so the sentence in content.js that lists them read
+        // `undefined` and never rendered — on all 144 pages.
+        neighborhoods: Array.isArray(value.neighborhoods) ? value.neighborhoods : [],
         path: cityPath(name, value.stateCode),
         statePath: STATE_PAGE_PATHS[value.stateCode],
       };

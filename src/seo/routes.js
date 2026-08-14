@@ -23,6 +23,7 @@ import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations
 import { getArticleRoutes } from './articles.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
 import { COMPARE_HUB, getComparisons } from './comparisons.js';
+import { UTILITY_HUB, getUtilities } from './utilities.js';
 
 /**
  * Public, indexable pages with hand-authored metadata.
@@ -332,6 +333,9 @@ export function getCityRoutes() {
 export function getArticleRouteList(fullArticles) {
   return getArticleRoutes(fullArticles).map((article) => ({
     type: 'article',
+    // Carried through so the content model can find this article in the map it
+    // was built from — the related-guide links are keyed on it.
+    id: article.id,
     path: article.path,
     // Left undefined when article data was not supplied. No generic fallback on
     // purpose: a shared placeholder title across 73 URLs is the exact failure
@@ -407,6 +411,63 @@ export function getComparisonRoutes() {
     changefreq: 'weekly',
     comparison,
   }));
+
+  return [hub, ...pages];
+}
+
+/**
+ * The utility hub and every delivery territory under it.
+ *
+ * As with the comparisons, the registry does not decide which utilities exist —
+ * src/seo/utilities.js does, and it publishes one only where we already cover
+ * enough of its territory to say something the state page does not. A utility
+ * that falls below that bar leaves the sitemap and the prerender in the same
+ * build that stops rendering it.
+ */
+export function getUtilityRoutes() {
+  const utilities = getUtilities();
+  if (!utilities.length) return [];
+
+  const hub = {
+    type: 'utility-hub',
+    page: 'Utilities',
+    path: canonicalPath(UTILITY_HUB.path),
+    title: UTILITY_HUB.title,
+    description: UTILITY_HUB.description,
+    heading: UTILITY_HUB.heading,
+    priority: 0.8,
+    changefreq: 'monthly',
+  };
+
+  const pages = utilities.map((utility) => {
+    const where = utility.stateCodes.map((code) => STATE_NAMES[code]).join(', ');
+    return {
+      type: 'utility',
+      path: utility.path,
+      // The name people search is the utility's, so it leads. "Rates" is in the
+      // query too, and the page does answer it — by explaining which half of the
+      // bill the utility actually controls.
+      // Short name in the title: "Oncor Electric Delivery Electricity Rates" ran
+      // to 79 characters and was truncated in results. The name people type is
+      // the short one anyway.
+      // The subtitle earns its place by saying what makes the page different,
+      // but not at the cost of a truncated result. Long utility names drop it.
+      title:
+        `${utility.shortName} Electricity Rates: Delivery vs Supply | Electric Scouts`.length <= 70
+          ? `${utility.shortName} Electricity Rates: Delivery vs Supply | Electric Scouts`
+          : `${utility.shortName} Electricity Rates and Delivery | Electric Scouts`,
+      description:
+        `${utility.shortName} delivers power in ${where} — it does not set your energy rate. ` +
+        `What it charges for, and the plans you can buy instead.`,
+      heading: `${utility.name} Electricity Rates`,
+      // Delivery territories change far more slowly than plan prices, and the
+      // page's own figures come from the state snapshot, so it does not need
+      // the weekly recrawl a comparison page earns.
+      priority: 0.7,
+      changefreq: 'monthly',
+      utility,
+    };
+  });
 
   return [hub, ...pages];
 }
@@ -506,6 +567,7 @@ export function getIndexableRoutes(options = {}) {
     ...getCityRoutes(),
     ...getProviderRoutes(providers),
     ...getComparisonRoutes(),
+    ...getUtilityRoutes(),
     ...getArticleRouteList(fullArticles),
   ];
 

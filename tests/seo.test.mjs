@@ -29,17 +29,26 @@ import {
   getAliasRoutes,
   getProviderRoutes,
   getComparisonRoutes,
+  getUtilityRoutes,
+  getArticleRouteList,
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS } from '../src/seo/articles.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
 import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket } from '../src/seo/market.js';
-import { buildCitySections, buildStateSections, buildProviderSections } from '../src/seo/content.js';
+import { buildCitySections, buildStateSections, buildProviderSections, buildComparisonSections, buildUtilitySections } from '../src/seo/content.js';
 import { createResolver, parseHtml } from '../src/seo/audit.mjs';
 import { buildPageContent, renderBody } from '../src/seo/render.js';
 import { organizationSchema, standaloneOrganizationSchema } from '../src/seo/organization.js';
 import { getStates, getCities } from '../src/seo/locations.js';
 import { LOCATION_DATA } from '../src/components/location/locationData.js';
+import { comparisonsForProvider, comparisonsForState } from '../src/seo/comparisons.js';
+import { getUtilities, utilitiesForState, utilityForCity } from '../src/seo/utilities.js';
+import { relatedArticles, articlesForState } from '../src/seo/articleLinks.js';
+import { loadSeoData } from '../src/seo/data.mjs';
+
+const { fullArticles: seoArticles } = await loadSeoData();
+const articleRoutes = getArticleRouteList(seoArticles);
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -1145,8 +1154,9 @@ const navContext = (() => {
 })();
 
 /** The prerendered body for a route, which is where the crawlable nav lives. */
-function renderNav(route) {
-  return renderBody(route, buildPageContent(route, navContext), navContext);
+function renderNav(route, extra = {}) {
+  const context = { ...navContext, ...extra };
+  return renderBody(route, buildPageContent(route, context), context);
 }
 
 describe('the comparison cluster is linked from the rest of the site', () => {
@@ -1273,5 +1283,476 @@ describe('published copy does not link to noindex legacy routes', () => {
       !articles.includes('/city-rates?city='),
       'article copy links to the noindex /city-rates route; use the clean /electricity-rates/:state/:city URL'
     );
+  });
+});
+
+/* ==================================================================
+ * Internal linking within the comparison cluster
+ *
+ * Before these links existed every matchup page had exactly one inbound
+ * link, from the hub. A page nothing points at from the pages people
+ * actually land on is a page Google has little reason to rank.
+ * ================================================================== */
+
+describe('supplier and state pages link into their matchups', () => {
+  test('a provider page links to every matchup featuring that provider', () => {
+    const providers = getPublishableProviders();
+    let checked = 0;
+    for (const route of getProviderRoutes(providers)) {
+      const matchups = comparisonsForProvider(route.provider.slug);
+      if (!matchups.length) continue;
+      const html = renderNav(route);
+      for (const entry of matchups) {
+        checked += 1;
+        assert.ok(
+          html.includes(`href="${entry.path}"`),
+          `/providers/${route.provider.slug} does not link to ${entry.path}`
+        );
+      }
+    }
+    assert.ok(checked > 0, 'no provider matchups were exercised');
+  });
+
+  test('a state page links to the matchups fought in that state', () => {
+    let checked = 0;
+    for (const route of getStateRoutes()) {
+      const matchups = comparisonsForState(route.state.code);
+      if (!matchups.length) continue;
+      const html = renderNav(route);
+      for (const entry of matchups) {
+        checked += 1;
+        assert.ok(
+          html.includes(`href="${entry.path}"`),
+          `${route.path} does not link to ${entry.path}, a matchup fought in ${route.state.code}`
+        );
+      }
+    }
+    assert.ok(checked > 0, 'no state matchups were exercised');
+  });
+
+  test('a matchup page links sideways to other matchups, not just back to the hub', () => {
+    const routes = getComparisonRoutes().filter((r) => r.type === 'comparison');
+    const providerRoutes = routes.filter((r) => r.comparison.type === 'provider-vs-provider');
+    assert.ok(providerRoutes.length > 0, 'no supplier matchups in the registry');
+
+    for (const route of providerRoutes) {
+      const html = renderNav(route);
+      const linked = [...html.matchAll(/href="(\/compare\/[^"]+)"/g)].map((m) => m[1]);
+      const others = new Set(linked.filter((p) => p !== route.path));
+      assert.ok(
+        others.size > 0,
+        `${route.path} links to no other matchup — the cluster dead-ends here`
+      );
+    }
+  });
+
+  test('every published matchup is reachable from more than the hub alone', () => {
+    const providers = getPublishableProviders();
+    const pages = [
+      ...getProviderRoutes(providers),
+      ...getStateRoutes(),
+      ...getComparisonRoutes().filter((r) => r.type === 'comparison'),
+    ];
+    const inbound = new Map();
+    for (const route of pages) {
+      for (const match of renderNav(route).matchAll(/href="(\/compare\/[^"]+)"/g)) {
+        if (match[1] === route.path) continue;
+        inbound.set(match[1], (inbound.get(match[1]) || 0) + 1);
+      }
+    }
+    for (const route of getComparisonRoutes().filter((r) => r.type === 'comparison')) {
+      assert.ok(
+        (inbound.get(route.path) || 0) > 0,
+        `${route.path} has no inbound link from any supplier, state or sibling matchup page`
+      );
+    }
+  });
+});
+
+/* ==================================================================
+ * Comparison pages stay distinct and substantial
+ * ================================================================== */
+
+describe('comparison pages are neither thin nor near-duplicates', () => {
+  /** Rough word count of the prose a comparison page renders. */
+  function wordsIn(route) {
+    const { intro = [], sections = [] } = buildComparisonSections(route);
+    const parts = [
+      ...intro,
+      ...sections.flatMap((s) => [s.heading, ...(s.paragraphs || []), ...(s.bullets || [])]),
+      ...sections.flatMap((s) => (s.faqs || []).flatMap((f) => [f.question, f.answer])),
+    ];
+    return parts.join(' ').split(/\s+/).filter(Boolean).length;
+  }
+
+  test('every comparison page carries substantial prose', () => {
+    for (const route of getComparisonRoutes().filter((r) => r.type === 'comparison')) {
+      const words = wordsIn(route);
+      assert.ok(words >= 220, `${route.path} has only ${words} words of prose`);
+    }
+  });
+
+  test('no two comparison pages open with the same sentence', () => {
+    const openings = new Map();
+    for (const route of getComparisonRoutes().filter((r) => r.type === 'comparison')) {
+      const { intro = [] } = buildComparisonSections(route);
+      const first = (intro[0] || '').trim();
+      assert.ok(first, `${route.path} has no opening sentence`);
+      assert.ok(
+        !openings.has(first),
+        `${route.path} opens identically to ${openings.get(first)} — that is the templated-page smell`
+      );
+      openings.set(first, route.path);
+    }
+  });
+
+  test('every comparison page has a unique title, description and heading', () => {
+    for (const field of ['title', 'description', 'heading']) {
+      const seen = new Map();
+      for (const route of getComparisonRoutes()) {
+        const value = route[field];
+        assert.ok(value, `${route.path} has no ${field}`);
+        assert.ok(!seen.has(value), `${route.path} shares its ${field} with ${seen.get(value)}`);
+        seen.set(value, route.path);
+      }
+    }
+  });
+});
+
+/* ==================================================================
+ * Utility territory pages
+ *
+ * A new cluster gets the same treatment the comparison cluster needed
+ * after the fact: linked in from the pages people land on, distinct from
+ * one another, and substantial enough to deserve indexing.
+ * ================================================================== */
+
+describe('utility territory pages', () => {
+  const utilities = getUtilities();
+
+  test('only utilities with real coverage are published', () => {
+    assert.ok(utilities.length > 0, 'no utilities published');
+    for (const utility of utilities) {
+      assert.ok(
+        utility.cities.length >= 3,
+        `${utility.path} publishes on ${utility.cities.length} cities — below the coverage bar`
+      );
+      assert.ok(utility.states.length > 0, `${utility.path} has no state market behind it`);
+    }
+  });
+
+  test('a shared municipal/deregulated territory is not published as one', () => {
+    // "Austin Energy / Oncor" describes a city split between a municipal
+    // utility and a deregulated one; which half an address falls in is a ZIP
+    // question a static page cannot answer.
+    for (const utility of utilities) {
+      assert.ok(!utility.name.includes('/'), `${utility.name} is a shared-territory label`);
+    }
+  });
+
+  test('every utility page carries substantial, distinct prose', () => {
+    const openings = new Map();
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { intro = [], sections = [] } = buildUtilitySections(route);
+      const words = [
+        ...intro,
+        ...sections.flatMap((s) => [s.heading, ...(s.paragraphs || []), ...(s.bullets || [])]),
+        ...sections.flatMap((s) => (s.faqs || []).flatMap((f) => [f.question, f.answer])),
+      ].join(' ').split(/\s+/).filter(Boolean).length;
+      assert.ok(words >= 300, `${route.path} has only ${words} words`);
+
+      const first = (intro[0] || '').trim();
+      assert.ok(first, `${route.path} has no opening sentence`);
+      assert.ok(
+        !openings.has(first),
+        `${route.path} opens identically to ${openings.get(first)}`
+      );
+      openings.set(first, route.path);
+    }
+  });
+
+  test('the delivery/supply explanation differs by regulatory model', () => {
+    // Texas has no utility default supply at all, the Northeast sells a
+    // regulated default, and Illinois and Ohio add municipal aggregation.
+    // Writing one explanation for all three would be both less accurate and
+    // the templated page this site keeps refusing to publish.
+    const byModel = new Map();
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { sections } = buildUtilitySections(route);
+      const explainer = sections.find((s) => s.bullets && !s.table);
+      assert.ok(explainer, `${route.path} has no delivery/supply explanation`);
+      byModel.set(route.utility.model, (byModel.get(route.utility.model) || 0) + 1);
+    }
+    assert.ok(byModel.size >= 3, `expected three regulatory models, saw ${byModel.size}`);
+  });
+
+  test('titles and descriptions fit what Google renders', () => {
+    for (const route of getUtilityRoutes()) {
+      assert.ok(route.title.length <= 70, `${route.path} title is ${route.title.length} chars`);
+      assert.ok(
+        route.description.length >= 70 && route.description.length <= 165,
+        `${route.path} description is ${route.description.length} chars`
+      );
+    }
+  });
+
+  test('every utility page is unique on title, description and heading', () => {
+    for (const field of ['title', 'description', 'heading']) {
+      const seen = new Map();
+      for (const route of getUtilityRoutes()) {
+        const value = route[field];
+        assert.ok(value, `${route.path} has no ${field}`);
+        assert.ok(!seen.has(value), `${route.path} shares its ${field} with ${seen.get(value)}`);
+        seen.set(value, route.path);
+      }
+    }
+  });
+
+  test('state pages link to the territories that deliver there', () => {
+    let checked = 0;
+    for (const route of getStateRoutes()) {
+      const territories = utilitiesForState(route.state.code);
+      if (!territories.length) continue;
+      const html = renderNav(route);
+      for (const utility of territories) {
+        checked += 1;
+        assert.ok(html.includes(`href="${utility.path}"`), `${route.path} does not link to ${utility.path}`);
+      }
+    }
+    assert.ok(checked > 0, 'no state/utility links were exercised');
+  });
+
+  test('the prerendered nav reaches the utility hub', () => {
+    const html = renderNav(getUtilityRoutes()[0]);
+    assert.ok(
+      /<nav aria-label="Primary">[\s\S]*href="\/utilities"[\s\S]*<\/nav>/.test(html),
+      'the primary nav has no link to /utilities, which islands the whole cluster'
+    );
+  });
+
+  test('every utility page is reachable from a state or city page', () => {
+    const inbound = new Set();
+    for (const route of [...getStateRoutes(), ...getCityRoutes()]) {
+      for (const match of renderNav(route).matchAll(/href="(\/utilities\/[^"]+)"/g)) {
+        inbound.add(match[1]);
+      }
+    }
+    for (const utility of utilities) {
+      assert.ok(inbound.has(utility.path), `${utility.path} has no inbound link from a state or city page`);
+    }
+  });
+
+  test('no utility page claims a delivery charge we do not hold', () => {
+    // We hold plan rates, not tariffs. A number presented as a delivery charge
+    // would be invented, and this is the family most likely to attract one.
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { intro = [], sections = [] } = buildUtilitySections(route);
+      const prose = [
+        ...intro,
+        ...sections.flatMap((s) => [...(s.paragraphs || []), ...(s.bullets || [])]),
+        ...sections.flatMap((s) => (s.faqs || []).map((f) => f.answer)),
+      ].join(' ');
+      assert.ok(
+        !/delivery (charge|rate)s? (of|is|are) [\d$]/i.test(prose),
+        `${route.path} states a delivery charge figure`
+      );
+    }
+  });
+});
+
+/* ==================================================================
+ * City pages must not read as copies of each other
+ *
+ * 81 of the 144 cities share their headline rate with a same-state
+ * sibling, and when the state and the rate both match, every sentence
+ * derived from them matches too. Lakewood and Parma — same county, same
+ * 9.5¢/kWh — once shared 70% of their main content.
+ *
+ * The fix was to stop restating state-level material in full on every city
+ * page and to publish the fields that belong to the city alone. This pins
+ * the result: the shared portion is bounded, and the local material has to
+ * be there.
+ * ================================================================== */
+
+describe('city pages are distinct from their same-state siblings', () => {
+  const cities = getCities();
+
+  /** 5-gram Jaccard over a page's prose, the same measure the audit uses. */
+  function shingles(text) {
+    const words = String(text).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+    const out = new Set();
+    for (let i = 0; i + 5 <= words.length; i++) out.add(words.slice(i, i + 5).join(' '));
+    return out;
+  }
+  function similarity(a, b) {
+    let shared = 0;
+    for (const gram of a) if (b.has(gram)) shared += 1;
+    return shared / (a.size + b.size - shared || 1);
+  }
+  function prose(city) {
+    const citiesByState = { [city.stateCode]: cities.filter((c) => c.stateCode === city.stateCode) };
+    const { intro = [], sections = [] } = buildCitySections({ city }, { citiesByState });
+    return [
+      ...intro,
+      ...sections.flatMap((s) => [s.heading, ...(s.paragraphs || []), ...(s.bullets || [])]),
+      ...sections.flatMap((s) => (s.faqs || []).flatMap((f) => [f.question, f.answer])),
+    ].join(' ');
+  }
+
+  test('every city publishes the districts only it covers', () => {
+    // getCities() used to drop `neighborhoods`, so the one sentence naming
+    // them read `undefined` and never rendered on any of the 144 pages.
+    for (const city of cities) {
+      assert.ok(
+        Array.isArray(city.neighborhoods) && city.neighborhoods.length > 0,
+        `${city.path} carries no neighbourhoods — the field is being dropped again`
+      );
+    }
+    for (const city of cities.slice(0, 12)) {
+      const text = prose(city);
+      assert.ok(
+        city.neighborhoods.some((area) => text.includes(area)),
+        `${city.path} does not name any of its own districts`
+      );
+    }
+  });
+
+  test('same-rate siblings do not read as one page', () => {
+    // The hardest case in the data: same state, same headline rate, so every
+    // figure-derived sentence is identical and only local material separates
+    // them. Bounded rather than eliminated — going below this needs city-level
+    // rate data we do not hold, and inventing it is not an option.
+    const byState = new Map();
+    for (const city of cities) {
+      if (!byState.has(city.stateCode)) byState.set(city.stateCode, []);
+      byState.get(city.stateCode).push(city);
+    }
+
+    let worst = 0;
+    let worstPair = null;
+    let compared = 0;
+    for (const group of byState.values()) {
+      for (let i = 0; i < group.length; i++) {
+        for (let j = i + 1; j < group.length; j++) {
+          if (group[i].avgRate !== group[j].avgRate) continue;
+          compared += 1;
+          const value = similarity(shingles(prose(group[i])), shingles(prose(group[j])));
+          if (value > worst) {
+            worst = value;
+            worstPair = `${group[i].path} ~ ${group[j].path}`;
+          }
+        }
+      }
+    }
+
+    assert.ok(compared > 0, 'no same-rate sibling pairs were exercised');
+    assert.ok(
+      worst < 0.68,
+      `${worstPair} is ${worst.toFixed(3)} similar — city pages are drifting back toward templates`
+    );
+  });
+
+  test('a city page still points at its own utility where we publish one', () => {
+    let checked = 0;
+    for (const city of cities) {
+      const utility = utilityForCity(city);
+      if (!utility) continue;
+      checked += 1;
+      assert.ok(prose(city).includes(utility.name), `${city.path} does not name ${utility.name}`);
+    }
+    assert.ok(checked > 0, 'no city/utility pairs were exercised');
+  });
+});
+
+/* ==================================================================
+ * Internal link equity
+ *
+ * A page with one inbound link is a page Google has little reason to
+ * crawl often or rank well, however good it is. The 73 guides were the
+ * clearest case: the deepest content on the site, the only family with no
+ * near-duplicate pairs, and a median of one inbound link each.
+ * ================================================================== */
+
+describe('every page family accumulates internal links', () => {
+  test('an article route carries the id its related links are keyed on', () => {
+    // getArticleRouteList dropped `id`, so relatedArticles() had nothing to
+    // look up and the Related Guides block silently rendered empty on all 73.
+    for (const route of articleRoutes) {
+      assert.ok(route.id != null, `${route.path} has no id`);
+    }
+  });
+
+  test('every guide links to other guides, and no guide is a dead end', () => {
+    for (const route of articleRoutes) {
+      const related = relatedArticles(route.id, seoArticles);
+      assert.ok(related.length >= 3, `${route.path} suggests only ${related.length} related guides`);
+      for (const entry of related) {
+        assert.notEqual(String(entry.id), String(route.id), `${route.path} links to itself`);
+      }
+    }
+  });
+
+  test('every guide is suggested by at least one other guide', () => {
+    // Relatedness is not symmetric: a broad guide links out generously and can
+    // receive nothing back. Reciprocity in relatedArticles() is what stops
+    // 17 of the 73 sitting on fewer than three inbound links.
+    const suggested = new Set();
+    for (const route of articleRoutes) {
+      for (const entry of relatedArticles(route.id, seoArticles)) suggested.add(String(entry.id));
+    }
+    for (const route of articleRoutes) {
+      assert.ok(
+        suggested.has(String(route.id)),
+        `/learn/${route.id} is suggested by no other guide — it can only be reached from the index`
+      );
+    }
+  });
+
+  test('state pages link to the guides written about them', () => {
+    let linked = 0;
+    for (const route of getStateRoutes()) {
+      const guides = articlesForState(route.state.code, seoArticles);
+      if (!guides.length) continue;
+      linked += 1;
+      const html = renderNav(route, { fullArticles: seoArticles });
+      for (const guide of guides) {
+        assert.ok(html.includes(`href="${guide.path}"`), `${route.path} does not link to ${guide.path}`);
+      }
+    }
+    assert.ok(linked > 0, 'no state matched any guide');
+  });
+
+  test('a guide is only claimed by a state it is actually about', () => {
+    // Matching on body text would attach any guide mentioning Texas once to
+    // the Texas page, spending that page's authority on something a reader
+    // did not ask for.
+    for (const route of getStateRoutes()) {
+      for (const guide of articlesForState(route.state.code, seoArticles)) {
+        const haystack = `${guide.title} ${(seoArticles[guide.id].tags || []).join(' ')}`.toLowerCase();
+        assert.ok(
+          haystack.includes(route.state.name.toLowerCase()),
+          `${route.path} claims ${guide.path}, which does not name the state in its title or tags`
+        );
+      }
+    }
+  });
+
+  test('a supplier page names the rivals selling in the same states', () => {
+    const providers = getPublishableProviders();
+    for (const route of getProviderRoutes(providers).slice(0, 10)) {
+      const { sections } = buildProviderSections(route);
+      const rivals = sections.find((s) => /Other Suppliers Selling Where/.test(s.heading || ''));
+      const overlapping = providers.filter(
+        (other) =>
+          other.slug !== route.provider.slug &&
+          other.plans > 0 &&
+          (other.planStates || []).some((code) => (route.provider.planStates || []).includes(code))
+      );
+      if (!overlapping.length) continue;
+      assert.ok(rivals, `${route.path} names no overlapping suppliers`);
+      for (const [path] of rivals.links) {
+        assert.notEqual(path, route.path, `${route.path} lists itself as a rival`);
+      }
+    }
   });
 });

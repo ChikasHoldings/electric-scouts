@@ -20,6 +20,8 @@ import {
   buildCitySections,
   buildCompareHubSections,
   buildComparisonSections,
+  buildUtilityHubSections,
+  buildUtilitySections,
   buildProviderSections,
   buildStateSections,
   buildStaticSections,
@@ -51,6 +53,9 @@ export function ogImageFor(route) {
   if (path === '/compare' || path.startsWith('/compare/')) {
     return /-vs-.*-energy$|-energy-vs-/.test(path) ? '/images/og-providers.jpg' : '/images/og-compare.jpg';
   }
+  // A delivery territory is a place question, so it takes the service-areas
+  // image rather than the supplier one.
+  if (path === '/utilities' || path.startsWith('/utilities/')) return '/images/og-service-areas.jpg';
   if (path.startsWith('/providers') || path === '/all-providers') return '/images/og-providers.jpg';
   if (path.startsWith('/business')) return '/images/og-business.jpg';
   if (path.startsWith('/learn') || path === '/learning-center') return '/images/og-learn.jpg';
@@ -147,6 +152,8 @@ export function breadcrumbsFor(route) {
       return [home, { name: 'Providers', path: '/all-providers' }, { name: route.heading, path: route.path }];
     case 'comparison':
       return [home, { name: 'Comparisons', path: '/compare' }, { name: route.heading, path: route.path }];
+    case 'utility':
+      return [home, { name: 'Utilities', path: '/utilities' }, { name: route.utility.name, path: route.path }];
     case 'article':
       return [
         home,
@@ -293,9 +300,18 @@ function siteNav(states) {
     ['/all-providers', 'Electricity Providers'],
     ['/all-states', 'Electricity Rates by State'],
     ['/all-cities', 'Electricity Rates by City'],
+    // Same lesson as /compare: a cluster nothing links to is reachable only by
+    // sitemap, and the orphan check passes anyway because its pages link to
+    // each other.
+    ['/utilities', 'Electricity Utilities by Territory'],
     ['/bill-analyzer', 'Bill Analyzer'],
     ['/residential-electricity', 'Residential Electricity'],
     ['/business-electricity', 'Business Electricity'],
+    // Both are linked from the real header and footer; the prerendered nav is
+    // meant to mirror them and was missing these two, which left them with one
+    // and two inbound links respectively.
+    ['/business-hub', 'Business Electricity by Company Size'],
+    ['/home-concierge', 'Home Concierge'],
     ['/renewable-energy', 'Renewable Energy Plans'],
     ['/savings-calculator', 'Savings Calculator'],
     ['/learning-center', 'Learning Center'],
@@ -385,22 +401,28 @@ function renderSection(section) {
  */
 /**
  * @param {Record<string, any>} route
- * @param {{citiesByState?: Record<string, any[]>, states?: any[], articles?: any[]}} [context]
+ * `articles` is the route list; `fullArticles` is the raw map, which is the
+ * only one carrying the tags the related-guide links are scored on.
+ * @param {{citiesByState?: Record<string, any[]>, states?: any[], articles?: any[], fullArticles?: Record<string, any>}} [context]
  */
 export function buildPageContent(route, context = {}) {
   switch (route.type) {
     case 'city':
       return buildCitySections(route, { citiesByState: context.citiesByState || {} });
     case 'state':
-      return buildStateSections(route);
+      return buildStateSections(route, context);
     case 'provider':
       return buildProviderSections(route);
     case 'comparison':
       return buildComparisonSections(route);
     case 'compare-hub':
       return buildCompareHubSections();
+    case 'utility':
+      return buildUtilitySections(route);
+    case 'utility-hub':
+      return buildUtilityHubSections();
     case 'article':
-      return buildArticleSections(route);
+      return buildArticleSections(route, { articles: context.fullArticles });
     default:
       return buildStaticSections(route, context);
   }

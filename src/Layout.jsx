@@ -470,7 +470,7 @@ export default function Layout({ children, currentPageName }) {
                 </picture>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                Compare electricity rates from {MARKET_TOTALS.providersWithPlans} suppliers across {MARKET_TOTALS.states} deregulated states.
+                Compare electricity rates from {MARKET_TOTALS.providersWithPlans} suppliers across {MARKET_TOTALS.states} deregulated states. Save up to $800/year.
               </p>
               <div className="flex gap-2">
                 <a href="https://facebook.com/electricscouts" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">

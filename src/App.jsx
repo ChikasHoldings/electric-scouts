@@ -37,6 +37,7 @@ const ArticleRedirect = lazy(() => import('@/components/ArticleRedirect'));
 const CityRatesPage = lazy(() => import('@/pages/CityRates'));
 const ArticleDetailPage = lazy(() => import('@/pages/ArticleDetail'));
 const CompareVersusPage = lazy(() => import('@/pages/CompareVersus'));
+const UtilityDetailPage = lazy(() => import('@/pages/UtilityDetail'));
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -180,6 +181,18 @@ const AppRoutes = () => {
         </LayoutWrapper>
       } />
 
+      {/* ── Clean URL: Utility Territories (/utilities/:slug) ── */}
+      {/* The hub at /utilities comes from the registry loop below; only the
+          territory pages need a hand-written route, for the same reason the
+          matchup pages do — the path carries a slug the registry cannot express. */}
+      <Route path="/utilities/:slug" element={
+        <LayoutWrapper currentPageName="UtilityDetail">
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin" /></div>}>
+            <UtilityDetailPage />
+          </Suspense>
+        </LayoutWrapper>
+      } />
+
       {/* ── Legacy Redirects: Old query-param URLs → Clean URLs ── */}
       <Route path="/city-rates" element={
         <Suspense fallback={null}>
@@ -203,6 +216,8 @@ const AppRoutes = () => {
         // CompareVersus is reached only as /compare/:slug, above. Left in the
         // loop it would also publish /compare-versus, a URL nothing links to.
         if (pageName === 'CompareVersus') return null;
+        // Reached only as /utilities/:slug, above.
+        if (pageName === 'UtilityDetail') return null;
         const seoPath = createPageUrl(pageName);
         return (
           <Route

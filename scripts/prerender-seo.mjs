@@ -142,7 +142,9 @@ async function main() {
   // link to every article — without that list the 73 article pages have no
   // inbound link anywhere on the site and stay orphaned.
   const articles = getArticleRouteList(fullArticles);
-  const context = { states, citiesByState, articles };
+  // fullArticles carries the tags the topical article links are scored on;
+  // `articles` above is the route list, which does not.
+  const context = { states, citiesByState, articles, fullArticles };
 
   const routes = getAllRoutes(seoData);
 
