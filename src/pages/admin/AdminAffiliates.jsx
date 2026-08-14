@@ -45,6 +45,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { useToast } from "../../components/ui/use-toast";
+import AdminPage from "@/components/admin/AdminPage";
 
 const emptyForm = {
   slug: "",
@@ -336,7 +337,7 @@ export default function AdminAffiliates() {
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="space-y-6">
+    <AdminPage>
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Card>
@@ -739,6 +740,6 @@ export default function AdminAffiliates() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }

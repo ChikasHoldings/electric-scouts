@@ -15,6 +15,7 @@ import {
   AlertCircle, Loader2, X,
   Zap, Wifi, Tv, Droplet
 } from "lucide-react";
+import AdminPage from "@/components/admin/AdminPage";
 
 const STATUS_CONFIG = {
   new: { label: "New", color: "bg-blue-100 text-blue-800", icon: AlertCircle },
@@ -140,15 +141,10 @@ export default function AdminConcierge() {
     }
   };
 
+  // The screen's name and one-liner come from the top bar, which states them
+  // once for every page. The counts below are what this page alone knows.
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Home Concierge</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage utility setup requests and track revenue</p>
-        </div>
-      </div>
-
+    <AdminPage>
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="border-2">
@@ -434,6 +430,6 @@ export default function AdminConcierge() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }

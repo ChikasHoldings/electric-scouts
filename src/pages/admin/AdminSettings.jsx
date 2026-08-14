@@ -21,6 +21,7 @@ import {
   Check,
   X,
 } from "lucide-react";
+import AdminPage from "@/components/admin/AdminPage";
 
 const TABS = [
   { id: "profile", label: "Profile", icon: User },
@@ -195,16 +196,13 @@ export default function AdminSettings() {
     </div>
   );
 
+  // A single-column form reads badly at full width, so this is the one screen
+  // that narrows its measure — declared, rather than improvised with mx-auto.
+  // The title the header used to repeat now lives in the top bar only.
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage your profile, security, and notification preferences.</p>
-      </div>
-
+    <AdminPage width="narrow">
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1">
+      <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -501,6 +499,6 @@ export default function AdminSettings() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </AdminPage>
   );
 }

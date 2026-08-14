@@ -18,6 +18,7 @@ import {
 import { Plus, Pencil, Loader2, Users, AlertTriangle } from "lucide-react";
 
 import { parseOptionalNumber } from "@/lib/planValidation";
+import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
 
 /**
  * Lead buyers.
@@ -182,17 +183,22 @@ export default function AdminLeadBuyers() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <p className="text-[14px] text-gray-600 leading-relaxed max-w-2xl">
-          Partners who buy qualified leads. A lead is offered to the highest-priority
-          active buyer whose targeting it matches — and never to the same buyer twice.
-        </p>
-        <Button onClick={openNew} className="gap-1.5 flex-shrink-0">
-          <Plus className="w-4 h-4" aria-hidden="true" />
-          Add buyer
-        </Button>
-      </div>
+    <AdminPage>
+      <AdminPageBar
+        summary={
+          <>
+            {buyers.length} {buyers.length === 1 ? "buyer" : "buyers"} · {activeCount} active.
+            A lead is offered to the highest-priority active buyer whose targeting it
+            matches — and never to the same buyer twice.
+          </>
+        }
+        actions={
+          <Button onClick={openNew} size="sm" className="gap-1.5">
+            <Plus className="w-4 h-4" aria-hidden="true" />
+            Add buyer
+          </Button>
+        }
+      />
 
       {activeCount === 0 && (
         <div className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
@@ -371,7 +377,7 @@ export default function AdminLeadBuyers() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }
 

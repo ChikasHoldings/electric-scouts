@@ -29,6 +29,7 @@ import { isCommissionCapable } from "@/lib/commissionCapable";
 import {
   summarizeRevenue, summarizeDeliveries, REVENUE_STATUS, STATUS_LABELS, SOURCE_LABELS,
 } from "@/lib/revenue";
+import AdminPage from "@/components/admin/AdminPage";
 
 /**
  * Revenue.
@@ -226,7 +227,7 @@ export default function AdminRevenue() {
   }
 
   return (
-    <div className="space-y-8">
+    <AdminPage>
       <p className="text-[14px] text-gray-600 leading-relaxed max-w-3xl">
         Earnings are what a partner has agreed to pay. Accrued is what we have
         booked but nobody has confirmed yet &mdash; real activity, not revenue.
@@ -699,6 +700,6 @@ export default function AdminRevenue() {
           <ExternalLink className="w-3 h-3" aria-hidden="true" />
         </a>
       </p>
-    </div>
+    </AdminPage>
   );
 }

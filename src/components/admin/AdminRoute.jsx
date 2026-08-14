@@ -1,34 +1,17 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
+import { ADMIN_ROLES, canAccessPath, landingPathForRole, ROLE_LABELS } from "@/lib/adminNav";
 import AdminLayout from "./AdminLayout";
 import AdminBoot from "./AdminBoot";
 
 /**
- * Which roles may open which admin route.
+ * The gate in front of every admin screen.
  *
- * This must stay in step with the sidebar in AdminLayout: a link an editor can
- * see but not open is a worse experience than no link at all, and Leads was
- * exactly that — listed in the nav for editors, and denied here because it had
- * no entry and fell through to the admin-only default.
- *
- * Anything not listed defaults to admin-only, which is the safe direction to
- * be wrong in for a route added later.
+ * Which roles may open which route is not decided here — it is decided once, in
+ * the nav registry, alongside which roles see the link. The two used to be
+ * separate tables that had to be edited together, and a link an editor could
+ * see but not open was the failure that resulted.
  */
-const routePermissions = {
-  "/admin": ["admin", "editor", "viewer"],
-  "/admin/leads": ["admin", "editor"],
-  "/admin/revenue": ["admin"],
-  "/admin/lead-buyers": ["admin"],
-  "/admin/providers": ["admin", "editor"],
-  "/admin/plans": ["admin", "editor"],
-  "/admin/territories": ["admin", "editor"],
-  "/admin/articles": ["admin", "editor"],
-  "/admin/users": ["admin"],
-  "/admin/affiliates": ["admin"],
-  "/admin/concierge": ["admin", "editor"],
-  "/admin/settings": ["admin", "editor", "viewer"],
-};
-
 export default function AdminRoute({ children }) {
   const { user, profile, isAuthenticated, isLoadingAuth, isLoadingProfile } = useAuth();
   const location = useLocation();
@@ -47,10 +30,9 @@ export default function AdminRoute({ children }) {
   if (isLoadingProfile || (!profile && isAuthenticated)) return <AdminBoot />;
 
   const userRole = profile?.role || "user";
-  const allowedRoles = ["admin", "editor", "viewer"];
 
   // Not an admin/editor/viewer → show access denied
-  if (!allowedRoles.includes(userRole)) {
+  if (!ADMIN_ROLES.includes(userRole)) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-md px-6">
@@ -75,14 +57,7 @@ export default function AdminRoute({ children }) {
     );
   }
 
-  // Check route-level permissions
-  const currentPath = location.pathname;
-  const matchedRoute = Object.keys(routePermissions).find(
-    (route) => currentPath === route || (route !== "/admin" && currentPath.startsWith(route))
-  );
-  const allowedForRoute = matchedRoute ? routePermissions[matchedRoute] : ["admin"];
-
-  if (!allowedForRoute.includes(userRole)) {
+  if (!canAccessPath(userRole, location.pathname)) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center py-20">
@@ -94,14 +69,14 @@ export default function AdminRoute({ children }) {
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Restricted Access</h2>
             <p className="text-gray-600 mb-6">
-              Your role ({userRole}) does not have permission to access this page.
-              Contact an administrator if you need access.
+              Your role ({ROLE_LABELS[userRole] || userRole}) does not have permission to
+              open this page. Contact an administrator if you need access.
             </p>
             <a
-              href="/admin"
+              href={landingPathForRole(userRole)}
               className="inline-flex items-center px-4 py-2 bg-[#0A5C8C] text-white rounded-lg hover:bg-[#084a6f] transition-colors"
             >
-              Go to Dashboard
+              Back to Dashboard
             </a>
           </div>
         </div>

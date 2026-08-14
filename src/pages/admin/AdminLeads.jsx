@@ -59,6 +59,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import AdminPage from "@/components/admin/AdminPage";
 
 // ─── Status Config ──────────────────────────────────────────
 const STATUS_OPTIONS = [
@@ -316,9 +317,10 @@ export default function AdminLeads() {
     return states;
   }, [leads]);
 
-  // No <AdminLayout> wrapper — AdminRoute already provides it.
+  // No <AdminLayout> wrapper — AdminRoute already provides it, and the content
+  // column is the layout's to set, not this page's.
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <AdminPage>
       {/* Action bar — sits right below the AdminLayout top bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p className="text-sm text-gray-500">
@@ -727,7 +729,7 @@ export default function AdminLeads() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
+import { groupedNavForRole, navItemForPath, ROLE_LABELS } from "@/lib/adminNav";
 import {
   LayoutDashboard,
   Building2,
@@ -10,7 +11,6 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronRight,
   Shield,
   ExternalLink,
   Link2,
@@ -24,28 +24,26 @@ import {
   Gauge,
 } from "lucide-react";
 
-// Sidebar nav items ordered by business importance.
-// "admin" = full access, "editor" = content management, "viewer" = read-only dashboard
-const navItems = [
-  { label: "Dashboard", path: "/admin", icon: LayoutDashboard, roles: ["admin", "editor", "viewer"] },
-  { label: "Leads", path: "/admin/leads", icon: UserCheck, roles: ["admin", "editor"] },
-  { label: "Revenue", path: "/admin/revenue", icon: TrendingUp, roles: ["admin"] },
-  { label: "Lead Buyers", path: "/admin/lead-buyers", icon: Handshake, roles: ["admin"] },
-  { label: "Affiliates", path: "/admin/affiliates", icon: Link2, roles: ["admin"] },
-  { label: "Providers", path: "/admin/providers", icon: Building2, roles: ["admin", "editor"] },
-  // One plan screen for every audience. Business and renewable were separate
-  // pages that differed only by a filter, and which one you opened silently
-  // decided how a plan got classified.
-  { label: "Plans", path: "/admin/plans", icon: Zap, roles: ["admin", "editor"] },
-  // Delivery tariffs sit next to Plans because they finish the price a plan
-  // shows: without one, every plan in that market can only show a supply-only
-  // subtotal and no savings comparison.
-  { label: "Delivery Tariffs", path: "/admin/territories", icon: Gauge, roles: ["admin", "editor"] },
-  { label: "Concierge", path: "/admin/concierge", icon: Home, roles: ["admin", "editor"] },
-  { label: "Articles", path: "/admin/articles", icon: FileText, roles: ["admin", "editor"] },
-  { label: "Users", path: "/admin/users", icon: Users, roles: ["admin"] },
-  { label: "Settings", path: "/admin/settings", icon: Settings, roles: ["admin", "editor", "viewer"] },
-];
+/**
+ * Icon names from the nav registry to the components that draw them.
+ *
+ * The registry stays import-free so the route guard and the tests can read it
+ * without React; this map is the one place that needs both.
+ */
+const NAV_ICONS = {
+  dashboard: LayoutDashboard,
+  leads: UserCheck,
+  concierge: Home,
+  revenue: TrendingUp,
+  buyers: Handshake,
+  affiliates: Link2,
+  providers: Building2,
+  plans: Zap,
+  tariffs: Gauge,
+  articles: FileText,
+  users: Users,
+  settings: Settings,
+};
 
 export default function AdminLayout({ children }) {
   const { user, profile, logout } = useAuth();
@@ -79,15 +77,19 @@ export default function AdminLayout({ children }) {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  // Filter nav items based on user role
   const userRole = profile?.role || "viewer";
-  const filteredNavItems = navItems.filter((item) => item.roles.includes(userRole));
+  const navGroups = groupedNavForRole(userRole);
+  const currentPage = navItemForPath(location.pathname);
 
-  const currentPage = filteredNavItems.find(
-    (item) =>
-      location.pathname === item.path ||
-      (item.path !== "/admin" && location.pathname.startsWith(item.path))
-  ) || filteredNavItems[0];
+  // The panel's screens are the kind an operator keeps several of open at once,
+  // and every tab used to be titled the same thing.
+  useEffect(() => {
+    const previous = document.title;
+    document.title = currentPage
+      ? `${currentPage.label} · Electric Scouts Admin`
+      : "Electric Scouts Admin";
+    return () => { document.title = previous; };
+  }, [currentPage]);
 
   const initials = (profile?.full_name || user?.email || "A")
     .split(" ")
@@ -101,7 +103,9 @@ export default function AdminLayout({ children }) {
       <div className="px-4 py-3 border-b border-gray-100">
         <p className="text-sm font-semibold text-gray-900 truncate">{profile?.full_name || "Admin"}</p>
         <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-full capitalize">{userRole}</span>
+        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+          {ROLE_LABELS[userRole] || userRole}
+        </span>
       </div>
       <Link to="/admin/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
         <User className="w-4 h-4" /> Profile
@@ -122,23 +126,31 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+      {/* Mobile header — carries the page name, because the mobile viewport has
+          no sidebar and no top bar to carry it. It used to read "Admin Panel"
+          on all twelve screens. */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-3 py-3 flex items-center gap-2">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg hover:bg-gray-100"
+          className="p-2 -ml-1 rounded-lg hover:bg-gray-100 flex-shrink-0"
+          aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
+          aria-expanded={sidebarOpen}
         >
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-[#0A5C8C]" />
-          <span className="font-bold text-gray-900">Admin Panel</span>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-gray-900 leading-tight truncate">
+            {currentPage?.label || "Admin"}
+          </p>
+          <p className="text-[11px] text-gray-500 leading-tight truncate">
+            Electric Scouts Admin
+          </p>
         </div>
-        {/* Mobile avatar */}
-        <div className="relative" ref={mobileDropdownRef}>
+        <div className="relative flex-shrink-0" ref={mobileDropdownRef}>
           <button
             onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
             className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold"
+            aria-label="Account menu"
           >
             {initials}
           </button>
@@ -182,31 +194,40 @@ export default function AdminLayout({ children }) {
           </div>
         </div>
 
-        {/* Navigation — filtered by role */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-          {filteredNavItems.map((item) => {
-            const isActive =
-              location.pathname === item.path ||
-              (item.path !== "/admin" && location.pathname.startsWith(item.path));
-            const Icon = item.icon;
+        {/* Navigation — grouped, and filtered by role */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Admin sections">
+          {navGroups.map((group, groupIndex) => (
+            <div key={group.id} className={groupIndex > 0 ? "mt-5" : ""}>
+              {group.label && (
+                <p className="px-3 pb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-gray-500">
+                  {group.label}
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {group.items.map((item) => {
+                  const isActive = currentPage?.path === item.path;
+                  const Icon = NAV_ICONS[item.icon] || LayoutDashboard;
 
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                  isActive
-                    ? "bg-white/15 text-white"
-                    : "text-gray-300 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="truncate">{item.label}</span>
-                {isActive && <ChevronRight className="w-4 h-4 ml-auto flex-shrink-0" />}
-              </Link>
-            );
-          })}
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setSidebarOpen(false)}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                        isActive
+                          ? "bg-white/15 text-white"
+                          : "text-gray-300 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5 flex-shrink-0" />
+                      <span className="truncate">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* User info & logout — pinned to bottom */}
@@ -232,6 +253,7 @@ export default function AdminLayout({ children }) {
               onClick={handleLogout}
               className="p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex-shrink-0"
               title="Sign Out"
+              aria-label="Sign out"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -240,16 +262,19 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Main content */}
-      <main className="lg:ml-72 min-h-screen pt-16 lg:pt-0">
-        {/* Top bar with avatar dropdown */}
-        <div className="hidden lg:flex items-center justify-between bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-30">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">{currentPage?.label || "Admin"}</h1>
-            <p className="text-sm text-gray-500">
-              Electric Scouts Administration
+      <main className="lg:ml-72 min-h-screen pt-[60px] lg:pt-0">
+        {/* Top bar — the single place a screen is named. Pages below it render
+            their live counts and actions, never their own title. */}
+        <div className="hidden lg:flex items-center justify-between gap-6 bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-30">
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold text-gray-900 truncate">
+              {currentPage?.label || "Admin"}
+            </h1>
+            <p className="text-sm text-gray-500 truncate">
+              {currentPage?.description || "Electric Scouts Administration"}
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-shrink-0">
             <Link
               to="/"
               className="text-sm text-gray-500 hover:text-[#0A5C8C] flex items-center gap-1"
@@ -268,7 +293,7 @@ export default function AdminLayout({ children }) {
                 </div>
                 <div className="text-left hidden xl:block">
                   <p className="text-sm font-medium text-gray-900 leading-tight">{profile?.full_name || "Admin"}</p>
-                  <p className="text-xs text-gray-500 leading-tight capitalize">{userRole}</p>
+                  <p className="text-xs text-gray-500 leading-tight">{ROLE_LABELS[userRole] || userRole}</p>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${avatarDropdownOpen ? "rotate-180" : ""}`} />
               </button>
@@ -277,8 +302,11 @@ export default function AdminLayout({ children }) {
           </div>
         </div>
 
-        {/* Page content */}
-        <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+        {/* Page content. Every screen gets the same gutter and the same maximum
+            column, so the content does not resize as you move between them. */}
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto w-full max-w-[1360px]">{children}</div>
+        </div>
       </main>
     </div>
   );

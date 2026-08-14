@@ -43,6 +43,7 @@ import {
   Image,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import AdminPage from "@/components/admin/AdminPage";
 
 const CATEGORIES = [
   "Energy Savings",
@@ -207,8 +208,8 @@ export default function AdminArticles() {
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <AdminPage>
+      {/* Filters, and the primary action */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -520,6 +521,6 @@ export default function AdminArticles() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }
