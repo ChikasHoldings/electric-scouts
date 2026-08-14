@@ -34,12 +34,13 @@ import {
 import { ARTICLE_IDS } from '../src/seo/articles.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
 import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket } from '../src/seo/market.js';
-import { buildCitySections, buildStateSections, buildProviderSections } from '../src/seo/content.js';
+import { buildCitySections, buildStateSections, buildProviderSections, buildComparisonSections } from '../src/seo/content.js';
 import { createResolver, parseHtml } from '../src/seo/audit.mjs';
 import { buildPageContent, renderBody } from '../src/seo/render.js';
 import { organizationSchema, standaloneOrganizationSchema } from '../src/seo/organization.js';
 import { getStates, getCities } from '../src/seo/locations.js';
 import { LOCATION_DATA } from '../src/components/location/locationData.js';
+import { comparisonsForProvider, comparisonsForState } from '../src/seo/comparisons.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -1273,5 +1274,138 @@ describe('published copy does not link to noindex legacy routes', () => {
       !articles.includes('/city-rates?city='),
       'article copy links to the noindex /city-rates route; use the clean /electricity-rates/:state/:city URL'
     );
+  });
+});
+
+/* ==================================================================
+ * Internal linking within the comparison cluster
+ *
+ * Before these links existed every matchup page had exactly one inbound
+ * link, from the hub. A page nothing points at from the pages people
+ * actually land on is a page Google has little reason to rank.
+ * ================================================================== */
+
+describe('supplier and state pages link into their matchups', () => {
+  test('a provider page links to every matchup featuring that provider', () => {
+    const providers = getPublishableProviders();
+    let checked = 0;
+    for (const route of getProviderRoutes(providers)) {
+      const matchups = comparisonsForProvider(route.provider.slug);
+      if (!matchups.length) continue;
+      const html = renderNav(route);
+      for (const entry of matchups) {
+        checked += 1;
+        assert.ok(
+          html.includes(`href="${entry.path}"`),
+          `/providers/${route.provider.slug} does not link to ${entry.path}`
+        );
+      }
+    }
+    assert.ok(checked > 0, 'no provider matchups were exercised');
+  });
+
+  test('a state page links to the matchups fought in that state', () => {
+    let checked = 0;
+    for (const route of getStateRoutes()) {
+      const matchups = comparisonsForState(route.state.code);
+      if (!matchups.length) continue;
+      const html = renderNav(route);
+      for (const entry of matchups) {
+        checked += 1;
+        assert.ok(
+          html.includes(`href="${entry.path}"`),
+          `${route.path} does not link to ${entry.path}, a matchup fought in ${route.state.code}`
+        );
+      }
+    }
+    assert.ok(checked > 0, 'no state matchups were exercised');
+  });
+
+  test('a matchup page links sideways to other matchups, not just back to the hub', () => {
+    const routes = getComparisonRoutes().filter((r) => r.type === 'comparison');
+    const providerRoutes = routes.filter((r) => r.comparison.type === 'provider-vs-provider');
+    assert.ok(providerRoutes.length > 0, 'no supplier matchups in the registry');
+
+    for (const route of providerRoutes) {
+      const html = renderNav(route);
+      const linked = [...html.matchAll(/href="(\/compare\/[^"]+)"/g)].map((m) => m[1]);
+      const others = new Set(linked.filter((p) => p !== route.path));
+      assert.ok(
+        others.size > 0,
+        `${route.path} links to no other matchup — the cluster dead-ends here`
+      );
+    }
+  });
+
+  test('every published matchup is reachable from more than the hub alone', () => {
+    const providers = getPublishableProviders();
+    const pages = [
+      ...getProviderRoutes(providers),
+      ...getStateRoutes(),
+      ...getComparisonRoutes().filter((r) => r.type === 'comparison'),
+    ];
+    const inbound = new Map();
+    for (const route of pages) {
+      for (const match of renderNav(route).matchAll(/href="(\/compare\/[^"]+)"/g)) {
+        if (match[1] === route.path) continue;
+        inbound.set(match[1], (inbound.get(match[1]) || 0) + 1);
+      }
+    }
+    for (const route of getComparisonRoutes().filter((r) => r.type === 'comparison')) {
+      assert.ok(
+        (inbound.get(route.path) || 0) > 0,
+        `${route.path} has no inbound link from any supplier, state or sibling matchup page`
+      );
+    }
+  });
+});
+
+/* ==================================================================
+ * Comparison pages stay distinct and substantial
+ * ================================================================== */
+
+describe('comparison pages are neither thin nor near-duplicates', () => {
+  /** Rough word count of the prose a comparison page renders. */
+  function wordsIn(route) {
+    const { intro = [], sections = [] } = buildComparisonSections(route);
+    const parts = [
+      ...intro,
+      ...sections.flatMap((s) => [s.heading, ...(s.paragraphs || []), ...(s.bullets || [])]),
+      ...sections.flatMap((s) => (s.faqs || []).flatMap((f) => [f.question, f.answer])),
+    ];
+    return parts.join(' ').split(/\s+/).filter(Boolean).length;
+  }
+
+  test('every comparison page carries substantial prose', () => {
+    for (const route of getComparisonRoutes().filter((r) => r.type === 'comparison')) {
+      const words = wordsIn(route);
+      assert.ok(words >= 220, `${route.path} has only ${words} words of prose`);
+    }
+  });
+
+  test('no two comparison pages open with the same sentence', () => {
+    const openings = new Map();
+    for (const route of getComparisonRoutes().filter((r) => r.type === 'comparison')) {
+      const { intro = [] } = buildComparisonSections(route);
+      const first = (intro[0] || '').trim();
+      assert.ok(first, `${route.path} has no opening sentence`);
+      assert.ok(
+        !openings.has(first),
+        `${route.path} opens identically to ${openings.get(first)} — that is the templated-page smell`
+      );
+      openings.set(first, route.path);
+    }
+  });
+
+  test('every comparison page has a unique title, description and heading', () => {
+    for (const field of ['title', 'description', 'heading']) {
+      const seen = new Map();
+      for (const route of getComparisonRoutes()) {
+        const value = route[field];
+        assert.ok(value, `${route.path} has no ${field}`);
+        assert.ok(!seen.has(value), `${route.path} shares its ${field} with ${seen.get(value)}`);
+        seen.set(value, route.path);
+      }
+    }
   });
 });

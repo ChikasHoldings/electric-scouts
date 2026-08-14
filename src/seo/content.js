@@ -19,7 +19,12 @@
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
 import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
-import { getPlanComparisons, getProviderComparisons } from './comparisons.js';
+import {
+  comparisonsForProvider,
+  comparisonsForState,
+  getPlanComparisons,
+  getProviderComparisons,
+} from './comparisons.js';
 import {
   MARKET_GENERATED_AT,
   compareToStateMedian,
@@ -499,6 +504,26 @@ export function buildStateSections(route) {
     });
   }
 
+  /* Matchups fought in this state.
+   *
+   * Only the pairs that actually overlap here, which is what makes this
+   * different from a generic "see also" block: a reader in Ohio is shown the
+   * suppliers competing for their address, not the Texas-only pairs. The
+   * registry drops a matchup as soon as its two suppliers stop sharing a
+   * state, so this list cannot outlive the pages it points at. */
+  const stateMatchups = comparisonsForState(state.code);
+  if (stateMatchups.length) {
+    sections.push({
+      heading: `Supplier Matchups in ${state.name}`,
+      paragraphs: [
+        `${stateMatchups.length === 1 ? 'One pair of suppliers in' : `These ${stateMatchups.length} pairs of suppliers in`} ` +
+          `${state.name} sell against each other closely enough to be worth comparing directly. ` +
+          `Each page counts rates, plan mix and exit fees for both sides in ${state.name} ${asOf}.`,
+      ],
+      links: stateMatchups.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
   sections.push({
     heading: `${state.name} Electricity Questions`,
     faqs: buildStateFaqs(state, market, insights),
@@ -508,6 +533,7 @@ export function buildStateSections(route) {
     heading: 'Next Steps',
     links: [
       ['/compare-rates', 'Compare plans for your ZIP code'],
+      ['/compare', 'Compare suppliers head to head'],
       ['/all-states', 'See every deregulated state we cover'],
       ['/all-providers', 'Browse the supplier directory'],
       ['/learning-center', 'Read our electricity guides'],
@@ -611,6 +637,30 @@ export function buildProviderSections(route) {
           `from the supplier directory.`,
       ],
       links: extraStates.map((code) => [STATE_PAGE_PATHS[code], `${STATE_NAMES[code]} electricity rates`]),
+    });
+  }
+
+  /* Head-to-head pages featuring this supplier.
+   *
+   * These links are the reason the /compare cluster is worth publishing. A
+   * matchup page answers "which of these two" — the question a reader has
+   * immediately after reading one supplier's page — so the supplier page is
+   * where the link belongs. Without it every matchup had exactly one inbound
+   * link, from the hub, and nothing pointed at it from the pages people
+   * actually land on. */
+  const matchups = comparisonsForProvider(provider.slug);
+  if (matchups.length) {
+    const opponents = matchups.map((entry) =>
+      entry.a.slug === provider.slug ? entry.b.name : entry.a.name
+    );
+    sections.push({
+      heading: `${provider.name} Compared Head to Head`,
+      paragraphs: [
+        `We hold side-by-side comparisons of ${provider.name} against ` +
+          `${joinNames(opponents, 3)} — rates, plan counts, contract terms and exit fees, ` +
+          `counted in every state where both are sold.`,
+      ],
+      links: matchups.map((entry) => [entry.path, entry.heading]),
     });
   }
 
@@ -1827,6 +1877,27 @@ function providerVersusSections(comparison) {
 
   sections.push({ heading: `${a.name} vs ${b.name}: Common Questions`, faqs });
 
+  /* Sideways links to the other matchups either supplier appears in.
+   *
+   * Someone comparing two suppliers has usually not narrowed it to exactly
+   * these two, so the next question is almost always "and how does one of them
+   * do against a third". Linking those pages from here is what turns the
+   * cluster into something a reader can walk, rather than a set of leaves that
+   * all hang off the hub and dead-end. */
+  const related = [...comparisonsForProvider(a.slug), ...comparisonsForProvider(b.slug)]
+    .filter((entry) => entry.slug !== comparison.slug)
+    .filter((entry, index, list) => list.findIndex((other) => other.slug === entry.slug) === index);
+  if (related.length) {
+    sections.push({
+      heading: 'Other Matchups With These Suppliers',
+      paragraphs: [
+        `If one of these two is on your shortlist but the other is not, these compare the same ` +
+          `supplier against a different competitor, on the same figures.`,
+      ],
+      links: related.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
   sections.push({
     heading: 'Check Both at Your Address',
     paragraphs: [
@@ -1879,7 +1950,77 @@ function planVersusSections(comparison) {
     },
   });
 
+  /* Where the split is most lopsided.
+   *
+   * The state table above shows every market, which is thorough and hard to
+   * read — 12 rows of two numbers do not tell you where the choice actually
+   * matters. These are the markets at either end, named, so the page says
+   * something a reader can act on rather than leaving them to scan. Only for
+   * countable comparisons: "offered / not offered" has no extremes to find. */
+  if (unit === 'plans') {
+    const scored = rows
+      .map((row) => ({ ...row, a: Number(row.a) || 0, b: Number(row.b) || 0 }))
+      .filter((row) => row.a + row.b > 0);
+    const widestA = [...scored].sort((x, y) => y.a - y.b - (x.a - x.b))[0];
+    const widestB = [...scored].sort((x, y) => y.b - y.a - (x.b - x.a))[0];
+    const bullets = [];
+    if (widestA && widestA.a > widestA.b) {
+      bullets.push(
+        `${widestA.name} leans hardest toward ${a.short.toLowerCase()}: ${widestA.a} of them ` +
+          `against ${widestA.b} ${b.short.toLowerCase()}.`
+      );
+    }
+    if (widestB && widestB.b > widestB.a && widestB.name !== widestA?.name) {
+      bullets.push(
+        `${widestB.name} goes the other way: ${widestB.b} ${b.short.toLowerCase()} ` +
+          `against ${widestB.a} ${a.short.toLowerCase()}.`
+      );
+    }
+    const balanced = scored.filter((row) => row.a > 0 && row.b > 0);
+    if (balanced.length) {
+      bullets.push(
+        `${balanced.length} of the ${scored.length} markets carry both, so in most states this is ` +
+          `a real choice rather than a decision the market makes for you.`
+      );
+    }
+    const absent = scored.filter((row) => row.a === 0 || row.b === 0);
+    if (absent.length) {
+      bullets.push(
+        `In ${joinNames(absent.map((row) => row.name), 4)} one side is not sold at all, ` +
+          `so the comparison there is academic.`
+      );
+    }
+    if (bullets.length) {
+      sections.push({
+        heading: 'Where the Balance Tips',
+        paragraphs: [
+          `The state table is the full picture; these are the markets worth noticing in it.`,
+        ],
+        bullets,
+        links: [widestA, widestB]
+          .filter(Boolean)
+          .filter((row, index, list) => list.findIndex((other) => other.name === row.name) === index)
+          .map((row) => [row.path, `${row.name} electricity rates`]),
+      });
+    }
+  }
+
   sections.push({ heading: 'Questions People Ask', faqs });
+
+  /* The other plan-shape questions. Someone weighing fixed against variable is
+   * usually also deciding a term length and whether an exit fee matters — the
+   * shapes are chosen together, so the pages should link together. */
+  const otherShapes = getPlanComparisons().filter((entry) => entry.slug !== comparison.slug);
+  if (otherShapes.length) {
+    sections.push({
+      heading: 'The Other Choices You Are Making',
+      paragraphs: [
+        `Plan shape is not one decision but several, taken at the same time. These cover the rest ` +
+          `of them, counted from the same catalog.`,
+      ],
+      links: otherShapes.map((entry) => [entry.path, entry.heading]),
+    });
+  }
 
   sections.push({
     heading: 'See What Is Available Where You Live',

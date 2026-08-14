@@ -164,6 +164,36 @@ export const PROVIDER_MATCHUPS = [
     angle:
       'Two mid-sized suppliers competing across Illinois, the Mid-Atlantic and Texas, with different renewable positions.',
   },
+  {
+    a: 'constellation-energy',
+    b: 'verde-energy',
+    angle:
+      'The broadest catalog in our data against the greenest. Constellation sells more plans, in more states, across more contract lengths than anyone we track; Verde sells fewer, but almost all of them are renewable. The choice is between having the most options and having mostly green ones.',
+  },
+  {
+    a: 'direct-energy',
+    b: 'xoom-energy',
+    angle:
+      'These two open within a tenth of a cent of each other across ten shared states, which makes the entry rate close to useless as a tiebreaker. What separates them is shape: one offers contract lengths either side of a year and some plans with no exit fee, the other keeps to twelve and twenty-four months with an exit fee on every plan.',
+  },
+  {
+    a: 'cleanchoice-energy',
+    b: 'constellation-energy',
+    angle:
+      'The clearest read we have on what all-renewable supply costs. One sells nothing but 100% renewable plans; the other sells the cheapest entry rate in the catalog and offers green as one option among many. The gap between their starting rates is the premium, in cents, before any argument about whether it is worth paying.',
+  },
+  {
+    a: 'inspire-clean-energy',
+    b: 'perch-energy',
+    angle:
+      'Two suppliers selling nothing but renewable plans, none of which carry an early termination fee, built in opposite ways: one is a month-to-month subscription with a rate that can move, the other locks a fixed rate for a year or two. Same energy, same freedom to leave, entirely different exposure to price.',
+  },
+  {
+    a: 'clearview-energy',
+    b: 'town-square-energy',
+    angle:
+      'Two small Northeast catalogs of near-identical size and price, where the decision comes down to how long you want to commit — one sells a single twelve-month product, the other adds a six-month term for anyone unwilling to sign for a year.',
+  },
 ];
 
 /* ------------------------------------------------------------------ *
