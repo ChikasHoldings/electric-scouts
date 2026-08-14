@@ -14,9 +14,12 @@
 
 import { SITE_NAME, SITE_URL, absoluteUrl } from './site.js';
 import { MARKET_TOTALS } from './market.js';
+import { getComparisons } from './comparisons.js';
 import {
   buildArticleSections,
   buildCitySections,
+  buildCompareHubSections,
+  buildComparisonSections,
   buildProviderSections,
   buildStateSections,
   buildStaticSections,
@@ -42,6 +45,12 @@ export function ogImageFor(route) {
   const path = route.path || '/';
   if (path.startsWith('/compare-rates')) return '/images/og-compare.jpg';
   if (path.startsWith('/bill-analyzer')) return '/images/og-bill-analyzer.jpg';
+  // Supplier matchups are a provider-shaped question; plan-shape comparisons
+  // belong with the comparison tool. /compare-rates is matched above, so this
+  // only catches the /compare family.
+  if (path === '/compare' || path.startsWith('/compare/')) {
+    return /-vs-.*-energy$|-energy-vs-/.test(path) ? '/images/og-providers.jpg' : '/images/og-compare.jpg';
+  }
   if (path.startsWith('/providers') || path === '/all-providers') return '/images/og-providers.jpg';
   if (path.startsWith('/business')) return '/images/og-business.jpg';
   if (path.startsWith('/learn') || path === '/learning-center') return '/images/og-learn.jpg';
@@ -161,6 +170,8 @@ export function breadcrumbsFor(route) {
       ];
     case 'provider':
       return [home, { name: 'Providers', path: '/all-providers' }, { name: route.heading, path: route.path }];
+    case 'comparison':
+      return [home, { name: 'Comparisons', path: '/compare' }, { name: route.heading, path: route.path }];
     case 'article':
       return [
         home,
@@ -206,6 +217,25 @@ export function structuredDataFor(route, content) {
       mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(route.path) },
       author: { '@id': `${SITE_URL}/#organization` },
       publisher: { '@id': `${SITE_URL}/#organization` },
+    });
+  }
+
+  // The comparison hub is a genuine list of pages, which is the one thing
+  // ItemList is for. Nothing else here gets it: an ItemList over a page's
+  // internal links describes navigation, not content, and Google treats that
+  // as markup that does not match the page.
+  if (route.type === 'compare-hub') {
+    const entries = getComparisons();
+    graph.push({
+      '@type': 'ItemList',
+      name: 'Electricity comparisons',
+      numberOfItems: entries.length,
+      itemListElement: entries.map((entry, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: entry.heading,
+        url: absoluteUrl(entry.path),
+      })),
     });
   }
 
@@ -384,6 +414,10 @@ export function buildPageContent(route, context = {}) {
       return buildStateSections(route);
     case 'provider':
       return buildProviderSections(route);
+    case 'comparison':
+      return buildComparisonSections(route);
+    case 'compare-hub':
+      return buildCompareHubSections();
     case 'article':
       return buildArticleSections(route);
     default:

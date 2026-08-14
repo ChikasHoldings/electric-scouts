@@ -1,24 +1,24 @@
 {
-  "generatedAt": "2026-08-11",
+  "generatedAt": "2026-08-14",
   "source": "supabase: electricity_plans (is_active), electricity_providers",
   "totals": {
-    "activePlans": 378,
+    "activePlans": 372,
     "providersWithPlans": 35,
     "states": 12
   },
   "states": {
     "CT": {
-      "plans": 26,
-      "residentialPlans": 22,
-      "businessPlans": 4,
-      "renewablePlans": 13,
-      "renewableProviders": 10,
-      "fixedPlans": 25,
+      "plans": 23,
+      "residentialPlans": 20,
+      "businessPlans": 3,
+      "renewablePlans": 12,
+      "renewableProviders": 9,
+      "fixedPlans": 22,
       "variablePlans": 1,
       "noEtfPlans": 9,
       "minRate": 9.8,
       "maxRate": 14.49,
-      "medianRate": 11.8,
+      "medianRate": 11.79,
       "minResidentialRate": 10.2,
       "minBusinessRate": 9.8,
       "minRenewableRate": 10.2,
@@ -29,7 +29,7 @@
         24
       ],
       "monthToMonth": true,
-      "providers": 15,
+      "providers": 14,
       "providerNames": [
         "CleanChoice Energy",
         "Clearview Energy",
@@ -38,7 +38,6 @@
         "Inspire Clean Energy",
         "Just Energy",
         "Major Energy",
-        "NextVolt Energy",
         "Perch Energy",
         "Public Power",
         "Spark Energy",
@@ -168,14 +167,14 @@
       ]
     },
     "ME": {
-      "plans": 22,
-      "residentialPlans": 20,
+      "plans": 20,
+      "residentialPlans": 18,
       "businessPlans": 2,
-      "renewablePlans": 9,
+      "renewablePlans": 8,
       "renewableProviders": 7,
-      "fixedPlans": 22,
+      "fixedPlans": 20,
       "variablePlans": 0,
-      "noEtfPlans": 8,
+      "noEtfPlans": 6,
       "minRate": 9.4,
       "maxRate": 16.49,
       "medianRate": 14.89,
@@ -205,17 +204,17 @@
       ]
     },
     "NH": {
-      "plans": 22,
-      "residentialPlans": 19,
+      "plans": 21,
+      "residentialPlans": 18,
       "businessPlans": 3,
       "renewablePlans": 7,
       "renewableProviders": 6,
-      "fixedPlans": 22,
+      "fixedPlans": 21,
       "variablePlans": 0,
-      "noEtfPlans": 6,
+      "noEtfPlans": 5,
       "minRate": 9.3,
       "maxRate": 14.49,
-      "medianRate": 12.5,
+      "medianRate": 12.49,
       "minResidentialRate": 9.7,
       "minBusinessRate": 9.3,
       "minRenewableRate": 9.7,
@@ -525,13 +524,13 @@
       "businessPlans": 0,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 4,
+      "variablePlans": 1,
       "noEtfPlans": 0,
       "minRate": 9.49,
       "maxRate": 19.7,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 13.5,
+      "minResidentialRate": 9.49,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -564,12 +563,12 @@
       "renewablePlans": 0,
       "renewableProviders": 0,
       "fixedPlans": 0,
-      "variablePlans": 0,
+      "variablePlans": 6,
       "noEtfPlans": 0,
       "minRate": 11.8,
       "maxRate": 14.7,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 14.2,
+      "minResidentialRate": 11.8,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -609,14 +608,14 @@
       "businessPlans": 1,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 1,
+      "variablePlans": 4,
       "noEtfPlans": 0,
       "minRate": 9.8,
       "maxRate": 15.5,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
+      "medianRate": 15.4,
+      "minResidentialRate": 15.3,
+      "minBusinessRate": 9.8,
       "minRenewableRate": null,
       "terms": [
         12,
@@ -644,22 +643,22 @@
       "businessPlans": 0,
       "renewablePlans": 8,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "fixedPlans": 2,
+      "variablePlans": 6,
+      "noEtfPlans": 6,
       "minRate": 9.5,
       "maxRate": 18.9,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 13.05,
+      "minResidentialRate": 9.5,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 9.5,
       "terms": [
         12,
         15,
         24,
         36
       ],
-      "monthToMonth": false,
+      "monthToMonth": true,
       "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
@@ -683,12 +682,12 @@
       "renewablePlans": 0,
       "renewableProviders": 0,
       "fixedPlans": 0,
-      "variablePlans": 0,
+      "variablePlans": 3,
       "noEtfPlans": 0,
       "minRate": 15.6,
       "maxRate": 15.7,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 15.6,
+      "minResidentialRate": 15.6,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -734,15 +733,15 @@
       "businessPlans": 0,
       "renewablePlans": 17,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 17,
       "variablePlans": 0,
-      "noEtfPlans": 0,
+      "noEtfPlans": 9,
       "minRate": 8.9,
       "maxRate": 16.49,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 10.99,
+      "minResidentialRate": 8.9,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 8.9,
       "terms": [
         12,
         24
@@ -790,15 +789,15 @@
       "businessPlans": 1,
       "renewablePlans": 1,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 12,
       "variablePlans": 0,
       "noEtfPlans": 0,
       "minRate": 6.59,
       "maxRate": 15.09,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 10.84,
+      "minResidentialRate": 6.59,
+      "minBusinessRate": 9.4,
+      "minRenewableRate": 10.1,
       "terms": [
         12
       ],
@@ -848,15 +847,15 @@
       "businessPlans": 13,
       "renewablePlans": 9,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "fixedPlans": 34,
+      "variablePlans": 7,
+      "noEtfPlans": 11,
       "minRate": 6.49,
       "maxRate": 16.9,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 10,
+      "minResidentialRate": 6.49,
+      "minBusinessRate": 7.8,
+      "minRenewableRate": 8.4,
       "terms": [
         3,
         4,
@@ -910,15 +909,15 @@
       "businessPlans": 9,
       "renewablePlans": 7,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "fixedPlans": 29,
+      "variablePlans": 4,
+      "noEtfPlans": 4,
       "minRate": 6.29,
       "maxRate": 15.8,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 10.4,
+      "minResidentialRate": 6.29,
+      "minBusinessRate": 7.5,
+      "minRenewableRate": 7.19,
       "terms": [
         7,
         12,
@@ -948,12 +947,12 @@
       "renewablePlans": 0,
       "renewableProviders": 0,
       "fixedPlans": 0,
-      "variablePlans": 0,
+      "variablePlans": 5,
       "noEtfPlans": 0,
       "minRate": 15.5,
       "maxRate": 16.2,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 15.6,
+      "minResidentialRate": 15.5,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -982,15 +981,15 @@
       "businessPlans": 0,
       "renewablePlans": 1,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 2,
       "variablePlans": 0,
-      "noEtfPlans": 0,
+      "noEtfPlans": 2,
       "minRate": 15.99,
       "maxRate": 16.49,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 16.24,
+      "minResidentialRate": 15.99,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 16.49,
       "terms": [
         12
       ],
@@ -1030,14 +1029,14 @@
       "businessPlans": 4,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
+      "fixedPlans": 11,
       "variablePlans": 0,
       "noEtfPlans": 0,
       "minRate": 6.29,
       "maxRate": 13.79,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
+      "medianRate": 8.29,
+      "minResidentialRate": 6.29,
+      "minBusinessRate": 7.2,
       "minRenewableRate": null,
       "terms": [
         12
@@ -1069,13 +1068,13 @@
       "businessPlans": 0,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 1,
+      "variablePlans": 2,
       "noEtfPlans": 0,
       "minRate": 10,
       "maxRate": 13.2,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 11.29,
+      "minResidentialRate": 10,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -1103,15 +1102,15 @@
       "businessPlans": 1,
       "renewablePlans": 2,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 1,
+      "variablePlans": 2,
       "noEtfPlans": 0,
       "minRate": 10,
       "maxRate": 13.4,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 10.5,
+      "minResidentialRate": 10.5,
+      "minBusinessRate": 10,
+      "minRenewableRate": 10.5,
       "terms": [
         3,
         12
@@ -1149,22 +1148,22 @@
       "businessPlans": 0,
       "renewablePlans": 17,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "fixedPlans": 12,
+      "variablePlans": 5,
+      "noEtfPlans": 6,
       "minRate": 8.6,
       "maxRate": 17.9,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 12.4,
+      "minResidentialRate": 8.6,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 8.6,
       "terms": [
         12,
         18,
         24,
         36
       ],
-      "monthToMonth": false,
+      "monthToMonth": true,
       "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
@@ -1203,15 +1202,15 @@
       "businessPlans": 3,
       "renewablePlans": 6,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 16,
       "variablePlans": 0,
       "noEtfPlans": 0,
       "minRate": 6.2,
       "maxRate": 14.5,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 10.35,
+      "minResidentialRate": 6.8,
+      "minBusinessRate": 6.2,
+      "minRenewableRate": 7.8,
       "terms": [
         12,
         24
@@ -1253,16 +1252,16 @@
       "renewablePlans": 15,
       "renewableProviders": 1,
       "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "variablePlans": 15,
+      "noEtfPlans": 15,
       "minRate": 8.49,
       "maxRate": 15.99,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 10.8,
+      "minResidentialRate": 8.49,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 8.49,
       "terms": [],
-      "monthToMonth": false,
+      "monthToMonth": true,
       "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
@@ -1300,15 +1299,15 @@
       "businessPlans": 2,
       "renewablePlans": 7,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 9,
+      "variablePlans": 5,
       "noEtfPlans": 0,
       "minRate": 8.3,
       "maxRate": 16.5,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 11.25,
+      "minResidentialRate": 9.9,
+      "minBusinessRate": 8.3,
+      "minRenewableRate": 9.99,
       "terms": [
         3,
         12,
@@ -1388,13 +1387,13 @@
       "businessPlans": 0,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
+      "fixedPlans": 7,
       "variablePlans": 0,
-      "noEtfPlans": 0,
+      "noEtfPlans": 7,
       "minRate": 10.69,
       "maxRate": 14.79,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 11.89,
+      "minResidentialRate": 10.69,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -1425,23 +1424,22 @@
         "30-Day Satisfaction Guarantee"
       ],
       "planStates": [
-        "CT",
         "TX"
       ],
-      "plans": 10,
-      "residentialPlans": 6,
-      "businessPlans": 4,
-      "renewablePlans": 4,
+      "plans": 7,
+      "residentialPlans": 4,
+      "businessPlans": 3,
+      "renewablePlans": 3,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 7,
       "variablePlans": 0,
       "noEtfPlans": 0,
       "minRate": 9.8,
       "maxRate": 14.8,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 12.8,
+      "minResidentialRate": 12.8,
+      "minBusinessRate": 9.8,
+      "minRenewableRate": 11.8,
       "terms": [
         12,
         24
@@ -1504,14 +1502,14 @@
       "renewablePlans": 6,
       "renewableProviders": 1,
       "fixedPlans": 0,
-      "variablePlans": 0,
+      "variablePlans": 6,
       "noEtfPlans": 0,
       "minRate": 9.8,
       "maxRate": 14.7,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 13.75,
+      "minResidentialRate": 9.8,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 9.8,
       "terms": [
         3,
         12,
@@ -1578,8 +1576,8 @@
       "noEtfPlans": 0,
       "minRate": 16.5,
       "maxRate": 17.1,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 16.8,
+      "minResidentialRate": 16.5,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -1625,15 +1623,15 @@
       "businessPlans": 3,
       "renewablePlans": 15,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 15,
       "variablePlans": 0,
-      "noEtfPlans": 0,
+      "noEtfPlans": 15,
       "minRate": 9.8,
       "maxRate": 14.2,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 11.8,
+      "minResidentialRate": 11.2,
+      "minBusinessRate": 9.8,
+      "minRenewableRate": 9.8,
       "terms": [
         12,
         24
@@ -1673,13 +1671,13 @@
       "businessPlans": 0,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
+      "fixedPlans": 8,
       "variablePlans": 0,
-      "noEtfPlans": 0,
+      "noEtfPlans": 8,
       "minRate": 6.49,
       "maxRate": 13.99,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 10.74,
+      "minResidentialRate": 6.49,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -1715,12 +1713,12 @@
       "renewablePlans": 0,
       "renewableProviders": 0,
       "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "variablePlans": 5,
+      "noEtfPlans": 1,
       "minRate": 15.8,
       "maxRate": 18.9,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 16.2,
+      "minResidentialRate": 15.8,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -1729,7 +1727,7 @@
         24,
         36
       ],
-      "monthToMonth": false,
+      "monthToMonth": true,
       "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     },
     {
@@ -1750,15 +1748,15 @@
       "businessPlans": 1,
       "renewablePlans": 8,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "fixedPlans": 2,
+      "variablePlans": 6,
+      "noEtfPlans": 6,
       "minRate": 9.5,
       "maxRate": 14.2,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 12,
+      "minResidentialRate": 9.5,
+      "minBusinessRate": 10.8,
+      "minRenewableRate": 9.5,
       "terms": [
         3,
         4,
@@ -1794,20 +1792,20 @@
         "ME",
         "NH"
       ],
-      "plans": 5,
-      "residentialPlans": 5,
+      "plans": 2,
+      "residentialPlans": 2,
       "businessPlans": 0,
-      "renewablePlans": 3,
+      "renewablePlans": 2,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 2,
       "variablePlans": 0,
       "noEtfPlans": 0,
       "minRate": 10.3,
-      "maxRate": 15.5,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "maxRate": 10.4,
+      "medianRate": 10.35,
+      "minResidentialRate": 10.3,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 10.3,
       "terms": [
         12
       ],
@@ -1844,13 +1842,13 @@
       "businessPlans": 0,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 7,
+      "variablePlans": 4,
       "noEtfPlans": 0,
       "minRate": 6.59,
       "maxRate": 16.8,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 11.59,
+      "minResidentialRate": 6.59,
       "minBusinessRate": null,
       "minRenewableRate": null,
       "terms": [
@@ -1899,15 +1897,15 @@
       "businessPlans": 0,
       "renewablePlans": 3,
       "renewableProviders": 1,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 6,
+      "variablePlans": 3,
       "noEtfPlans": 0,
       "minRate": 6.49,
       "maxRate": 15.4,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 10.99,
+      "minResidentialRate": 6.49,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 13.8,
       "terms": [
         12,
         36
@@ -1948,15 +1946,15 @@
       "businessPlans": 5,
       "renewablePlans": 1,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 12,
       "variablePlans": 0,
-      "noEtfPlans": 0,
+      "noEtfPlans": 1,
       "minRate": 6.39,
       "maxRate": 14.49,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
-      "minRenewableRate": null,
+      "medianRate": 10.1,
+      "minResidentialRate": 6.39,
+      "minBusinessRate": 8.5,
+      "minRenewableRate": 10.2,
       "terms": [
         6,
         12
@@ -1985,14 +1983,14 @@
       "renewablePlans": 2,
       "renewableProviders": 1,
       "fixedPlans": 0,
-      "variablePlans": 0,
-      "noEtfPlans": 0,
+      "variablePlans": 6,
+      "noEtfPlans": 6,
       "minRate": 14.5,
       "maxRate": 17.2,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 16,
+      "minResidentialRate": 14.5,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 16.2,
       "terms": [
         12,
         28,
@@ -2019,14 +2017,14 @@
       "businessPlans": 2,
       "renewablePlans": 0,
       "renewableProviders": 0,
-      "fixedPlans": 0,
-      "variablePlans": 0,
+      "fixedPlans": 2,
+      "variablePlans": 2,
       "noEtfPlans": 0,
       "minRate": 9.8,
       "maxRate": 16.4,
-      "medianRate": null,
-      "minResidentialRate": null,
-      "minBusinessRate": null,
+      "medianRate": 12.25,
+      "minResidentialRate": 14.3,
+      "minBusinessRate": 9.8,
       "minRenewableRate": null,
       "terms": [
         12,
@@ -2069,15 +2067,15 @@
       "businessPlans": 0,
       "renewablePlans": 22,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 25,
       "variablePlans": 0,
       "noEtfPlans": 0,
       "minRate": 7.49,
       "maxRate": 16.49,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 10.5,
+      "minResidentialRate": 7.49,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 7.49,
       "terms": [
         12,
         24
@@ -2120,15 +2118,15 @@
       "businessPlans": 0,
       "renewablePlans": 8,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 8,
       "variablePlans": 0,
-      "noEtfPlans": 0,
+      "noEtfPlans": 8,
       "minRate": 11.99,
       "maxRate": 16.49,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 13.99,
+      "minResidentialRate": 11.99,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 11.99,
       "terms": [
         12
       ],
@@ -2182,15 +2180,15 @@
       "businessPlans": 0,
       "renewablePlans": 3,
       "renewableProviders": 1,
-      "fixedPlans": 0,
+      "fixedPlans": 21,
       "variablePlans": 0,
       "noEtfPlans": 0,
       "minRate": 6.39,
       "maxRate": 15.49,
-      "medianRate": null,
-      "minResidentialRate": null,
+      "medianRate": 11.39,
+      "minResidentialRate": 6.39,
       "minBusinessRate": null,
-      "minRenewableRate": null,
+      "minRenewableRate": 9.6,
       "terms": [
         12,
         24
@@ -2198,5 +2196,1661 @@
       "monthToMonth": false,
       "updatedAt": "2026-08-11T17:48:21.046506+00:00"
     }
-  ]
+  ],
+  "providerStates": {
+    "APG&E": {
+      "TX": {
+        "plans": 6,
+        "minRate": 11.8,
+        "maxRate": 14.7,
+        "medianRate": 14.2,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Ambit Energy": {
+      "IL": {
+        "plans": 1,
+        "minRate": 9.49,
+        "maxRate": 9.49,
+        "medianRate": 9.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 11.19,
+        "maxRate": 11.19,
+        "medianRate": 11.19,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "ME": {
+        "plans": 1,
+        "minRate": 15.5,
+        "maxRate": 15.5,
+        "medianRate": 15.5,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 1,
+        "minRate": 13.5,
+        "maxRate": 13.5,
+        "medianRate": 13.5,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "TX": {
+        "plans": 1,
+        "minRate": 19.7,
+        "maxRate": 19.7,
+        "medianRate": 19.7,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Champion Energy": {
+      "TX": {
+        "plans": 5,
+        "minRate": 9.8,
+        "maxRate": 15.5,
+        "medianRate": 15.4,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      }
+    },
+    "Chariot Energy": {
+      "TX": {
+        "plans": 8,
+        "minRate": 9.5,
+        "maxRate": 18.9,
+        "medianRate": 13.05,
+        "renewablePlans": 8,
+        "noEtfPlans": 6,
+        "businessPlans": 0
+      }
+    },
+    "Cirro Energy": {
+      "TX": {
+        "plans": 3,
+        "minRate": 15.6,
+        "maxRate": 15.7,
+        "medianRate": 15.6,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "CleanChoice Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 14.49,
+        "maxRate": 14.49,
+        "medianRate": 14.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 2,
+        "minRate": 8.9,
+        "maxRate": 11.49,
+        "medianRate": 10.2,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 2,
+        "minRate": 11,
+        "maxRate": 16.49,
+        "medianRate": 13.75,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 2,
+        "minRate": 9.3,
+        "maxRate": 13.49,
+        "medianRate": 11.4,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 9.5,
+        "maxRate": 13.99,
+        "medianRate": 11.75,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 2,
+        "minRate": 10.5,
+        "maxRate": 12.99,
+        "medianRate": 11.75,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 3,
+        "minRate": 8.9,
+        "maxRate": 9.2,
+        "medianRate": 8.99,
+        "renewablePlans": 3,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 2,
+        "minRate": 9.4,
+        "maxRate": 10.99,
+        "medianRate": 10.2,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "RI": {
+        "plans": 1,
+        "minRate": 15.99,
+        "maxRate": 15.99,
+        "medianRate": 15.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      }
+    },
+    "Clearview Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 11.79,
+        "maxRate": 11.79,
+        "medianRate": 11.79,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 1,
+        "minRate": 9.09,
+        "maxRate": 9.09,
+        "medianRate": 9.09,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 14.09,
+        "maxRate": 14.09,
+        "medianRate": 14.09,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 11.09,
+        "maxRate": 11.09,
+        "medianRate": 11.09,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "ME": {
+        "plans": 3,
+        "minRate": 9.4,
+        "maxRate": 15.09,
+        "medianRate": 10.1,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "NH": {
+        "plans": 1,
+        "minRate": 13.09,
+        "maxRate": 13.09,
+        "medianRate": 13.09,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 1,
+        "minRate": 11.59,
+        "maxRate": 11.59,
+        "medianRate": 11.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 10.59,
+        "maxRate": 10.59,
+        "medianRate": 10.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 1,
+        "minRate": 6.59,
+        "maxRate": 6.59,
+        "medianRate": 6.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 1,
+        "minRate": 8.59,
+        "maxRate": 8.59,
+        "medianRate": 8.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Constellation Energy": {
+      "CT": {
+        "plans": 4,
+        "minRate": 10.2,
+        "maxRate": 13.2,
+        "medianRate": 11.45,
+        "renewablePlans": 1,
+        "noEtfPlans": 2,
+        "businessPlans": 1
+      },
+      "IL": {
+        "plans": 4,
+        "minRate": 7.9,
+        "maxRate": 9.29,
+        "medianRate": 8.7,
+        "renewablePlans": 1,
+        "noEtfPlans": 2,
+        "businessPlans": 1
+      },
+      "MA": {
+        "plans": 3,
+        "minRate": 11.2,
+        "maxRate": 14.49,
+        "medianRate": 13.99,
+        "renewablePlans": 0,
+        "noEtfPlans": 2,
+        "businessPlans": 1
+      },
+      "MD": {
+        "plans": 3,
+        "minRate": 8.8,
+        "maxRate": 10.99,
+        "medianRate": 9,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 1
+      },
+      "ME": {
+        "plans": 2,
+        "minRate": 9.5,
+        "maxRate": 9.8,
+        "medianRate": 9.65,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "NH": {
+        "plans": 2,
+        "minRate": 9.7,
+        "maxRate": 10.1,
+        "medianRate": 9.9,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 8.5,
+        "maxRate": 11.49,
+        "medianRate": 10,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 1
+      },
+      "NY": {
+        "plans": 3,
+        "minRate": 9.2,
+        "maxRate": 10.49,
+        "medianRate": 10,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 1
+      },
+      "OH": {
+        "plans": 4,
+        "minRate": 6.49,
+        "maxRate": 8.8,
+        "medianRate": 7.3,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "PA": {
+        "plans": 3,
+        "minRate": 8.1,
+        "maxRate": 8.79,
+        "medianRate": 8.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 2,
+        "businessPlans": 1
+      },
+      "RI": {
+        "plans": 2,
+        "minRate": 10,
+        "maxRate": 10.8,
+        "medianRate": 10.4,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "TX": {
+        "plans": 9,
+        "minRate": 8.9,
+        "maxRate": 16.9,
+        "medianRate": 11.5,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 2
+      }
+    },
+    "Direct Energy": {
+      "CT": {
+        "plans": 4,
+        "minRate": 10.1,
+        "maxRate": 12.99,
+        "medianRate": 11.15,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "IL": {
+        "plans": 1,
+        "minRate": 8.79,
+        "maxRate": 8.79,
+        "medianRate": 8.79,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 2,
+        "minRate": 10.8,
+        "maxRate": 13.79,
+        "medianRate": 12.3,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "MD": {
+        "plans": 3,
+        "minRate": 8.4,
+        "maxRate": 10.79,
+        "medianRate": 9.1,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "NH": {
+        "plans": 3,
+        "minRate": 9.7,
+        "maxRate": 12.5,
+        "medianRate": 12,
+        "renewablePlans": 0,
+        "noEtfPlans": 2,
+        "businessPlans": 1
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 8.2,
+        "maxRate": 11.29,
+        "medianRate": 9.75,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "NY": {
+        "plans": 2,
+        "minRate": 8.9,
+        "maxRate": 10.29,
+        "medianRate": 9.6,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "OH": {
+        "plans": 4,
+        "minRate": 6.29,
+        "maxRate": 7.5,
+        "medianRate": 6.89,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "PA": {
+        "plans": 4,
+        "minRate": 7.8,
+        "maxRate": 9.49,
+        "medianRate": 8.65,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "RI": {
+        "plans": 4,
+        "minRate": 10.4,
+        "maxRate": 13.49,
+        "medianRate": 11.7,
+        "renewablePlans": 1,
+        "noEtfPlans": 2,
+        "businessPlans": 1
+      },
+      "TX": {
+        "plans": 4,
+        "minRate": 15.3,
+        "maxRate": 15.8,
+        "medianRate": 15.45,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Discount Power": {
+      "TX": {
+        "plans": 5,
+        "minRate": 15.5,
+        "maxRate": 16.2,
+        "medianRate": 15.6,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Electricity Maine": {
+      "ME": {
+        "plans": 2,
+        "minRate": 15.99,
+        "maxRate": 16.49,
+        "medianRate": 16.24,
+        "renewablePlans": 1,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      }
+    },
+    "Eligo Energy": {
+      "IL": {
+        "plans": 2,
+        "minRate": 7.5,
+        "maxRate": 8.79,
+        "medianRate": 8.15,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 13.79,
+        "maxRate": 13.79,
+        "medianRate": 13.79,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 1,
+        "minRate": 12.49,
+        "maxRate": 12.49,
+        "medianRate": 12.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 7.9,
+        "maxRate": 11.29,
+        "medianRate": 9.6,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 10.29,
+        "maxRate": 10.29,
+        "medianRate": 10.29,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 2,
+        "minRate": 6.29,
+        "maxRate": 7.2,
+        "medianRate": 6.75,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "PA": {
+        "plans": 2,
+        "minRate": 7.5,
+        "maxRate": 8.29,
+        "medianRate": 7.9,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      }
+    },
+    "Frontier Utilities": {
+      "NJ": {
+        "plans": 1,
+        "minRate": 11.29,
+        "maxRate": 11.29,
+        "medianRate": 11.29,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "TX": {
+        "plans": 2,
+        "minRate": 10,
+        "maxRate": 13.2,
+        "medianRate": 11.6,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Gexa Energy": {
+      "TX": {
+        "plans": 3,
+        "minRate": 10,
+        "maxRate": 13.4,
+        "medianRate": 10.5,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      }
+    },
+    "Green Mountain Energy": {
+      "IL": {
+        "plans": 2,
+        "minRate": 8.6,
+        "maxRate": 10.99,
+        "medianRate": 9.8,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 11.1,
+        "maxRate": 11.1,
+        "medianRate": 11.1,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 12.99,
+        "maxRate": 12.99,
+        "medianRate": 12.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 9.8,
+        "maxRate": 13.49,
+        "medianRate": 11.65,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 2,
+        "minRate": 10.2,
+        "maxRate": 12.49,
+        "medianRate": 11.35,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 2,
+        "minRate": 9.1,
+        "maxRate": 10.49,
+        "medianRate": 9.8,
+        "renewablePlans": 2,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "TX": {
+        "plans": 7,
+        "minRate": 12,
+        "maxRate": 17.9,
+        "medianRate": 16.8,
+        "renewablePlans": 7,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      }
+    },
+    "Indra Energy": {
+      "IL": {
+        "plans": 2,
+        "minRate": 9.2,
+        "maxRate": 10.5,
+        "medianRate": 9.85,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 2,
+        "minRate": 10.8,
+        "maxRate": 11.8,
+        "medianRate": 11.3,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 10.9,
+        "maxRate": 11.9,
+        "medianRate": 11.4,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 3,
+        "minRate": 6.2,
+        "maxRate": 7.8,
+        "medianRate": 6.8,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "PA": {
+        "plans": 3,
+        "minRate": 7.8,
+        "maxRate": 9.6,
+        "medianRate": 8.6,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "TX": {
+        "plans": 4,
+        "minRate": 10.2,
+        "maxRate": 14.5,
+        "medianRate": 13,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      }
+    },
+    "Inspire Clean Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 13.99,
+        "maxRate": 13.99,
+        "medianRate": 13.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 2,
+        "minRate": 9.2,
+        "maxRate": 10.99,
+        "medianRate": 10.1,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 2,
+        "minRate": 11.3,
+        "maxRate": 15.99,
+        "medianRate": 13.65,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 2,
+        "minRate": 9.7,
+        "maxRate": 12.99,
+        "medianRate": 11.35,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 10.1,
+        "maxRate": 13.49,
+        "medianRate": 11.8,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 2,
+        "minRate": 10.8,
+        "maxRate": 12.49,
+        "medianRate": 11.65,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 2,
+        "minRate": 8.49,
+        "maxRate": 9.5,
+        "medianRate": 9,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 2,
+        "minRate": 9.8,
+        "maxRate": 10.49,
+        "medianRate": 10.15,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      }
+    },
+    "Just Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 13.49,
+        "maxRate": 13.49,
+        "medianRate": 13.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 2,
+        "minRate": 8.3,
+        "maxRate": 10.49,
+        "medianRate": 9.4,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 15.49,
+        "maxRate": 15.49,
+        "medianRate": 15.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 12.49,
+        "maxRate": 12.49,
+        "medianRate": 12.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 1,
+        "minRate": 12.99,
+        "maxRate": 12.99,
+        "medianRate": 12.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 11.99,
+        "maxRate": 11.99,
+        "medianRate": 11.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 1,
+        "minRate": 9.99,
+        "maxRate": 9.99,
+        "medianRate": 9.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "TX": {
+        "plans": 6,
+        "minRate": 9.9,
+        "maxRate": 16.5,
+        "medianRate": 10.3,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      }
+    },
+    "Major Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 11.89,
+        "maxRate": 11.89,
+        "medianRate": 11.89,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 14.19,
+        "maxRate": 14.19,
+        "medianRate": 14.19,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 11.19,
+        "maxRate": 11.19,
+        "medianRate": 11.19,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "ME": {
+        "plans": 2,
+        "minRate": 14.29,
+        "maxRate": 14.79,
+        "medianRate": 14.54,
+        "renewablePlans": 0,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 1,
+        "minRate": 11.69,
+        "maxRate": 11.69,
+        "medianRate": 11.69,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 10.69,
+        "maxRate": 10.69,
+        "medianRate": 10.69,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      }
+    },
+    "NextVolt Energy": {
+      "TX": {
+        "plans": 7,
+        "minRate": 9.8,
+        "maxRate": 14.8,
+        "medianRate": 12.8,
+        "renewablePlans": 3,
+        "noEtfPlans": 0,
+        "businessPlans": 3
+      }
+    },
+    "Octopus Energy": {
+      "TX": {
+        "plans": 6,
+        "minRate": 9.8,
+        "maxRate": 14.7,
+        "medianRate": 13.75,
+        "renewablePlans": 6,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Payless Power": {
+      "TX": {
+        "plans": 2,
+        "minRate": 16.5,
+        "maxRate": 17.1,
+        "medianRate": 16.8,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Perch Energy": {
+      "CT": {
+        "plans": 2,
+        "minRate": 11.8,
+        "maxRate": 12.5,
+        "medianRate": 12.15,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 3,
+        "minRate": 11,
+        "maxRate": 14.2,
+        "medianRate": 13.5,
+        "renewablePlans": 3,
+        "noEtfPlans": 3,
+        "businessPlans": 1
+      },
+      "MD": {
+        "plans": 2,
+        "minRate": 9.8,
+        "maxRate": 11.5,
+        "medianRate": 10.65,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 1
+      },
+      "ME": {
+        "plans": 1,
+        "minRate": 13.8,
+        "maxRate": 13.8,
+        "medianRate": 13.8,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 1,
+        "minRate": 12.8,
+        "maxRate": 12.8,
+        "medianRate": 12.8,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 11.5,
+        "maxRate": 12.2,
+        "medianRate": 11.85,
+        "renewablePlans": 2,
+        "noEtfPlans": 2,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 3,
+        "minRate": 10.5,
+        "maxRate": 11.8,
+        "medianRate": 11.2,
+        "renewablePlans": 3,
+        "noEtfPlans": 3,
+        "businessPlans": 1
+      },
+      "RI": {
+        "plans": 1,
+        "minRate": 13.5,
+        "maxRate": 13.5,
+        "medianRate": 13.5,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      }
+    },
+    "Public Power": {
+      "CT": {
+        "plans": 1,
+        "minRate": 11.69,
+        "maxRate": 11.69,
+        "medianRate": 11.69,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 1,
+        "minRate": 8.99,
+        "maxRate": 8.99,
+        "medianRate": 8.99,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 13.99,
+        "maxRate": 13.99,
+        "medianRate": 13.99,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 10.99,
+        "maxRate": 10.99,
+        "medianRate": 10.99,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 1,
+        "minRate": 11.49,
+        "maxRate": 11.49,
+        "medianRate": 11.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 10.49,
+        "maxRate": 10.49,
+        "medianRate": 10.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 1,
+        "minRate": 6.49,
+        "maxRate": 6.49,
+        "medianRate": 6.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 1,
+        "minRate": 8.49,
+        "maxRate": 8.49,
+        "medianRate": 8.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      }
+    },
+    "Reliant Energy": {
+      "TX": {
+        "plans": 5,
+        "minRate": 15.8,
+        "maxRate": 18.9,
+        "medianRate": 16.2,
+        "renewablePlans": 0,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      }
+    },
+    "Rhythm Energy": {
+      "TX": {
+        "plans": 8,
+        "minRate": 9.5,
+        "maxRate": 14.2,
+        "medianRate": 12,
+        "renewablePlans": 8,
+        "noEtfPlans": 6,
+        "businessPlans": 1
+      }
+    },
+    "SmartEnergy": {
+      "ME": {
+        "plans": 1,
+        "minRate": 10.3,
+        "maxRate": 10.3,
+        "medianRate": 10.3,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 1,
+        "minRate": 10.4,
+        "maxRate": 10.4,
+        "medianRate": 10.4,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Spark Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 11.79,
+        "maxRate": 11.79,
+        "medianRate": 11.79,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 1,
+        "minRate": 9.09,
+        "maxRate": 9.09,
+        "medianRate": 9.09,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 11.09,
+        "maxRate": 11.09,
+        "medianRate": 11.09,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 1,
+        "minRate": 11.59,
+        "maxRate": 11.59,
+        "medianRate": 11.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 10.59,
+        "maxRate": 10.59,
+        "medianRate": 10.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 1,
+        "minRate": 6.59,
+        "maxRate": 6.59,
+        "medianRate": 6.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 1,
+        "minRate": 8.59,
+        "maxRate": 8.59,
+        "medianRate": 8.59,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "TX": {
+        "plans": 4,
+        "minRate": 14.1,
+        "maxRate": 16.8,
+        "medianRate": 14.6,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "TXU Energy": {
+      "TX": {
+        "plans": 4,
+        "minRate": 9.8,
+        "maxRate": 16.4,
+        "medianRate": 12.25,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 2
+      }
+    },
+    "Think Energy": {
+      "IL": {
+        "plans": 1,
+        "minRate": 8.99,
+        "maxRate": 8.99,
+        "medianRate": 8.99,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 10.99,
+        "maxRate": 10.99,
+        "medianRate": 10.99,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 1,
+        "minRate": 11.49,
+        "maxRate": 11.49,
+        "medianRate": 11.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 10.49,
+        "maxRate": 10.49,
+        "medianRate": 10.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 1,
+        "minRate": 6.49,
+        "maxRate": 6.49,
+        "medianRate": 6.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 1,
+        "minRate": 8.49,
+        "maxRate": 8.49,
+        "medianRate": 8.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "TX": {
+        "plans": 3,
+        "minRate": 13.8,
+        "maxRate": 15.4,
+        "medianRate": 14.8,
+        "renewablePlans": 3,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Town Square Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 9.8,
+        "maxRate": 9.8,
+        "medianRate": 9.8,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 10.5,
+        "maxRate": 10.5,
+        "medianRate": 10.5,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "ME": {
+        "plans": 1,
+        "minRate": 14.49,
+        "maxRate": 14.49,
+        "medianRate": 14.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 4,
+        "minRate": 9.3,
+        "maxRate": 12.49,
+        "medianRate": 11.14,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 1
+      },
+      "NY": {
+        "plans": 2,
+        "minRate": 8.5,
+        "maxRate": 10.39,
+        "medianRate": 9.45,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      },
+      "OH": {
+        "plans": 1,
+        "minRate": 6.39,
+        "maxRate": 6.39,
+        "medianRate": 6.39,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 1,
+        "minRate": 8.39,
+        "maxRate": 8.39,
+        "medianRate": 8.39,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "RI": {
+        "plans": 1,
+        "minRate": 10,
+        "maxRate": 10,
+        "medianRate": 10,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 1
+      }
+    },
+    "TriEagle Energy": {
+      "TX": {
+        "plans": 6,
+        "minRate": 14.5,
+        "maxRate": 17.2,
+        "medianRate": 16,
+        "renewablePlans": 2,
+        "noEtfPlans": 6,
+        "businessPlans": 0
+      }
+    },
+    "Verde Energy": {
+      "CT": {
+        "plans": 2,
+        "minRate": 10.5,
+        "maxRate": 12.99,
+        "medianRate": 11.75,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 2,
+        "minRate": 8.3,
+        "maxRate": 9.99,
+        "medianRate": 9.15,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 2,
+        "minRate": 10.7,
+        "maxRate": 14.99,
+        "medianRate": 12.85,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 2,
+        "minRate": 8.8,
+        "maxRate": 11.99,
+        "medianRate": 10.4,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "ME": {
+        "plans": 3,
+        "minRate": 9.8,
+        "maxRate": 16.49,
+        "medianRate": 15.99,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 3,
+        "minRate": 10,
+        "maxRate": 14.49,
+        "medianRate": 13.99,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 9.2,
+        "maxRate": 12.49,
+        "medianRate": 10.85,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 2,
+        "minRate": 9.8,
+        "maxRate": 11.49,
+        "medianRate": 10.65,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 2,
+        "minRate": 7.49,
+        "maxRate": 8.5,
+        "medianRate": 8,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 2,
+        "minRate": 8.7,
+        "maxRate": 9.49,
+        "medianRate": 9.1,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "RI": {
+        "plans": 3,
+        "minRate": 10.3,
+        "maxRate": 14.49,
+        "medianRate": 12.99,
+        "renewablePlans": 2,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    },
+    "Viridian Energy": {
+      "CT": {
+        "plans": 1,
+        "minRate": 13.49,
+        "maxRate": 13.49,
+        "medianRate": 13.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 15.49,
+        "maxRate": 15.49,
+        "medianRate": 15.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 12.49,
+        "maxRate": 12.49,
+        "medianRate": 12.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "ME": {
+        "plans": 1,
+        "minRate": 16.49,
+        "maxRate": 16.49,
+        "medianRate": 16.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 1,
+        "minRate": 14.49,
+        "maxRate": 14.49,
+        "medianRate": 14.49,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 1,
+        "minRate": 12.99,
+        "maxRate": 12.99,
+        "medianRate": 12.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 11.99,
+        "maxRate": 11.99,
+        "medianRate": 11.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      },
+      "RI": {
+        "plans": 1,
+        "minRate": 14.99,
+        "maxRate": 14.99,
+        "medianRate": 14.99,
+        "renewablePlans": 1,
+        "noEtfPlans": 1,
+        "businessPlans": 0
+      }
+    },
+    "XOOM Energy": {
+      "CT": {
+        "plans": 2,
+        "minRate": 10.6,
+        "maxRate": 11.59,
+        "medianRate": 11.1,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "IL": {
+        "plans": 1,
+        "minRate": 8.89,
+        "maxRate": 8.89,
+        "medianRate": 8.89,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MA": {
+        "plans": 1,
+        "minRate": 13.89,
+        "maxRate": 13.89,
+        "medianRate": 13.89,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "MD": {
+        "plans": 1,
+        "minRate": 10.89,
+        "maxRate": 10.89,
+        "medianRate": 10.89,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "ME": {
+        "plans": 3,
+        "minRate": 14.99,
+        "maxRate": 15.49,
+        "medianRate": 15.49,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NH": {
+        "plans": 3,
+        "minRate": 12.79,
+        "maxRate": 13.19,
+        "medianRate": 12.99,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NJ": {
+        "plans": 2,
+        "minRate": 9.6,
+        "maxRate": 11.39,
+        "medianRate": 10.5,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "NY": {
+        "plans": 1,
+        "minRate": 10.39,
+        "maxRate": 10.39,
+        "medianRate": 10.39,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "OH": {
+        "plans": 2,
+        "minRate": 6.39,
+        "maxRate": 6.69,
+        "medianRate": 6.54,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "PA": {
+        "plans": 2,
+        "minRate": 8.39,
+        "maxRate": 8.99,
+        "medianRate": 8.69,
+        "renewablePlans": 0,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      },
+      "RI": {
+        "plans": 3,
+        "minRate": 10.6,
+        "maxRate": 13.29,
+        "medianRate": 12.79,
+        "renewablePlans": 1,
+        "noEtfPlans": 0,
+        "businessPlans": 0
+      }
+    }
+  }
 }
