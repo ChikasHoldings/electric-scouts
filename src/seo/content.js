@@ -24,6 +24,7 @@ import {
   comparisonsForState,
   getPlanComparisons,
   getProviderComparisons,
+  providerStateData,
 } from './comparisons.js';
 import {
   MARKET_GENERATED_AT,
@@ -46,6 +47,12 @@ const publishableSlugs = new Map(getPublishableProviders().map((p) => [p.name, p
  */
 function providerEntries(names) {
   return names.map((name) => ({ name, path: publishableSlugs.get(name) ? `/providers/${publishableSlugs.get(name)}` : null }));
+}
+
+/** Whole percent, or null when the denominator makes the figure meaningless. */
+function pctOf(part, whole) {
+  if (!whole || part == null) return null;
+  return Math.round((part / whole) * 100);
 }
 
 /**
@@ -612,6 +619,111 @@ export function buildProviderSections(route) {
       paragraphs: [`What ${provider.name} currently has in the Electric Scouts comparison (${asOf}):`],
       bullets,
     });
+  }
+
+  /* Where this supplier sits in each market it sells into.
+   *
+   * The single most useful thing we can say about a supplier is not what it
+   * charges but whether that is cheap, and only a site holding the whole
+   * catalog can answer it. Every figure is a comparison of two numbers we
+   * already publish — the supplier's own entry rate, and the market it is sold
+   * into — so nothing here is asserted.
+   *
+   * It also puts a check on the supplier-written descriptions above it. Discount
+   * Power's says it "offers some of the lowest electricity rates in Texas" while
+   * its cheapest plan opens at 15.5¢ against a Texas median of 14.35¢. The
+   * description is the supplier's claim; this table is ours. */
+  const perState = providerStateData(provider.name);
+  const positions = (provider.planStates || [])
+    .map((code) => {
+      const own = perState[code];
+      const market = getStateMarket(code);
+      if (!own || !market || own.minRate == null || market.minRate == null) return null;
+      return { code, name: STATE_NAMES[code], path: STATE_PAGE_PATHS[code], own, market };
+    })
+    .filter(Boolean);
+
+  if (positions.length) {
+    const cheaperThanMedian = positions.filter((row) => row.own.minRate <= row.market.medianRate);
+    const marketLeader = positions.filter((row) => row.own.minRate <= row.market.minRate);
+
+    const verdict =
+      marketLeader.length > 0
+        ? `${provider.name} holds the cheapest plan we track in ` +
+          `${joinNames(marketLeader.map((row) => row.name), 3)}.`
+        : cheaperThanMedian.length === positions.length
+          ? `${provider.name} opens below the median in every market where we hold its plans, ` +
+            `though not at the very bottom of any of them.`
+          : cheaperThanMedian.length === 0
+            ? `${provider.name} opens above the median rate in ${positions.length === 1 ? 'that market' : 'every market where we hold its plans'}, ` +
+              `so it is competing on something other than headline price — contract length, ` +
+              `renewable supply or exit terms.`
+            : `${provider.name} opens below the median in ` +
+              `${joinNames(cheaperThanMedian.map((row) => row.name), 3)} and above it elsewhere, ` +
+              `which is the usual pattern: suppliers price by utility territory, not by brand.`;
+
+    sections.push({
+      heading: `How ${provider.name} Prices Against the Market`,
+      paragraphs: [
+        `A rate means little on its own. These are ${provider.name}'s cheapest plans set against ` +
+          `every plan we hold in the same state (${asOf}).`,
+        verdict,
+      ],
+      table: {
+        columns: ['State', `${provider.name} from`, 'Cheapest we track', 'State median'],
+        rows: positions.map((row) => [
+          { text: row.name, path: row.path },
+          formatRate(row.own.minRate),
+          formatRate(row.market.minRate),
+          formatRate(row.market.medianRate),
+        ]),
+      },
+    });
+
+    /* Plan mix against the market, where the supplier differs from it. A
+     * supplier that matches its market on every count gets no bullets rather
+     * than a list saying it is unremarkable. */
+    const mix = [];
+    const totalPlans = positions.reduce((sum, row) => sum + (row.own.plans || 0), 0);
+    const marketPlans = positions.reduce((sum, row) => sum + (row.market.plans || 0), 0);
+    const share = pctOf(totalPlans, marketPlans);
+    if (share !== null && share >= 1) {
+      mix.push(
+        `${provider.name} accounts for ${share}% of the plans we track in the markets it sells into.`
+      );
+    }
+    const ownRenewable = pctOf(provider.renewablePlans, provider.plans);
+    const marketRenewable = pctOf(
+      positions.reduce((sum, row) => sum + (row.market.renewablePlans || 0), 0),
+      marketPlans
+    );
+    if (ownRenewable !== null && marketRenewable !== null && Math.abs(ownRenewable - marketRenewable) >= 10) {
+      mix.push(
+        ownRenewable > marketRenewable
+          ? `${ownRenewable}% of its plans are 100% renewable, against ${marketRenewable}% across those markets.`
+          : `${ownRenewable}% of its plans are 100% renewable, below the ${marketRenewable}% typical of those markets.`
+      );
+    }
+    const ownNoEtf = pctOf(provider.noEtfPlans, provider.plans);
+    const marketNoEtf = pctOf(
+      positions.reduce((sum, row) => sum + (row.market.noEtfPlans || 0), 0),
+      marketPlans
+    );
+    if (ownNoEtf !== null && marketNoEtf !== null && Math.abs(ownNoEtf - marketNoEtf) >= 10) {
+      mix.push(
+        ownNoEtf > marketNoEtf
+          ? `${ownNoEtf}% carry no early termination fee, against ${marketNoEtf}% across those markets — ` +
+            `unusually easy to leave.`
+          : `${ownNoEtf}% carry no early termination fee, against ${marketNoEtf}% across those markets, ` +
+            `so check the exit fee before enrolling.`
+      );
+    }
+    if (mix.length) {
+      sections.push({
+        heading: `${provider.name} Against the Rest of the Market`,
+        bullets: mix,
+      });
+    }
   }
 
   if (stateLinks.length) {
