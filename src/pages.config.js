@@ -28,7 +28,9 @@ const PAGE_LOADERS = {
   BusinessHub: () => import('./pages/BusinessHub'),
   BusinessQuoteDashboard: () => import('./pages/BusinessQuoteDashboard'),
   CityRates: () => import('./pages/CityRates'),
+  Compare: () => import('./pages/Compare'),
   CompareRates: () => import('./pages/CompareRates'),
+  CompareVersus: () => import('./pages/CompareVersus'),
   ConnecticutElectricity: () => import('./pages/ConnecticutElectricity'),
   FAQ: () => import('./pages/FAQ'),
   HomeConcierge: () => import('./pages/HomeConcierge'),
@@ -81,6 +83,9 @@ const DYNAMIC_ROUTE_PAGES = [
   ['/electricity-rates/', 'CityRates'],
   ['/learn/', 'ArticleDetail'],
   ['/providers/', 'ProviderDetails'],
+  // The trailing slash matters: it keeps the hub at /compare matching the
+  // registry entry below, and leaves /compare-rates alone.
+  ['/compare/', 'CompareVersus'],
 ];
 
 /** Which registry page renders `pathname`, or null for the eager homepage. */

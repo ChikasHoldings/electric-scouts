@@ -13,10 +13,13 @@
  */
 
 import { SITE_NAME, SITE_URL, absoluteUrl } from './site.js';
-import { MARKET_TOTALS } from './market.js';
+import { organizationSchema } from './organization.js';
+import { getComparisons } from './comparisons.js';
 import {
   buildArticleSections,
   buildCitySections,
+  buildCompareHubSections,
+  buildComparisonSections,
   buildProviderSections,
   buildStateSections,
   buildStaticSections,
@@ -42,6 +45,12 @@ export function ogImageFor(route) {
   const path = route.path || '/';
   if (path.startsWith('/compare-rates')) return '/images/og-compare.jpg';
   if (path.startsWith('/bill-analyzer')) return '/images/og-bill-analyzer.jpg';
+  // Supplier matchups are a provider-shaped question; plan-shape comparisons
+  // belong with the comparison tool. /compare-rates is matched above, so this
+  // only catches the /compare family.
+  if (path === '/compare' || path.startsWith('/compare/')) {
+    return /-vs-.*-energy$|-energy-vs-/.test(path) ? '/images/og-providers.jpg' : '/images/og-compare.jpg';
+  }
   if (path.startsWith('/providers') || path === '/all-providers') return '/images/og-providers.jpg';
   if (path.startsWith('/business')) return '/images/og-business.jpg';
   if (path.startsWith('/learn') || path === '/learning-center') return '/images/og-learn.jpg';
@@ -88,34 +97,9 @@ const PRERENDER_VISIBILITY_TAGS = [
  * verifiable first-party review data, and inventing one violates Google's
  * structured data policy.
  */
-export function organizationSchema() {
-  return {
-    '@type': 'Organization',
-    '@id': `${SITE_URL}/#organization`,
-    name: SITE_NAME,
-    url: `${SITE_URL}/`,
-    logo: {
-      '@type': 'ImageObject',
-      url: `${SITE_URL}/images/logo-header.png`,
-      width: 200,
-      height: 60,
-    },
-    // Counted from the market snapshot rather than asserted. The previous copy
-    // claimed "40+ providers" on all 258 pages while the snapshot holds 35 with
-    // an active plan, so the one org-level fact the site repeated everywhere was
-    // one it could not support.
-    description:
-      `Electric Scouts is a free, independent electricity comparison platform tracking ` +
-      `${MARKET_TOTALS.activePlans} electricity plans from ${MARKET_TOTALS.providersWithPlans} ` +
-      `suppliers across ${MARKET_TOTALS.states} deregulated US states.`,
-    sameAs: [
-      'https://facebook.com/electricscouts',
-      'https://x.com/electricscouts',
-      'https://linkedin.com/company/electricscouts',
-      'https://instagram.com/electricscouts',
-    ],
-  };
-}
+// Re-exported so the prerendered @graph and the React pages emit one entity
+// from one definition. See src/seo/organization.js for why that matters.
+export { organizationSchema };
 
 export function websiteSchema() {
   return {
@@ -161,6 +145,8 @@ export function breadcrumbsFor(route) {
       ];
     case 'provider':
       return [home, { name: 'Providers', path: '/all-providers' }, { name: route.heading, path: route.path }];
+    case 'comparison':
+      return [home, { name: 'Comparisons', path: '/compare' }, { name: route.heading, path: route.path }];
     case 'article':
       return [
         home,
@@ -206,6 +192,25 @@ export function structuredDataFor(route, content) {
       mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(route.path) },
       author: { '@id': `${SITE_URL}/#organization` },
       publisher: { '@id': `${SITE_URL}/#organization` },
+    });
+  }
+
+  // The comparison hub is a genuine list of pages, which is the one thing
+  // ItemList is for. Nothing else here gets it: an ItemList over a page's
+  // internal links describes navigation, not content, and Google treats that
+  // as markup that does not match the page.
+  if (route.type === 'compare-hub') {
+    const entries = getComparisons();
+    graph.push({
+      '@type': 'ItemList',
+      name: 'Electricity comparisons',
+      numberOfItems: entries.length,
+      itemListElement: entries.map((entry, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: entry.heading,
+        url: absoluteUrl(entry.path),
+      })),
     });
   }
 
@@ -279,6 +284,12 @@ function linkList(links) {
 function siteNav(states) {
   const primary = [
     ['/compare-rates', 'Compare Electricity Rates'],
+    // The hub, and through it all 22 matchup pages. Without this line the
+    // comparison cluster is an island: those pages link to each other, so every
+    // one of them has inbound links and the orphan check passes, while nothing
+    // on the rest of the site links in and the only way to reach them is the
+    // sitemap. It mirrors the "Compare Head to Head" column in the real footer.
+    ['/compare', 'Compare Suppliers Head to Head'],
     ['/all-providers', 'Electricity Providers'],
     ['/all-states', 'Electricity Rates by State'],
     ['/all-cities', 'Electricity Rates by City'],
@@ -384,6 +395,10 @@ export function buildPageContent(route, context = {}) {
       return buildStateSections(route);
     case 'provider':
       return buildProviderSections(route);
+    case 'comparison':
+      return buildComparisonSections(route);
+    case 'compare-hub':
+      return buildCompareHubSections();
     case 'article':
       return buildArticleSections(route);
     default:

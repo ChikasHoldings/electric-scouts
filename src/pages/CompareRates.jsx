@@ -83,6 +83,7 @@ import {
   CommercialComplete,
   RenewableFallback,
 } from "../components/compare/ui/ResultsView";
+import { MARKET_TOTALS } from "@/seo/market";
 
 /**
  * /compare-rates — the shared comparison engine.
@@ -436,7 +437,7 @@ export default function CompareRates() {
           { question: "How long does it take to switch electricity providers?", answer: "Enrollment takes 5-10 minutes online. Your new service activates within 1-2 billing cycles (14-45 days depending on your utility)." },
           { question: "Can I switch electricity providers anytime?", answer: "Yes, but you may face early termination fees if you're under contract. Wait until your contract expiration for penalty-free switching. Month-to-month plans can be switched anytime." },
           { question: "How much can I save by switching electricity providers?", answer: "The average household saves $200-$800 per year by switching to a more competitive electricity plan. Savings depend on your current rate, usage, and the plans available in your area." },
-          { question: "Is it free to compare electricity rates on Electric Scouts?", answer: "Yes, Electric Scouts is 100% free to use. We compare rates from 40+ providers across 12 deregulated states. There are no hidden fees or obligations." },
+          { question: "Is it free to compare electricity rates on Electric Scouts?", answer: `Yes, Electric Scouts is 100% free to use. We compare rates from ${MARKET_TOTALS.providersWithPlans} suppliers across ${MARKET_TOTALS.states} deregulated states. There are no hidden fees or obligations.` },
           { question: "What is a deregulated electricity market?", answer: "In deregulated states, you can choose your electricity provider instead of being locked into your local utility. This competition drives prices down and gives you more plan options including fixed-rate, variable-rate, and renewable energy plans." }
         ]),
         getBreadcrumbSchema([

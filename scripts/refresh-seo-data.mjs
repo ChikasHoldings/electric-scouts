@@ -23,6 +23,7 @@
  */
 
 import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createClient } from '@supabase/supabase-js';
@@ -73,6 +74,50 @@ function summarizePlans(plans) {
   };
 }
 
+/**
+ * Refuse to write a snapshot that would delete a large share of the published
+ * pages, unless the operator says they meant it.
+ *
+ * A provider page exists only while its row is `is_active` with at least one
+ * plan. That makes an accidental bulk edit in the admin panel — or a query that
+ * comes back half-empty — indistinguishable from an editorial decision, and the
+ * consequence is not reversible on Google's timescale: 30-odd URLs drop out of
+ * the sitemap, get recrawled as 404s, and take weeks to return once the flag is
+ * put back.
+ *
+ * This happened. On 2026-08-13 every provider row but two was flipped inactive
+ * in a single pass; the snapshot in git still described the site that was
+ * actually being served, so nothing broke, and nothing warned either. The guard
+ * turns that silence into a failed refresh.
+ *
+ * Set ALLOW_PAGE_LOSS=1 to proceed anyway.
+ */
+function assertNoMassDeindex(snapshot) {
+  const published = snapshot.providers.filter((p) => p.isActive && p.plans > 0).length;
+  const withPlans = snapshot.providers.filter((p) => p.plans > 0).length;
+  if (!withPlans) throw new Error('refusing to write a snapshot with no provider carrying a plan');
+
+  const previous = existingProviderPageCount();
+  const lost = previous - published;
+  if (previous && lost > 0 && lost / previous > 0.25 && !process.env.ALLOW_PAGE_LOSS) {
+    throw new Error(
+      `refusing to drop ${lost} of ${previous} provider pages (${published} would remain).\n` +
+        `  ${withPlans} providers still carry plans, so this is an is_active change, not a data loss.\n` +
+        '  Confirm the deactivation was intended, then re-run with ALLOW_PAGE_LOSS=1.'
+    );
+  }
+}
+
+/** Publishable provider count in the snapshot currently on disk, or 0 if none. */
+function existingProviderPageCount() {
+  try {
+    const current = JSON.parse(fsSync.readFileSync(OUTPUT, 'utf8'));
+    return (current.providers || []).filter((p) => p.isActive && p.plans > 0).length;
+  } catch {
+    return 0;
+  }
+}
+
 async function main() {
   const url = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const key = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
@@ -120,6 +165,32 @@ async function main() {
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  // Per-supplier, per-state aggregates. The head-to-head comparison pages
+  // (src/seo/comparisons.js) are built on this: "who is cheaper" is only a
+  // meaningful question inside one state, because suppliers price by utility
+  // territory. Provider-level and state-level totals cannot answer it.
+  const providerStates = {};
+  for (const provider of providerRecords) {
+    if (!provider.plans) continue;
+    const own = plans.filter((p) => p.provider_name === provider.name);
+    const perState = {};
+    for (const code of STATE_CODES) {
+      const rows = own.filter((p) => p.state === code);
+      if (!rows.length) continue;
+      const summary = summarizePlans(rows);
+      perState[code] = {
+        plans: summary.plans,
+        minRate: summary.minRate,
+        maxRate: summary.maxRate,
+        medianRate: summary.medianRate,
+        renewablePlans: summary.renewablePlans,
+        noEtfPlans: summary.noEtfPlans,
+        businessPlans: summary.businessPlans,
+      };
+    }
+    if (Object.keys(perState).length) providerStates[provider.name] = perState;
+  }
+
   const snapshot = {
     generatedAt: new Date().toISOString().split('T')[0],
     source: 'supabase: electricity_plans (is_active), electricity_providers',
@@ -130,7 +201,10 @@ async function main() {
     },
     states,
     providers: providerRecords,
+    providerStates,
   };
+
+  assertNoMassDeindex(snapshot);
 
   await fs.writeFile(OUTPUT, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');
   console.log(`wrote ${path.relative(ROOT, OUTPUT)}`);

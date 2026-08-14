@@ -22,6 +22,7 @@ import { canonicalPath } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { getArticleRoutes } from './articles.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
+import { COMPARE_HUB, getComparisons } from './comparisons.js';
 
 /**
  * Public, indexable pages with hand-authored metadata.
@@ -373,6 +374,43 @@ export function getProviderRoutes(providers = []) {
     .filter((route) => route.path !== '/providers/');
 }
 
+/**
+ * The comparison hub and every head-to-head page under it.
+ *
+ * The registry does not decide which matchups exist — src/seo/comparisons.js
+ * does, and it drops any whose two suppliers have stopped overlapping. So a
+ * comparison that no longer holds up disappears from the sitemap and the
+ * prerender in the same build that stops rendering it.
+ */
+export function getComparisonRoutes() {
+  const hub = {
+    type: 'compare-hub',
+    page: 'Compare',
+    path: canonicalPath(COMPARE_HUB.path),
+    title: COMPARE_HUB.title,
+    description: COMPARE_HUB.description,
+    heading: COMPARE_HUB.heading,
+    priority: 0.9,
+    changefreq: 'weekly',
+  };
+
+  const pages = getComparisons().map((comparison) => ({
+    type: 'comparison',
+    path: comparison.path,
+    title: comparison.title,
+    description: comparison.description,
+    heading: comparison.heading,
+    // Supplier matchups sit level with provider pages: they answer the same
+    // question one step later in the decision. Plan-shape comparisons are
+    // evergreen and rank for their own terms, so they sit alongside them.
+    priority: 0.8,
+    changefreq: 'weekly',
+    comparison,
+  }));
+
+  return [hub, ...pages];
+}
+
 /** Mirrors utils/providerSlug.generateProviderSlug. */
 export function providerSlug(name) {
   if (!name) return '';
@@ -467,6 +505,7 @@ export function getIndexableRoutes(options = {}) {
     ...getStateRoutes(),
     ...getCityRoutes(),
     ...getProviderRoutes(providers),
+    ...getComparisonRoutes(),
     ...getArticleRouteList(fullArticles),
   ];
 

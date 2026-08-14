@@ -19,6 +19,7 @@
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
 import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
+import { getPlanComparisons, getProviderComparisons } from './comparisons.js';
 import {
   MARKET_GENERATED_AT,
   compareToStateMedian,
@@ -43,12 +44,35 @@ function providerEntries(names) {
 }
 
 /**
- * Savings claims are filtered out of state key facts. The figures are internal
- * estimates, and repeating them as fact in crawlable copy is the kind of
- * unverifiable claim this rebuild is meant to remove.
+ * Key facts we cannot stand behind, dropped before a state's copy is published.
+ *
+ * Three kinds, all from the hand-maintained LOCATION_DATA table:
+ *
+ *   1. Savings figures. Internal estimates, repeated as fact.
+ *   2. Supplier counts. Every state carried one and every one disagreed with
+ *      the snapshot — Texas claimed "Over 100 retail electric providers" against
+ *      22 in the catalog, Pennsylvania "50+" against 15, Rhode Island "15+"
+ *      against 8. Whether or not a state really has that many licensed REPs,
+ *      the page has no source for it and prints it directly above the number we
+ *      can source, so the page contradicts itself.
+ *   3. Average residential rates. These are utility default averages; the site
+ *      holds plan rates, which is a different measure. Printed unlabelled next
+ *      to our median they read as the same figure disagreeing with itself —
+ *      Illinois said 14.3¢/kWh beside a snapshot median of 8.99¢.
+ *
+ * What survives is the durable, checkable material: when the state deregulated,
+ * which utilities still handle delivery, and how switching works. The counts and
+ * rates a reader wants are still on the page, from the snapshot, labelled with
+ * the scope they actually have.
  */
+const UNSOURCED_FACT = [
+  /saving/i,
+  /\b(over\s+)?\d+\+?\s+[a-z ]*\b(suppliers?|providers?)\b/i,
+  /average\s+residential\s+rate/i,
+];
+
 function factualKeyFacts(keyFacts = []) {
-  return keyFacts.filter((fact) => !/saving/i.test(fact));
+  return keyFacts.filter((fact) => !UNSOURCED_FACT.some((pattern) => pattern.test(fact)));
 }
 
 /**
@@ -1697,6 +1721,246 @@ function totalPlans(states) {
 
 function totalProviders(states) {
   return new Set(states.flatMap((state) => getStateMarket(state.code)?.providerNames || [])).size;
+}
+
+/* ------------------------------------------------------------------ *
+ * Comparison pages
+ *
+ * The prerendered half of /compare/:slug. Everything here is read off the
+ * comparison object src/seo/comparisons.js already computed, so the crawled
+ * page and the React page state the same verdicts from the same numbers —
+ * there is no second copy of the logic to drift.
+ * ------------------------------------------------------------------ */
+
+export function buildComparisonSections(route) {
+  const comparison = route.comparison;
+  if (!comparison) return { intro: [route.description].filter(Boolean), sections: [] };
+  return comparison.type === 'provider-vs-provider'
+    ? providerVersusSections(comparison)
+    : planVersusSections(comparison);
+}
+
+function providerVersusSections(comparison) {
+  const { a, b, sharedStates, cheaperCounts, dimensions, faqs, aOnly, bOnly } = comparison;
+  const sections = [];
+
+  const decided = cheaperCounts.a !== cheaperCounts.b;
+  const leader = cheaperCounts.a > cheaperCounts.b ? a : b;
+  const intro = [
+    comparison.angle,
+    sharedStates.length === 1
+      ? `Both suppliers sell into ${sharedStates[0].name}, which is where this comparison applies. ` +
+        `Everything below comes from the plans Electric Scouts holds for each of them (${asOf}).`
+      : `They compete in ${sharedStates.length} of the states we cover. ` +
+        (decided
+          ? `${leader.name} has the lower starting rate in ${Math.max(cheaperCounts.a, cheaperCounts.b)} of them`
+          : `Neither has the lower starting rate in more of them`) +
+        `, but the answer changes by market, so the table below is broken out state by state (${asOf}).`,
+  ].filter(Boolean);
+
+  /* The head-to-head table. This is the page: two columns of the suppliers'
+   * own figures, with the dimension each one wins marked. */
+  sections.push({
+    heading: `${a.name} vs ${b.name} at a Glance`,
+    paragraphs: [
+      `Every figure below is counted from the ${a.plans} ${a.name} plans and the ${b.plans} ` +
+        `${b.name} plans in our catalog (${asOf}). Rate figures describe the plans a supplier ` +
+        `offers somewhere, not a quote for your address.`,
+    ],
+    table: {
+      columns: ['', a.name, b.name],
+      rows: dimensions.map((dimension) => [
+        { text: dimension.label },
+        dimension.winner === 'a' ? `${dimension.a} ✓` : dimension.a,
+        dimension.winner === 'b' ? `${dimension.b} ✓` : dimension.b,
+      ]),
+    },
+  });
+
+  /* Per-state rates — the part that answers "which is cheaper where I live",
+   * and the part no two comparison pages share. */
+  if (sharedStates.length) {
+    sections.push({
+      heading: `Which Is Cheaper in Your State`,
+      paragraphs: [
+        `Suppliers price by utility territory, so the winner in one state routinely loses in the ` +
+          `next. These are the lowest and median rates we hold for each supplier in every market ` +
+          `where both are sold.`,
+      ],
+      table: {
+        columns: ['State', `${a.name} from`, `${b.name} from`, 'Cheaper start'],
+        rows: sharedStates.map((row) => [
+          { text: row.name, path: row.path },
+          formatRate(row.a.minRate),
+          formatRate(row.b.minRate),
+          row.cheaper === null ? 'Tied' : row.cheaper === 'a' ? a.name : b.name,
+        ]),
+      },
+    });
+  }
+
+  /* Coverage only matters when it differs, so a pair with identical footprints
+   * gets no section rather than a section saying "neither has extra states". */
+  const coverageBullets = [];
+  if (aOnly.length) {
+    coverageBullets.push(
+      `${a.name} also has plans in ${joinNames(aOnly.map((code) => STATE_NAMES[code]))}, where ${b.name} does not.`
+    );
+  }
+  if (bOnly.length) {
+    coverageBullets.push(
+      `${b.name} also has plans in ${joinNames(bOnly.map((code) => STATE_NAMES[code]))}, where ${a.name} does not.`
+    );
+  }
+  if (coverageBullets.length) {
+    sections.push({
+      heading: 'Where Only One of Them Sells',
+      paragraphs: [
+        'Outside the shared markets there is no comparison to make — only one of the two is an option at all.',
+      ],
+      bullets: coverageBullets,
+      links: [...aOnly, ...bOnly]
+        .filter((code, index, list) => list.indexOf(code) === index)
+        .map((code) => [STATE_PAGE_PATHS[code], `${STATE_NAMES[code]} electricity rates`]),
+    });
+  }
+
+  sections.push({ heading: `${a.name} vs ${b.name}: Common Questions`, faqs });
+
+  sections.push({
+    heading: 'Check Both at Your Address',
+    paragraphs: [
+      `A tally of markets is not an offer. Enter your ZIP code to see which of these two actually ` +
+        `serves your utility territory and what each is charging there today.`,
+    ],
+    links: [
+      ['/compare-rates', 'Compare both suppliers at your ZIP code'],
+      [`/providers/${a.slug}`, `${a.name} plans and rates`],
+      [`/providers/${b.slug}`, `${b.name} plans and rates`],
+      ['/compare', 'All head-to-head comparisons'],
+    ],
+  });
+
+  return { intro, sections };
+}
+
+function planVersusSections(comparison) {
+  const { a, b, rows, columns, unit, faqs, lede } = comparison;
+  const sections = [];
+
+  const intro = [lede];
+  if (unit === 'plans') {
+    const totalA = rows.reduce((sum, row) => sum + (Number(row.a) || 0), 0);
+    const totalB = rows.reduce((sum, row) => sum + (Number(row.b) || 0), 0);
+    intro.push(
+      `Across the ${rows.length} deregulated states Electric Scouts covers, our catalog holds ` +
+        `${totalA} ${a.short.toLowerCase()} plans and ${totalB} ${b.short.toLowerCase()} plans (${asOf}). ` +
+        `The split is nothing like even in every state, which is the first thing worth knowing before you shop.`
+    );
+  } else {
+    intro.push(
+      `The table below shows how the two compare in each of the ${rows.length} states we cover (${asOf}).`
+    );
+  }
+
+  sections.push({
+    heading: 'How the Two Compare, State by State',
+    paragraphs: [
+      `Markets differ enough that a rule of thumb from one state misleads in another. ` +
+        `Each row links through to that state's full breakdown.`,
+    ],
+    table: {
+      columns: ['State', ...columns],
+      rows: rows.map((row) => [
+        { text: row.name, path: row.path },
+        String(row.a),
+        String(row.b),
+      ]),
+    },
+  });
+
+  sections.push({ heading: 'Questions People Ask', faqs });
+
+  sections.push({
+    heading: 'See What Is Available Where You Live',
+    links: [
+      ['/compare-rates', 'Compare plans for your ZIP code'],
+      ['/bill-analyzer', 'Check what your current plan is really costing'],
+      ['/compare', 'All head-to-head comparisons'],
+      ['/all-states', 'How each state market works'],
+    ],
+  });
+
+  return { intro, sections };
+}
+
+/**
+ * The hub. Its job is to give every comparison page one crawlable inbound link
+ * from a page that itself has a reason to exist, and to let a reader see the
+ * whole set at once.
+ */
+export function buildCompareHubSections() {
+  const providerPages = getProviderComparisons();
+  const planPages = getPlanComparisons();
+  const sections = [];
+
+  const intro = [
+    'Two suppliers rarely differ in the ways their advertising suggests. These pages put the ' +
+      'figures we hold for each side by side — rates, plan counts, contract terms, renewable mix ' +
+      'and exit fees — and mark which one wins on each, market by market.',
+    `Every comparison here is built from the same plan catalog as the rest of the site (${asOf}). ` +
+      'A supplier matchup is published only where both suppliers actually compete for the same ' +
+      'customer, so the list is short on purpose.',
+  ];
+
+  if (providerPages.length) {
+    sections.push({
+      heading: 'Supplier vs Supplier',
+      paragraphs: [
+        `Head-to-head comparisons for ${providerPages.length} matchups where both suppliers sell ` +
+          'into at least one of the same states.',
+      ],
+      table: {
+        columns: ['Comparison', 'States where both are sold', 'Cheaper start in more markets'],
+        rows: providerPages.map((entry) => [
+          { text: entry.heading, path: entry.path },
+          entry.stateNames.length === 1 ? entry.stateNames[0] : String(entry.stateNames.length),
+          entry.cheaperCounts.a === entry.cheaperCounts.b
+            ? 'Split'
+            : entry.cheaperCounts.a > entry.cheaperCounts.b
+              ? entry.a.name
+              : entry.b.name,
+        ]),
+      },
+    });
+  }
+
+  if (planPages.length) {
+    sections.push({
+      heading: 'Plan Type vs Plan Type',
+      paragraphs: [
+        'The choices that apply in every market: how long to commit, what happens to the rate, ' +
+          'what it costs to leave, and whether renewable supply is worth the difference.',
+      ],
+      links: planPages.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
+  sections.push({
+    heading: 'Compare for Your Own Address',
+    paragraphs: [
+      'These pages compare suppliers and plan shapes in general. What you can actually buy depends ' +
+        'on your utility territory, which is set by ZIP code.',
+    ],
+    links: [
+      ['/compare-rates', 'Compare electricity rates by ZIP code'],
+      ['/all-providers', 'Every supplier we track'],
+      ['/all-states', 'Electricity rates by state'],
+      ['/bill-analyzer', 'Check your current bill against these rates'],
+    ],
+  });
+
+  return { intro, sections };
 }
 
 /* ------------------------------------------------------------------ *

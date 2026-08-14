@@ -51,7 +51,7 @@ export default function Landing() {
     <>
     <SEOHead
       title="Electric Scouts | Stop Overpaying for Electricity — We'll Prove It"
-      description="Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from 40+ providers across 12 states. Free Bill Analyzer included."
+      description={`Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from ${MARKET_TOTALS.providersWithPlans} suppliers across ${MARKET_TOTALS.states} states. Free Bill Analyzer included.`}
       canonical="/"
       keywords="compare electricity rates, bill analyzer, electricity providers, energy comparison, electricity plans, save on electricity, deregulated electricity"
     />
@@ -90,7 +90,7 @@ export default function Landing() {
 
             {/* Subheadline */}
             <p className="text-lg md:text-xl text-blue-100 mb-6">
-              Upload your bill or enter your ZIP code. We'll analyze your charges, expose where you're losing money, and match you with a better plan from 40+ providers. Takes 60 seconds.
+              Upload your bill or enter your ZIP code. We'll analyze your charges, expose where you're losing money, and match you with a better plan from {MARKET_TOTALS.providersWithPlans} suppliers. Takes 60 seconds.
             </p>
 
             {/* Main CTA Form */}
@@ -255,7 +255,7 @@ export default function Landing() {
               {
                 icon: ShieldCheck,
                 title: "No Sponsored Rankings",
-                description: "Plans are ranked by value to you, not by who pays us the most. We partner with 40+ providers so the best deal always wins — regardless of the brand.",
+                description: `Plans are ranked by value to you, not by who pays us the most. We partner with ${MARKET_TOTALS.providersWithPlans} suppliers so the best deal always wins — regardless of the brand.`,
                 color: "blue"
               },
               {

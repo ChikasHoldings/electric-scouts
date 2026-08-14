@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getBreadcrumbSchema, getOrganizationSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
+import { MARKET_TOTALS } from "@/seo/market";
 
 export default function AboutUs() {
   const breadcrumbData = getBreadcrumbSchema([
@@ -80,7 +81,7 @@ export default function AboutUs() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { value: "12", label: "States Served", icon: Globe, color: "blue" },
-            { value: "40+", label: "Energy Providers", icon: Zap, color: "orange" },
+            { value: String(MARKET_TOTALS.providersWithPlans), label: "Energy Suppliers", icon: Zap, color: "orange" },
             { value: "$800", label: "Avg. Annual Savings", icon: TrendingDown, color: "green" },
             { value: "4.8★", label: "Customer Rating", icon: Award, color: "purple" }
           ].map((stat, i) => (
@@ -176,7 +177,7 @@ export default function AboutUs() {
                 icon: BarChart3,
                 color: "bg-blue-100 text-blue-600",
                 title: "Rate Comparison",
-                desc: "Compare electricity rates from 40+ providers across 12 states. Enter your ZIP code and see every available plan ranked by price, term length, and features — all in one place."
+                desc: `Compare electricity rates from ${MARKET_TOTALS.providersWithPlans} suppliers across ${MARKET_TOTALS.states} states. Enter your ZIP code and see every available plan ranked by price, term length, and features — all in one place.`
               },
               {
                 icon: Zap,
@@ -269,7 +270,7 @@ export default function AboutUs() {
               <div className="grid md:grid-cols-2 gap-x-12 gap-y-6">
                 {[
                   { title: "100% Free Service", desc: "Our comparison tool is completely free. No hidden costs, no subscriptions, no obligations — ever." },
-                  { title: "Comprehensive Coverage", desc: "Access plans from 40+ providers across 12 deregulated states. The widest selection available anywhere." },
+                  { title: "Comprehensive Coverage", desc: `Access ${MARKET_TOTALS.activePlans} plans from ${MARKET_TOTALS.providersWithPlans} suppliers across ${MARKET_TOTALS.states} deregulated states.` },
                   { title: "Real-Time Rates", desc: "Our database is continuously updated with the latest rates so you always see current pricing." },
                   { title: "Independent & Unbiased", desc: "We're not owned by any electricity provider. Our comparisons are fair, objective, and always in your favor." },
                   { title: "Easy Switching", desc: "Found a better plan? Switch directly through our platform with same-day or next-day activation." },

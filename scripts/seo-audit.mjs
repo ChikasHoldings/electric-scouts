@@ -243,6 +243,34 @@ async function main() {
     if (!external.length) flag('P1', 'orphan', page.path, 'no internal links point here');
   }
 
+  // Islands: a group of pages that link to each other but that nothing outside
+  // links into. Every page in one has inbound links, so the orphan check above
+  // passes on all of them, while a crawler starting at "/" never arrives.
+  //
+  // This is not hypothetical. The 23 pages under /compare linked to each other
+  // — hub to matchup, matchup back to hub — and nothing else on the site linked
+  // to any of them. The audit reported zero orphans while the entire cluster
+  // was reachable only by reading the sitemap.
+  //
+  // The crawl above seeds itself from the registry and the sitemap so that
+  // every page gets fetched, which means it cannot answer this question. So walk
+  // the recorded link graph from "/" instead, and compare.
+  const reachable = new Set(['/']);
+  const walk = ['/'];
+  while (walk.length) {
+    const current = walk.shift();
+    for (const href of new Set(pages.get(current)?.internalLinks || [])) {
+      const target = canonicalPath(href);
+      if (reachable.has(target)) continue;
+      reachable.add(target);
+      walk.push(target);
+    }
+  }
+  for (const page of indexable) {
+    if (page.path === '/' || page.isAlias || reachable.has(page.path)) continue;
+    flag('P1', 'unreachable', page.path, 'in the sitemap, but no chain of links from / reaches it');
+  }
+
   // Alias pages are excluded: sharing a title with the page you canonicalize to
   // is the point of an alias, and counting it as a duplicate would hide the
   // duplicates that actually matter.
@@ -302,6 +330,7 @@ async function main() {
     missingCanonical: count('missing-canonical'),
     canonicalMismatch: count('canonical-mismatch'),
     orphanPages: count('orphan'),
+    unreachablePages: count('unreachable'),
     thinPages: count('thin-content'),
     pagesWithoutSsrHtml: count('no-ssr-content'),
     softFourOhFours: count('soft-404'),
@@ -342,6 +371,7 @@ async function main() {
     ['missing canonical', summary.missingCanonical],
     ['canonical mismatch', summary.canonicalMismatch],
     ['orphan pages', summary.orphanPages],
+    ['unreachable from /', summary.unreachablePages],
     ['thin pages (<' + THIN_MAIN_WORDS + ' words)', summary.thinPages],
     ['pages without SSR HTML', summary.pagesWithoutSsrHtml],
     ['soft 404s', summary.softFourOhFours],

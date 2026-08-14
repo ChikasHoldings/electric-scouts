@@ -33,9 +33,10 @@ const AdminTerritories = lazy(() => import('@/pages/admin/AdminTerritories'));
 const CityRatesRedirect = lazy(() => import('@/components/CityRatesRedirect'));
 const ArticleRedirect = lazy(() => import('@/components/ArticleRedirect'));
 
-// Lazy-loaded CityRates and ArticleDetail for clean URL routes
+// Lazy-loaded CityRates, ArticleDetail and CompareVersus for clean URL routes
 const CityRatesPage = lazy(() => import('@/pages/CityRates'));
 const ArticleDetailPage = lazy(() => import('@/pages/ArticleDetail'));
+const CompareVersusPage = lazy(() => import('@/pages/CompareVersus'));
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -165,6 +166,20 @@ const AppRoutes = () => {
         </LayoutWrapper>
       } />
 
+      {/* ── Clean URL: Head-to-head Pages (/compare/:slug) ── */}
+      {/* The hub at /compare comes from the registry loop below; only the
+          matchup pages need a hand-written route, because their path carries a
+          slug the registry cannot express. Without this the prerendered HTML
+          rendered for a crawler was replaced by the 404 page the moment React
+          hydrated. */}
+      <Route path="/compare/:slug" element={
+        <LayoutWrapper currentPageName="CompareVersus">
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin" /></div>}>
+            <CompareVersusPage />
+          </Suspense>
+        </LayoutWrapper>
+      } />
+
       {/* ── Legacy Redirects: Old query-param URLs → Clean URLs ── */}
       <Route path="/city-rates" element={
         <Suspense fallback={null}>
@@ -185,6 +200,9 @@ const AppRoutes = () => {
       {Object.entries(Pages).map(([pageName, Page]) => {
         // Skip CityRates and ArticleDetail — they now have clean URL routes above
         if (pageName === 'CityRates' || pageName === 'ArticleDetail') return null;
+        // CompareVersus is reached only as /compare/:slug, above. Left in the
+        // loop it would also publish /compare-versus, a URL nothing links to.
+        if (pageName === 'CompareVersus') return null;
         const seoPath = createPageUrl(pageName);
         return (
           <Route
@@ -202,6 +220,9 @@ const AppRoutes = () => {
       {/* Legacy PascalCase and lowercase redirects for backward compatibility */}
       {Object.keys(Pages).map((pageName) => {
         if (pageName === 'CityRates' || pageName === 'ArticleDetail') return null;
+        // CompareVersus is reached only as /compare/:slug, above. Left in the
+        // loop it would also publish /compare-versus, a URL nothing links to.
+        if (pageName === 'CompareVersus') return null;
         const seoPath = createPageUrl(pageName);
         const legacyPascal = `/${pageName}`;
         const legacyLower = `/${pageName.toLowerCase()}`;

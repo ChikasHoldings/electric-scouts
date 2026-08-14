@@ -138,7 +138,7 @@ export default function OhioElectricity() {
             <CardContent className="p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Ohio Utility Information</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Ohio's competitive electricity market allows you to choose from 40+ suppliers while your local utility continues to deliver power safely and reliably to your home or business.
+                Ohio's competitive electricity market lets you choose your supplier while your local utility continues to deliver power safely and reliably to your home or business. We currently track {stateMarket?.providers ?? 0} suppliers selling into Ohio.
               </p>
               <div className="grid md:grid-cols-2 gap-4 mt-6">
                 <div className="bg-blue-50 rounded-lg p-4">
@@ -186,7 +186,7 @@ export default function OhioElectricity() {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">40+ Providers</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{stateMarket?.providers ?? 0} Suppliers</h3>
                 <p className="text-gray-600">
                   Access to one of the most competitive electricity markets in the U.S.
                 </p>
