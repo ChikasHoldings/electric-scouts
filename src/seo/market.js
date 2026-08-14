@@ -53,6 +53,21 @@ export function providersInState(stateCode) {
   return market ? market.providerNames || [] : [];
 }
 
+/**
+ * Suppliers selling at least one 100% renewable plan in a state.
+ *
+ * Exists because the state pages used to answer "can I get renewable energy
+ * here?" with a hand-written list of company names, and those lists had drifted
+ * — Ohio's named two suppliers we hold no Ohio plans from at all. The answer is
+ * derivable from the snapshot, so it should be derived.
+ */
+export function renewableProvidersInState(stateCode) {
+  const perProvider = marketData.providerStates || {};
+  return providersInState(stateCode).filter(
+    (name) => (perProvider[name]?.[stateCode]?.renewablePlans || 0) > 0
+  );
+}
+
 /** States where a provider has tracked plans, as {code, name, path} records. */
 export function providerStateLinks(provider, statePaths) {
   return (provider.planStates || [])

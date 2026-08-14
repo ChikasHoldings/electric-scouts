@@ -8,7 +8,7 @@ import { Search, MapPin, CheckCircle, Zap, TrendingDown } from "lucide-react";
 import { getAllDeregulatedStates, validateZipCode } from "../components/compare/stateData";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
-import { MARKET_TOTALS } from "@/seo/market";
+import { MARKET_TOTALS, getStateMarket } from "@/seo/market";
 
 export default function AllStates() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -209,7 +209,7 @@ export default function AllStates() {
                         <div className="text-xs text-gray-600 mb-0.5">Providers</div>
                         <div className="text-base font-bold text-[#0A5C8C] flex items-center gap-1">
                           <Zap className="w-3.5 h-3.5" />
-                          {state.providerCount}+
+                          {getStateMarket(state.code)?.providers ?? state.providerCount}
                         </div>
                       </div>
                       <div className="bg-green-50 rounded-lg p-2.5">

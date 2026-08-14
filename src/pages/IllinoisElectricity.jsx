@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getProviderPageUrl } from "@/utils/providerSlug";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
-import { getStateMarket } from "@/seo/market.js";
+import { formatRate, getStateMarket, providersInState, renewableProvidersInState } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function IllinoisElectricity() {
@@ -17,15 +18,15 @@ export default function IllinoisElectricity() {
   // Plan counts and supplier counts come from the checked-in market
   // snapshot, so this page and its prerendered twin quote the same figures.
   const stateMarket = getStateMarket("IL");
+  // The suppliers with an active plan here, from the same snapshot the
+  // prerendered page reads. The list this replaced was hand-kept and named
+  // companies we carry no plans from, so "View Plans" led nowhere.
+  const stateProviders = providersInState("IL").slice(0, 6);
+  const renewableHere = renewableProvidersInState("IL");
 
   const stateData = {
     name: "Illinois",
-    avgSavings: 700,
-    providerCount: 36,
-    avgRate: "8.8¢/kWh",
-    avgMonthlyBill: "$126",
     topCities: ["Chicago", "Aurora", "Naperville", "Joliet", "Rockford", "Springfield"],
-    topProviders: ["Constellation", "Direct Energy", "IGS Energy", "Verde Energy", "Amigo Energy", "Starion Energy"],
     faqs: [
       {
         id: 1,
@@ -45,7 +46,7 @@ export default function IllinoisElectricity() {
       {
         id: 4,
         question: "Can I get renewable energy in Illinois?",
-        answer: "Yes! Many Illinois electricity suppliers offer 100% renewable energy plans sourced from wind and solar. Companies like Verde Energy, Direct Energy, and Constellation offer green energy options that support Illinois' growing renewable energy sector while often matching or beating standard rates."
+        answer: `Yes. ${stateMarket?.renewablePlans ?? 0} of the ${stateMarket?.plans ?? 0} Illinois plans we track are backed by 100% renewable energy${renewableHere.length ? `, from suppliers including ${renewableHere.slice(0, 3).join(", ")}` : ""}. Renewable supply in a competitive market is normally matched with renewable energy certificates rather than a dedicated line to a wind farm.`
       }
     ]
   };
@@ -91,8 +92,8 @@ export default function IllinoisElectricity() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.avgRate}</div>
-                <div className="text-sm text-blue-100">Avg. Rate</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.medianRate != null ? formatRate(stateMarket.medianRate) : "—"}</div>
+                <div className="text-sm text-blue-100">Median Plan Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
@@ -103,8 +104,8 @@ export default function IllinoisElectricity() {
                 <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>
-                <div className="text-sm text-blue-100">Avg. Bill</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.minRate != null ? formatRate(stateMarket.minRate) : "—"}</div>
+                <div className="text-sm text-blue-100">Cheapest Plan</div>
               </div>
             </div>
 
@@ -256,16 +257,19 @@ export default function IllinoisElectricity() {
             Top Illinois Electricity Providers
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stateData.topProviders.map((provider, index) => (
+            {stateProviders.map((provider, index) => (
               <Card key={index} className="hover:shadow-lg transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900">{provider}</h3>
                     <Award className="w-6 h-6 text-[#FF6B35]" />
                   </div>
-                  <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                  {/* Straight to the supplier's own page. The card used to send
+                      everyone to the generic comparison regardless of which
+                      supplier they clicked, which threw away the intent. */}
+                  <Link to={getProviderPageUrl(provider)}>
                     <Button variant="outline" className="w-full">
-                      View Plans
+                      View {provider} plans
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>

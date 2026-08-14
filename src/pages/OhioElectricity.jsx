@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getProviderPageUrl } from "@/utils/providerSlug";
 import { getCityUrl } from "@/utils/cityUrls";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, DollarSign, Users, Award, ChevronDown, ArrowRight } from "lucide-react";
-import { getStateMarket } from "@/seo/market.js";
+import { formatRate, getStateMarket, providersInState, renewableProvidersInState } from "@/seo/market.js";
 import SEOHead, { getBreadcrumbSchema, getServiceSchema, getFAQSchema } from "../components/SEOHead";
 
 export default function OhioElectricity() {
@@ -17,15 +18,15 @@ export default function OhioElectricity() {
   // Plan counts and supplier counts come from the checked-in market
   // snapshot, so this page and its prerendered twin quote the same figures.
   const stateMarket = getStateMarket("OH");
+  // The suppliers with an active plan here, from the same snapshot the
+  // prerendered page reads. The list this replaced was hand-kept and named
+  // companies we carry no plans from, so "View Plans" led nowhere.
+  const stateProviders = providersInState("OH").slice(0, 6);
+  const renewableHere = renewableProvidersInState("OH");
 
   const stateData = {
     name: "Ohio",
-    avgSavings: 760,
-    providerCount: 40,
-    avgRate: "8.6¢/kWh",
-    avgMonthlyBill: "$124",
     topCities: ["Columbus", "Cleveland", "Cincinnati", "Toledo", "Akron", "Dayton", "Parma", "Canton", "Youngstown", "Lorain", "Hamilton", "Springfield", "Kettering", "Elyria", "Lakewood", "Cuyahoga Falls", "Middletown", "Newark", "Mansfield", "Mentor"],
-    topProviders: ["Constellation", "Direct Energy", "IGS Energy", "AEP Energy", "Energy Harbor", "Verde Energy"],
     faqs: [
       {
         id: 1,
@@ -40,12 +41,12 @@ export default function OhioElectricity() {
       {
         id: 3,
         question: "What are the best electricity providers in Ohio?",
-        answer: "Top-rated Ohio electricity providers include AEP Energy, Constellation, Direct Energy, IGS Energy, and Verde Energy. The best provider depends on your specific needs, whether you prioritize the lowest rate, renewable energy options, or flexible contract terms."
+        answer: `We do not rank suppliers, because "best" depends on what you are optimising for. What we can tell you is what is actually on sale: ${stateMarket?.providers ?? 0} suppliers with at least one active Ohio plan, among them ${stateProviders.slice(0, 4).join(", ")}. Compare them on rate, contract length and exit fee rather than on brand.`
       },
       {
         id: 4,
         question: "Can I get renewable energy in Ohio?",
-        answer: "Yes! Many Ohio electricity suppliers offer 100% renewable energy plans. Companies like Verde Energy, IGS Energy, and AEP Energy provide green energy options that support wind and solar projects. These renewable plans are often competitively priced with traditional electricity sources."
+        answer: `Yes. ${stateMarket?.renewablePlans ?? 0} of the ${stateMarket?.plans ?? 0} Ohio plans we track are backed by 100% renewable energy${renewableHere.length ? `, from suppliers including ${renewableHere.slice(0, 3).join(", ")}` : ""}. Renewable supply in a competitive market is normally matched with renewable energy certificates rather than a dedicated line to a wind farm.`
       }
     ]
   };
@@ -88,8 +89,8 @@ export default function OhioElectricity() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.avgRate}</div>
-                <div className="text-sm text-blue-100">Avg. Rate</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.medianRate != null ? formatRate(stateMarket.medianRate) : "—"}</div>
+                <div className="text-sm text-blue-100">Median Plan Rate</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-2xl font-bold mb-1">{stateMarket?.providers ?? "—"}</div>
@@ -100,8 +101,8 @@ export default function OhioElectricity() {
                 <div className="text-sm text-blue-100">Plans Tracked</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold mb-1">{stateData.avgMonthlyBill}</div>
-                <div className="text-sm text-blue-100">Avg. Bill</div>
+                <div className="text-2xl font-bold mb-1">{stateMarket?.minRate != null ? formatRate(stateMarket.minRate) : "—"}</div>
+                <div className="text-sm text-blue-100">Cheapest Plan</div>
               </div>
             </div>
 
@@ -212,16 +213,19 @@ export default function OhioElectricity() {
             Top Ohio Electricity Providers
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stateData.topProviders.map((provider, index) => (
+            {stateProviders.map((provider, index) => (
               <Card key={index} className="hover:shadow-lg transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900">{provider}</h3>
                     <Award className="w-6 h-6 text-[#FF6B35]" />
                   </div>
-                  <Link to={createPageUrl("CompareRates") + (zipCode ? `?zip=${zipCode}` : '')}>
+                  {/* Straight to the supplier's own page. The card used to send
+                      everyone to the generic comparison regardless of which
+                      supplier they clicked, which threw away the intent. */}
+                  <Link to={getProviderPageUrl(provider)}>
                     <Button variant="outline" className="w-full">
-                      View Plans
+                      View {provider} plans
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>
