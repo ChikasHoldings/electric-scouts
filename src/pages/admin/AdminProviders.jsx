@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import LogoUpload from "@/components/admin/LogoUpload";
+import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
 
 const emptyProvider = {
   name: "", slug: "", description: "", logo_url: "", website_url: "",
@@ -173,17 +174,20 @@ export default function AdminProviders() {
   const renewableCount = providers.filter(p => (p.offer_categories || []).includes("renewable")).length;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Provider Management</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage electricity providers across all deregulated states</p>
-        </div>
-        <Button size="sm" onClick={() => { setEditingProvider(null); setForm(emptyProvider); setDialogOpen(true); }}>
-          <Plus className="w-4 h-4 mr-1" /> Add Provider
-        </Button>
-      </div>
+    <AdminPage>
+      <AdminPageBar
+        summary={
+          <>
+            {providers.length} providers · {activeCount} active · {statesSet.size}{" "}
+            {statesSet.size === 1 ? "market" : "markets"}
+          </>
+        }
+        actions={
+          <Button size="sm" onClick={() => { setEditingProvider(null); setForm(emptyProvider); setDialogOpen(true); }}>
+            <Plus className="w-4 h-4 mr-1" /> Add Provider
+          </Button>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
@@ -545,6 +549,6 @@ export default function AdminProviders() {
         </DialogContent>
       </Dialog>
 
-    </div>
+    </AdminPage>
   );
 }

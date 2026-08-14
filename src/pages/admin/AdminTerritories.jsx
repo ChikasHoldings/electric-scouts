@@ -20,6 +20,7 @@ import { Plus, Pencil, Trash2, Loader2, Zap, AlertTriangle, ExternalLink } from 
 import { useToast } from "@/components/ui/use-toast";
 import { validateTerritory, BILLING_MODEL_LABELS } from "@/lib/territoryValidation";
 import { BILLING_MODELS } from "@/lib/deliveryTariff";
+import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
 
 /**
  * Delivery tariffs, one row per utility service territory.
@@ -175,21 +176,20 @@ export default function AdminTerritories() {
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Zap className="w-6 h-6 text-blue-600" /> Delivery tariffs
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
+    <AdminPage>
+      <AdminPageBar
+        summary={
+          <>
             {territories.length} configured · {territories.filter((t) => t.is_active).length} active ·
             {" "}covering {new Set(territories.filter((t) => t.is_active).map((t) => t.state)).size} of {STATES.length} markets
-          </p>
-        </div>
-        <Button size="sm" onClick={() => openCreate()}>
-          <Plus className="w-4 h-4 mr-1" /> Add tariff
-        </Button>
-      </div>
+          </>
+        }
+        actions={
+          <Button size="sm" onClick={() => openCreate()}>
+            <Plus className="w-4 h-4 mr-1" /> Add tariff
+          </Button>
+        }
+      />
 
       {uncovered.length > 0 && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
@@ -532,6 +532,6 @@ export default function AdminTerritories() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }

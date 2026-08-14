@@ -21,6 +21,7 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   validatePlan, pricingCompleteness, catalogPricingCoverage, CUSTOMER_TYPES,
 } from "@/lib/planValidation";
+import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
 
 /**
  * Plans — every audience, one screen.
@@ -252,21 +253,20 @@ export default function AdminPlans() {
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Zap className="w-6 h-6 text-blue-600" /> Plans
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
+    <AdminPage>
+      <AdminPageBar
+        summary={
+          <>
             {allPlans.length} plans · {counts.active} active · {counts.byType.residential} residential ·{" "}
             {counts.byType.business} business · {counts.green} at 50%+ renewable
-          </p>
-        </div>
-        <Button size="sm" onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-1" /> Add Plan
-        </Button>
-      </div>
+          </>
+        }
+        actions={
+          <Button size="sm" onClick={openCreate}>
+            <Plus className="w-4 h-4 mr-1" /> Add Plan
+          </Button>
+        }
+      />
 
       {/*
         The pricing-coverage banner.
@@ -786,6 +786,6 @@ export default function AdminPlans() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }

@@ -49,6 +49,7 @@ import {
   FileEdit,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
 
 const ROLE_CONFIG = {
   admin: {
@@ -271,23 +272,25 @@ export default function AdminUsers() {
   const getRoleConfig = (role) => ROLE_CONFIG[role] || ROLE_CONFIG.user;
 
   return (
-    <div className="space-y-6">
-      {/* Header with Create Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage admin users and assign roles.
-          </p>
-        </div>
-        <Button
-          onClick={() => setShowCreateDialog(true)}
-          className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white"
-        >
-          <UserPlus className="w-4 h-4 mr-2" />
-          Create New User
-        </Button>
-      </div>
+    <AdminPage>
+      <AdminPageBar
+        summary={
+          <>
+            {users.length} {users.length === 1 ? "account" : "accounts"} · {adminCount} admin ·{" "}
+            {editorCount} editor · {viewerCount} viewer
+          </>
+        }
+        actions={
+          <Button
+            onClick={() => setShowCreateDialog(true)}
+            size="sm"
+            className="bg-[#0A5C8C] hover:bg-[#084a6f] text-white"
+          >
+            <UserPlus className="w-4 h-4 mr-2" />
+            Create New User
+          </Button>
+        }
+      />
 
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -776,6 +779,6 @@ export default function AdminUsers() {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminPage>
   );
 }
