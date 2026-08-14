@@ -333,6 +333,9 @@ export function getCityRoutes() {
 export function getArticleRouteList(fullArticles) {
   return getArticleRoutes(fullArticles).map((article) => ({
     type: 'article',
+    // Carried through so the content model can find this article in the map it
+    // was built from — the related-guide links are keyed on it.
+    id: article.id,
     path: article.path,
     // Left undefined when article data was not supplied. No generic fallback on
     // purpose: a shared placeholder title across 73 URLs is the exact failure

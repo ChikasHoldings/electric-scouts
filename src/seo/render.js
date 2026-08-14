@@ -307,6 +307,11 @@ function siteNav(states) {
     ['/bill-analyzer', 'Bill Analyzer'],
     ['/residential-electricity', 'Residential Electricity'],
     ['/business-electricity', 'Business Electricity'],
+    // Both are linked from the real header and footer; the prerendered nav is
+    // meant to mirror them and was missing these two, which left them with one
+    // and two inbound links respectively.
+    ['/business-hub', 'Business Electricity by Company Size'],
+    ['/home-concierge', 'Home Concierge'],
     ['/renewable-energy', 'Renewable Energy Plans'],
     ['/savings-calculator', 'Savings Calculator'],
     ['/learning-center', 'Learning Center'],
@@ -396,14 +401,16 @@ function renderSection(section) {
  */
 /**
  * @param {Record<string, any>} route
- * @param {{citiesByState?: Record<string, any[]>, states?: any[], articles?: any[]}} [context]
+ * `articles` is the route list; `fullArticles` is the raw map, which is the
+ * only one carrying the tags the related-guide links are scored on.
+ * @param {{citiesByState?: Record<string, any[]>, states?: any[], articles?: any[], fullArticles?: Record<string, any>}} [context]
  */
 export function buildPageContent(route, context = {}) {
   switch (route.type) {
     case 'city':
       return buildCitySections(route, { citiesByState: context.citiesByState || {} });
     case 'state':
-      return buildStateSections(route);
+      return buildStateSections(route, context);
     case 'provider':
       return buildProviderSections(route);
     case 'comparison':
@@ -415,7 +422,7 @@ export function buildPageContent(route, context = {}) {
     case 'utility-hub':
       return buildUtilityHubSections();
     case 'article':
-      return buildArticleSections(route);
+      return buildArticleSections(route, { articles: context.fullArticles });
     default:
       return buildStaticSections(route, context);
   }

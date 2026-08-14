@@ -30,6 +30,7 @@ import {
   getProviderRoutes,
   getComparisonRoutes,
   getUtilityRoutes,
+  getArticleRouteList,
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS } from '../src/seo/articles.js';
@@ -43,6 +44,11 @@ import { getStates, getCities } from '../src/seo/locations.js';
 import { LOCATION_DATA } from '../src/components/location/locationData.js';
 import { comparisonsForProvider, comparisonsForState } from '../src/seo/comparisons.js';
 import { getUtilities, utilitiesForState, utilityForCity } from '../src/seo/utilities.js';
+import { relatedArticles, articlesForState } from '../src/seo/articleLinks.js';
+import { loadSeoData } from '../src/seo/data.mjs';
+
+const { fullArticles: seoArticles } = await loadSeoData();
+const articleRoutes = getArticleRouteList(seoArticles);
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -1148,8 +1154,9 @@ const navContext = (() => {
 })();
 
 /** The prerendered body for a route, which is where the crawlable nav lives. */
-function renderNav(route) {
-  return renderBody(route, buildPageContent(route, navContext), navContext);
+function renderNav(route, extra = {}) {
+  const context = { ...navContext, ...extra };
+  return renderBody(route, buildPageContent(route, context), context);
 }
 
 describe('the comparison cluster is linked from the rest of the site', () => {
@@ -1654,5 +1661,98 @@ describe('city pages are distinct from their same-state siblings', () => {
       assert.ok(prose(city).includes(utility.name), `${city.path} does not name ${utility.name}`);
     }
     assert.ok(checked > 0, 'no city/utility pairs were exercised');
+  });
+});
+
+/* ==================================================================
+ * Internal link equity
+ *
+ * A page with one inbound link is a page Google has little reason to
+ * crawl often or rank well, however good it is. The 73 guides were the
+ * clearest case: the deepest content on the site, the only family with no
+ * near-duplicate pairs, and a median of one inbound link each.
+ * ================================================================== */
+
+describe('every page family accumulates internal links', () => {
+  test('an article route carries the id its related links are keyed on', () => {
+    // getArticleRouteList dropped `id`, so relatedArticles() had nothing to
+    // look up and the Related Guides block silently rendered empty on all 73.
+    for (const route of articleRoutes) {
+      assert.ok(route.id != null, `${route.path} has no id`);
+    }
+  });
+
+  test('every guide links to other guides, and no guide is a dead end', () => {
+    for (const route of articleRoutes) {
+      const related = relatedArticles(route.id, seoArticles);
+      assert.ok(related.length >= 3, `${route.path} suggests only ${related.length} related guides`);
+      for (const entry of related) {
+        assert.notEqual(String(entry.id), String(route.id), `${route.path} links to itself`);
+      }
+    }
+  });
+
+  test('every guide is suggested by at least one other guide', () => {
+    // Relatedness is not symmetric: a broad guide links out generously and can
+    // receive nothing back. Reciprocity in relatedArticles() is what stops
+    // 17 of the 73 sitting on fewer than three inbound links.
+    const suggested = new Set();
+    for (const route of articleRoutes) {
+      for (const entry of relatedArticles(route.id, seoArticles)) suggested.add(String(entry.id));
+    }
+    for (const route of articleRoutes) {
+      assert.ok(
+        suggested.has(String(route.id)),
+        `/learn/${route.id} is suggested by no other guide — it can only be reached from the index`
+      );
+    }
+  });
+
+  test('state pages link to the guides written about them', () => {
+    let linked = 0;
+    for (const route of getStateRoutes()) {
+      const guides = articlesForState(route.state.code, seoArticles);
+      if (!guides.length) continue;
+      linked += 1;
+      const html = renderNav(route, { fullArticles: seoArticles });
+      for (const guide of guides) {
+        assert.ok(html.includes(`href="${guide.path}"`), `${route.path} does not link to ${guide.path}`);
+      }
+    }
+    assert.ok(linked > 0, 'no state matched any guide');
+  });
+
+  test('a guide is only claimed by a state it is actually about', () => {
+    // Matching on body text would attach any guide mentioning Texas once to
+    // the Texas page, spending that page's authority on something a reader
+    // did not ask for.
+    for (const route of getStateRoutes()) {
+      for (const guide of articlesForState(route.state.code, seoArticles)) {
+        const haystack = `${guide.title} ${(seoArticles[guide.id].tags || []).join(' ')}`.toLowerCase();
+        assert.ok(
+          haystack.includes(route.state.name.toLowerCase()),
+          `${route.path} claims ${guide.path}, which does not name the state in its title or tags`
+        );
+      }
+    }
+  });
+
+  test('a supplier page names the rivals selling in the same states', () => {
+    const providers = getPublishableProviders();
+    for (const route of getProviderRoutes(providers).slice(0, 10)) {
+      const { sections } = buildProviderSections(route);
+      const rivals = sections.find((s) => /Other Suppliers Selling Where/.test(s.heading || ''));
+      const overlapping = providers.filter(
+        (other) =>
+          other.slug !== route.provider.slug &&
+          other.plans > 0 &&
+          (other.planStates || []).some((code) => (route.provider.planStates || []).includes(code))
+      );
+      if (!overlapping.length) continue;
+      assert.ok(rivals, `${route.path} names no overlapping suppliers`);
+      for (const [path] of rivals.links) {
+        assert.notEqual(path, route.path, `${route.path} lists itself as a rival`);
+      }
+    }
   });
 });

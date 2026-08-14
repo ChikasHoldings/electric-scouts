@@ -20,6 +20,7 @@
 import { LOCATION_DATA } from '../components/location/locationData.js';
 import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { UTILITY_ROOT, getUtilities, utilitiesForState, utilityForCity } from './utilities.js';
+import { articlesForState, relatedArticles } from './articleLinks.js';
 import {
   comparisonsForProvider,
   comparisonsForState,
@@ -461,7 +462,7 @@ function buildCityFaqs(city, market, insights, utility) {
  * State pages
  * ------------------------------------------------------------------ */
 
-export function buildStateSections(route) {
+export function buildStateSections(route, context = {}) {
   const { state } = route;
   const market = getStateMarket(state.code);
   const location = LOCATION_DATA[state.code];
@@ -586,6 +587,20 @@ export function buildStateSections(route) {
           `Each page counts rates, plan mix and exit fees for both sides in ${state.name} ${asOf}.`,
       ],
       links: stateMatchups.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
+  /* Guides written about this state. 26 of the 73 name a state we publish,
+   * and those are the ones worth linking from it — a guide that mentions
+   * Texas in passing is not a Texas guide. */
+  const stateArticles = articlesForState(state.code, context.fullArticles);
+  if (stateArticles.length) {
+    sections.push({
+      heading: `Guides for ${state.name}`,
+      paragraphs: [
+        `Written for ${state.name} specifically, rather than for deregulated markets in general.`,
+      ],
+      links: stateArticles.map((entry) => [entry.path, entry.title]),
     });
   }
 
@@ -834,6 +849,51 @@ export function buildProviderSections(route) {
           `counted in every state where both are sold.`,
       ],
       links: matchups.map((entry) => [entry.path, entry.heading]),
+    });
+  }
+
+  /* Suppliers competing for the same customer.
+   *
+   * A supplier with no curated matchup was reachable only from its state page
+   * and the directory — two inbound links, against a median of seven across
+   * the family. These are not matchups (no editorial judgement, no comparison
+   * tables); they are the answer to "who else sells where this one sells",
+   * which is the next question after reading a supplier profile, and they give
+   * the smaller suppliers a route in from the larger ones.
+   *
+   * Ranked by shared footprint, then by closeness in catalog size rather than
+   * by absolute size. Sorting by size put the same handful of national
+   * suppliers on all 35 pages and left the small Texas-only ones with two
+   * inbound links each — they shared states with the giants but never appeared
+   * in a giant's own list. Closeness fixes both halves of that: it links small
+   * suppliers to each other, and it is the more useful comparison anyway.
+   * Weighing a five-plan retailer against a forty-one-plan national is not the
+   * choice a reader on this page is making. */
+  const rivals = getPublishableProviders()
+    .filter((other) => other.slug !== provider.slug && other.plans > 0)
+    .map((other) => ({
+      other,
+      shared: (other.planStates || []).filter((code) => (provider.planStates || []).includes(code)).length,
+      sizeGap: Math.abs((other.plans || 0) - (provider.plans || 0)),
+    }))
+    .filter((entry) => entry.shared > 0)
+    .sort((a, b) => b.shared - a.shared || a.sizeGap - b.sizeGap)
+    .slice(0, 6);
+
+  if (rivals.length) {
+    sections.push({
+      heading: `Other Suppliers Selling Where ${provider.name} Does`,
+      paragraphs: [
+        `${provider.name} is not the only option at these addresses. Each of these sells into at ` +
+          `least one of the same states, so they are the suppliers a ${provider.name} quote is ` +
+          `really being weighed against.`,
+      ],
+      links: rivals.map(({ other, shared }) => [
+        `/providers/${other.slug}`,
+        shared === 1
+          ? `${other.name} — also sold in ${STATE_NAMES[(other.planStates || []).find((code) => (provider.planStates || []).includes(code))]}`
+          : `${other.name} — overlaps in ${shared} states`,
+      ]),
     });
   }
 
@@ -2281,19 +2341,43 @@ export function buildCompareHubSections() {
  * Articles
  * ------------------------------------------------------------------ */
 
-export function buildArticleSections(route) {
+/**
+ * @param {Record<string, any>} route
+ * @param {{articles?: Record<string, any>}} [context] the raw article map, which
+ *   carries the tags the related-guide links are scored on
+ */
+export function buildArticleSections(route, context = {}) {
+  const { articles } = context;
+  const sections = [];
+
+  /* Guides on the same subject.
+   *
+   * These 73 pages are the best content on the site and were the worst
+   * linked — a median of one inbound link each, from /learning-center, and
+   * every one of them ending with the same three hub links. Nothing pointed
+   * from one guide to another, so none of them passed any authority to the
+   * others and none of them accumulated any. */
+  const related = route.id && articles ? relatedArticles(route.id, articles) : [];
+  if (related.length) {
+    sections.push({
+      heading: 'Related Guides',
+      links: related.map((entry) => [entry.path, entry.title]),
+    });
+  }
+
+  sections.push({
+    heading: 'Keep Reading',
+    links: [
+      ['/learning-center', 'All electricity guides'],
+      ['/compare-rates', 'Compare plans for your ZIP code'],
+      ['/compare', 'Compare suppliers head to head'],
+      ['/all-states', 'How your state market works'],
+    ],
+  });
+
   return {
     intro: route.description ? [route.description] : [],
-    sections: [
-      {
-        heading: 'Keep Reading',
-        links: [
-          ['/learning-center', 'All electricity guides'],
-          ['/compare-rates', 'Compare plans for your ZIP code'],
-          ['/all-states', 'How your state market works'],
-        ],
-      },
-    ],
+    sections,
   };
 }
 
