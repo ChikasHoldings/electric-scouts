@@ -529,11 +529,15 @@ function CityRatesInner() {
             {displayCityName} Electricity FAQs
           </h2>
           <div className="space-y-4">
-            {cityFaqs.map((faq) => (
-              <Card 
-                key={faq.id} 
+            {/* Identified by position. These FAQ objects carry no id, so
+                key={faq.id} was undefined on every one of them — React saw a
+                keyless list, and the open-state check compared undefined to
+                undefined, so opening one question opened all four at once. */}
+            {cityFaqs.map((faq, index) => (
+              <Card
+                key={index}
                 className="border-2 hover:border-[#0A5C8C] transition-all cursor-pointer overflow-hidden"
-                onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                onClick={() => setOpenFaq(openFaq === index ? null : index)}
               >
                 <CardContent className="p-0">
                   <div className="flex items-center justify-between p-6">
@@ -542,13 +546,13 @@ function CityRatesInner() {
                     </h3>
                     <ChevronDown 
                       className={`w-5 h-5 text-[#0A5C8C] flex-shrink-0 transition-transform duration-300 ${
-                        openFaq === faq.id ? 'rotate-180' : ''
+                        openFaq === index ? 'rotate-180' : ''
                       }`}
                     />
                   </div>
                   <div 
                     className={`transition-all duration-300 ease-in-out ${
-                      openFaq === faq.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                      openFaq === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     }`}
                   >
                     <div className="px-6 pb-6 pt-0">

@@ -102,13 +102,16 @@ export default function HeroSection({ zipCode, setZipCode }) {
           <div className="relative hidden lg:block">
             <picture>
               <source srcSet="/images/homepage/hero-smart-home.webp" type="image/webp" />
+              {/* fetchpriority lowercase: React 18 drops the camelCase spelling
+                  before it becomes an attribute, and this is the homepage LCP
+                  image, so the hint is worth actually delivering. */}
               <img
                 src="/images/homepage/hero-smart-home.jpg"
                 alt="Smart home energy comparison dashboard"
                 className="w-full h-auto max-w-lg mx-auto"
                 loading="eager"
                 decoding="async"
-                fetchPriority="high"
+                fetchpriority="high"
                 width="500"
                 height="500" />
             </picture>

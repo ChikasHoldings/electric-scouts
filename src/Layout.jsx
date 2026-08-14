@@ -135,12 +135,16 @@ export default function Layout({ children, currentPageName }) {
             <Link to={createPageUrl("Home")} className="flex items-center">
               <picture>
                 <source srcSet="/images/logo-header.webp" type="image/webp" />
-                <img 
+                {/* fetchpriority is lowercase on purpose. React 18 does not map
+                    the camelCase `fetchPriority` to an attribute, so the hint was
+                    dropped before it reached the browser, and every public page
+                    logged an "unrecognized prop" warning saying so. */}
+                <img
                   src="/images/logo-header.png"
                   alt="Electric Scouts Logo - Compare Electricity Rates and Save on Your Energy Bill in 12 Deregulated States"
                   className="h-9 sm:h-9 lg:h-10"
                   loading="eager"
-                  fetchPriority="high"
+                  fetchpriority="high"
                   width="193"
                   height="40"
                 />

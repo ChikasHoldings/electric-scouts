@@ -252,7 +252,10 @@ export default function AdminUsers() {
 
   const adminCount = users.filter((u) => u.role === "admin").length;
   const editorCount = users.filter((u) => u.role === "editor").length;
-  const userCount = users.filter(
+  // Named for what the summary line calls it. It was `userCount` while the
+  // summary read `viewerCount`, and because no-undef was off nothing caught it
+  // — the page threw a ReferenceError the moment it rendered.
+  const viewerCount = users.filter(
     (u) => u.role === "user" || u.role === "viewer" || !u.role
   ).length;
 
