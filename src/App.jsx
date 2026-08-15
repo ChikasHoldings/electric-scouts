@@ -7,27 +7,14 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
+import RouteErrorBoundary from '@/components/RouteErrorBoundary';
 import { AuthProvider } from '@/lib/AuthContext';
 import { createPageUrl } from '@/utils';
 import ProviderDetailsPage from '@/pages/ProviderDetails';
 
-// Admin imports — lazy-loaded for code-splitting
+// Admin — lazy-loaded from its own registry, which App.jsx and main.jsx share
 import AdminBoot from '@/components/admin/AdminBoot';
-
-const AdminRoute = lazy(() => import('@/components/admin/AdminRoute'));
-const AdminLogin = lazy(() => import('@/pages/admin/AdminLogin'));
-const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
-const AdminProviders = lazy(() => import('@/pages/admin/AdminProviders'));
-const AdminPlans = lazy(() => import('@/pages/admin/AdminPlans'));
-const AdminArticles = lazy(() => import('@/pages/admin/AdminArticles'));
-const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
-const AdminAffiliates = lazy(() => import('@/pages/admin/AdminAffiliates'));
-const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
-const AdminConcierge = lazy(() => import('@/pages/admin/AdminConcierge'));
-const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
-const AdminRevenue = lazy(() => import('@/pages/admin/AdminRevenue'));
-const AdminLeadBuyers = lazy(() => import('@/pages/admin/AdminLeadBuyers'));
-const AdminTerritories = lazy(() => import('@/pages/admin/AdminTerritories'));
+import { ADMIN_ROUTES, AdminGate, AdminLoginPage } from './admin.config';
 
 // Lazy-loaded SEO redirect components
 const CityRatesRedirect = lazy(() => import('@/components/CityRatesRedirect'));
@@ -43,104 +30,75 @@ const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 
-const LayoutWrapper = ({ children, currentPageName }) => Layout ?
-  <Layout currentPageName={currentPageName}>
-    <Suspense fallback={
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin" />
-      </div>
-    }>
-      {children}
-    </Suspense>
-  </Layout>
-  : <Suspense fallback={
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin" />
-      </div>
-    }>
-      {children}
-    </Suspense>;
+const PageSpinner = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin" />
+  </div>
+);
+
+/**
+ * Header, footer and the page between them.
+ *
+ * The error boundary is inside the layout and outside the Suspense boundary, so
+ * it catches both a page that throws while rendering and a chunk that fails to
+ * arrive — and in either case the visitor keeps the nav they came in with
+ * instead of losing the whole site to a full-screen error.
+ */
+const LayoutWrapper = ({ children, currentPageName }) => {
+  const content = (
+    <RouteErrorBoundary>
+      <Suspense fallback={<PageSpinner />}>{children}</Suspense>
+    </RouteErrorBoundary>
+  );
+  return Layout ? <Layout currentPageName={currentPageName}>{content}</Layout> : content;
+};
 
 // The main app component — public pages render immediately without waiting for auth.
 // Only admin routes (wrapped in AdminRoute) wait for auth to resolve.
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* ── Admin Routes (lazy-loaded, auth-gated by AdminRoute) ── */}
+      {/* ── Admin ── */}
+
+      {/* Login sits outside the gate — it is the one admin screen a logged-out
+          visitor is supposed to reach. */}
       <Route path="/admin/login" element={
         <Suspense fallback={<AdminBoot />}>
-          <AdminLogin />
+          <AdminLoginPage />
         </Suspense>
       } />
-      <Route path="/admin" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminDashboard /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/providers" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminProviders /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/plans" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminPlans /></AdminRoute>
-        </Suspense>
-      } />
-      {/* The business and renewable plan screens were the residential one with
-          a filter changed, so they are now filters on /admin/plans. Redirected
-          rather than removed: these paths are in browser histories and, more
-          importantly, in the muscle memory of whoever runs the catalog. */}
+
+      {/* Consolidated screens, kept as redirects rather than removed: these
+          paths are in browser histories and, more importantly, in the muscle
+          memory of whoever runs the catalog. Business and renewable plans were
+          the residential screen with a filter changed; monetization readiness
+          is one section of revenue, because "can we earn" is only useful next
+          to "what did we earn". They stay outside the gate so they resolve
+          without waiting on auth. */}
       <Route path="/admin/business-plans" element={<Navigate to="/admin/plans" replace />} />
       <Route path="/admin/renewable-plans" element={<Navigate to="/admin/plans" replace />} />
-      <Route path="/admin/articles" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminArticles /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/users" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminUsers /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/affiliates" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminAffiliates /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/settings" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminSettings /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/concierge" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminConcierge /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/lead-buyers" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminLeadBuyers /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/territories" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminTerritories /></AdminRoute>
-        </Suspense>
-      } />
-      <Route path="/admin/revenue" element={
-        <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminRevenue /></AdminRoute>
-        </Suspense>
-      } />
-      {/* Monetization readiness is now one section of the revenue screen — the
-          question "can we earn" is only useful next to "what did we earn". */}
       <Route path="/admin/monetization" element={<Navigate to="/admin/revenue" replace />} />
-      <Route path="/admin/leads" element={
+
+      {/* One layout route for the whole panel.
+          Every screen used to declare its own
+          <Suspense fallback={<AdminBoot/>}><AdminRoute>…</AdminRoute></Suspense>,
+          which meant moving between two admin pages tore down the gate, the
+          sidebar and the header, painted the full-screen boot spinner over
+          everything while the next chunk arrived, and then rebuilt the shell
+          from scratch — indistinguishable from a hard refresh, and it reset
+          every open menu and scroll position on the way. Nested under a single
+          parent, the shell mounts once and only the content area swaps. */}
+      <Route path="/admin" element={
         <Suspense fallback={<AdminBoot />}>
-          <AdminRoute><AdminLeads /></AdminRoute>
+          <AdminGate />
         </Suspense>
-      } />
+      }>
+        {ADMIN_ROUTES.map(({ path, relative, Component }) =>
+          relative
+            ? <Route key={path} path={relative} element={<Component />} />
+            : <Route key={path} index element={<Component />} />
+        )}
+      </Route>
 
       {/* ── Public Routes (render immediately, no auth gate) ── */}
       <Route path="/providers/:slug" element={

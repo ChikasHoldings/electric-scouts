@@ -33,6 +33,18 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const appSource = readFileSync(join(here, '..', 'src', 'App.jsx'), 'utf8');
+const adminConfigSource = readFileSync(join(here, '..', 'src', 'admin.config.js'), 'utf8');
+
+/**
+ * The paths admin.config.js can render, read out of the source rather than
+ * imported: the module builds React.lazy components at load time, and this
+ * suite runs under bare Node with no bundler and no JSX.
+ */
+const registeredRoutePaths = (() => {
+  const block = adminConfigSource.match(/const ADMIN_PAGE_LOADERS = \{([\s\S]*?)\n\};/);
+  assert.ok(block, 'ADMIN_PAGE_LOADERS is no longer a literal object in admin.config.js');
+  return [...block[1].matchAll(/'(\/admin[^']*)':/g)].map((m) => m[1]);
+})();
 
 describe('the registry is internally coherent', () => {
   test('every entry is complete', () => {
@@ -70,11 +82,38 @@ describe('the registry is internally coherent', () => {
 });
 
 describe('the router serves every path the registry names', () => {
-  test('each nav path has a route in App.jsx', () => {
+  test('each nav path has a screen in the admin route registry', () => {
     for (const item of ADMIN_NAV) {
       assert.ok(
-        appSource.includes(`path="${item.path}"`),
-        `${item.path} is in the sidebar but has no <Route> in App.jsx`
+        registeredRoutePaths.includes(item.path),
+        `${item.path} is in the sidebar but has no loader in admin.config.js — ` +
+          'the link would open a shell that never stops loading'
+      );
+    }
+  });
+
+  test('the registry has no screen the sidebar cannot reach', () => {
+    const navPaths = new Set(ADMIN_NAV.map((i) => i.path));
+    for (const path of registeredRoutePaths) {
+      assert.ok(
+        navPaths.has(path),
+        `${path} loads a screen no sidebar entry links to — add it to ADMIN_NAV or drop it`
+      );
+    }
+  });
+
+  test('every screen is nested under the one /admin layout route', () => {
+    // The shape matters, not just the paths: a screen given its own top-level
+    // <Route> would remount the gate, the sidebar and the header on arrival,
+    // which reads to an operator as the panel reloading itself.
+    assert.ok(
+      /<Route path="\/admin" element=\{[\s\S]*?\}>\s*\{ADMIN_ROUTES\.map/.test(appSource),
+      'App.jsx no longer renders the admin screens as children of a /admin layout route'
+    );
+    for (const item of ADMIN_NAV) {
+      assert.ok(
+        !appSource.includes(`path="${item.path}"`) || item.path === '/admin',
+        `${item.path} has its own top-level <Route> again, outside the layout route`
       );
     }
   });

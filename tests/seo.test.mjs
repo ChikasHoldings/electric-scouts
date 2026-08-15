@@ -46,6 +46,7 @@ import { comparisonsForProvider, comparisonsForState } from '../src/seo/comparis
 import { getUtilities, utilitiesForState, utilityForCity } from '../src/seo/utilities.js';
 import { relatedArticles, articlesForState } from '../src/seo/articleLinks.js';
 import { loadSeoData } from '../src/seo/data.mjs';
+import { getCityUrl, stateSlugFor } from '../src/utils/cityUrls.js';
 
 const { fullArticles: seoArticles } = await loadSeoData();
 const articleRoutes = getArticleRouteList(seoArticles);
@@ -1841,5 +1842,111 @@ describe('the React pages quote the same market figures as the prerendered ones'
         assert.ok(inState.has(name), `${code} lists ${name} as renewable but it has no plans there`);
       }
     }
+  });
+});
+
+/**
+ * Legacy query-param URLs still resolve, and resolve somewhere real.
+ *
+ * `/city-rates?city=…&state=…` and `/article-detail?…` are in the wild: they
+ * are what this site published before the clean URLs existed, so they are what
+ * old inbound links and Google's index still point at. Both are noindex now and
+ * exist only to forward.
+ *
+ * `getCityUrl` used to fall back to `/city-rates?city=…&state=…` when it could
+ * not place the state — which is the URL the redirect component renders for.
+ * Any old link that spelled the state as a slug (`state=ohio`) therefore
+ * redirected to itself, forever, and the visitor got a blank page that never
+ * resolved. A crawler got the same thing.
+ */
+describe('legacy URLs forward instead of looping', () => {
+  test('a state code, slug or display name all reach the same city page', () => {
+    for (const state of ['OH', 'oh', 'ohio', 'Ohio']) {
+      assert.equal(
+        getCityUrl('Columbus', state),
+        '/electricity-rates/ohio/columbus',
+        `state="${state}" did not resolve to the Ohio city page`
+      );
+    }
+    assert.equal(getCityUrl('Corpus Christi', 'TX'), '/electricity-rates/texas/corpus-christi');
+    assert.equal(getCityUrl('New York City', 'new-york'), '/electricity-rates/new-york/new-york-city');
+  });
+
+  test('no input produces a URL that redirects back into the redirect', () => {
+    const inputs = [
+      ['Columbus', 'ohio'], ['Columbus', 'OH'], ['Columbus', 'Ohio'],
+      ['Columbus', 'ZZ'], ['Columbus', ''], ['Columbus', null], ['Columbus', undefined],
+      ['', 'OH'], [null, 'OH'], [undefined, 'OH'], ['Nowhere', 'Atlantis'],
+    ];
+    for (const [city, state] of inputs) {
+      const url = getCityUrl(city, state);
+      assert.ok(
+        !url.startsWith('/city-rates'),
+        `getCityUrl(${JSON.stringify(city)}, ${JSON.stringify(state)}) → ${url}, ` +
+          'which the redirect component would hand straight back to itself'
+      );
+      assert.ok(url.startsWith('/'), `${url} is not a site-relative path`);
+    }
+  });
+
+  test('an unplaceable state lands on the city index rather than nowhere', () => {
+    assert.equal(getCityUrl('Columbus', 'ZZ'), '/all-cities');
+    assert.equal(getCityUrl('', 'OH'), '/all-cities');
+  });
+
+  test('stateSlugFor answers only for states we actually serve', () => {
+    assert.equal(stateSlugFor('TX'), 'texas');
+    assert.equal(stateSlugFor('rhode island'), 'rhode-island');
+    assert.equal(stateSlugFor('CA'), null);
+    assert.equal(stateSlugFor(''), null);
+    assert.equal(stateSlugFor(null), null);
+  });
+
+  test('the redirect components guard the loop themselves', () => {
+    const cityRedirect = fs.readFileSync(
+      path.join(ROOT, 'src', 'components', 'CityRatesRedirect.jsx'), 'utf8');
+    assert.ok(
+      cityRedirect.includes('startsWith("/city-rates")'),
+      'CityRatesRedirect no longer checks that its target is not itself'
+    );
+    const articleRedirect = fs.readFileSync(
+      path.join(ROOT, 'src', 'components', 'ArticleRedirect.jsx'), 'utf8');
+    assert.ok(
+      articleRedirect.includes('"slug"') && articleRedirect.includes('"id"'),
+      'ArticleRedirect ignores one of the two identifiers legacy links carry'
+    );
+  });
+});
+
+/**
+ * One sitemap, and nothing generating a second one in the browser.
+ *
+ * /sitemap-xml used to build its own copy from the route registry without the
+ * provider or article lists, so it published a fraction of the real URL set —
+ * and it threw a TypeError on every load assigning to `document.contentType`,
+ * which is read-only.
+ */
+describe('the sitemap has exactly one source', () => {
+  test('the preview page reads the published file rather than rebuilding it', () => {
+    const source = fs.readFileSync(path.join(ROOT, 'src', 'pages', 'SitemapXML.jsx'), 'utf8');
+    assert.ok(source.includes("fetch(\"/sitemap.xml\""), 'the page no longer reads /sitemap.xml');
+    // The assignment, not the word — the file explains the old bug in a comment.
+    assert.ok(
+      !/document\.contentType\s*=/.test(source),
+      'the page still assigns to the read-only document.contentType'
+    );
+    assert.ok(
+      !source.includes('generateDynamicSitemap'),
+      'the page still builds a second sitemap in the browser'
+    );
+  });
+
+  test('nothing else generates sitemap XML at runtime', () => {
+    const manager = fs.readFileSync(
+      path.join(ROOT, 'src', 'components', 'seo', 'SitemapManager.jsx'), 'utf8');
+    assert.ok(
+      !manager.includes('urlset'),
+      'SitemapManager builds sitemap XML again — dist/sitemap.xml is the only sitemap'
+    );
   });
 });

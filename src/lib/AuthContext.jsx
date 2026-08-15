@@ -160,6 +160,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Sign out, and by default leave for the public homepage.
+   *
+   * The one place in the app where a full page load is the right call rather
+   * than a router navigation: it discards the React Query cache along with
+   * everything else, and that cache holds leads, buyers and customer contact
+   * details fetched under the session being ended. A soft navigation would
+   * leave all of it in memory for whoever sits down next.
+   */
   const logout = async (shouldRedirect = true) => {
     try {
       await supabase.auth.signOut();
@@ -174,22 +183,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const navigateToLogin = () => {
-    window.location.href = '/admin';
-  };
-
-  const resetPassword = async (email) => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) throw error;
-      return true;
-    } catch (error) {
-      setAuthError({ type: 'reset_failed', message: error.message });
-      throw error;
-    }
-  };
 
   // Manually re-check the session (used by checkAppState)
   const checkSession = async () => {
@@ -236,8 +229,6 @@ export const AuthProvider = ({ children }) => {
       signUp,
       loginWithGoogle,
       logout,
-      navigateToLogin,
-      resetPassword,
       checkAppState: checkSession,
     }}>
       {children}

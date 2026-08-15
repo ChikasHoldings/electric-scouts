@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Clock, CheckCircle, FileText, TrendingDown, AlertCircle, Mail, Phone, MapPin, Calendar, Zap } from "lucide-react";
 
 export default function BusinessQuoteDashboard() {
-  const { user, isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();
+  const { user, isLoadingAuth } = useAuth();
   const loading = isLoadingAuth;
 
   const { data: quotes = [], isLoading, refetch } = useQuery({
@@ -70,11 +70,14 @@ export default function BusinessQuoteDashboard() {
               <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-gray-900 mb-3">Sign In Required</h2>
               <p className="text-gray-600 mb-6">Please sign in to view your custom quote requests</p>
-              <Button 
-                onClick={() => navigateToLogin()}
-                className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white"
-              >
-                Sign In
+              {/* Signing in used to reload the browser onto /admin, which is the
+                  staff panel: a business customer landed on "Access Denied"
+                  with no route back to their own quotes. The sign-in screen
+                  takes a return path, so they come back here. */}
+              <Button asChild className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white">
+                <Link to={`/admin/login?next=${encodeURIComponent(createPageUrl("BusinessQuoteDashboard"))}`}>
+                  Sign In
+                </Link>
               </Button>
             </CardContent>
           </Card>

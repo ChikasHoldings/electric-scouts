@@ -54,14 +54,41 @@ export function slugToCity(slug) {
 }
 
 /**
+ * The URL slug for a state, given whichever form the caller has.
+ *
+ * "OH", "oh", "ohio" and "Ohio" all resolve to "ohio". The three forms are not
+ * hypothetical: pages pass the code, the legacy query-param URLs this module
+ * replaced carry the slug, and catalog rows carry the display name.
+ *
+ * Returns null for a state we do not serve, so callers can decide rather than
+ * building a URL for a page that does not exist.
+ */
+export function stateSlugFor(state) {
+  if (!state) return null;
+  const raw = String(state).trim();
+  if (!raw) return null;
+  const byCode = STATE_NAMES[raw.toUpperCase()];
+  if (byCode) return byCode;
+  const slug = raw.toLowerCase().replace(/\s+/g, '-');
+  return STATE_CODES[slug] ? slug : null;
+}
+
+/**
  * Generate clean city page URL
  * ("Houston", "TX") → "/electricity-rates/texas/houston"
+ *
+ * An unresolvable state lands on the city index, never on the legacy
+ * `/city-rates?city=…&state=…` form. That form redirects *here*, so returning
+ * it handed the router a redirect to itself: React Router remounted the
+ * redirect, which produced the same URL, forever. The visible result was a
+ * permanently blank page, and it was reachable from any old inbound link that
+ * spelled the state as a slug — `/city-rates?city=columbus&state=ohio` —
+ * because the lookup above only ever matched the two-letter code.
  */
-export function getCityUrl(cityName, stateCode) {
-  const stateSlug = STATE_NAMES[stateCode];
-  if (!stateSlug) return `/city-rates?city=${encodeURIComponent(cityName)}&state=${stateCode}`;
-  const citySlug = cityToSlug(cityName);
-  return `/electricity-rates/${stateSlug}/${citySlug}`;
+export function getCityUrl(cityName, state) {
+  const stateSlug = stateSlugFor(state);
+  if (!stateSlug || !cityName) return '/all-cities';
+  return `/electricity-rates/${stateSlug}/${cityToSlug(cityName)}`;
 }
 
 /**

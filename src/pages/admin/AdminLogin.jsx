@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,9 +7,24 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Shield, Loader2, AlertCircle, Eye, EyeOff, ArrowLeft, CheckCircle, Mail, KeyRound } from "lucide-react";
 
+/**
+ * Where to send someone after they sign in.
+ *
+ * `?next=` is honoured only when it is a path on this site — a bare leading
+ * slash, and not the `//host` form a browser reads as another origin. An open
+ * redirect on a login screen is how a phishing link borrows your domain.
+ */
+function safeNextPath(value) {
+  if (!value) return null;
+  if (!value.startsWith("/") || value.startsWith("//")) return null;
+  return value;
+}
+
 export default function AdminLogin() {
   const { login, isAuthenticated, profile, isLoadingAuth, isLoadingProfile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextPath = safeNextPath(searchParams.get("next"));
 
   // Login state
   const [email, setEmail] = useState("");
@@ -32,12 +47,22 @@ export default function AdminLogin() {
 
   const codeInputRefs = useRef([]);
 
-  // If already logged in as admin, redirect
+  /**
+   * Already signed in? Leave.
+   *
+   * Staff go to the panel. Everyone else goes wherever they were sent from —
+   * this is the app's only sign-in screen, so a customer opening their quote
+   * dashboard arrives here too, and without `next` they would be stranded on a
+   * login form they have already satisfied.
+   */
   useEffect(() => {
-    if (!isLoadingAuth && !isLoadingProfile && isAuthenticated && ["admin", "editor", "viewer"].includes(profile?.role)) {
-      navigate("/admin", { replace: true });
+    if (isLoadingAuth || isLoadingProfile || !isAuthenticated) return;
+    if (["admin", "editor", "viewer"].includes(profile?.role)) {
+      navigate(nextPath || "/admin", { replace: true });
+    } else if (nextPath) {
+      navigate(nextPath, { replace: true });
     }
-  }, [isAuthenticated, profile, isLoadingAuth, isLoadingProfile, navigate]);
+  }, [isAuthenticated, profile, isLoadingAuth, isLoadingProfile, navigate, nextPath]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
