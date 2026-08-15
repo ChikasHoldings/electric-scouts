@@ -16,11 +16,13 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Loader2, Zap, AlertTriangle, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Zap, AlertTriangle, ExternalLink, Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { validateTerritory, BILLING_MODEL_LABELS } from "@/lib/territoryValidation";
 import { BILLING_MODELS } from "@/lib/deliveryTariff";
 import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
+import BulkImportDialog from "@/components/admin/BulkImportDialog";
+import { importTerritories, dayBefore } from "@/lib/bulkImport";
 
 /**
  * Delivery tariffs, one row per utility service territory.
@@ -84,6 +86,7 @@ export default function AdminTerritories() {
   const [form, setForm] = useState(emptyTerritory);
   const [formErrors, setFormErrors] = useState({});
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   const { data: territories = [], isLoading } = useQuery({
     queryKey: ["admin-territories"],
@@ -175,6 +178,39 @@ export default function AdminTerritories() {
 
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
+  /**
+   * Apply a pasted tariff sheet.
+   *
+   * A changed tariff does not overwrite the old row — it closes it the day
+   * before the replacement opens and inserts a new one. That is what lets a
+   * quote from last month still be explained, and it is the reason the table
+   * carries an effective window at all.
+   */
+  const applyImport = async (rows) => {
+    let created = 0;
+    let superseded = 0;
+    for (const row of rows) {
+      if (row.action === "supersede" && row.current) {
+        const closesOn = dayBefore(row.values.effective_from);
+        if (closesOn) {
+          await UtilityTerritory.update(row.current.id, { effective_to: closesOn });
+        }
+        superseded += 1;
+      } else {
+        created += 1;
+      }
+      await UtilityTerritory.create({ ...row.values, is_active: true });
+    }
+    queryClient.invalidateQueries({ queryKey: ["admin-territories"] });
+    toast({
+      title: "Tariffs imported",
+      description: [
+        created ? `${created} added` : null,
+        superseded ? `${superseded} superseded, the previous rate closed the day before` : null,
+      ].filter(Boolean).join(" · "),
+    });
+  };
+
   return (
     <AdminPage>
       <AdminPageBar
@@ -185,9 +221,14 @@ export default function AdminTerritories() {
           </>
         }
         actions={
-          <Button size="sm" onClick={() => openCreate()}>
-            <Plus className="w-4 h-4 mr-1" /> Add tariff
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setImportOpen(true)}>
+              <Upload className="w-4 h-4 mr-1" /> Import
+            </Button>
+            <Button size="sm" onClick={() => openCreate()}>
+              <Plus className="w-4 h-4 mr-1" /> Add tariff
+            </Button>
+          </div>
         }
       />
 
@@ -532,6 +573,23 @@ export default function AdminTerritories() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <BulkImportDialog
+        open={importOpen}
+        onOpenChange={() => setImportOpen(false)}
+        title="Import delivery tariffs"
+        description="Paste the delivery charges from the utility tariff sheets. A charge given in dollars per kWh where cents are expected is rejected rather than imported — that mistake would make every estimate in the market a hundredth of the truth."
+        sample={"name,state,billing_model,delivery_per_kwh_cents,fixed_monthly_delivery_charge,effective_from,service_zip_prefixes\nOncor,TX,supply_only,4.8,4.23,2026-01-01,750 751 752"}
+        analyze={(text) => importTerritories(text, territories)}
+        onCommit={applyImport}
+        describeRow={(row) =>
+          `${row.values.name || "(no name)"} · ${row.values.state || "??"} · ` +
+          (row.values.billing_model === "all_in"
+            ? "all-in, delivery included"
+            : `${row.values.delivery_per_kwh_cents ?? "—"}¢/kWh`) +
+          (row.current ? ` (was ${row.current.delivery_per_kwh_cents ?? "—"}¢)` : "")
+        }
+      />
+
     </AdminPage>
   );
 }

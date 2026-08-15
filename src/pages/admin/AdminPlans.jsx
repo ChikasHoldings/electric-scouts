@@ -16,12 +16,14 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Search, Loader2, Zap, Leaf, Building, AlertTriangle } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Loader2, Zap, Leaf, Building, AlertTriangle, Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   validatePlan, pricingCompleteness, catalogPricingCoverage, CUSTOMER_TYPES,
 } from "@/lib/planValidation";
 import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
+import BulkImportDialog from "@/components/admin/BulkImportDialog";
+import { importPlans } from "@/lib/bulkImport";
 
 /**
  * Plans — every audience, one screen.
@@ -99,6 +101,7 @@ export default function AdminPlans() {
   const [editingPlan, setEditingPlan] = useState(null);
   const [form, setForm] = useState(emptyPlan);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ["admin-plans"],
@@ -262,9 +265,14 @@ export default function AdminPlans() {
           </>
         }
         actions={
-          <Button size="sm" onClick={openCreate}>
-            <Plus className="w-4 h-4 mr-1" /> Add Plan
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setImportOpen(true)}>
+              <Upload className="w-4 h-4 mr-1" /> Import rates
+            </Button>
+            <Button size="sm" onClick={openCreate}>
+              <Plus className="w-4 h-4 mr-1" /> Add Plan
+            </Button>
+          </div>
         }
       />
 
@@ -786,6 +794,35 @@ export default function AdminPlans() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <BulkImportDialog
+        open={importOpen}
+        onOpenChange={() => setImportOpen(false)}
+        title="Import plan rates"
+        description="Paste a supplier rate card. Rates are in cents per kWh — a figure given in dollars is rejected rather than imported, because it would survive every other check and invent a saving a hundred times too large."
+        sample={"provider_name,plan_name,state,customer_type,rate_per_kwh,contract_length,plan_type,renewable_percentage,monthly_base_charge,early_termination_fee\nNextVolt Energy,NextVolt Fixed 12,TX,residential,13.5,12,fixed,15,0,150"}
+        analyze={(text) => importPlans(text, providers, allPlans)}
+        onCommit={async (rows) => {
+          for (const row of rows) {
+            if (row.action === "update" && row.current) {
+              await ElectricityPlan.update(row.current.id, row.values);
+            } else {
+              await ElectricityPlan.create(row.values);
+            }
+          }
+          invalidate();
+          toast({
+            title: "Rates imported",
+            description: `${rows.length} plan${rows.length === 1 ? "" : "s"} written.`,
+          });
+        }}
+        describeRow={(row) =>
+          `${row.values.provider_name || "(no supplier)"} · ${row.values.plan_name || "(no plan)"} · ` +
+          `${row.values.state || "??"} · ${row.values.rate_per_kwh ?? "—"}¢/kWh` +
+          (row.rateChange && row.rateChange.from !== row.rateChange.to
+            ? ` (was ${row.rateChange.from}¢)` : "")
+        }
+      />
+
     </AdminPage>
   );
 }
