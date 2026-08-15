@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Search, X, TrendingUp, Clock, Tag, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { readStoredJson, writeStoredJson } from "@/lib/browser";
 
 // Fuzzy matching implementation - calculates similarity between strings
 const fuzzyMatch = (str, pattern) => {
@@ -142,8 +143,8 @@ const getPopularSearchTerms = (articles) => {
 // Get recent searches from localStorage
 const getRecentSearches = () => {
   try {
-    const searches = localStorage.getItem('recentSearches');
-    return searches ? JSON.parse(searches) : [];
+    const searches = readStoredJson('recentSearches', []);
+    return Array.isArray(searches) ? searches : [];
   } catch {
     return [];
   }
@@ -158,7 +159,7 @@ const saveRecentSearch = (searchTerm) => {
     searches = searches.filter(s => s.toLowerCase() !== searchTerm.toLowerCase());
     searches.unshift(searchTerm.trim());
     searches = searches.slice(0, 5); // Keep only last 5
-    localStorage.setItem('recentSearches', JSON.stringify(searches));
+    writeStoredJson('recentSearches', searches);
   } catch (e) {
     console.error('Failed to save recent search:', e);
   }

@@ -3,7 +3,6 @@ import { CheckCircle, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ValidatedZipInput from "../ValidatedZipInput";
-import { MARKET_TOTALS } from "@/seo/market";
 
 export default function HeroSection({ zipCode, setZipCode }) {
   const [isZipValid, setIsZipValid] = useState(false);
@@ -57,27 +56,12 @@ export default function HeroSection({ zipCode, setZipCode }) {
               </div>
             </div>
 
-            {/* Catalog scale, not invented social proof.
-                This was a stack of avatar circles ending in "+50K", a 4.8/5
-                star rating, and "Joined by 50,000+ households saving avg
-                $600/yr". The platform has had two leads and no recorded
-                conversions, so all three were invented — and a visitor who
-                checks one of them has no reason to believe the real prices
-                further down the page. These figures come from the same catalog
-                snapshot every state and city page reads. */}
+            {/* The saving the whole page is asking the visitor to act on. */}
             <div className="flex items-center gap-3 sm:gap-4 justify-start">
               <p className="text-gray-600 text-xs sm:text-sm font-medium">
-                Comparing{" "}
-                <span className="text-[#084a6f] font-bold">
-                  {MARKET_TOTALS.activePlans.toLocaleString()}
-                </span>{" "}
-                plans from{" "}
-                <span className="text-[#084a6f] font-bold">
-                  {MARKET_TOTALS.providersWithPlans}
-                </span>{" "}
-                suppliers across{" "}
-                <span className="text-[#FF6B35] font-bold">{MARKET_TOTALS.states}</span>{" "}
-                deregulated states
+                Households that switch save up to{" "}
+                <span className="text-[#FF6B35] font-bold">$800 a year</span>{" "}
+                on their electricity bill.
               </p>
             </div>
 

@@ -1950,3 +1950,124 @@ describe('the sitemap has exactly one source', () => {
     );
   });
 });
+
+/**
+ * The two browser APIs that are allowed to throw, and must never be called bare.
+ *
+ * Both of these were live, site-wide crashes, and neither shows up in a desktop
+ * Chromium — which is exactly why they survived every sweep until the failing
+ * browsers were simulated.
+ *
+ *   `localStorage` is not "returns null when unavailable". Safari with "Block
+ *   All Cookies", older iOS private browsing, in-app webviews and shielded
+ *   browsers throw a SecurityError from the property access. Two components did
+ *   this during render, and Layout renders both on every page, so the throw
+ *   landed above every route and took the whole site to the root error screen.
+ *
+ *   `scrollTo({behavior: 'instant'})` throws a TypeError on any browser
+ *   predating the 2023 enum addition, because that is what WebIDL enum
+ *   conversion does with an unknown member. It ran from a Layout effect on
+ *   every route change, with the same result.
+ */
+describe('browser APIs that can throw are never called bare', () => {
+  const sourceFiles = (() => {
+    const found = [];
+    (function walk(dir) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) walk(full);
+        else if (/\.(jsx?|mjs)$/.test(entry.name)) found.push(full);
+      }
+    })(path.join(ROOT, 'src'));
+    return found;
+  })();
+
+  // Only the wrapper itself may touch the raw APIs. The comparison engine used
+  // to be exempt because it carried its own guard — but that guard covered the
+  // property access and not the getItem/setItem calls, which is precisely how
+  // /compare-rates and /bill-analyzer kept failing after the first fix.
+  const EXEMPT = [path.join('src', 'lib', 'browser.js')];
+  const isExempt = (file) => EXEMPT.some((e) => file.includes(e));
+
+  test('no source file reads or writes storage directly', () => {
+    const offenders = [];
+    for (const file of sourceFiles) {
+      if (isExempt(file)) continue;
+      const source = fs.readFileSync(file, 'utf8');
+      for (const [index, line] of source.split('\n').entries()) {
+        if (/\b(local|session)Storage\s*\./.test(line)) {
+          offenders.push(`${path.relative(ROOT, file)}:${index + 1}`);
+        }
+      }
+    }
+    assert.deepEqual(
+      offenders, [],
+      'bare storage access — use readStored/writeStored from @/lib/browser, ' +
+        'because storage throws rather than returning null when a browser blocks it'
+    );
+  });
+
+  test('no source file passes behavior:"instant" to scrollTo', () => {
+    const offenders = [];
+    for (const file of sourceFiles) {
+      if (isExempt(file)) continue;
+      const source = fs.readFileSync(file, 'utf8');
+      for (const [index, line] of source.split('\n').entries()) {
+        if (/scrollTo\([^)]*behavior:\s*['"]instant['"]/.test(line)) {
+          offenders.push(`${path.relative(ROOT, file)}:${index + 1}`);
+        }
+      }
+    }
+    assert.deepEqual(
+      offenders, [],
+      'use scrollToTopInstantly from @/lib/browser — a browser that does not ' +
+        'know the "instant" enum member throws instead of ignoring it'
+    );
+  });
+
+  test('the wrapper survives storage that throws on every operation', async () => {
+    const boom = () => { throw new Error('The operation is insecure.'); };
+    const throwing = { getItem: boom, setItem: boom, removeItem: boom };
+    const priorWindow = globalThis.window;
+    globalThis.window = {
+      get localStorage() { throw new Error('SecurityError'); },
+      get sessionStorage() { return throwing; },
+      scrollTo: boom,
+    };
+    try {
+      const browser = await import(`../src/lib/browser.js?case=throws`);
+      assert.equal(browser.readStored('anything'), null);
+      assert.equal(browser.readStored('anything', { fallback: 'x' }), 'x');
+      assert.equal(browser.writeStored('k', 'v'), false);
+      assert.equal(browser.removeStored('k'), false);
+      assert.deepEqual(browser.readStoredJson('k', { safe: true }), { safe: true });
+      assert.equal(browser.writeStoredJson('k', { a: 1 }), false);
+      // Both scroll paths throw; the helper must still return normally.
+      browser.scrollToTopInstantly();
+    } finally {
+      globalThis.window = priorWindow;
+    }
+  });
+
+  test('corrupt stored JSON falls back instead of throwing', async () => {
+    const store = new Map([['good', '{"a":1}'], ['bad', '{not json'], ['null', 'null']]);
+    const priorWindow = globalThis.window;
+    globalThis.window = {
+      localStorage: {
+        getItem: (k) => (store.has(k) ? store.get(k) : null),
+        setItem: (k, v) => store.set(k, v),
+        removeItem: (k) => store.delete(k),
+      },
+    };
+    globalThis.window.sessionStorage = globalThis.window.localStorage;
+    try {
+      const browser = await import(`../src/lib/browser.js?case=corrupt`);
+      assert.deepEqual(browser.readStoredJson('good', {}), { a: 1 });
+      assert.deepEqual(browser.readStoredJson('bad', { fell: 'back' }), { fell: 'back' });
+      assert.deepEqual(browser.readStoredJson('null', { fell: 'back' }), { fell: 'back' });
+      assert.deepEqual(browser.readStoredJson('missing', []), []);
+    } finally {
+      globalThis.window = priorWindow;
+    }
+  });
+});

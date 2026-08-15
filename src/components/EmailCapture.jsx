@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Zap, CheckCircle, X } from "lucide-react";
+import { readStored, writeStored } from "@/lib/browser";
 
 /**
  * Non-Intrusive Email Capture Component
@@ -28,8 +29,8 @@ export default function EmailCapture({
   useEffect(() => {
     if (variant !== 'slide-up') return;
     
-    const wasDismissed = sessionStorage.getItem('es_capture_dismissed');
-    const wasSubmitted = localStorage.getItem('es_lead_captured');
+    const wasDismissed = readStored('es_capture_dismissed', { session: true });
+    const wasSubmitted = readStored('es_lead_captured');
     if (wasDismissed || wasSubmitted) return;
 
     const handleScroll = () => {
@@ -53,7 +54,7 @@ export default function EmailCapture({
   const handleDismiss = () => {
     setDismissed(true);
     setVisible(false);
-    sessionStorage.setItem('es_capture_dismissed', 'true');
+    writeStored('es_capture_dismissed', 'true', { session: true });
   };
 
   const handleSubmit = async (e) => {
@@ -87,7 +88,7 @@ export default function EmailCapture({
 
       if (response.ok && data.success) {
         setSubmitted(true);
-        localStorage.setItem('es_lead_captured', 'true');
+        writeStored('es_lead_captured', 'true');
         if (onCapture) onCapture({ email, name, zip });
       } else {
         setError(data.error || 'Something went wrong. Please try again.');
@@ -101,7 +102,10 @@ export default function EmailCapture({
   };
 
   if (dismissed || !visible) return null;
-  if (localStorage.getItem('es_lead_captured') && variant === 'slide-up') return null;
+  // Read through the guarded helper: a bare localStorage access here threw a
+  // SecurityError in every browser that blocks storage, and this component is
+  // rendered by Layout on every page, so the throw took the whole site down.
+  if (readStored('es_lead_captured') && variant === 'slide-up') return null;
 
   // ── Success State ──
   if (submitted) {

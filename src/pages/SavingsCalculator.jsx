@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import SEOHead from "../components/SEOHead";
 import { HowToSchema } from "../components/seo/StructuredData";
+import { scrollToTopInstantly } from "@/lib/browser";
 
 export default function SavingsCalculator() {
   const [currentRate, setCurrentRate] = useState("");
@@ -21,7 +22,7 @@ export default function SavingsCalculator() {
   // Scroll to top when results are shown
   useEffect(() => {
     if (results) {
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      scrollToTopInstantly();
     }
   }, [results]);
 

@@ -17,6 +17,7 @@ import PlanSearchLoader from "../components/compare/PlanSearchLoader";
 import { useAffiliateLinks } from "@/hooks/useAffiliateLink";
 import { ElectricityProvider } from "@/api/supabaseEntities";
 import { getProviderLogoUrl } from "@/utils/providerSlug";
+import { scrollToTopInstantly, writeStored } from "@/lib/browser";
 
 export default function RenewableCompareRates() {
   const [step, setStep] = useState(1);
@@ -67,7 +68,7 @@ export default function RenewableCompareRates() {
           const providers = await getProvidersForZipCode(zipFromUrl);
           setCityName(city || validation.state?.name || "your area");
           setAvailableProviders(providers);
-          localStorage.setItem('compareRatesZip', zipFromUrl);
+          writeStored('compareRatesZip', zipFromUrl);
           setStep(2);
         } else {
           setZipCode(zipFromUrl);
@@ -81,7 +82,7 @@ export default function RenewableCompareRates() {
 
   // Scroll to top on every step change
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    scrollToTopInstantly();
   }, [step]);
 
   const handleZipSubmit = async () => {
@@ -101,7 +102,7 @@ export default function RenewableCompareRates() {
     setCityName(city || validation.state?.name || "your area");
     setAvailableProviders(providers);
     setZipError("");
-    localStorage.setItem('compareRatesZip', zipCode);
+    writeStored('compareRatesZip', zipCode);
     // Go directly to bill upload step
     setStep(2);
   };
@@ -115,7 +116,7 @@ export default function RenewableCompareRates() {
       const provs = await getProvidersForZipCode(data.zip_code);
       setCityName(city || 'your area');
       setAvailableProviders(provs);
-      localStorage.setItem('compareRatesZip', data.zip_code);
+      writeStored('compareRatesZip', data.zip_code);
       const newUrl = `${window.location.pathname}?zip=${data.zip_code}`;
       window.history.replaceState({}, '', newUrl);
     }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Clock, Eye, Award } from "lucide-react";
 import { getReadingHistory } from "./ArticleRecommendations";
+import { readStoredJson, writeStoredJson } from "@/lib/browser";
 
 export default function ReadingAnalytics({ allArticles }) {
   const [stats, setStats] = useState({
@@ -18,7 +19,7 @@ export default function ReadingAnalytics({ allArticles }) {
   const calculateStats = () => {
     try {
       const history = getReadingHistory();
-      const views = JSON.parse(localStorage.getItem('articleViews') || '{}');
+      const views = readStoredJson('articleViews', {});
       
       // Articles read
       const articlesRead = Object.keys(views).length;
@@ -44,7 +45,7 @@ export default function ReadingAnalytics({ allArticles }) {
       );
       
       // Reading streak (days with activity)
-      const readingDates = JSON.parse(localStorage.getItem('readingDates') || '[]');
+      const readingDates = readStoredJson('readingDates', []);
       const readingStreak = calculateStreak(readingDates);
       
       setStats({
@@ -136,12 +137,12 @@ export default function ReadingAnalytics({ allArticles }) {
 // Helper to track daily reading
 export const trackDailyReading = () => {
   try {
-    const dates = JSON.parse(localStorage.getItem('readingDates') || '[]');
+    const dates = readStoredJson('readingDates', []);
     const today = new Date().toISOString().split('T')[0];
     
     if (!dates.includes(today)) {
       dates.unshift(today);
-      localStorage.setItem('readingDates', JSON.stringify(dates.slice(0, 30))); // Keep last 30 days
+      writeStoredJson('readingDates', dates.slice(0, 30)); // Keep last 30 days
     }
   } catch (e) {
     console.error('Failed to track daily reading:', e);
