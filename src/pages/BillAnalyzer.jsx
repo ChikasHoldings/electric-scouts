@@ -31,6 +31,7 @@ import {
   MONETIZATION,
 } from "../components/compare/engine/resultsContract";
 import { validateEmail, validateFirstName } from "@/lib/contactValidation";
+import { scrollToTopInstantly, writeStored, readStored, removeStored } from "@/lib/browser";
 
 /**
  * /bill-analyzer — read a bill, then price the market against it.
@@ -104,7 +105,7 @@ function emptyBill() {
 
 function saveToSession(bill) {
   try {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(bill));
+    writeStored(SESSION_KEY, JSON.stringify(bill), { session: true });
   } catch {
     /* private mode or quota — resuming is a convenience, not a requirement */
   }
@@ -122,7 +123,7 @@ function saveToSession(bill) {
  */
 function loadFromSession() {
   try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
+    const raw = readStored(SESSION_KEY, { session: true });
     const parsed = raw ? JSON.parse(raw) : null;
     if (!parsed || typeof parsed !== "object") return null;
 
@@ -135,7 +136,7 @@ function loadFromSession() {
 
 function clearSession() {
   try {
-    sessionStorage.removeItem(SESSION_KEY);
+    removeStored(SESSION_KEY, { session: true });
   } catch {
     /* ignore */
   }
@@ -427,7 +428,7 @@ export default function BillAnalyzer() {
   const sessionId = useMemo(() => getOrCreateSessionId(), []);
 
   useEffect(() => {
-    if (step === STEPS.RESULTS) window.scrollTo({ top: 0, behavior: "instant" });
+    if (step === STEPS.RESULTS) scrollToTopInstantly();
   }, [step]);
 
   // ── The authoritative comparison ──

@@ -9,6 +9,8 @@
  * Nothing here is PII: campaign metadata only.
  */
 
+import { readStoredJson, writeStoredJson, removeStored } from '../../../lib/browser.js';
+
 const STORAGE_KEY = 'es_attribution';
 
 const UTM_KEYS = [
@@ -19,37 +21,11 @@ const UTM_KEYS = [
   'utm_term',
 ];
 
-function safeSessionStorage() {
-  // Private browsing and some embedded webviews throw on access rather than
-  // returning null, so every read/write goes through a guard.
-  try {
-    if (typeof window === 'undefined' || !window.sessionStorage) return null;
-    return window.sessionStorage;
-  } catch {
-    return null;
-  }
-}
-
-function readStored() {
-  const store = safeSessionStorage();
-  if (!store) return null;
-  try {
-    const raw = store.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeStored(value) {
-  const store = safeSessionStorage();
-  if (!store) return;
-  try {
-    store.setItem(STORAGE_KEY, JSON.stringify(value));
-  } catch {
-    /* quota or disabled storage — attribution is best-effort */
-  }
-}
+// Storage goes through lib/browser.js: private browsing and embedded webviews
+// throw both from the property access and from getItem/setItem, and attribution
+// is best-effort — never a reason to lose the page.
+const readAttribution = () => readStoredJson(STORAGE_KEY, null, { session: true });
+const writeAttribution = (value) => writeStoredJson(STORAGE_KEY, value, { session: true });
 
 /**
  * Read attribution from the current URL, falling back to whatever was captured
@@ -57,7 +33,7 @@ function writeStored(value) {
  * campaign and then navigates internally keeps the original campaign.
  */
 export function captureAttribution(search, referrer, href) {
-  const stored = readStored();
+  const stored = readAttribution();
   if (stored) return stored;
 
   const params = new URLSearchParams(search || '');
@@ -73,7 +49,7 @@ export function captureAttribution(search, referrer, href) {
 
   // Only persist once something worth attributing exists, otherwise a direct
   // visit would lock in an empty record and mask a later campaign hit.
-  if (Object.keys(captured).length > 0) writeStored(captured);
+  if (Object.keys(captured).length > 0) writeAttribution(captured);
 
   return captured;
 }
@@ -104,13 +80,7 @@ export function campaignContext(attribution = {}) {
 }
 
 export function clearAttribution() {
-  const store = safeSessionStorage();
-  if (!store) return;
-  try {
-    store.removeItem(STORAGE_KEY);
-  } catch {
-    /* ignore */
-  }
+  removeStored(STORAGE_KEY, { session: true });
 }
 
 export { UTM_KEYS };

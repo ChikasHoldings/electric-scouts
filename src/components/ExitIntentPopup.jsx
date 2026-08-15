@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { X, MapPin, User, Mail, CheckCircle, TrendingDown, Shield, Zap } from "lucide-react";
+import { readStored, writeStored } from "@/lib/browser";
 import popupImage from "/images/exit-popup-illustration.png";
 
 export default function ExitIntentPopup() {
@@ -15,7 +16,7 @@ export default function ExitIntentPopup() {
 
   useEffect(() => {
     // Don't show if already dismissed or submitted
-    if (localStorage.getItem("exitPopupDismissed") || localStorage.getItem("rateAlertsSubmitted")) {
+    if (readStored("exitPopupDismissed") || readStored("rateAlertsSubmitted")) {
       hasTriggered.current = true;
       return;
     }
@@ -45,7 +46,7 @@ export default function ExitIntentPopup() {
 
   const handleDismiss = () => {
     setIsVisible(false);
-    localStorage.setItem("exitPopupDismissed", "true");
+    writeStored("exitPopupDismissed", "true");
   };
 
   const handleSubmit = async (e) => {
@@ -77,8 +78,8 @@ export default function ExitIntentPopup() {
       });
       if (!response.ok) throw new Error("Failed to submit");
       setSubmitted(true);
-      localStorage.setItem("rateAlertsSubmitted", "true");
-      localStorage.setItem("exitPopupDismissed", "true");
+      writeStored("rateAlertsSubmitted", "true");
+      writeStored("exitPopupDismissed", "true");
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {

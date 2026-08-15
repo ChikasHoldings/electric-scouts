@@ -17,33 +17,30 @@
 import { CUSTOMER_TYPES, createInitialState, invalidateBranchState } from './comparisonState.js';
 import { resolveEntryContext } from './entryContext.js';
 import { fullName } from '../../../lib/contactValidation.js';
+import { readStored, writeStored, removeStored, readStoredJson, writeStoredJson } from '../../../lib/browser.js';
 
 const SESSION_KEY = 'es_comparison_session';
 
-function safeStorage() {
-  try {
-    if (typeof window === 'undefined' || !window.sessionStorage) return null;
-    return window.sessionStorage;
-  } catch {
-    return null;
-  }
-}
+/*
+ * Storage goes through lib/browser.js rather than a local guard.
+ *
+ * The local guard this replaced wrapped the *property access* — which is one of
+ * the two ways storage fails. The other is that `getItem` and `setItem`
+ * themselves throw, which is what Safari with cookies blocked actually does,
+ * and `store?.getItem(...)` outside a try was therefore an uncaught throw that
+ * took /compare-rates and /bill-analyzer down for those visitors.
+ */
 
 /** Stable id for this comparison, created on first use and reused thereafter. */
 export function getOrCreateSessionId() {
-  const store = safeStorage();
-  const existing = store?.getItem(`${SESSION_KEY}_id`);
+  const existing = readStored(`${SESSION_KEY}_id`, { session: true });
   if (existing) return existing;
 
   const id = typeof crypto !== 'undefined' && crypto.randomUUID
     ? crypto.randomUUID()
     : `cs_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 
-  try {
-    store?.setItem(`${SESSION_KEY}_id`, id);
-  } catch {
-    /* best effort */
-  }
+  writeStored(`${SESSION_KEY}_id`, id, { session: true });
   return id;
 }
 
@@ -69,14 +66,9 @@ export function safeSessionSnapshot(state) {
 
 /** Persist in-progress answers so a reload doesn't lose the visitor's place. */
 export function saveLocalSession(state) {
-  const store = safeStorage();
-  if (!store) return;
-  try {
-    // The bill file itself is never cached — only the figures read from it.
-    store.setItem(SESSION_KEY, JSON.stringify(safeSessionSnapshot(state)));
-  } catch {
-    /* quota — resuming is a convenience, not a requirement */
-  }
+  // The bill file itself is never cached — only the figures read from it.
+  // A failed write is fine: resuming is a convenience, not a requirement.
+  writeStoredJson(SESSION_KEY, safeSessionSnapshot(state), { session: true });
 }
 
 /**
@@ -106,25 +98,12 @@ export function seedLocalSession(seed) {
 }
 
 export function loadLocalSession() {
-  const store = safeStorage();
-  if (!store) return null;
-  try {
-    const raw = store.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+  return readStoredJson(SESSION_KEY, null, { session: true });
 }
 
 export function clearLocalSession() {
-  const store = safeStorage();
-  if (!store) return;
-  try {
-    store.removeItem(SESSION_KEY);
-    store.removeItem(`${SESSION_KEY}_id`);
-  } catch {
-    /* ignore */
-  }
+  removeStored(SESSION_KEY, { session: true });
+  removeStored(`${SESSION_KEY}_id`, { session: true });
 }
 
 /**

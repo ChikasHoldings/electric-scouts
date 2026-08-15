@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Bell, CheckCircle, MapPin, Mail, User, ArrowRight } from "lucide-react";
+import { readStored, writeStored } from "@/lib/browser";
 
 export default function RateAlertsCapture({ sourcePage = "homepage" }) {
   const [firstName, setFirstName] = useState("");
@@ -9,7 +10,10 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState(null);
 
-  const alreadySubmitted = typeof window !== "undefined" && localStorage.getItem("es_rate_alerts_captured");
+  // Read during render, so it goes through the guarded helper: a browser that
+  // blocks storage throws from the property access, and the `typeof window`
+  // check does not catch that.
+  const alreadySubmitted = Boolean(readStored("es_rate_alerts_captured"));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +39,7 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
       const data = await response.json();
       if (response.ok && data.success) {
         setIsSubmitted(true);
-        localStorage.setItem("es_rate_alerts_captured", "true");
+        writeStored("es_rate_alerts_captured", "true");
       } else {
         setError(data.error || "Something went wrong. Please try again.");
       }

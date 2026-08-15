@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ShieldCheck, Scale, Receipt, Ban } from "lucide-react";
-import { MARKET_TOTALS, MARKET_GENERATED_AT } from "@/seo/market";
+import { MARKET_TOTALS } from "@/seo/market";
 
 /**
  * Why a visitor should trust the comparison — stated from things that are true.
@@ -55,14 +55,6 @@ const PROMISES = [
 ];
 
 export default function TestimonialsSection() {
-  const snapshotDate = MARKET_GENERATED_AT
-    ? new Date(MARKET_GENERATED_AT).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : null;
-
   return (
     <section className="bg-slate-50 py-10 sm:py-14 lg:py-16">
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
@@ -114,7 +106,6 @@ export default function TestimonialsSection() {
             </div>
           </div>
           <p className="text-xs text-gray-500 text-center">
-            {snapshotDate ? `Catalog snapshot taken ${snapshotDate}. ` : ""}
             <Link to="/compare-rates" className="text-[#0A5C8C] hover:underline font-medium">
               Compare plans for your ZIP code
             </Link>

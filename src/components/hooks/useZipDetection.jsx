@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { validateZipCode } from '../compare/stateData';
+import { readStored, writeStored, removeStored } from '@/lib/browser';
 
 export function useZipDetection() {
   const [detectedZip, setDetectedZip] = useState('');
@@ -7,7 +8,7 @@ export function useZipDetection() {
 
   useEffect(() => {
     // Check localStorage first
-    const savedZip = localStorage.getItem('userZipCode');
+    const savedZip = readStored('userZipCode');
     if (savedZip && savedZip.length === 5) {
       const validation = validateZipCode(savedZip);
       if (validation.valid) {
@@ -56,13 +57,13 @@ export function useZipDetection() {
 
   const saveZip = (zip) => {
     if (zip && zip.length === 5) {
-      localStorage.setItem('userZipCode', zip);
+      writeStored('userZipCode', zip);
       setDetectedZip(zip);
     }
   };
 
   const clearZip = () => {
-    localStorage.removeItem('userZipCode');
+    removeStored('userZipCode');
     setDetectedZip('');
   };
 

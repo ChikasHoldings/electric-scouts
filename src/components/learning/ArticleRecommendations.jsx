@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, TrendingUp, User, Sparkles } from "lucide-react";
 import { InvokeLLM } from "@/api/supabaseIntegrations";
+import { readStoredJson, writeStoredJson } from "@/lib/browser";
 
 const colorClasses = {
   blue: { bg: "bg-blue-50", text: "text-blue-600" },
@@ -15,8 +16,8 @@ const colorClasses = {
 // Helper to get/set reading history from localStorage
 const getReadingHistory = () => {
   try {
-    const history = localStorage.getItem('articleReadingHistory');
-    return history ? JSON.parse(history) : [];
+    const history = readStoredJson('articleReadingHistory', []);
+    return Array.isArray(history) ? history : [];
   } catch {
     return [];
   }
@@ -30,7 +31,7 @@ const updateReadingHistory = (articleId) => {
     history.unshift(articleId);
     // Keep only last 10 articles
     history = history.slice(0, 10);
-    localStorage.setItem('articleReadingHistory', JSON.stringify(history));
+    writeStoredJson('articleReadingHistory', history);
   } catch (e) {
     console.error('Failed to update reading history:', e);
   }
@@ -39,9 +40,9 @@ const updateReadingHistory = (articleId) => {
 // Helper to track article views for popularity
 const trackArticleView = (articleId) => {
   try {
-    const views = JSON.parse(localStorage.getItem('articleViews') || '{}');
+    const views = readStoredJson('articleViews', {});
     views[articleId] = (views[articleId] || 0) + 1;
-    localStorage.setItem('articleViews', JSON.stringify(views));
+    writeStoredJson('articleViews', views);
   } catch (e) {
     console.error('Failed to track view:', e);
   }
@@ -49,7 +50,7 @@ const trackArticleView = (articleId) => {
 
 const getPopularArticles = (allArticles, limit = 6) => {
   try {
-    const views = JSON.parse(localStorage.getItem('articleViews') || '{}');
+    const views = readStoredJson('articleViews', {});
     return allArticles
       .map(article => ({
         ...article,
@@ -184,7 +185,7 @@ Return ONLY a JSON array of recommended article IDs in order of relevance, like:
         }
         
         // Popularity bonus (low weight)
-        const views = JSON.parse(localStorage.getItem('articleViews') || '{}');
+        const views = readStoredJson('articleViews', {});
         score += Math.min((views[article.id] || 0) * 0.5, 3);
         
         return { article, score };

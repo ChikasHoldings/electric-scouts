@@ -9,6 +9,7 @@ import { MARKET_TOTALS } from "@/seo/market";
 import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ExitIntentPopup from "./components/ExitIntentPopup";
 import EmailCapture from "./components/EmailCapture";
+import { scrollToTopInstantly } from "@/lib/browser";
 
 // Primary navigation — customer segments first (Residential → Commercial →
 // Renewable Energy), then the Bill Analyzer tool. Service Areas follows as a
@@ -133,7 +134,7 @@ export default function Layout({ children, currentPageName }) {
 
   // Scroll to top on route change and close mobile menu
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    scrollToTopInstantly();
     setMobileMenuOpen(false);
     setServiceAreaOpen(false);
   }, [location.pathname, location.search]);

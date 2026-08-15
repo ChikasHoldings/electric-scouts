@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import SEOHead, { getOrganizationSchema } from "@/components/SEOHead";
 import { MARKET_TOTALS } from "@/seo/market";
+import { scrollToTopInstantly } from "@/lib/browser";
 
 export default function HomeConcierge() {
   const { toast } = useToast();
@@ -54,7 +55,7 @@ export default function HomeConcierge() {
 
   // Scroll to top on every step change
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    scrollToTopInstantly();
   }, [step]);
   
   const [formData, setFormData] = useState({

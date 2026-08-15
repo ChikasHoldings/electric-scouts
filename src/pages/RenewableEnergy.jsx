@@ -20,7 +20,7 @@ import { captureAttributionFromWindow, campaignContext } from "@/components/comp
 import { track, EVENTS } from "@/components/compare/engine/analytics";
 import { ENTRY_CONTEXTS } from "@/components/compare/engine/entryContext";
 import { getStates } from "@/seo/locations";
-import { formatRate, getStateMarket, MARKET_GENERATED_AT } from "@/seo/market.js";
+import { formatRate, getStateMarket } from "@/seo/market.js";
 
 /**
  * /renewable-energy — the entry page for renewable supply.
@@ -151,7 +151,7 @@ export default function RenewableEnergy() {
           ["States with plans", String(rows.length)],
           ["Lowest tracked", lowestRenewableRate || "—"],
         ]}
-        factsNote={`From our plan snapshot of ${MARKET_GENERATED_AT}. Where a ZIP code has no renewable plan available we say so, rather than showing a standard plan as a green one.`}
+        factsNote="Where a ZIP code has no renewable plan available we say so, rather than showing a standard plan as a green one."
         formTitle="Compare renewable plans"
         formSubtitle="One question after this — home or business — then the plans."
         formNote="Renewable availability varies by utility territory. Comparing is free and carries no obligation."

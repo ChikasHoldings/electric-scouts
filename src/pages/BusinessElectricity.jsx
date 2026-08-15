@@ -18,7 +18,7 @@ import { captureAttributionFromWindow, campaignContext } from "@/components/comp
 import { track, EVENTS } from "@/components/compare/engine/analytics";
 import { ENTRY_CONTEXTS } from "@/components/compare/engine/entryContext";
 import { getStates } from "@/seo/locations";
-import { formatRate, getStateMarket, MARKET_GENERATED_AT } from "@/seo/market.js";
+import { formatRate, getStateMarket } from "@/seo/market.js";
 
 /**
  * /business-electricity — the entry page for commercial supply.
@@ -135,7 +135,7 @@ export default function BusinessElectricity() {
           ["Markets covered", String(rows.length)],
           ["Lowest tracked", lowestBusinessRate || "—"],
         ]}
-        factsNote={`From our plan snapshot of ${MARKET_GENERATED_AT}. A quote priced against your own load profile can land above or below a listed plan, and demand charges are billed separately.`}
+        factsNote="A quote priced against your own load profile can land above or below a listed plan, and demand charges are billed separately."
         formTitle="Start a commercial comparison"
         formSubtitle="Next question is about the business — the ZIP code carries over."
         formNote="No obligation. Multi-site accounts can be aggregated under one contract where the sites share a deregulated market."
