@@ -22,10 +22,14 @@ import {
 import {
   Plus, Pencil, Trash2, Search, Loader2, Building2, ExternalLink,
   Star, CheckCircle2, XCircle, Leaf,
-  Zap, Building,
+  Zap, Building, AlertTriangle, Link2,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import LogoUpload from "@/components/admin/LogoUpload";
+import { AffiliateLink } from "@/api/supabaseEntities";
+import {
+  providerReadiness, catalogReadiness, toggleWarning, STATUS_LABELS,
+} from "@/lib/providerReadiness";
 import AdminPage, { AdminPageBar } from "@/components/admin/AdminPage";
 
 const emptyProvider = {
@@ -54,6 +58,9 @@ export default function AdminProviders() {
   const [form, setForm] = useState(emptyProvider);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [serviceExclusions, setServiceExclusions] = useState({});
+  // A switch that would publish a broken page, or unpublish a working one,
+  // parks here until the operator has read what it costs.
+  const [pendingToggle, setPendingToggle] = useState(null);
 
   // Queries
   const { data: providers = [], isLoading } = useQuery({
@@ -64,6 +71,14 @@ export default function AdminProviders() {
   const { data: plans = [] } = useQuery({
     queryKey: ["admin-plans-all"],
     queryFn: () => ElectricityPlan.list(),
+  });
+
+  // Read so the Affiliate column can report a real destination rather than the
+  // has_affiliate_program flag, which is a note and not a link.
+  const { data: affiliateLinks = [] } = useQuery({
+    queryKey: ["admin-affiliate-links"],
+    queryFn: () => AffiliateLink.list(),
+    placeholderData: [],
   });
 
   // Mutations
@@ -99,9 +114,34 @@ export default function AdminProviders() {
 
   const toggleMutation = useMutation({
     mutationFn: ({ id, is_active }) => ElectricityProvider.update(id, { is_active }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-providers"] }),
+    onSuccess: (_data, { name, is_active }) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
+      toast({
+        title: is_active ? `${name} is live` : `${name} is off the site`,
+        description: is_active
+          ? "Its page and plans are available to visitors now."
+          : "Its page and plans are no longer shown.",
+      });
+    },
     onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
+
+  /**
+   * Flip a provider, after saying what the flip does.
+   *
+   * Publishing a supplier with nothing to sell, and unpublishing one that is
+   * ranking, are both a click away from each other on this screen and neither
+   * used to say anything. Unremarkable changes still go straight through.
+   */
+  const requestToggle = (provider, nextActive) => {
+    const readiness = providerReadiness(provider, plans, affiliateLinks);
+    const warning = toggleWarning(provider, readiness, nextActive);
+    if (warning) {
+      setPendingToggle({ provider, nextActive, warning });
+      return;
+    }
+    toggleMutation.mutate({ id: provider.id, is_active: nextActive, name: provider.name });
+  };
 
   // Helpers
   const generateSlug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -165,6 +205,7 @@ export default function AdminProviders() {
     return true;
   });
 
+  const catalog = catalogReadiness(providers, plans, affiliateLinks);
   const activeCount = providers.filter(p => p.is_active).length;
   const affiliateCount = providers.filter(p => p.has_affiliate_program).length;
   const planCount = plans.length;
@@ -178,8 +219,14 @@ export default function AdminProviders() {
       <AdminPageBar
         summary={
           <>
-            {providers.length} providers · {activeCount} active · {statesSet.size}{" "}
-            {statesSet.size === 1 ? "market" : "markets"}
+            {providers.length} providers · {catalog.live} live · {catalog.ready} ready to
+            switch on · {statesSet.size} {statesSet.size === 1 ? "market" : "markets"}
+            {catalog.incomplete > 0 && (
+              <span className="ml-2 inline-flex items-center gap-1 text-amber-700">
+                <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
+                {catalog.incomplete} live but incomplete
+              </span>
+            )}
           </>
         }
         actions={
@@ -288,14 +335,15 @@ export default function AdminProviders() {
                 <TableHead>States</TableHead>
                 <TableHead className="text-center">Plans</TableHead>
                 <TableHead className="text-center">Rating</TableHead>
-                <TableHead className="text-center">Affiliate</TableHead>
-                <TableHead className="text-center">Active</TableHead>
+                <TableHead className="text-center">Sign-up link</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-center">Live</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map(provider => {
-                const providerPlans = plans.filter(p => p.provider_name === provider.name);
+                const readiness = providerReadiness(provider, plans, affiliateLinks);
                 return (
                   <TableRow key={provider.id} className={!provider.is_active ? "opacity-50 bg-gray-50" : ""}>
                     <TableCell>
@@ -337,7 +385,14 @@ export default function AdminProviders() {
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      <span className="text-sm font-medium">{providerPlans.length}</span>
+                      {/* Active out of total. The bare total is what made a
+                          supplier with nine switched-off plans look ready. */}
+                      <span className={`text-sm font-medium ${readiness.activePlans === 0 ? "text-red-600" : "text-gray-900"}`}>
+                        {readiness.activePlans}
+                      </span>
+                      {readiness.totalPlans !== readiness.activePlans && (
+                        <span className="text-xs text-gray-400"> / {readiness.totalPlans}</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-1">
@@ -346,16 +401,54 @@ export default function AdminProviders() {
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      {provider.has_affiliate_program ? (
-                        <Badge className="bg-green-100 text-green-700 text-[10px]"><CheckCircle2 className="w-3 h-3 mr-0.5" />Active</Badge>
+                      {/* Where the sign-up button actually sends a customer —
+                          not the has_affiliate_program flag, which is a note to
+                          self and was green on suppliers with no URL at all. */}
+                      {readiness.outbound.kind === "tracked" ? (
+                        <Badge className="bg-green-100 text-green-700 text-[10px]" title={readiness.outbound.url}>
+                          <Link2 className="w-3 h-3 mr-0.5" />Tracked
+                        </Badge>
+                      ) : readiness.outbound.kind === "affiliate" ? (
+                        <Badge className="bg-blue-100 text-blue-700 text-[10px]" title={readiness.outbound.url}>
+                          <CheckCircle2 className="w-3 h-3 mr-0.5" />Affiliate
+                        </Badge>
+                      ) : readiness.outbound.kind === "website" ? (
+                        <Badge variant="outline" className="text-amber-600 border-amber-200 text-[10px]" title={readiness.outbound.url}>
+                          Website only
+                        </Badge>
                       ) : (
-                        <Badge variant="outline" className="text-gray-400 text-[10px]"><XCircle className="w-3 h-3 mr-0.5" />None</Badge>
+                        <Badge variant="outline" className="text-red-500 border-red-200 text-[10px]">
+                          <XCircle className="w-3 h-3 mr-0.5" />None
+                        </Badge>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      {/* What switching this row would do, in advance. */}
+                      <div className="min-w-[150px]">
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] ${
+                            readiness.status === "live" ? "text-green-700 border-green-200 bg-green-50"
+                            : readiness.status === "incomplete" ? "text-amber-700 border-amber-200 bg-amber-50"
+                            : readiness.status === "ready" ? "text-blue-700 border-blue-200 bg-blue-50"
+                            : "text-gray-500 border-gray-200"
+                          }`}
+                        >
+                          {readiness.status === "incomplete" && <AlertTriangle className="w-3 h-3 mr-0.5" />}
+                          {STATUS_LABELS[readiness.status]}
+                        </Badge>
+                        {readiness.blockers.length > 0 && (
+                          <p className="text-[11px] text-gray-500 mt-1 leading-snug">
+                            {readiness.blockers[0]}
+                          </p>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-center">
                       <Switch
                         checked={provider.is_active}
-                        onCheckedChange={(checked) => toggleMutation.mutate({ id: provider.id, is_active: checked })}
+                        aria-label={`${provider.is_active ? "Take" : "Put"} ${provider.name} ${provider.is_active ? "off" : "on"} the site`}
+                        onCheckedChange={(checked) => requestToggle(provider, checked)}
                       />
                     </TableCell>
                     <TableCell className="text-right">
@@ -544,6 +637,40 @@ export default function AdminProviders() {
             <Button variant="destructive" onClick={() => deleteMutation.mutate(deleteConfirm.id)} disabled={deleteMutation.isPending}>
               {deleteMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Publish / Unpublish Confirm ─────────────────────────
+          Only opens when the flip has a consequence worth reading: publishing a
+          supplier with nothing to sell, or taking down one that is currently
+          ranking. Everything else flips on the click. */}
+      <Dialog open={!!pendingToggle} onOpenChange={() => setPendingToggle(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-500" aria-hidden="true" />
+              {pendingToggle?.warning.title}
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {pendingToggle?.warning.body}
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingToggle(null)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                toggleMutation.mutate({
+                  id: pendingToggle.provider.id,
+                  is_active: pendingToggle.nextActive,
+                  name: pendingToggle.provider.name,
+                });
+                setPendingToggle(null);
+              }}
+              className={pendingToggle?.nextActive ? "" : "bg-red-600 hover:bg-red-700 text-white"}
+            >
+              {pendingToggle?.warning.confirmLabel}
             </Button>
           </DialogFooter>
         </DialogContent>
