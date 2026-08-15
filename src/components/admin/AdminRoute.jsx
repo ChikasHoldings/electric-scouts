@@ -1,16 +1,23 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Suspense } from "react";
+import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { ADMIN_ROLES, canAccessPath, landingPathForRole, ROLE_LABELS } from "@/lib/adminNav";
 import AdminLayout from "./AdminLayout";
-import AdminBoot from "./AdminBoot";
+import AdminBoot, { AdminPageLoading } from "./AdminBoot";
+import RouteErrorBoundary from "@/components/RouteErrorBoundary";
 
 /**
- * The gate in front of every admin screen.
+ * The gate in front of every admin screen, and the panel's layout route.
  *
  * Which roles may open which route is not decided here — it is decided once, in
  * the nav registry, alongside which roles see the link. The two used to be
  * separate tables that had to be edited together, and a link an editor could
  * see but not open was the failure that resulted.
+ *
+ * Mounted once, by the `/admin` layout route, with each screen rendering into
+ * the `<Outlet />` below. That is what keeps the sidebar and header on screen
+ * while you move around the panel; `children` remains supported for callers
+ * that render a screen directly.
  */
 export default function AdminRoute({ children }) {
   const { user, profile, isAuthenticated, isLoadingAuth, isLoadingProfile } = useAuth();
@@ -46,12 +53,12 @@ export default function AdminRoute({ children }) {
             You don't have admin privileges. Please contact the site administrator
             to request access.
           </p>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-flex items-center px-4 py-2 bg-[#0A5C8C] text-white rounded-lg hover:bg-[#084a6f] transition-colors"
           >
             Return to Homepage
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -72,18 +79,39 @@ export default function AdminRoute({ children }) {
               Your role ({ROLE_LABELS[userRole] || userRole}) does not have permission to
               open this page. Contact an administrator if you need access.
             </p>
-            <a
-              href={landingPathForRole(userRole)}
+            <Link
+              to={landingPathForRole(userRole)}
               className="inline-flex items-center px-4 py-2 bg-[#0A5C8C] text-white rounded-lg hover:bg-[#084a6f] transition-colors"
             >
               Back to Dashboard
-            </a>
+            </Link>
           </div>
         </div>
       </AdminLayout>
     );
   }
 
-  // Authorized → render admin layout with content
-  return <AdminLayout>{children}</AdminLayout>;
+  /**
+   * Authorized → the shell, with the matched screen inside it.
+   *
+   * Both boundaries belong here rather than around the whole route. A Suspense
+   * boundary above the layout replaces the sidebar and header with a spinner
+   * every time you open a different screen, which is the flash this file's
+   * layout-route arrangement exists to remove; an error boundary above the
+   * layout means one screen throwing costs the operator the entire panel and
+   * their way out of it. Below the layout, the panel holds still: the content
+   * column waits, or reports the failure, and the nav keeps working.
+   */
+  return (
+    <AdminLayout>
+      <RouteErrorBoundary
+        homePath={landingPathForRole(userRole)}
+        homeLabel="Back to Dashboard"
+      >
+        <Suspense fallback={<AdminPageLoading />}>
+          {children ?? <Outlet />}
+        </Suspense>
+      </RouteErrorBoundary>
+    </AdminLayout>
+  );
 }

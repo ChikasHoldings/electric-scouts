@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { preloadPageForPath } from '@/pages.config'
+import { preloadAdminForPath } from '@/admin.config'
 import '@/index.css'
 
 const container = document.getElementById('root')
@@ -28,8 +29,15 @@ container?.querySelector('[data-seo-prerender]')?.remove()
  * page arrive. Waiting for the one chunk this URL needs turns that into a
  * single paint. It is a wait on a real dependency, not a timer — a chunk that
  * fails resolves anyway and the Suspense boundary takes over as before.
+ *
+ * Exactly one of these two does any work: an admin URL matches no public page
+ * and a public URL matches no admin screen. They run together rather than in
+ * sequence so neither waits on the other's lookup.
  */
-preloadPageForPath(window.location.pathname).then(() => {
+Promise.all([
+  preloadPageForPath(window.location.pathname),
+  preloadAdminForPath(window.location.pathname),
+]).then(() => {
   ReactDOM.createRoot(container).render(
     /**
      * The boundary was written and never mounted, so any render error anywhere

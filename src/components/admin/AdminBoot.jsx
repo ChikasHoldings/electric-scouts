@@ -26,3 +26,21 @@ export default function AdminBoot() {
     </div>
   );
 }
+
+/**
+ * The wait for one screen's chunk, once the panel is already up.
+ *
+ * Deliberately not AdminBoot. That one covers the whole viewport, which is
+ * right while there is no panel yet and wrong the moment there is: used for a
+ * navigation it blanks the sidebar and header the visitor just clicked in, and
+ * the panel appears to reload. This sits in the content column, under a header
+ * that never moves, and carries no caption — the top bar has already named the
+ * screen being opened.
+ */
+export function AdminPageLoading() {
+  return (
+    <div className="flex items-center justify-center py-24" role="status" aria-label="Loading page">
+      <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin" />
+    </div>
+  );
+}
