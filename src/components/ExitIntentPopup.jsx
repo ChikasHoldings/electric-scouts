@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { X, MapPin, User, Mail, CheckCircle, TrendingDown, Shield, Zap } from "lucide-react";
-import { readStored, writeStored } from "@/lib/browser";
+import {
+  hasGivenEmail, markEmailGiven, isDismissed, dismissFor, PROMPT_KEYS,
+} from "@/lib/leadCapture";
 import popupImage from "/images/exit-popup-illustration.png";
 
 export default function ExitIntentPopup() {
@@ -15,38 +17,39 @@ export default function ExitIntentPopup() {
   const timeoutRef = useRef(null);
 
   useEffect(() => {
-    // Don't show if already dismissed or submitted
-    if (readStored("exitPopupDismissed") || readStored("rateAlertsSubmitted")) {
+    // Someone who has given us their email — anywhere on the site — is never
+    // asked again. A dismissal only holds for its window.
+    if (hasGivenEmail() || isDismissed(PROMPT_KEYS.exitIntent)) {
       hasTriggered.current = true;
       return;
     }
 
     // Wait at least 5 seconds before enabling exit intent detection
+    const onMouseLeave = (e) => {
+      // Only when the pointer leaves through the top, toward the tab bar.
+      if (e.clientY <= 0 && !hasTriggered.current) {
+        hasTriggered.current = true;
+        setIsVisible(true);
+        document.removeEventListener("mouseout", onMouseLeave);
+      }
+    };
+
     timeoutRef.current = setTimeout(() => {
-      const handleMouseLeave = (e) => {
-        // Only trigger when mouse moves above the viewport (toward browser chrome/close button)
-        if (e.clientY <= 0 && !hasTriggered.current) {
-          hasTriggered.current = true;
-          setIsVisible(true);
-          document.removeEventListener("mouseout", handleMouseLeave);
-        }
-      };
-
-      document.addEventListener("mouseout", handleMouseLeave);
-
-      return () => {
-        document.removeEventListener("mouseout", handleMouseLeave);
-      };
+      document.addEventListener("mouseout", onMouseLeave);
     }, 5000);
 
+    // The listener is removed here, not from inside the timeout. A function
+    // returned to setTimeout is discarded, so the old arrangement left the
+    // listener attached for the life of the tab.
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      document.removeEventListener("mouseout", onMouseLeave);
     };
   }, []);
 
   const handleDismiss = () => {
     setIsVisible(false);
-    writeStored("exitPopupDismissed", "true");
+    dismissFor(PROMPT_KEYS.exitIntent);
   };
 
   const handleSubmit = async (e) => {
@@ -78,8 +81,7 @@ export default function ExitIntentPopup() {
       });
       if (!response.ok) throw new Error("Failed to submit");
       setSubmitted(true);
-      writeStored("rateAlertsSubmitted", "true");
-      writeStored("exitPopupDismissed", "true");
+      markEmailGiven("rateAlertsSubmitted");
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {

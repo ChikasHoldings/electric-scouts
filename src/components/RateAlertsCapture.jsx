@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Bell, CheckCircle, MapPin, Mail, User, ArrowRight } from "lucide-react";
-import { readStored, writeStored } from "@/lib/browser";
+import { hasGivenEmail, markEmailGiven } from "@/lib/leadCapture";
 
 export default function RateAlertsCapture({ sourcePage = "homepage" }) {
   const [firstName, setFirstName] = useState("");
@@ -13,7 +13,7 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
   // Read during render, so it goes through the guarded helper: a browser that
   // blocks storage throws from the property access, and the `typeof window`
   // check does not catch that.
-  const alreadySubmitted = Boolean(readStored("es_rate_alerts_captured"));
+  const alreadySubmitted = hasGivenEmail();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ export default function RateAlertsCapture({ sourcePage = "homepage" }) {
       const data = await response.json();
       if (response.ok && data.success) {
         setIsSubmitted(true);
-        writeStored("es_rate_alerts_captured", "true");
+        markEmailGiven("es_rate_alerts_captured");
       } else {
         setError(data.error || "Something went wrong. Please try again.");
       }

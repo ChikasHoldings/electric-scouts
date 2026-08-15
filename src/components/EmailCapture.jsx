@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Zap, CheckCircle, X } from "lucide-react";
-import { readStored, writeStored } from "@/lib/browser";
+import {
+  hasGivenEmail, markEmailGiven, isDismissed, dismissFor, PROMPT_KEYS,
+} from "@/lib/leadCapture";
 
 /**
  * Non-Intrusive Email Capture Component
@@ -29,9 +31,7 @@ export default function EmailCapture({
   useEffect(() => {
     if (variant !== 'slide-up') return;
     
-    const wasDismissed = readStored('es_capture_dismissed', { session: true });
-    const wasSubmitted = readStored('es_lead_captured');
-    if (wasDismissed || wasSubmitted) return;
+    if (isDismissed(PROMPT_KEYS.slideUp) || hasGivenEmail()) return;
 
     const handleScroll = () => {
       const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
@@ -54,7 +54,7 @@ export default function EmailCapture({
   const handleDismiss = () => {
     setDismissed(true);
     setVisible(false);
-    writeStored('es_capture_dismissed', 'true', { session: true });
+    dismissFor(PROMPT_KEYS.slideUp);
   };
 
   const handleSubmit = async (e) => {
@@ -88,7 +88,7 @@ export default function EmailCapture({
 
       if (response.ok && data.success) {
         setSubmitted(true);
-        writeStored('es_lead_captured', 'true');
+        markEmailGiven('es_lead_captured');
         if (onCapture) onCapture({ email, name, zip });
       } else {
         setError(data.error || 'Something went wrong. Please try again.');
@@ -105,7 +105,7 @@ export default function EmailCapture({
   // Read through the guarded helper: a bare localStorage access here threw a
   // SecurityError in every browser that blocks storage, and this component is
   // rendered by Layout on every page, so the throw took the whole site down.
-  if (readStored('es_lead_captured') && variant === 'slide-up') return null;
+  if (hasGivenEmail() && variant === 'slide-up') return null;
 
   // ── Success State ──
   if (submitted) {
