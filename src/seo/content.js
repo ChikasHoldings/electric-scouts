@@ -440,7 +440,10 @@ export function buildCitySections(route, { citiesByState }) {
     sections.push({
       heading: `Why You Cannot Switch Suppliers in ${city.name}`,
       paragraphs: [
-        city.noRetailChoice.reason,
+        // The reason itself is already the second sentence of the intro, and it
+        // is the answer to the first FAQ below. Repeating it verbatim a third
+        // time in between reads as padding, so this section picks up from it
+        // rather than restating it.
         `That makes ${city.name} an exception in ${stateName}. In the parts of the state ` +
           `served by a competitive delivery utility, households buy the supply half of the ` +
           `bill from a retailer of their choosing and the plan comparison on this site ` +
