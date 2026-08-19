@@ -21,6 +21,7 @@ import ValidatedZipInput from "../components/ValidatedZipInput";
 
 // Comprehensive city data for all states
 import { cityData } from "@/data/cityRatesData";
+import { retailChoiceStatus } from "@/seo/locations";
 
 class CityRatesErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -85,6 +86,9 @@ function CityRatesInner() {
     'RI': { avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 15, state: "Rhode Island", county: "Local County" }
   };
   
+  // Null for a normal competitive city; an object explaining why not otherwise.
+  const noChoice = retailChoiceStatus(displayCityName, stateCode);
+
   const city = cityData[cityKey] || {
     ...stateDefaults[stateCode],
     stateCode: stateCode,
@@ -226,12 +230,27 @@ function CityRatesInner() {
             {/* Breadcrumb Navigation */}
             <PageBreadcrumbs items={breadcrumbItems} variant="light" className="mb-4" />
 
+            {/* A city served by a municipal utility has no cheap rate to move
+                to and no supplier to compare, so it gets neither promise. The
+                prerendered H1 already said so; without this the mounted app
+                replaced it with the offer and Google indexes the mounted app. */}
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
-              Cheap Electricity Rates in {displayCityName}, {city.state}
+              {noChoice
+                ? `${displayCityName} Electricity Rates`
+                : `Cheap Electricity Rates in ${displayCityName}, ${city.state}`}
             </h1>
             <p className="text-lg text-blue-100 mb-5">
-              Compare electricity plans from the suppliers serving {city.county}.
-              The average residential rate here is {city.avgRate}.
+              {noChoice ? (
+                <>
+                  Electricity in {displayCityName} is supplied by {noChoice.utility}. The average
+                  residential rate here is {city.avgRate}.
+                </>
+              ) : (
+                <>
+                  Compare electricity plans from the suppliers serving {city.county}.
+                  The average residential rate here is {city.avgRate}.
+                </>
+              )}
             </p>
 
             {/* Quick Stats */}

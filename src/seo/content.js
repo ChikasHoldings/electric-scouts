@@ -18,9 +18,11 @@
  */
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
-import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
+import { getCities, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { UTILITY_ROOT, getUtilities, utilitiesForState, utilityForCity } from './utilities.js';
 import { articlesForState, relatedArticles } from './articleLinks.js';
+import { STATIC_PAGE_CONTENT } from './staticContent.js';
+import { resolveSections, setDerivedCounts } from './figures.js';
 import {
   comparisonsForProvider,
   comparisonsForState,
@@ -119,6 +121,12 @@ function withoutUnsupportedClaims(text) {
 }
 
 const asOf = `as of ${MARKET_GENERATED_AT}`;
+
+/* CITY_COUNT and UTILITY_COUNT are figures about our own coverage rather than
+ * about the market, so figures.js cannot read them without importing the very
+ * modules that import it. They are bound here instead, where both are already
+ * in scope. */
+setDerivedCounts({ cityCount: getCities().length, utilityCount: getUtilities().length });
 
 /* ------------------------------------------------------------------ *
  * Shared fragments
@@ -1086,10 +1094,65 @@ function buildProviderFaqs(provider) {
  * that is intentional, so a new indexable page cannot be added without someone
  * deciding what it should actually say.
  */
+/** Headings match when they are the same words, ignoring case and punctuation. */
+function normalizeHeading(heading) {
+  return String(heading || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
 export function buildStaticSections(route, context) {
   const builder = STATIC_BUILDERS[route.path];
-  if (!builder) return { intro: [route.description].filter(Boolean), sections: [] };
-  return builder(route, context);
+  const base = builder
+    ? builder(route, context)
+    : { intro: [route.description].filter(Boolean), sections: [] };
+
+  /* The editorial body, where this page has one. It is merged in rather than
+   * replacing the builder's output: the builder owns the tables and link lists
+   * assembled from the snapshot, and this owns the prose. The drafted sections
+   * go in ahead of the page's closing "Next Steps" block so the page still ends
+   * on somewhere to go.
+   *
+   * Every sentence citing a figure is resolved here, and any that cites one we
+   * cannot compute is dropped — see src/seo/figures.js. */
+  const editorial = STATIC_PAGE_CONTENT[route.path];
+  if (!editorial) return base;
+
+  const drafted = resolveSections(editorial.sections);
+  if (!drafted.length) return base;
+
+  /* A drafted section whose heading the builder already uses is merged into it
+   * rather than appended. Several drafts extend a section that exists —
+   * "Deregulated States We Cover" is the builder's table plus the draft's
+   * explanation of what the table is — and appending would have printed the
+   * heading twice with half the content under each. */
+  const sections = (base.sections || []).map((section) => ({ ...section }));
+  const byHeading = new Map(sections.map((section, index) => [normalizeHeading(section.heading), index]));
+  const appended = [];
+
+  for (const section of drafted) {
+    const existingIndex = byHeading.get(normalizeHeading(section.heading));
+    if (existingIndex === undefined) {
+      appended.push(section);
+      byHeading.set(normalizeHeading(section.heading), sections.length + appended.length - 1);
+      continue;
+    }
+    const target = sections[existingIndex];
+    target.paragraphs = [...(target.paragraphs || []), ...(section.paragraphs || [])];
+    if (section.bullets) target.bullets = [...(target.bullets || []), ...section.bullets];
+    if (section.faqs) target.faqs = [...(target.faqs || []), ...section.faqs];
+    if (section.links && !target.links) target.links = section.links;
+  }
+
+  const closingIndex = sections.findIndex((section) => /^Next Steps$/i.test(section.heading || ''));
+  if (closingIndex === -1) sections.push(...appended);
+  else sections.splice(closingIndex, 0, ...appended);
+
+  // An intro line is added only where it says something the builder's does not.
+  const intro = [...(base.intro || [])];
+  for (const line of editorial.intro || []) {
+    if (!intro.some((existing) => existing.trim() === line.trim())) intro.push(line);
+  }
+
+  return { ...base, intro, sections };
 }
 
 export function hasStaticContent(path) {
