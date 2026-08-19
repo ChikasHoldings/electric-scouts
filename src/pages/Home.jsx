@@ -56,7 +56,7 @@ export default function Home() {
     <div className="min-h-screen">
       <SEOHead
         title="Compare Electricity Rates in 12 States | Electric Scouts"
-        description="Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available."
+        description="Compare electricity plans across the 12 US states where you choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available."
         keywords="compare electricity rates, bill analyzer, electricity providers, energy comparison, electricity plans, power companies, cheap electricity, fixed rate electricity, variable rate plans, renewable energy plans, electricity rates by zip code, switch electricity provider, deregulated electricity markets, electricity bill analysis"
         canonical="/"
         structuredData={structuredData}

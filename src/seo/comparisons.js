@@ -42,7 +42,7 @@
  */
 
 import marketData from './market-data.json' with { type: 'json' };
-import { canonicalPath, TITLE_MAX } from './site.js';
+import { canonicalPath, DESCRIPTION_MAX, TITLE_MAX } from './site.js';
 import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import {
   MARKET_GENERATED_AT,
@@ -580,7 +580,7 @@ function providerComparisonDescription(a, b, rows, aWins, bWins) {
         `${a.name} vs ${b.name} in ${state}: ${verdictText}. Plan counts, contract terms and renewable mix compared.`,
         `${a.name} vs ${b.name} in ${state}: entry rates, plan counts, contract terms and renewable mix side by side.`,
       ],
-      { max: 165, min: 70 }
+      { max: DESCRIPTION_MAX, min: 70 }
     );
   }
 
@@ -594,7 +594,7 @@ function providerComparisonDescription(a, b, rows, aWins, bWins) {
       `${a.name} vs ${b.name} across ${rows.length} shared states: ${verdictText}. Rates and terms compared.`,
       `${a.name} vs ${b.name} in the ${rows.length} states where both are sold: entry rates, contract terms and renewable mix.`,
     ],
-    { max: 165, min: 70 }
+    { max: DESCRIPTION_MAX, min: 70 }
   );
 }
 
@@ -788,7 +788,7 @@ function planComparisonDescription(spec, rows) {
         `${totalA} ${spec.a.short.toLowerCase()} plans against ${totalB} ${spec.b.short.toLowerCase()} in ${rows.length} states. What each costs and which one suits your situation.`,
         `${spec.a.name} against ${spec.b.name} in ${rows.length} deregulated states: what each costs and which one suits your situation.`,
       ],
-      { max: 165, min: 70 }
+      { max: DESCRIPTION_MAX, min: 70 }
     );
   }
   return fit(
@@ -796,7 +796,7 @@ function planComparisonDescription(spec, rows) {
       `${spec.a.name} against ${spec.b.name} in ${rows.length} deregulated states. What each costs, what each commits you to, and how to tell which one you are being sold.`,
       `${spec.a.name} against ${spec.b.name} in ${rows.length} deregulated states: what each costs and what each commits you to.`,
     ],
-    { max: 165, min: 70 }
+    { max: DESCRIPTION_MAX, min: 70 }
   );
 }
 

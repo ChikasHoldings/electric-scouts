@@ -18,7 +18,7 @@
  * serverless functions and by Node build scripts alike.
  */
 
-import { canonicalPath, SITE_NAME, stripBrand, withBrand } from './site.js';
+import { canonicalPath, DESCRIPTION_MAX, SITE_NAME, stripBrand, withBrand } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { ARTICLE_SLUGS, getArticleRoutes } from './articles.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
@@ -34,7 +34,7 @@ export const STATIC_ROUTES = [
     page: "Home",
     path: "/",
     title: "Compare Electricity Rates in 12 States | Electric Scouts",
-    description: "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
+    description: "Compare electricity plans across the 12 US states where you choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     priority: 1.0,
     changefreq: "daily",
   },
@@ -50,7 +50,7 @@ export const STATIC_ROUTES = [
     page: "BillAnalyzer",
     path: "/bill-analyzer",
     title: "Electricity Bill Analyzer | Electric Scouts",
-    description: "Upload an electricity bill and see the rate you really pay once base charges, delivery and credits are counted, then compare it against plans sold at your address.",
+    description: "Upload an electricity bill and see the rate you really pay once base charges, delivery and credits are counted, then compare it against plans sold at your ZIP.",
     priority: 0.9,
     changefreq: "weekly",
   },
@@ -178,7 +178,7 @@ export const STATIC_ROUTES = [
     page: "TermsOfService",
     path: "/terms-of-service",
     title: "Terms of Service | Electric Scouts",
-    description: "The terms that apply when you use Electric Scouts to compare electricity plans, including accuracy of rates, affiliate relationships and limitation of liability.",
+    description: "The terms that apply when you use Electric Scouts to compare electricity plans: accuracy of rates, affiliate relationships and limitation of liability.",
     priority: 0.3,
     changefreq: "yearly",
   },
@@ -260,7 +260,14 @@ export function cityDescription(city, market) {
   if (!market || !market.plans) {
     return `${local} Compare suppliers serving ${city.county} and switch for free with Electric Scouts.`;
   }
-  return `${local} Compare ${market.plans} ${city.stateName} plans from ${market.providers} suppliers by ZIP code.`;
+  const base = `${local} Compare ${market.plans} ${city.stateName} plans from ${market.providers} suppliers by ZIP code.`;
+  // 58 of these were landing at 112-119 characters against a limit near 160,
+  // leaving a third of the snippet unused on the pages that need to look
+  // distinct from each other most. The delivery utility is the most
+  // city-specific fact left, and it is the name the reader knows from their
+  // own bill — so it goes in wherever it fits.
+  const tail = city.utilityCompany ? ` ${city.utilityCompany} delivers the power.` : '';
+  return tail && (base + tail).length <= 158 ? base + tail : base;
 }
 
 /** Title for a provider detail page. */
@@ -445,26 +452,32 @@ export function getUtilityRoutes() {
 
   const pages = utilities.map((utility) => {
     const where = utility.stateCodes.map((code) => STATE_NAMES[code]).join(', ');
+
+    // The subtitle earns its place by saying what makes the page different, but
+    // not at the cost of a truncated result, so it is used only while the whole
+    // title still fits with the brand on it.
+    const longTitle = withBrand(`${utility.shortName} Electricity Rates: Delivery vs Supply`);
+    const title = longTitle.includes(SITE_NAME)
+      ? longTitle
+      : withBrand(`${utility.shortName} Electricity Rates and Delivery`);
+
+    // Utilities spanning several states pushed the description past the width a
+    // snippet shows. The short form keeps the correction, which is the whole
+    // point of the page, and drops the state list the H1 already gives.
+    const longDescription =
+      `${utility.shortName} delivers power in ${where} — it does not set your energy rate. ` +
+      `What it charges for, and the plans you can buy instead.`;
+    const description =
+      longDescription.length <= DESCRIPTION_MAX
+        ? longDescription
+        : `${utility.shortName} delivers your power but does not set your energy rate. ` +
+          `What it charges for, and the plans you can buy instead.`;
+
     return {
       type: 'utility',
       path: utility.path,
-      // The name people search is the utility's, so it leads. "Rates" is in the
-      // query too, and the page does answer it — by explaining which half of the
-      // bill the utility actually controls.
-      // Short name in the title: "Oncor Electric Delivery Electricity Rates" ran
-      // to 79 characters and was truncated in results. The name people type is
-      // the short one anyway.
-      // The subtitle earns its place by saying what makes the page different,
-      // but not at the cost of a truncated result. Long utility names drop it.
-      // The subtitle earns its place by saying what makes the page different,
-      // but not at the cost of a truncated result: the longer phrasing is used
-      // only while the whole title, brand included, still fits.
-      title: withBrand(`${utility.shortName} Electricity Rates: Delivery vs Supply`).includes(SITE_NAME)
-        ? withBrand(`${utility.shortName} Electricity Rates: Delivery vs Supply`)
-        : withBrand(`${utility.shortName} Electricity Rates and Delivery`),
-      description:
-        `${utility.shortName} delivers power in ${where} — it does not set your energy rate. ` +
-        `What it charges for, and the plans you can buy instead.`,
+      title,
+      description,
       heading: `${utility.name} Electricity Rates`,
       // Delivery territories change far more slowly than plan prices, and the
       // page's own figures come from the state snapshot, so it does not need
@@ -552,7 +565,7 @@ export const ALIAS_ROUTES = [
     canonical: '/',
     title: "Compare Electricity Rates in 12 States | Electric Scouts",
     description:
-      "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
+      "Compare electricity plans across the 12 US states where you choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     heading: 'Stop Overpaying for Electricity',
   },
 ];

@@ -584,7 +584,7 @@ export default function BillAnalyzer() {
   const seoBlock = (
     <SEOHead
       title="Electricity Bill Analyzer | Electric Scouts"
-      description="Upload an electricity bill and see the rate you really pay once base charges, delivery and credits are counted, then compare it against plans sold at your address."
+      description="Upload an electricity bill and see the rate you really pay once base charges, delivery and credits are counted, then compare it against plans sold at your ZIP."
       keywords="electricity bill analyzer, analyze electricity bill, electricity savings calculator, bill comparison tool, find cheaper electricity, electricity rate analyzer, power bill analysis, energy bill savings"
       canonical="/bill-analyzer"
       structuredData={[

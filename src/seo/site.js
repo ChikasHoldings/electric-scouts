@@ -86,6 +86,15 @@ export const TITLE_MAX = 60;
 export const BRAND_SUFFIX = ` | ${SITE_NAME}`;
 
 /**
+ * Longest description a result will show before it is cut.
+ *
+ * Softer than the title limit — Google rewrites most descriptions anyway — but
+ * a snippet that ends mid-word is still a snippet whose last clause was wasted,
+ * and the last clause is usually the one carrying the call to action.
+ */
+export const DESCRIPTION_MAX = 158;
+
+/**
  * Append the brand to a title, but only while it still fits.
  *
  * 107 of this site's indexable titles were over the limit, and every one of

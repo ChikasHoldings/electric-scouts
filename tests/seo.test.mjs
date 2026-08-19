@@ -710,6 +710,56 @@ describe('registry stays in step with app data', () => {
  * Deployment configuration
  * ================================================================== */
 
+describe('metadata fits the result Google renders', () => {
+  // 107 titles were over the width Google renders, every one of them because
+  // of the " | Electric Scouts" suffix rather than the title itself, and 62
+  // descriptions were using barely two thirds of the space available. Both are
+  // enforced here so neither drifts back.
+  const routes = getIndexableRoutes({
+    providers: getPublishableProviders(),
+    fullArticles: seoArticles,
+  });
+
+  test('no title is truncated', () => {
+    const over = routes
+      .filter((route) => route.title.length > TITLE_MAX)
+      .map((route) => `${route.title.length} ${route.path}: ${route.title}`);
+    assert.deepEqual(over, [], 'titles over the render width');
+  });
+
+  test('no description overruns the snippet', () => {
+    // A couple of characters past DESCRIPTION_MAX costs a partial word at most,
+    // so the enforced ceiling has a little headroom over the target.
+    const over = routes
+      .filter((route) => route.description.length > 160)
+      .map((route) => `${route.description.length} ${route.path}`);
+    assert.deepEqual(over, [], 'descriptions over the snippet width');
+  });
+
+  test('no two indexable pages share a title or a description', () => {
+    for (const field of ['title', 'description']) {
+      const seen = new Map();
+      const clashes = [];
+      for (const route of routes) {
+        const value = route[field];
+        if (seen.has(value)) clashes.push(`${seen.get(value)} and ${route.path} share a ${field}`);
+        else seen.set(value, route.path);
+      }
+      assert.deepEqual(clashes, []);
+    }
+  });
+
+  test('the brand is dropped only when it would not fit', () => {
+    for (const route of routes) {
+      if (route.title.includes('Electric Scouts')) continue;
+      assert.ok(
+        route.title.length + ' | Electric Scouts'.length > TITLE_MAX,
+        `${route.path} dropped the brand but had room: ${route.title}`
+      );
+    }
+  });
+});
+
 describe('city pages offer an image to the crawler', () => {
   // Every prerendered page carried zero <img> elements, so nothing on this site
   // was eligible for image search and no page could hand Google a primary image.

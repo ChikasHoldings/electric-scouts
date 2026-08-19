@@ -1932,7 +1932,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   10: {
     title: "How to Read Your Electricity Bill: Find Hidden Charges and Save Money",
     metaTitle: "How to Read Your Electricity Bill | Electric Scouts",
-    metaDescription: "Learn how to read your electricity bill, understand charges, and find hidden fees. Our guide explains your electric bill so you can save money on your energy costs.",
+    metaDescription: "How to read your electricity bill: what each charge is, where the fees hide, and how to work out the rate you are actually paying.",
     tags: ["electricity bill", "save money", "hidden charges", "understand your bill", "energy costs"],
     content: `
 <h2>Understanding Your Electricity Bill is the First Step to Savings</h2>

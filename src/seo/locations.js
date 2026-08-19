@@ -10,6 +10,7 @@
 // Relative paths with explicit extensions: this module is imported by Node
 // build scripts and Vercel functions as well as by the Vite browser bundle.
 import { cityData } from '../data/cityRatesData.js';
+import { LOCATION_DATA } from '../components/location/locationData.js';
 import { canonicalPath } from './site.js';
 
 /** State code -> URL slug used in /electricity-rates/:stateSlug/:citySlug */
@@ -78,6 +79,10 @@ export function getCities() {
         // at all, so nothing on this site was eligible for image search and
         // no page could offer Google a primary image.
         image: value.image || null,
+        // The company that delivers the power here. It is the most
+        // city-specific fact we hold after the rate itself, and the one a
+        // reader recognises from their bill.
+        utilityCompany: LOCATION_DATA[value.stateCode]?.cities?.[name]?.utilityCompany || null,
         path: cityPath(name, value.stateCode),
         statePath: STATE_PAGE_PATHS[value.stateCode],
       };
