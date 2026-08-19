@@ -10,6 +10,7 @@ import { useAutoSitemapNotify } from "./components/seo/useAutoSitemapNotify";
 import ExitIntentPopup from "./components/ExitIntentPopup";
 import EmailCapture from "./components/EmailCapture";
 import { scrollToTopInstantly } from "@/lib/browser";
+import SeoSections from "./components/seo/SeoSections";
 
 // Primary navigation — customer segments first (Residential → Commercial →
 // Renewable Energy), then the Bill Analyzer tool. Service Areas follows as a
@@ -442,6 +443,12 @@ export default function Layout({ children, currentPageName }) {
       {/* Main Content */}
       <main className="flex-1">
         {children}
+        {/* The page's editorial content — rate tables, local context, FAQ
+            answers — rendered from the same model the prerenderer writes into
+            the document. It lives here rather than inside each page so that
+            every public route carries it and the served HTML and the rendered
+            DOM cannot drift apart. See components/seo/SeoSections.jsx. */}
+        <SeoSections />
       </main>
 
 

@@ -228,6 +228,49 @@ export function structuredDataFor(route, content) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Content island
+ * ------------------------------------------------------------------ */
+
+/**
+ * The page's content model, serialized into the document for the React app.
+ *
+ * WHY THIS EXISTS
+ *
+ * Googlebot indexes the *rendered* DOM, not the HTML we serve. This app mounts
+ * with `createRoot().render()` and main.jsx removes the prerendered summary
+ * before mounting, so everything the prerenderer so carefully wrote — the
+ * tables, the local context, the FAQ answers the FAQPage markup describes —
+ * was deleted from the page before Google's renderer ever took its snapshot.
+ * What got indexed was the React shell and whatever its client-side queries had
+ * managed to resolve, which on a plan-driven page is a loading state. That is
+ * the soft 404, and it is why pages that look complete in "view source" were
+ * being dropped from the index.
+ *
+ * The fix is not to hide the payload better — it is to make the app render the
+ * same content. This tag carries the exact object `renderBody` was built from,
+ * so <SeoSections> can render it as real, visible page content with no second
+ * copy of the logic to drift out of step. Pre-render HTML and post-render DOM
+ * then say the same thing, which is also the only condition under which the
+ * JSON-LD on this page is truthful.
+ *
+ * `path` is stamped on it so a client-side navigation, which leaves this tag
+ * behind pointing at the URL the visitor landed on, cannot show one page's
+ * content under another page's heading.
+ */
+export function contentIslandTag(route, content) {
+  const payload = {
+    path: route.path,
+    type: route.type,
+    intro: content?.intro || [],
+    sections: content?.sections || [],
+  };
+  // Serialized as application/json, which the browser never executes. Only the
+  // closing-tag sequence has to be neutralized.
+  const json = JSON.stringify(payload).replace(/<\/script/gi, '<\\/script');
+  return `<script type="application/json" id="seo-content">${json}</script>`;
+}
+
+/* ------------------------------------------------------------------ *
  * <head>
  * ------------------------------------------------------------------ */
 
@@ -265,6 +308,9 @@ export function renderHead(route, content) {
     `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
     `<meta name="twitter:image" content="${escapeHtml(image)}" />`,
     `<script type="application/ld+json">${escapeJsonLd(JSON.stringify(structuredDataFor(route, content)))}</script>`,
+    // The same content model the body below is built from, handed to the React
+    // app so it can render this content itself. See contentIslandTag().
+    contentIslandTag(route, content),
     ...PRERENDER_VISIBILITY_TAGS,
   ];
 
