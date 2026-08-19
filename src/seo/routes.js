@@ -18,7 +18,7 @@
  * serverless functions and by Node build scripts alike.
  */
 
-import { canonicalPath } from './site.js';
+import { canonicalPath, SITE_NAME, stripBrand, withBrand } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { getArticleRoutes } from './articles.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
@@ -33,7 +33,7 @@ export const STATIC_ROUTES = [
   {
     page: "Home",
     path: "/",
-    title: "Electric Scouts | Stop Overpaying for Electricity — We'll Prove It",
+    title: "Compare Electricity Rates in 12 States | Electric Scouts",
     description: "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     priority: 1.0,
     changefreq: "daily",
@@ -226,7 +226,7 @@ export const STATE_PAGE_COMPONENTS = {
 
 /** Title for a state landing page. Kept inside typical SERP truncation. */
 export function stateTitle(stateName) {
-  return `${stateName} Electricity Rates & Providers | Electric Scouts`;
+  return withBrand(`${stateName} Electricity Rates & Providers`);
 }
 
 /**
@@ -247,7 +247,7 @@ export function stateDescription(stateName, market) {
 
 /** Title for a city page: the phrasing people actually search for. */
 export function cityTitle(city) {
-  return `Compare Electricity Rates in ${city.name}, ${city.stateCode} | Electric Scouts`;
+  return withBrand(`Compare Electricity Rates in ${city.name}, ${city.stateCode}`);
 }
 
 /**
@@ -265,7 +265,7 @@ export function cityDescription(city, market) {
 
 /** Title for a provider detail page. */
 export function providerTitle(provider) {
-  return `${provider.name} Electricity Plans & Rates | Electric Scouts`;
+  return withBrand(`${provider.name} Electricity Plans & Rates`);
 }
 
 export function providerDescription(provider) {
@@ -341,7 +341,7 @@ export function getArticleRouteList(fullArticles) {
     // purpose: a shared placeholder title across 73 URLs is the exact failure
     // mode this registry exists to prevent, and the prerender build aborts if
     // any route reaches it without metadata.
-    title: article.title,
+    title: article.title ? withBrand(stripBrand(article.title)) : article.title,
     description: article.description,
     heading: article.heading,
     content: article.content,
@@ -452,10 +452,12 @@ export function getUtilityRoutes() {
       // the short one anyway.
       // The subtitle earns its place by saying what makes the page different,
       // but not at the cost of a truncated result. Long utility names drop it.
-      title:
-        `${utility.shortName} Electricity Rates: Delivery vs Supply | Electric Scouts`.length <= 70
-          ? `${utility.shortName} Electricity Rates: Delivery vs Supply | Electric Scouts`
-          : `${utility.shortName} Electricity Rates and Delivery | Electric Scouts`,
+      // The subtitle earns its place by saying what makes the page different,
+      // but not at the cost of a truncated result: the longer phrasing is used
+      // only while the whole title, brand included, still fits.
+      title: withBrand(`${utility.shortName} Electricity Rates: Delivery vs Supply`).includes(SITE_NAME)
+        ? withBrand(`${utility.shortName} Electricity Rates: Delivery vs Supply`)
+        : withBrand(`${utility.shortName} Electricity Rates and Delivery`),
       description:
         `${utility.shortName} delivers power in ${where} — it does not set your energy rate. ` +
         `What it charges for, and the plans you can buy instead.`,
@@ -516,6 +518,9 @@ export function getStaticRoutes() {
       type: path === '/' ? 'home' : 'static',
       ...route,
       path,
+      // Hand-written titles go through the same measurement as the generated
+      // ones, so the brand is dropped rather than the distinguishing tail.
+      title: withBrand(stripBrand(route.title)),
       heading: STATIC_HEADINGS[path],
     };
   });
@@ -541,7 +546,7 @@ export const ALIAS_ROUTES = [
     type: 'alias',
     path: '/landing',
     canonical: '/',
-    title: "Electric Scouts | Stop Overpaying for Electricity — We'll Prove It",
+    title: "Compare Electricity Rates in 12 States | Electric Scouts",
     description:
       "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     heading: 'Stop Overpaying for Electricity',

@@ -42,7 +42,7 @@
  */
 
 import marketData from './market-data.json' with { type: 'json' };
-import { canonicalPath } from './site.js';
+import { canonicalPath, TITLE_MAX } from './site.js';
 import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import {
   MARKET_GENERATED_AT,
@@ -536,13 +536,19 @@ export function buildProviderComparison(matchup) {
     bOnly: (b.planStates || []).filter((code) => !shared.includes(code) && STATE_NAMES[code]),
     cheaperCounts: { a: aWins.length, b: bWins.length, tied: rows.length - aWins.length - bWins.length },
     stateNames,
+    // Measured at the width Google actually renders. Two suppliers with long
+    // names cannot carry the brand as well, and the brand is the part a
+    // searcher needs least — so it is dropped before the matchup is.
     title: fit(
       [
         `${a.name} vs ${b.name}: Rates Compared | Electric Scouts`,
         `${a.name} vs ${b.name} Compared | Electric Scouts`,
         `${a.name} vs ${b.name} | Electric Scouts`,
+        `${a.name} vs ${b.name}: Rates Compared`,
+        `${a.name} vs ${b.name} Compared`,
+        `${a.name} vs ${b.name}`,
       ],
-      { max: 70 }
+      { max: TITLE_MAX }
     ),
     heading: `${a.name} vs ${b.name}`,
     description: providerComparisonDescription(a, b, rows, aWins, bWins),
@@ -756,7 +762,7 @@ export function buildPlanComparison(spec) {
     path: canonicalPath(`${COMPARE_ROOT}/${spec.slug}`),
     a: spec.a,
     b: spec.b,
-    title: fit([`${spec.title} | Electric Scouts`, spec.title], { max: 70 }),
+    title: fit([`${spec.title} | Electric Scouts`, spec.title], { max: TITLE_MAX }),
     heading: spec.heading,
     description: planComparisonDescription(spec, rows),
     lede: spec.lede,
@@ -839,7 +845,7 @@ export function comparisonsForState(stateCode) {
 
 export const COMPARE_HUB = {
   path: COMPARE_ROOT,
-  title: 'Electricity Comparisons: Supplier and Plan Matchups | Electric Scouts',
+  title: 'Compare Electricity Suppliers Head to Head | Electric Scouts',
   heading: 'Electricity Comparisons, Head to Head',
   description:
     'Side-by-side electricity comparisons from our plan catalog: supplier against supplier where both are sold, and plan type against plan type in all 12 states.',

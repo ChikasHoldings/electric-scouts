@@ -50,7 +50,7 @@ export default function Landing() {
   return (
     <>
     <SEOHead
-      title="Electric Scouts | Stop Overpaying for Electricity — We'll Prove It"
+      title="Compare Electricity Rates in 12 States | Electric Scouts"
       description={`Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from ${MARKET_TOTALS.providersWithPlans} suppliers across ${MARKET_TOTALS.states} states. Free Bill Analyzer included.`}
       canonical="/"
       keywords="compare electricity rates, bill analyzer, electricity providers, energy comparison, electricity plans, save on electricity, deregulated electricity"

@@ -72,3 +72,43 @@ export function absoluteUrl(pathname) {
   const path = canonicalPath(pathname);
   return path === '/' ? `${SITE_URL}/` : `${SITE_URL}${path}`;
 }
+
+/**
+ * Longest title Google will render before truncating it with an ellipsis.
+ *
+ * Not a hard rule of the algorithm — it is a pixel width, and 60 characters is
+ * the conventional proxy for it. Overflow costs nothing in ranking and a great
+ * deal in clicks: the tail of the title is what distinguishes one result from
+ * the next, and it is exactly the part that gets cut.
+ */
+export const TITLE_MAX = 60;
+
+export const BRAND_SUFFIX = ` | ${SITE_NAME}`;
+
+/**
+ * Append the brand to a title, but only while it still fits.
+ *
+ * 107 of this site's indexable titles were over the limit, and every one of
+ * them was over it *because* of the suffix — "Constellation Energy vs Verde
+ * Energy: Rates Compared" is 52 characters and reads fine; the same title with
+ * " | Electric Scouts" bolted on is 70 and reaches the SERP as
+ * "…vs Verde Energy: Rates Compar…". The brand is the least informative part of
+ * the string and the only optional one, so it is what gives way. Google appends
+ * the site name to the result itself in most cases anyway.
+ *
+ * A `core` that is already too long on its own is returned untouched rather
+ * than cut mid-word: silently truncating a hand-written title would hide the
+ * problem instead of surfacing it, and the audit reports what remains.
+ */
+export function withBrand(core) {
+  const title = String(core || '').trim();
+  if (!title) return SITE_NAME;
+  if (title.includes(SITE_NAME)) return title;
+  return title.length + BRAND_SUFFIX.length <= TITLE_MAX ? `${title}${BRAND_SUFFIX}` : title;
+}
+
+/** Strip a trailing " | Electric Scouts" so a title can be re-measured. */
+export function stripBrand(title) {
+  const value = String(title || '').trim();
+  return value.endsWith(BRAND_SUFFIX) ? value.slice(0, -BRAND_SUFFIX.length).trim() : value;
+}
