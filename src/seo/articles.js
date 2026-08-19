@@ -85,16 +85,22 @@ export const ARTICLE_SLUGS = {
   25: 'maine-electricity-rates-guide',
   26: 'new-hampshire-electricity-rates-guide',
   27: 'rhode-island-electricity-rates-guide',
-  28: 'houston-electricity-rates',
-  29: 'dallas-electricity-rates',
-  30: 'chicago-electricity-rates',
-  31: 'philadelphia-electricity-rates',
-  32: 'new-york-city-electricity-rates',
-  33: 'san-antonio-electricity-rates',
-  34: 'austin-electricity-rates',
+  // 28-37: nine of these guides sat at <city>-electricity-rates, which is the
+  // exact query /electricity-rates/<state>/<city> is built to win. Two of our
+  // own URLs chasing one query splits the signal and we lose it twice. Each one
+  // is really about the delivery utility a reader is trying to get away from —
+  // "ComEd Alternatives", "PECO Alternatives" — so the slug says that instead,
+  // which is both a distinct query and a truer description of the article.
+  28: 'cheapest-electricity-plans-houston',
+  29: 'dallas-fort-worth-electricity-plans',
+  30: 'comed-alternatives-chicago',
+  31: 'peco-alternatives-philadelphia',
+  32: 'coned-alternatives-nyc',
+  33: 'cps-energy-san-antonio-explained',
+  34: 'austin-energy-explained',
   35: 'columbus-ohio-electricity-rates',
-  36: 'baltimore-electricity-rates',
-  37: 'boston-electricity-rates',
+  36: 'bge-alternatives-baltimore',
+  37: 'eversource-alternatives-boston',
   // Deliberately not "txu-energy-vs-reliant-energy": that is the slug of the
   // /compare page, and two of our own URLs chasing one query is a fight we lose
   // twice. This one is the opinionated guide, so it asks the question.
