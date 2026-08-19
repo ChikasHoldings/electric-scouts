@@ -33,7 +33,8 @@ import {
   getArticleRouteList,
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
-import { ARTICLE_IDS } from '../src/seo/articles.js';
+import { ARTICLE_IDS, ARTICLE_SLUGS, articlePath } from '../src/seo/articles.js';
+import { TITLE_MAX } from '../src/seo/site.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
 import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket, providersInState, renewableProvidersInState } from '../src/seo/market.js';
 import { buildCitySections, buildStateSections, buildProviderSections, buildComparisonSections, buildUtilitySections } from '../src/seo/content.js';
@@ -348,16 +349,81 @@ describe('sitemap.xml', () => {
   });
 
   test('advertises only article URLs the app can actually resolve', () => {
-    // /learn/:id resolves by numeric id. The previous sitemap also emitted
-    // /learn/<slug> for database articles, and every one of those rendered
-    // "Article Not Found" behind a 200 — a soft 404 we asked Google to crawl.
+    // Articles are published at their keyword slug. The sitemap must advertise
+    // the canonical form only: a /learn/<id> URL in here would be asking Google
+    // to crawl a redirect, and a slug with no article behind it would be the
+    // soft 404 this suite exists to prevent.
+    const slugs = new Set(Object.values(ARTICLE_SLUGS));
     const articleLocs = entries.map((e) => e.loc).filter((loc) => loc.includes('/learn/'));
     for (const loc of articleLocs) {
       const identifier = loc.split('/learn/')[1];
-      assert.match(identifier, /^\d+$/, `${loc} is not an article id the route resolves`);
-      assert.ok(ARTICLE_IDS.includes(Number(identifier)), `${loc} has no article behind it`);
+      assert.doesNotMatch(identifier, /^\d+$/, `${loc} is a legacy id URL, not the canonical slug`);
+      assert.ok(slugs.has(identifier), `${loc} has no article behind it`);
     }
     assert.equal(articleLocs.length, ARTICLE_IDS.length);
+  });
+
+  test('every legacy /learn/<id> URL 301s to its slug', () => {
+    // The numeric URLs are what Google already has indexed and what existing
+    // links point at. Without a redirect for each one they become 73 dead URLs
+    // and 73 orphaned slugs, and the equity on both halves is lost.
+    const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+    const redirects = new Map(
+      vercelConfig.redirects
+        .filter((entry) => /^\/learn\/\d+$/.test(entry.source))
+        .map((entry) => [entry.source, entry])
+    );
+    assert.equal(redirects.size, ARTICLE_IDS.length, 'article redirect count has drifted');
+    for (const id of ARTICLE_IDS) {
+      const entry = redirects.get(`/learn/${id}`);
+      assert.ok(entry, `/learn/${id} has no redirect`);
+      assert.equal(entry.destination, `/learn/${ARTICLE_SLUGS[id]}`, `/learn/${id} points at the wrong slug`);
+      assert.equal(entry.permanent, true, `/learn/${id} must be a 301, not a 302`);
+    }
+  });
+
+  test('article dates are recorded, plausible, and still describe the article', async () => {
+    // src/seo/articleDates.js is a snapshot of git history (Vercel clones at
+    // depth 1, so it cannot be computed during the build). The hash is what
+    // stops it going stale: edit an article without re-running
+    // scripts/refresh-article-dates.mjs and this fails rather than shipping a
+    // dateModified that quietly contradicts the page.
+    const { ARTICLE_DATES } = await import('../src/seo/articleDates.js');
+    const { hashBlocks } = await import('../scripts/refresh-article-dates.mjs');
+    const source = fs.readFileSync(
+      path.join(ROOT, 'src/components/learning/fullArticles.jsx'),
+      'utf8'
+    );
+    const current = hashBlocks(source);
+    const today = new Date().toISOString().slice(0, 10);
+
+    for (const id of ARTICLE_IDS) {
+      const entry = ARTICLE_DATES[id];
+      assert.ok(entry, `article ${id} has no recorded dates`);
+      const [published, modified, hash] = entry;
+      assert.match(published, /^\d{4}-\d{2}-\d{2}$/, `article ${id} datePublished is not an ISO date`);
+      assert.match(modified, /^\d{4}-\d{2}-\d{2}$/, `article ${id} dateModified is not an ISO date`);
+      assert.ok(published <= today, `article ${id} claims to be published in the future`);
+      assert.ok(modified <= today, `article ${id} claims to be modified in the future`);
+      assert.ok(modified >= published, `article ${id} was modified before it was published`);
+      assert.equal(
+        hash,
+        current[id],
+        `article ${id} has changed since its dates were recorded — run "node scripts/refresh-article-dates.mjs"`
+      );
+    }
+  });
+
+  test('every article has a slug, and no two share one', () => {
+    const slugs = ARTICLE_IDS.map((id) => ARTICLE_SLUGS[id]);
+    for (const [index, slug] of slugs.entries()) {
+      assert.ok(slug, `article ${ARTICLE_IDS[index]} has no slug`);
+      assert.match(slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/, `${slug} is not a clean slug`);
+      assert.doesNotMatch(slug, /^\d+$/, `${slug} is still numeric`);
+      // A year in a permanent URL dates the page the moment it turns over.
+      assert.doesNotMatch(slug, /-20\d\d(?:-|$)/, `${slug} pins a year into a permanent URL`);
+    }
+    assert.equal(new Set(slugs).size, slugs.length, 'two articles share a slug');
   });
 
   test('every sitemap URL was prerendered by this build', { skip: !distExists }, () => {
@@ -439,7 +505,7 @@ describe('prerendered output in dist/', () => {
     ['residential landing', '/residential-electricity'],
     ['commercial landing', '/business-electricity'],
     ['renewable landing', '/renewable-energy'],
-    ['article page', '/learn/1'],
+    ['article page', articlePath(1)],
     ['provider directory', '/all-providers'],
   ];
 
@@ -540,7 +606,7 @@ describe('prerendered output in dist/', () => {
   test('the landing pages are reachable from every prerendered page', () => {
     // The site nav is rendered into every prerendered page, so a new landing
     // page is one hop from anywhere rather than orphaned behind the header.
-    for (const routePath of ['/', '/compare-rates', '/texas-electricity', '/learn/1']) {
+    for (const routePath of ['/', '/compare-rates', '/texas-electricity', articlePath(1)]) {
       const links = new Set(internalLinks(readDist(distFileFor(routePath))));
       for (const landing of LANDING_PAGES) {
         assert.ok(links.has(landing), `${routePath} does not link to ${landing}`);
@@ -643,6 +709,377 @@ describe('registry stays in step with app data', () => {
 /* ================================================================== *
  * Deployment configuration
  * ================================================================== */
+
+describe('same-state city pages do not read alike', () => {
+  // 25 pairs of city pages exceeded 0.50 six-gram Jaccard similarity, worst
+  // 0.547. The cause was not the template — it was that the pages were asked
+  // to differ on their rate, and the rate ties: six of the fourteen Ohio
+  // cities share 9.5¢/kWh, and Lakewood and Parma match on the bill too, so
+  // every rate-derived sentence rendered character for character identical.
+  // The page now differs on what never ties (population) and what is unique
+  // by construction (ZIP set, district list, county cohort).
+  const cities = getCityRoutes();
+  const byState = {};
+  for (const route of cities) (byState[route.city.stateCode] ||= []).push(route);
+
+  const shingles = (text, n = 6) => {
+    const words = text.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+    const set = new Set();
+    for (let i = 0; i + n <= words.length; i++) set.add(words.slice(i, i + n).join(' '));
+    return set;
+  };
+  const jaccard = (a, b) => {
+    let shared = 0;
+    for (const gram of a) if (b.has(gram)) shared++;
+    return shared / (a.size + b.size - shared || 1);
+  };
+  const context = {
+    citiesByState: Object.fromEntries(
+      Object.entries(byState).map(([code, list]) => [code, list.map((r) => r.city)])
+    ),
+  };
+  /** The prose a reader sees — not the JSON, whose repeated keys inflate the score. */
+  const textOf = (route) => {
+    const content = buildCitySections(route, context);
+    const parts = [...(content.intro || [])];
+    for (const section of content.sections) {
+      parts.push(section.heading);
+      parts.push(...(section.paragraphs || []), ...(section.bullets || []));
+      for (const fact of section.facts || []) parts.push(fact.join(' '));
+      for (const faq of section.faqs || []) parts.push(faq.question, faq.answer);
+      for (const [, label] of section.links || []) parts.push(label);
+      for (const row of section.table?.rows || []) {
+        parts.push(row.map((cell) => (cell && typeof cell === 'object' ? cell.text : cell)).join(' '));
+      }
+    }
+    return parts.filter(Boolean).join(' ');
+  };
+
+  test('no two cities in a state exceed 0.50 similarity', () => {
+    const offenders = [];
+    for (const list of Object.values(byState)) {
+      const prepared = list.map((route) => ({ route, grams: shingles(textOf(route)) }));
+      for (let i = 0; i < prepared.length; i++) {
+        for (let j = i + 1; j < prepared.length; j++) {
+          const score = jaccard(prepared[i].grams, prepared[j].grams);
+          if (score > 0.5) {
+            offenders.push(`${score.toFixed(3)} ${prepared[i].route.path} <-> ${prepared[j].route.path}`);
+          }
+        }
+      }
+    }
+    assert.deepEqual(offenders, [], 'city pages that read alike');
+  });
+
+  test('the sections that differentiate are conditional, not universal', () => {
+    // A block present on one page and absent on its twin is the strongest
+    // dedup signal there is, so at least one of these must genuinely vary.
+    const headingSets = cities.slice(0, 60).map((route) => {
+      const content = buildCitySections(route, { citiesByState: {} });
+      return content.sections.map((section) => section.heading).join('|');
+    });
+    assert.ok(new Set(headingSets).size > 1, 'every city page has the identical section list');
+  });
+
+  test('sibling links are ordered per city, not alphabetically for the whole state', () => {
+    const ohio = byState.OH.map((route) => route.city);
+    const first = buildCitySections(byState.OH[0], { citiesByState: { OH: ohio } });
+    const second = buildCitySections(byState.OH[1], { citiesByState: { OH: ohio } });
+    const linksOf = (content) =>
+      (content.sections.find((section) => /^Other Cities We Cover/.test(section.heading))?.links || [])
+        .map(([, label]) => label)
+        .join('|');
+    assert.notEqual(linksOf(first), linksOf(second), 'two cities print the same sibling list');
+  });
+});
+
+describe('no page offers a switch where retail choice does not exist', () => {
+  // Ten cities on this site are served by a municipal utility or sit outside
+  // the competitive market, and every one of their pages was telling residents
+  // they could choose a supplier and offering them the statewide plan count.
+  // That is the one fact those readers came to find out, answered backwards —
+  // and a page that cannot deliver what its title promises is exactly what
+  // Google's helpful-content systems are built to demote.
+  const routes = getCityRoutes();
+  const noChoice = routes.filter((route) => route.city.noRetailChoice);
+  const OFFERS_A_SWITCH = /\bcompare\b|\bswitch(?:ing)?\b|\bchoose (?:your|a) supplier\b|\bcompeting (?:suppliers?|retailers?|providers?)\b|\bshop\b/i;
+
+  test('the list is populated and every entry carries a reason', () => {
+    assert.ok(noChoice.length >= 7, `only ${noChoice.length} cities flagged`);
+    for (const route of noChoice) {
+      const status = route.city.noRetailChoice;
+      assert.ok(status.utility, `${route.path} has no utility named`);
+      assert.ok(status.reason && status.reason.length > 80, `${route.path} reason is too thin to be useful`);
+      assert.ok(['municipal', 'regulated'].includes(status.kind), `${route.path} has an unknown kind`);
+    }
+  });
+
+  test('their titles and descriptions do not promise a comparison', () => {
+    for (const route of noChoice) {
+      assert.doesNotMatch(route.title, /^Compare/i, `${route.path} title offers a comparison`);
+      assert.doesNotMatch(
+        route.description,
+        /Compare \d+ .* plans/i,
+        `${route.path} description offers plans that are not sold there`
+      );
+      assert.doesNotMatch(route.heading, /^Compare/i, `${route.path} H1 offers a comparison`);
+    }
+  });
+
+  test('they explain why instead, and say who sets the rate', () => {
+    for (const route of noChoice) {
+      const content = buildCitySections(route, { citiesByState: {} });
+      const headings = content.sections.map((section) => section.heading);
+      assert.ok(
+        headings.some((heading) => /cannot switch/i.test(heading)),
+        `${route.path} never explains that switching is not possible`
+      );
+      const faqs = content.sections.flatMap((section) => section.faqs || []);
+      assert.ok(faqs.length >= 3, `${route.path} has too few FAQs`);
+      assert.ok(
+        faqs.some((faq) => /can i choose my electricity supplier/i.test(faq.question)),
+        `${route.path} does not answer the question its readers actually have`
+      );
+      // The intro must not open on the statewide plan count, which reads as an offer.
+      assert.ok(
+        !/Electric Scouts tracks \d+ active/.test(content.intro.join(' ')),
+        `${route.path} opens by advertising plans it cannot sell`
+      );
+    }
+  });
+
+  test('they do not link to the comparison engine as a next step', () => {
+    for (const route of noChoice) {
+      const content = buildCitySections(route, { citiesByState: {} });
+      const links = content.sections.flatMap((section) => section.links || []).map(([href]) => href);
+      for (const dead of ['/compare-rates', '/renewable-compare-rates', '/business-compare-rates']) {
+        assert.ok(!links.includes(dead), `${route.path} sends the reader to ${dead}, which cannot help them`);
+      }
+    }
+  });
+
+  test('the prerendered page says so too', { skip: !distExists }, () => {
+    for (const route of noChoice) {
+      const html = readDist(distFileFor(route.path));
+      assert.match(html, /cannot switch/i, `${route.path} does not say it in the served HTML`);
+      assert.ok(
+        html.includes(route.city.noRetailChoice.utility),
+        `${route.path} does not name ${route.city.noRetailChoice.utility}`
+      );
+    }
+  });
+
+  test('a competitive city is untouched by all of this', () => {
+    const houston = routes.find((route) => route.city.name === 'Houston');
+    assert.ok(!houston.city.noRetailChoice);
+    assert.match(houston.title, /^Compare/);
+    const content = buildCitySections(houston, { citiesByState: {} });
+    const links = content.sections.flatMap((section) => section.links || []).map(([href]) => href);
+    assert.ok(links.includes('/compare-rates'), 'a competitive city lost its comparison link');
+    assert.ok(OFFERS_A_SWITCH.test(JSON.stringify(content)), 'a competitive city stopped offering a switch');
+  });
+});
+
+describe('metadata fits the result Google renders', () => {
+  // 107 titles were over the width Google renders, every one of them because
+  // of the " | Electric Scouts" suffix rather than the title itself, and 62
+  // descriptions were using barely two thirds of the space available. Both are
+  // enforced here so neither drifts back.
+  const routes = getIndexableRoutes({
+    providers: getPublishableProviders(),
+    fullArticles: seoArticles,
+  });
+
+  test('no title is truncated', () => {
+    const over = routes
+      .filter((route) => route.title.length > TITLE_MAX)
+      .map((route) => `${route.title.length} ${route.path}: ${route.title}`);
+    assert.deepEqual(over, [], 'titles over the render width');
+  });
+
+  test('no description overruns the snippet', () => {
+    // A couple of characters past DESCRIPTION_MAX costs a partial word at most,
+    // so the enforced ceiling has a little headroom over the target.
+    const over = routes
+      .filter((route) => route.description.length > 160)
+      .map((route) => `${route.description.length} ${route.path}`);
+    assert.deepEqual(over, [], 'descriptions over the snippet width');
+  });
+
+  test('no two indexable pages share a title or a description', () => {
+    for (const field of ['title', 'description']) {
+      const seen = new Map();
+      const clashes = [];
+      for (const route of routes) {
+        const value = route[field];
+        if (seen.has(value)) clashes.push(`${seen.get(value)} and ${route.path} share a ${field}`);
+        else seen.set(value, route.path);
+      }
+      assert.deepEqual(clashes, []);
+    }
+  });
+
+  test('the brand is dropped only when it would not fit', () => {
+    for (const route of routes) {
+      if (route.title.includes('Electric Scouts')) continue;
+      assert.ok(
+        route.title.length + ' | Electric Scouts'.length > TITLE_MAX,
+        `${route.path} dropped the brand but had room: ${route.title}`
+      );
+    }
+  });
+});
+
+describe('city pages offer an image to the crawler', () => {
+  // Every prerendered page carried zero <img> elements, so nothing on this site
+  // was eligible for image search and no page could hand Google a primary image.
+  //
+  // The data was worse than missing, though. Two generic stock photographs were
+  // shared across 105 of the 144 cities, and each page captioned the one it got
+  // as that city's skyline — a single image asserting it was both Parma, Ohio
+  // and Sugar Land, Texas. Publishing that is a false claim and 105 duplicate
+  // images, so the shared photos were removed rather than rendered: 40 cities
+  // have a photograph of their own and those are the ones that get one.
+  const cityRoutes = getCityRoutes();
+  const withImage = cityRoutes.filter((route) => route.city.image);
+
+  const graphOf = (routePath) =>
+    tag
+      .jsonLd(readDist(distFileFor(routePath)))
+      .map((raw) =>
+        JSON.parse(raw.replace(/\\u003c/g, '<').replace(/\\u003e/g, '>').replace(/\\u0026/g, '&'))
+      )
+      .flatMap((doc) => doc['@graph'] || [doc]);
+
+  test('no photograph is shared between two cities', () => {
+    const seen = new Map();
+    const shared = [];
+    for (const route of withImage) {
+      if (seen.has(route.city.image)) {
+        shared.push(`${seen.get(route.city.image)} and ${route.path}`);
+      } else {
+        seen.set(route.city.image, route.path);
+      }
+    }
+    assert.deepEqual(shared, [], 'the same image is published as two different cities');
+  });
+
+  test('enough cities carry one to be worth having', () => {
+    assert.ok(withImage.length >= 30, `only ${withImage.length} cities have an image`);
+  });
+
+  test('the prerendered HTML renders it with alt text', { skip: !distExists }, () => {
+    for (const route of withImage.slice(0, 12)) {
+      const html = readDist(distFileFor(route.path));
+      const img = html.match(/<img\s[^>]*>/);
+      assert.ok(img, `${route.path} renders no <img>`);
+      assert.match(img[0], /alt="[^"]+"/, `${route.path} image has no alt text`);
+      // The src is HTML-escaped in the document, so compare against that form.
+      assert.ok(
+        img[0].includes(route.city.image.replace(/&/g, '&amp;')),
+        `${route.path} renders an image that is not the city's own`
+      );
+      // "skyline" asserted what the photo shows, which we do not know.
+      assert.doesNotMatch(img[0], /alt="[^"]*skyline/i, `${route.path} alt claims the photo is a skyline`);
+    }
+  });
+
+  test('a city with no photograph of its own renders none', { skip: !distExists }, () => {
+    const without = cityRoutes.filter((route) => !route.city.image);
+    for (const route of without.slice(0, 8)) {
+      const html = readDist(distFileFor(route.path));
+      assert.ok(!/<img\s/.test(html), `${route.path} has no image of its own but renders one`);
+    }
+  });
+
+  test('the image is declared as the page primary image', { skip: !distExists }, () => {
+    for (const route of withImage.slice(0, 6)) {
+      const node = graphOf(route.path).find((entry) => entry['@type'] === 'ImageObject');
+      assert.ok(node, `${route.path} declares no ImageObject`);
+      assert.equal(node.url, route.city.image);
+      assert.ok(node.caption, `${route.path} ImageObject has no caption`);
+    }
+  });
+
+  test('a page with its own photo does not claim the placeholder dimensions', { skip: !distExists }, () => {
+    // og:image:width/height describe the authored 1200x630 placeholder set. A
+    // city photo is a different shape, so it must ship without them rather
+    // than with a size that is wrong.
+    const html = readDist(distFileFor(withImage[0].path));
+    assert.ok(html.includes('og:image'), 'no og:image at all');
+    assert.ok(!html.includes('og:image:width'), 'city page asserts placeholder dimensions for its own photo');
+  });
+});
+
+describe('no unsourced savings or review claims reach a page', () => {
+  // This site holds plan rates. It does not hold anybody's bill, the utility
+  // default rate, a switched customer's before-and-after, or a single review —
+  // so a savings figure or a star rating is not a number it can produce. These
+  // had accumulated in the footer of every page, the homepage hero, the
+  // Organization JSON-LD, the About page's trust strip, and as a fabricated
+  // per-city "potential savings" on all 144 rows of the city index.
+  //
+  // For a site in a financial category these are the claims that cost trust
+  // with readers and with Google's quality systems, so the rule is enforced
+  // rather than remembered.
+  const SOURCE_DIRS = ['src/pages', 'src/components', 'src/seo'];
+  const CLAIMS = [
+    { pattern: /save\s+(?:up\s+to\s+)?\$\s?\d/i, what: 'a savings figure in dollars' },
+    { pattern: /\bavg\.?\s+annual\s+savings\b/i, what: 'an average annual savings claim' },
+    // Only when a figure is attached: /savings-calculator computes a number
+    // from the visitor's own rate and usage, which is arithmetic on their
+    // input rather than a claim this site is making.
+    { pattern: /\bpotential\s+savings\b[^.]{0,40}\$\s?\d|\$\s?\d[^.]{0,40}\bpotential\s+savings\b/i, what: 'a potential-savings figure' },
+    { pattern: /\b\d\.\d\s*(?:★|\/\s*5\b)/, what: 'a star rating' },
+    { pattern: /\b\d[\d,]*\s*\+?\s*(?:happy|satisfied)\s+customers\b/i, what: 'a customer count' },
+  ];
+
+  /** Source files that render, excluding the article bodies and the admin app. */
+  function sourceFiles() {
+    const out = [];
+    const walk = (dir) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name !== 'admin' && entry.name !== 'ui') walk(full);
+        } else if (/\.(jsx|js)$/.test(entry.name) && entry.name !== 'fullArticles.jsx') {
+          out.push(full);
+        }
+      }
+    };
+    for (const dir of SOURCE_DIRS) walk(path.join(ROOT, dir));
+    return out;
+  }
+
+  /** Strip comments so an explanation of a removed claim is not read as one. */
+  function stripComments(text) {
+    return text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
+  }
+
+  for (const { pattern, what } of CLAIMS) {
+    test(`no source file states ${what}`, () => {
+      const offenders = [];
+      for (const file of sourceFiles()) {
+        const body = stripComments(fs.readFileSync(file, 'utf8'));
+        for (const line of body.split('\n')) {
+          if (pattern.test(line)) offenders.push(`${path.relative(ROOT, file)}: ${line.trim().slice(0, 110)}`);
+        }
+      }
+      assert.deepEqual(offenders, [], `unsourced claim(s) found:\n  ${offenders.join('\n  ')}`);
+    });
+  }
+
+  test('the prerendered HTML states none of them either', { skip: !distExists }, () => {
+    const offenders = [];
+    for (const routePath of ['/', '/all-cities', '/all-providers', '/about-us', '/texas-electricity', '/electricity-rates/texas/houston']) {
+      const html = readDist(distFileFor(routePath));
+      for (const { pattern, what } of CLAIMS) {
+        if (pattern.test(html)) offenders.push(`${routePath} carries ${what}`);
+      }
+    }
+    assert.deepEqual(offenders, []);
+  });
+});
 
 describe('vercel.json routing', () => {
   const config = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
@@ -779,7 +1216,7 @@ describe('invalid dynamic URLs do not masquerade as pages', { skip: !distExists 
   });
 
   test('valid dynamic URLs still resolve to their prerendered page', () => {
-    for (const url of ['/electricity-rates/texas/houston', '/learn/1', ...getProviderRoutes(getPublishableProviders()).map((r) => r.path)]) {
+    for (const url of ['/electricity-rates/texas/houston', articlePath(1), ...getProviderRoutes(getPublishableProviders()).map((r) => r.path)]) {
       const result = resolve(url);
       assert.equal(result.status, 200, `${url} should resolve`);
       assert.ok(parseHtml(result.html).prerendered, `${url} served a shell with no prerendered body`);
@@ -931,7 +1368,7 @@ describe('pages carry content that justifies indexing', () => {
  * ================================================================== */
 
 describe('article metadata is ours and is supportable', { skip: !distExists }, () => {
-  const articleFiles = ARTICLE_IDS.map((id) => ({ id, file: `learn/${id}/index.html` })).filter(
+  const articleFiles = ARTICLE_IDS.map((id) => ({ id, file: `learn/${ARTICLE_SLUGS[id]}/index.html` })).filter(
     ({ file }) => fs.existsSync(path.join(DIST, file))
   );
 
@@ -955,13 +1392,28 @@ describe('article metadata is ours and is supportable', { skip: !distExists }, (
     }
   });
 
-  test('every article title ends with the site brand', () => {
+  test('article titles carry the brand whenever it fits, and never overflow', () => {
+    // The brand is dropped rather than allowed to push a title past the width
+    // Google renders — see withBrand() in src/seo/site.js. So the contract is
+    // not "always branded", it is "branded unless branding would truncate it".
+    // Measured decoded: "&amp;" is five characters in the source and one in the
+    // result, and it is the result Google truncates.
+    const decode = (value) =>
+      value
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
     for (const { id, file } of articleFiles) {
-      const title = tag.title(readDist(file));
-      assert.ok(
-        title.endsWith('| Electric Scouts'),
-        `/learn/${id} title is not branded Electric Scouts: ${title}`
-      );
+      const title = decode(tag.title(readDist(file)));
+      assert.ok(title.length <= TITLE_MAX, `/learn/${id} title overflows at ${title.length}: ${title}`);
+      if (!title.endsWith('| Electric Scouts')) {
+        assert.ok(
+          title.length + ' | Electric Scouts'.length > TITLE_MAX,
+          `/learn/${id} dropped the brand but had room for it: ${title}`
+        );
+      }
     }
   });
 
@@ -1034,7 +1486,7 @@ describe('structured data describes what the page shows', { skip: !distExists },
   });
 
   test('breadcrumb markup matches the on-page breadcrumb trail', () => {
-    for (const routePath of ['/electricity-rates/texas/houston', '/texas-electricity', '/learn/1']) {
+    for (const routePath of ['/electricity-rates/texas/houston', '/texas-electricity', articlePath(1)]) {
       const html = readDist(distFileFor(routePath));
       const graph = jsonLdOf(routePath).flatMap((doc) => doc['@graph'] || [doc]);
       const crumbs = graph.find((node) => node['@type'] === 'BreadcrumbList');
@@ -1066,7 +1518,7 @@ describe('crawl paths reach every indexable page', { skip: !distExists }, () => 
   test('the learning centre links to every article', () => {
     const links = new Set(internalLinks(readDist(distFileFor('/learning-center'))));
     for (const id of ARTICLE_IDS) {
-      assert.ok(links.has(`/learn/${id}`), `/learn/${id} is not linked from the learning centre`);
+      assert.ok(links.has(articlePath(id)), `${articlePath(id)} is not linked from the learning centre`);
     }
   });
 

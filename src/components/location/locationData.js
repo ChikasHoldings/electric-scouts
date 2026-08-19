@@ -54,7 +54,7 @@ export const LOCATION_DATA = {
         population: "1.5 million",
         avgRate: "11.5¢/kWh",
         avgUsage: "1,180 kWh/month",
-        insights: "Most of San Antonio is served by CPS Energy (not deregulated), but surrounding areas have competitive options with rates 10-15% lower than the municipal utility.",
+        insights: "",
         utilityCompany: "CPS Energy / Others",
         topZips: ["78201", "78202", "78209", "78216", "78232"]
       },
@@ -78,7 +78,7 @@ export const LOCATION_DATA = {
         population: "285,000",
         avgRate: "12.5¢/kWh",
         avgUsage: "1,120 kWh/month",
-        insights: "Plano's affluent households tend toward premium plans with smart home features. However, basic fixed-rate plans can save families $400-$600 annually.",
+        insights: "Plano's affluent households tend toward premium plans with smart home features.",
         utilityCompany: "Oncor Electric Delivery",
         topZips: ["75023", "75024", "75025", "75074", "75075"]
       },
@@ -94,7 +94,7 @@ export const LOCATION_DATA = {
         population: "681,000",
         avgRate: "12.2¢/kWh",
         avgUsage: "1,050 kWh/month",
-        insights: "El Paso has limited deregulation compared to other Texas cities. However, residents in deregulated zones can find rates 15-20% below the default utility rate.",
+        insights: "El Paso has limited deregulation compared to other Texas cities.",
         utilityCompany: "El Paso Electric",
         topZips: ["79901", "79902", "79903", "79912", "79925"]
       },
@@ -110,7 +110,7 @@ export const LOCATION_DATA = {
         population: "256,000",
         avgRate: "12.6¢/kWh",
         avgUsage: "1,100 kWh/month",
-        insights: "Irving's central DFW location means residents have access to the full range of competitive electricity providers, with rates often 10-15% below the state average.",
+        insights: "",
         utilityCompany: "Oncor Electric Delivery",
         topZips: ["75038", "75039", "75060", "75061", "75062"]
       },
@@ -177,7 +177,7 @@ export const LOCATION_DATA = {
         population: "2.7 million",
         avgRate: "14.5¢/kWh",
         avgUsage: "750 kWh/month",
-        insights: "Chicago residents pay some of the highest electricity rates in Illinois due to urban demand. Comparing plans can save the average household $300-$500 per year, especially with fixed-rate winter plans.",
+        insights: "Chicago residents pay some of the highest electricity rates in Illinois due to urban demand.",
         utilityCompany: "ComEd",
         topZips: ["60601", "60602", "60603", "60604", "60605"]
       },
@@ -193,15 +193,18 @@ export const LOCATION_DATA = {
         population: "149,000",
         avgRate: "13.6¢/kWh",
         avgUsage: "850 kWh/month",
-        insights: "Naperville consistently ranks among Illinois' most desirable suburbs. Residents here tend to prefer premium plans with smart home integration and renewable energy options.",
-        utilityCompany: "ComEd",
+        insights: "Naperville consistently ranks among Illinois' most desirable suburbs.",
+        // Not ComEd. Naperville runs its own municipal electric utility, so
+        // this row was both naming the wrong company on the Naperville page and
+        // counting the city toward ComEd's coverage on /utilities/comed.
+        utilityCompany: "Naperville Electric Utility",
         topZips: ["60540", "60563", "60564", "60565"]
       },
       "Rockford": {
         population: "148,000",
         avgRate: "14.2¢/kWh",
         avgUsage: "780 kWh/month",
-        insights: "Rockford's industrial heritage means many homes are older with less efficient insulation. Energy audits combined with competitive rate shopping can yield savings of $400+ annually.",
+        insights: "Rockford's industrial heritage means many homes are older with less efficient insulation.",
         utilityCompany: "ComEd",
         topZips: ["61101", "61102", "61103", "61104", "61107"]
       },
@@ -284,7 +287,7 @@ export const LOCATION_DATA = {
         population: "905,000",
         avgRate: "13.4¢/kWh",
         avgUsage: "850 kWh/month",
-        insights: "Columbus is Ohio's largest city and fastest-growing metro. The competitive electricity market here offers some of the best rates in the Midwest, with savings of $200-$400 per year.",
+        insights: "Columbus is Ohio's largest city and fastest-growing metro.",
         utilityCompany: "AEP Ohio",
         topZips: ["43201", "43202", "43204", "43205", "43206"]
       },
@@ -324,7 +327,7 @@ export const LOCATION_DATA = {
         population: "137,000",
         avgRate: "13.2¢/kWh",
         avgUsage: "840 kWh/month",
-        insights: "Dayton residents served by Dayton Power & Light have access to Ohio's competitive supplier market. Many find savings of 15-20% by switching from the default rate.",
+        insights: "Dayton residents served by Dayton Power & Light have access to Ohio's competitive supplier market.",
         utilityCompany: "Dayton Power & Light",
         topZips: ["45401", "45402", "45403", "45404", "45405"]
       },
@@ -375,7 +378,7 @@ export const LOCATION_DATA = {
         population: "1.6 million",
         avgRate: "16.8¢/kWh",
         avgUsage: "750 kWh/month",
-        insights: "Philadelphia's dense urban environment and aging infrastructure contribute to higher rates. Residents can save $400-$600 annually by switching from PECO's default rate to a competitive supplier.",
+        insights: "Philadelphia's dense urban environment and aging infrastructure contribute to higher rates.",
         utilityCompany: "PECO Energy",
         topZips: ["19101", "19102", "19103", "19104", "19106"]
       },
@@ -399,7 +402,7 @@ export const LOCATION_DATA = {
         population: "95,000",
         avgRate: "16.2¢/kWh",
         avgUsage: "760 kWh/month",
-        insights: "Reading residents face some of Pennsylvania's highest rates. Comparing suppliers is especially impactful here, with potential savings of $500+ per year.",
+        insights: "Reading residents face some of Pennsylvania's highest rates.",
         utilityCompany: "Met-Ed",
         topZips: ["19601", "19602", "19604", "19605", "19606"]
       },
@@ -415,7 +418,7 @@ export const LOCATION_DATA = {
         population: "77,000",
         avgRate: "15.5¢/kWh",
         avgUsage: "790 kWh/month",
-        insights: "Scranton's northeastern Pennsylvania location means cold winters and moderate summers. Annual savings of $300-$500 are common when switching from default utility rates.",
+        insights: "Scranton's northeastern Pennsylvania location means cold winters and moderate summers.",
         utilityCompany: "PPL Electric",
         topZips: ["18501", "18503", "18504", "18505", "18508"]
       },
@@ -506,7 +509,7 @@ export const LOCATION_DATA = {
         population: "200,000",
         avgRate: "23.8¢/kWh",
         avgUsage: "620 kWh/month",
-        insights: "Yonkers residents in the Con Edison territory face NYC-level rates. Comparing ESCO options can yield savings of $400-$700 annually.",
+        insights: "Yonkers residents in the Con Edison territory face NYC-level rates.",
         utilityCompany: "Con Edison",
         topZips: ["10701", "10702", "10703", "10704", "10705"]
       },
@@ -557,7 +560,7 @@ export const LOCATION_DATA = {
         population: "311,000",
         avgRate: "18.2¢/kWh",
         avgUsage: "680 kWh/month",
-        insights: "Newark's urban density and aging infrastructure contribute to higher electricity costs. Residents can save $350-$500 annually by comparing third-party supplier rates against PSE&G's default.",
+        insights: "Newark's urban density and aging infrastructure contribute to higher electricity costs.",
         utilityCompany: "PSE&G",
         topZips: ["07101", "07102", "07103", "07104", "07105"]
       },
@@ -589,7 +592,7 @@ export const LOCATION_DATA = {
         population: "74,000",
         avgRate: "17.2¢/kWh",
         avgUsage: "690 kWh/month",
-        insights: "Camden residents in the ACE service territory have access to competitive suppliers that can offer rates 10-15% below the default utility price.",
+        insights: "",
         utilityCompany: "Atlantic City Electric",
         topZips: ["08101", "08102", "08103", "08104", "08105"]
       },
@@ -632,7 +635,7 @@ export const LOCATION_DATA = {
         population: "585,000",
         avgRate: "15.5¢/kWh",
         avgUsage: "850 kWh/month",
-        insights: "Baltimore's hot summers and cold winters create year-round electricity demand. Comparing BGE's standard offer against competitive suppliers can save households $300-$500 annually.",
+        insights: "Baltimore's hot summers and cold winters create year-round electricity demand.",
         utilityCompany: "BGE",
         topZips: ["21201", "21202", "21205", "21206", "21209"]
       },
@@ -648,7 +651,7 @@ export const LOCATION_DATA = {
         population: "91,000",
         avgRate: "14.5¢/kWh",
         avgUsage: "880 kWh/month",
-        insights: "Germantown residents in the Pepco service territory have access to competitive suppliers offering rates 10-20% below the default utility price.",
+        insights: "",
         utilityCompany: "Pepco",
         topZips: ["20874", "20876"]
       },
@@ -707,7 +710,7 @@ export const LOCATION_DATA = {
         population: "675,000",
         avgRate: "26.5¢/kWh",
         avgUsage: "600 kWh/month",
-        insights: "Boston's high electricity rates make rate comparison especially valuable. Even a 2¢/kWh savings translates to $150+ annually. Many neighborhoods participate in community choice aggregation programs offering group discounts.",
+        insights: "Boston's high electricity rates make rate comparison especially valuable. Many neighborhoods participate in community choice aggregation programs offering group discounts.",
         utilityCompany: "Eversource",
         topZips: ["02101", "02102", "02103", "02108", "02109"]
       },
@@ -731,7 +734,7 @@ export const LOCATION_DATA = {
         population: "118,000",
         avgRate: "27.0¢/kWh",
         avgUsage: "550 kWh/month",
-        insights: "Cambridge's tech-savvy population and university community drive demand for innovative energy plans including 100% renewable options and smart home integration.",
+        insights: "",
         utilityCompany: "Eversource",
         topZips: ["02138", "02139", "02140", "02141", "02142"]
       },
@@ -747,7 +750,7 @@ export const LOCATION_DATA = {
         population: "101,000",
         avgRate: "25.8¢/kWh",
         avgUsage: "690 kWh/month",
-        insights: "New Bedford's coastal location and fishing industry heritage mean many homes have unique energy needs. Comparing rates can save $400-$600 annually.",
+        insights: "New Bedford's coastal location and fishing industry heritage mean many homes have unique energy needs.",
         utilityCompany: "Eversource",
         topZips: ["02740", "02741", "02742", "02743", "02744"]
       }
@@ -782,7 +785,7 @@ export const LOCATION_DATA = {
         population: "68,000",
         avgRate: "22.5¢/kWh",
         avgUsage: "650 kWh/month",
-        insights: "Portland's coastal climate and growing tech sector create diverse energy needs. Residents can save $250-$400 annually by comparing competitive electricity suppliers.",
+        insights: "Portland's coastal climate and growing tech sector create diverse energy needs.",
         utilityCompany: "Central Maine Power",
         topZips: ["04101", "04102", "04103", "04104"]
       },
@@ -849,7 +852,7 @@ export const LOCATION_DATA = {
         population: "115,000",
         avgRate: "21.8¢/kWh",
         avgUsage: "700 kWh/month",
-        insights: "Manchester is New Hampshire's largest city with a competitive electricity market. Residents can save $250-$400 annually by comparing competitive suppliers against Eversource's default rate.",
+        insights: "Manchester is New Hampshire's largest city with a competitive electricity market.",
         utilityCompany: "Eversource",
         topZips: ["03101", "03102", "03103", "03104", "03105"]
       },
@@ -916,7 +919,7 @@ export const LOCATION_DATA = {
         population: "190,000",
         avgRate: "25.0¢/kWh",
         avgUsage: "620 kWh/month",
-        insights: "Providence's high electricity rates make rate comparison essential. The city's community choice aggregation program offers group discounts that can save residents $300-$500 annually.",
+        insights: "Providence's high electricity rates make rate comparison essential.",
         utilityCompany: "Rhode Island Energy",
         topZips: ["02901", "02902", "02903", "02904", "02905"]
       },
@@ -932,7 +935,7 @@ export const LOCATION_DATA = {
         population: "82,000",
         avgRate: "24.5¢/kWh",
         avgUsage: "670 kWh/month",
-        insights: "Cranston's residential neighborhoods offer ideal conditions for competitive electricity shopping, with potential savings of $350-$500 per year.",
+        insights: "",
         utilityCompany: "Rhode Island Energy",
         topZips: ["02910", "02920", "02921"]
       },
@@ -983,7 +986,7 @@ export const LOCATION_DATA = {
         population: "148,000",
         avgRate: "27.0¢/kWh",
         avgUsage: "650 kWh/month",
-        insights: "Bridgeport's high electricity rates in the United Illuminating territory make competitive rate shopping essential. Residents can save $400-$600 annually by switching suppliers.",
+        insights: "Bridgeport's high electricity rates in the United Illuminating territory make competitive rate shopping essential.",
         utilityCompany: "United Illuminating",
         topZips: ["06601", "06602", "06604", "06605", "06606"]
       },
@@ -1015,7 +1018,7 @@ export const LOCATION_DATA = {
         population: "114,000",
         avgRate: "26.5¢/kWh",
         avgUsage: "670 kWh/month",
-        insights: "Waterbury's diverse economy and moderate housing costs make it a strong market for competitive electricity shopping, with savings of $350-$550 per year.",
+        insights: "",
         utilityCompany: "Eversource",
         topZips: ["06701", "06702", "06704", "06705", "06706"]
       },

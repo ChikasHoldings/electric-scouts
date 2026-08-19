@@ -15,6 +15,7 @@
 import { SITE_NAME, SITE_URL, absoluteUrl } from './site.js';
 import { organizationSchema } from './organization.js';
 import { getComparisons } from './comparisons.js';
+import { articleModifiedDate, articlePublishedDate } from './articleDates.js';
 import {
   buildArticleSections,
   buildCitySections,
@@ -192,13 +193,27 @@ export function structuredDataFor(route, content) {
   if (trail.length > 1) graph.push(breadcrumbSchema(trail));
 
   if (route.type === 'article') {
+    // Dates come from src/seo/articleDates.js, which is derived from this
+    // repository's git history — the commit that introduced an article and the
+    // last one that changed its own text. They were absent entirely before, and
+    // a date in structured data is a claim about the world: inventing one to
+    // look fresh is the kind of thing that costs a site its rich results.
+    const published = articlePublishedDate(route.id);
+    const modified = articleModifiedDate(route.id);
     graph.push({
       '@type': 'Article',
       headline: route.heading || route.title,
       description: route.description,
       mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(route.path) },
+      // The author is the organization, not an invented byline. This site has
+      // no named authors, and fabricating one is worse for E-E-A-T than being
+      // straightforward about who stands behind the page.
       author: { '@id': `${SITE_URL}/#organization` },
       publisher: { '@id': `${SITE_URL}/#organization` },
+      image: `${SITE_URL}${ogImageFor(route)}`,
+      inLanguage: 'en-US',
+      ...(published ? { datePublished: published } : {}),
+      ...(modified ? { dateModified: modified } : {}),
     });
   }
 
@@ -221,10 +236,64 @@ export function structuredDataFor(route, content) {
     });
   }
 
+  // A page-level image, declared only where the page actually shows one.
+  if (content?.image?.url) {
+    graph.push({
+      '@type': 'ImageObject',
+      '@id': `${absoluteUrl(route.path)}#primaryimage`,
+      url: content.image.url,
+      contentUrl: content.image.url,
+      caption: content.image.alt,
+    });
+  }
+
   const faqs = (content?.sections || []).flatMap((section) => section.faqs || []);
   if (faqs.length) graph.push(faqSchema(faqs));
 
   return { '@context': 'https://schema.org', '@graph': graph };
+}
+
+/* ------------------------------------------------------------------ *
+ * Content island
+ * ------------------------------------------------------------------ */
+
+/**
+ * The page's content model, serialized into the document for the React app.
+ *
+ * WHY THIS EXISTS
+ *
+ * Googlebot indexes the *rendered* DOM, not the HTML we serve. This app mounts
+ * with `createRoot().render()` and main.jsx removes the prerendered summary
+ * before mounting, so everything the prerenderer so carefully wrote — the
+ * tables, the local context, the FAQ answers the FAQPage markup describes —
+ * was deleted from the page before Google's renderer ever took its snapshot.
+ * What got indexed was the React shell and whatever its client-side queries had
+ * managed to resolve, which on a plan-driven page is a loading state. That is
+ * the soft 404, and it is why pages that look complete in "view source" were
+ * being dropped from the index.
+ *
+ * The fix is not to hide the payload better — it is to make the app render the
+ * same content. This tag carries the exact object `renderBody` was built from,
+ * so <SeoSections> can render it as real, visible page content with no second
+ * copy of the logic to drift out of step. Pre-render HTML and post-render DOM
+ * then say the same thing, which is also the only condition under which the
+ * JSON-LD on this page is truthful.
+ *
+ * `path` is stamped on it so a client-side navigation, which leaves this tag
+ * behind pointing at the URL the visitor landed on, cannot show one page's
+ * content under another page's heading.
+ */
+export function contentIslandTag(route, content) {
+  const payload = {
+    path: route.path,
+    type: route.type,
+    intro: content?.intro || [],
+    sections: content?.sections || [],
+  };
+  // Serialized as application/json, which the browser never executes. Only the
+  // closing-tag sequence has to be neutralized.
+  const json = JSON.stringify(payload).replace(/<\/script/gi, '<\\/script');
+  return `<script type="application/json" id="seo-content">${json}</script>`;
 }
 
 /* ------------------------------------------------------------------ *
@@ -237,7 +306,13 @@ export function renderHead(route, content) {
   const canonical = absoluteUrl(route.canonical || route.path);
   const title = route.title;
   const description = route.description || '';
-  const image = `${SITE_URL}${ogImageFor(route)}`;
+  // A city's own photograph beats the section-wide placeholder in a share card.
+  // A city's own photograph beats the section-wide placeholder in a share card.
+  // The dimensions below only describe the placeholder set, which is authored at
+  // 1200x630; a city photo is a different shape, so it goes out without them
+  // rather than with a size that is wrong.
+  const ownImage = content?.image?.url || null;
+  const image = ownImage || `${SITE_URL}${ogImageFor(route)}`;
   const robots = route.noindex ? ROBOTS_NOINDEX : ROBOTS_INDEXABLE;
   const ogType = route.type === 'article' ? 'article' : 'website';
 
@@ -256,8 +331,9 @@ export function renderHead(route, content) {
     `<meta property="og:title" content="${escapeHtml(title)}" />`,
     `<meta property="og:description" content="${escapeHtml(description)}" />`,
     `<meta property="og:image" content="${escapeHtml(image)}" />`,
-    `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
+    ...(ownImage
+      ? []
+      : [`<meta property="og:image:width" content="1200" />`, `<meta property="og:image:height" content="630" />`]),
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:site" content="@electricscouts" />`,
     `<meta name="twitter:url" content="${escapeHtml(canonical)}" />`,
@@ -265,6 +341,9 @@ export function renderHead(route, content) {
     `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
     `<meta name="twitter:image" content="${escapeHtml(image)}" />`,
     `<script type="application/ld+json">${escapeJsonLd(JSON.stringify(structuredDataFor(route, content)))}</script>`,
+    // The same content model the body below is built from, handed to the React
+    // app so it can render this content itself. See contentIslandTag().
+    contentIslandTag(route, content),
     ...PRERENDER_VISIBILITY_TAGS,
   ];
 
@@ -428,6 +507,31 @@ export function buildPageContent(route, context = {}) {
   }
 }
 
+/**
+ * "Published 1 March 2026 · Last updated 14 August 2026" for an article.
+ *
+ * Rendered from src/seo/articleDates.js, the same table the Article markup
+ * reads, so the visible date and the structured one cannot disagree.
+ */
+export function articleByline(id) {
+  const published = articlePublishedDate(id);
+  const modified = articleModifiedDate(id);
+  if (!published && !modified) return '';
+  const format = (iso) =>
+    new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    });
+  const parts = [];
+  if (published) parts.push(`Published <time datetime="${escapeHtml(published)}">${escapeHtml(format(published))}</time>`);
+  if (modified && modified !== published) {
+    parts.push(`Last updated <time datetime="${escapeHtml(modified)}">${escapeHtml(format(modified))}</time>`);
+  }
+  return `<p class="article-byline">${parts.join(' &middot; ')}</p>`;
+}
+
 function renderBreadcrumbNav(route) {
   const trail = breadcrumbsFor(route);
   if (trail.length < 2) return '';
@@ -443,7 +547,7 @@ function renderBreadcrumbNav(route) {
  * Full initial HTML for a route's #root container.
  *
  * @param {object} route
- * @param {{intro: string[], sections: object[]}} content
+ * @param {{intro: string[], sections: object[], image?: {url: string, alt: string}|null}} content
  * @param {{states: Array, citiesByState: Record<string, Array>}} context
  */
 export function renderBody(route, content, context) {
@@ -455,11 +559,26 @@ export function renderBody(route, content, context) {
   // same markup ArticleDetail renders — so they are inserted verbatim.
   const articleBody = route.type === 'article' && route.content ? route.content : '';
 
+  // Google will not use a date it cannot see on the page, and structured data
+  // that states one the page does not show is a mismatch. This renders the same
+  // two dates the Article markup carries, from the same source.
+  const byline = route.type === 'article' ? articleByline(route.id) : '';
+
+  // The city photograph, in the crawlable HTML. Width and height are declared
+  // so the browser reserves the space instead of shifting the page under the
+  // reader, and it is eager rather than lazy because it sits at the top.
+  const figure = content.image
+    ? `<figure><img src="${escapeHtml(content.image.url)}" alt="${escapeHtml(content.image.alt)}" ` +
+      `decoding="async" style="max-width:100%;height:auto" /></figure>`
+    : '';
+
   return [
     '<div data-seo-prerender="true" style="max-width:1100px;margin:0 auto;padding:24px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;line-height:1.6">',
     siteNav(context.states || []),
     renderBreadcrumbNav(route),
     `<main><h1>${escapeHtml(heading)}</h1>`,
+    byline,
+    figure,
     intro,
     articleBody,
     sections,

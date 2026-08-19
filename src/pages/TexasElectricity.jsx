@@ -350,9 +350,9 @@ export default function TexasElectricity() {
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <DollarSign className="w-6 h-6 text-green-600" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-2">Save $800/Year</h3>
+                <h3 className="text-base font-bold text-gray-900 mb-2">Compare Every Rate</h3>
                 <p className="text-sm text-gray-600">
-                  Average savings by comparing rates from competing suppliers
+                  Texas suppliers price the same power differently. We show you what each one charges.
                 </p>
               </CardContent>
             </Card>

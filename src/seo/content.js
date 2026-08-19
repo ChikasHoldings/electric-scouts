@@ -18,9 +18,11 @@
  */
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
-import { STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
+import { getCities, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { UTILITY_ROOT, getUtilities, utilitiesForState, utilityForCity } from './utilities.js';
 import { articlesForState, relatedArticles } from './articleLinks.js';
+import { STATIC_PAGE_CONTENT } from './staticContent.js';
+import { resolveSections, setDerivedCounts } from './figures.js';
 import {
   comparisonsForProvider,
   comparisonsForState,
@@ -120,6 +122,12 @@ function withoutUnsupportedClaims(text) {
 
 const asOf = `as of ${MARKET_GENERATED_AT}`;
 
+/* CITY_COUNT and UTILITY_COUNT are figures about our own coverage rather than
+ * about the market, so figures.js cannot read them without importing the very
+ * modules that import it. They are bound here instead, where both are already
+ * in scope. */
+setDerivedCounts({ cityCount: getCities().length, utilityCount: getUtilities().length });
+
 /* ------------------------------------------------------------------ *
  * Shared fragments
  * ------------------------------------------------------------------ */
@@ -167,6 +175,129 @@ export function getCityContext(city) {
   return { city, market, insights };
 }
 
+/**
+ * Opening sentence for a city whose blurb did not survive sanitizing.
+ *
+ * Built only from fields we hold for this city — county, population, the
+ * delivery utility — so it is factual and still differs city to city.
+ */
+function cityFallbackIntro(city) {
+  const parts = [`${city.name} is in ${city.county}, ${city.stateName}`];
+  if (city.population) parts.push(`with a population of ${city.population}`);
+  const opening = `${parts.join(', ')}.`;
+  if (city.noRetailChoice) {
+    return `${opening} Electricity here is supplied by ${city.noRetailChoice.utility}.`;
+  }
+  if (city.utilityCompany) {
+    return (
+      `${opening} ${city.utilityCompany} delivers the power, and the supply half of the ` +
+      `bill is bought from a competing retailer.`
+    );
+  }
+  return `${opening} Supply is bought from a competing retailer, separately from delivery.`;
+}
+
+/* ------------------------------------------------------------------ *
+ * City differentiation helpers
+ *
+ * Two cities in the same state used to differ only in their rate, and the
+ * rate is exactly what ties: six of the fourteen Ohio cities we cover share
+ * 9.5¢/kWh, and Lakewood and Parma match on the bill as well. Every
+ * rate-derived sentence on those two pages therefore rendered character for
+ * character identical. What never ties is population, and what is unique by
+ * construction is the ZIP set, the district list and the county cohort — so
+ * those are what the page is built to differ on.
+ * ------------------------------------------------------------------ */
+
+const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+
+/** "three" for small counts, "27" beyond the point words stop helping. */
+function countWord(n) {
+  return n <= 10 ? NUMBER_WORDS[n] : String(n);
+}
+
+function capitalize(text) {
+  return String(text).charAt(0).toUpperCase() + String(text).slice(1);
+}
+
+function ordinal(n) {
+  const rest = n % 100;
+  if (rest >= 11 && rest <= 13) return `${n}th`;
+  return `${n}${['th', 'st', 'nd', 'rd'][n % 10] || 'th'}`;
+}
+
+/** "Harris County" -> "Harris"; "Collin and Denton" keeps both. */
+function bareCounty(county) {
+  return String(county || '').replace(/\s+County$/i, '').trim();
+}
+
+/** Covered cities sharing this city's county. Empty is a meaningful answer. */
+function sameCountyPeers(city, siblings) {
+  const mine = bareCounty(city.county).toLowerCase();
+  if (!mine) return [];
+  return siblings
+    .filter((other) => other.path !== city.path)
+    .filter((other) => bareCounty(other.county).toLowerCase() === mine)
+    .sort((a, b) => parsePopulation(b.population) - parsePopulation(a.population));
+}
+
+/** "2,300,000+" -> 2300000; null when it does not parse. */
+function parsePopulation(value) {
+  const digits = String(value ?? '').replace(/[^0-9]/g, '');
+  return digits ? Number(digits) : null;
+}
+
+/** Where this city sits by size among the ones we cover in its state. */
+function populationRank(city, siblings) {
+  const mine = parsePopulation(city.population);
+  if (mine === null) return null;
+  const all = [city, ...siblings.filter((other) => other.path !== city.path)]
+    .map((entry) => ({ entry, size: parsePopulation(entry.population) }))
+    .filter((row) => row.size !== null)
+    .sort((a, b) => b.size - a.size);
+  if (all.length < 3) return null;
+  const index = all.findIndex((row) => row.entry.path === city.path);
+  if (index === -1) return null;
+  const neighbours = [all[index - 1], all[index + 1]]
+    .filter(Boolean)
+    .map((row) => row.entry);
+  return { rank: index + 1, total: all.length, neighbours };
+}
+
+/**
+ * Sibling cities, ordered by how related they actually are and labelled with
+ * why. The list this replaces printed the same twelve names in the same order
+ * on every page in the state, which is twelve identical link labels across
+ * fourteen Ohio pages.
+ */
+function orderedSiblings(city, siblings) {
+  const county = bareCounty(city.county).toLowerCase();
+  const prefixes = new Set((city.zipCodes || []).map((zip) => String(zip).slice(0, 3)));
+  const mine = parsePopulation(city.population);
+
+  return siblings
+    .map((other) => {
+      const sameCounty = county && bareCounty(other.county).toLowerCase() === county;
+      const sharesPrefix = (other.zipCodes || []).some((zip) => prefixes.has(String(zip).slice(0, 3)));
+      const theirs = parsePopulation(other.population);
+      const sizeGap = mine !== null && theirs !== null ? Math.abs(mine - theirs) : Number.MAX_SAFE_INTEGER;
+      const rank = sameCounty ? 0 : sharesPrefix ? 1 : 2;
+      const label = sameCounty
+        ? `also in ${bareCounty(city.county)} County`
+        : sharesPrefix
+          ? 'shares a ZIP range'
+          : null;
+      return { other, rank, sizeGap, label };
+    })
+    .sort((a, b) => a.rank - b.rank || a.sizeGap - b.sizeGap)
+    .slice(0, 12)
+    .map(({ other, label }, index) => {
+      // The two nearest in size earn their own label where nothing closer applies.
+      const reason = label || (index < 4 ? `closest to ${city.name} in size` : null);
+      return [other.path, reason ? `${other.name} electricity rates — ${reason}` : `${other.name} electricity rates`];
+    });
+}
+
 export function buildCitySections(route, { citiesByState }) {
   const { city } = route;
   const { market, insights } = getCityContext(city);
@@ -176,10 +307,39 @@ export function buildCitySections(route, { citiesByState }) {
   // Resolved once: used both in the coverage section and in Next Steps.
   const cityUtility = utilityForCity(city);
 
-  /* Intro: the city's own description, then what we track in its market. */
-  const intro = [city.description];
-  const tracked = trackedSentence(stateName, market);
-  if (tracked) intro.push(tracked);
+  /* Intro: the city's own description, then what we track in its market.
+   *
+   * 20 of the hand-written blurbs were a single sentence whose whole content
+   * was an invented supplier count ("a choice of over 40 retail electricity
+   * providers"), so sanitizing them leaves nothing. Rather than open those
+   * pages on the statewide sentence every city in the state shares, they get
+   * an opening built from what we do hold about this city specifically. */
+  /* A no-choice city's hand-written blurb is the problem, not the solution:
+   * Austin's opens "provides residents with competitive electricity rates and
+   * numerous green energy options from competing suppliers", which is exactly
+   * the claim the rest of this page now corrects. It is replaced wholesale. */
+  const intro = [
+    city.noRetailChoice ? cityFallbackIntro(city) : city.description || cityFallbackIntro(city),
+  ];
+
+  /* The city's photograph. Carried on the model rather than added by either
+   * renderer so the prerendered HTML and the mounted app show the same image
+   * with the same alt text — and so the ImageObject in the markup describes
+   * something that is actually on the page. */
+  const image = city.image
+    // "skyline" was asserting what the photograph shows, which we do not know.
+    // A place label is accurate for a photo we do hold for this city.
+    ? { url: city.image, alt: `${city.name}, ${city.stateName}` }
+    : null;
+  /* The statewide plan count is the wrong second sentence for a city whose
+   * residents cannot buy any of those plans — it reads as an offer. Those
+   * pages say why instead, which is the answer the reader actually needs. */
+  if (city.noRetailChoice) {
+    intro.push(city.noRetailChoice.reason);
+  } else {
+    const tracked = trackedSentence(stateName, market);
+    if (tracked) intro.push(tracked);
+  }
 
   /* At a glance — city-specific figures only.
    *
@@ -193,11 +353,18 @@ export function buildCitySections(route, { citiesByState }) {
     ['Average residential rate', city.avgRate],
     ['Estimated monthly bill', city.avgMonthlyBill],
   ];
-  if (market?.providers) {
+  // The statewide supplier count is a fact about the market, not about this
+  // city — and on a page that has just explained none of those suppliers sells
+  // here, printing it in the at-a-glance table undoes the explanation.
+  if (market?.providers && !city.noRetailChoice) {
     facts.push([`Suppliers with active ${stateName} plans`, String(market.providers)]);
   }
   facts.push(['County', city.county], ['Population', city.population]);
-  if (insights?.utilityCompany) facts.push(['Utility that delivers the power', insights.utilityCompany]);
+  if (city.noRetailChoice) {
+    facts.push(['Electricity supplied by', city.noRetailChoice.utility]);
+  } else if (insights?.utilityCompany) {
+    facts.push(['Utility that delivers the power', insights.utilityCompany]);
+  }
   if (insights?.avgUsage) facts.push(['Typical household usage', insights.avgUsage]);
   sections.push({
     heading: `${city.name} Electricity at a Glance`,
@@ -265,7 +432,32 @@ export function buildCitySections(route, { citiesByState }) {
   /* What a household here can buy. The full statewide breakdown lives on the
    * state page — repeating all of it here made every city page in a state
    * around half identical, so this is the summary plus the link. */
-  if (market?.plans) {
+  if (city.noRetailChoice) {
+    /* The section that would otherwise offer a switch. A reader here searched
+     * for their rate and deserves an answer, so the page explains who sets it,
+     * what that means for their bill, and where retail choice does apply — it
+     * just stops pretending they can shop. */
+    sections.push({
+      heading: `Why You Cannot Switch Suppliers in ${city.name}`,
+      paragraphs: [
+        // The reason itself is already the second sentence of the intro, and it
+        // is the answer to the first FAQ below. Repeating it verbatim a third
+        // time in between reads as padding, so this section picks up from it
+        // rather than restating it.
+        `That makes ${city.name} an exception in ${stateName}. In the parts of the state ` +
+          `served by a competitive delivery utility, households buy the supply half of the ` +
+          `bill from a retailer of their choosing and the plan comparison on this site ` +
+          `applies to them. It does not apply at a ${city.name} address.`,
+        `What you can still do here is reduce how much you use, and check that you are on ` +
+          `the most suitable of the rate schedules ${city.noRetailChoice.utility} offers — ` +
+          `many municipal utilities publish more than one, including time-of-use options.`,
+      ],
+      links: [
+        [city.statePath, `Where retail choice does apply in ${stateName}`],
+        ['/learning-center', 'Guides on reading a bill and cutting usage'],
+      ],
+    });
+  } else if (market?.plans) {
     const options = [];
     if (market.residentialPlans) {
       options.push(
@@ -304,31 +496,125 @@ export function buildCitySections(route, { citiesByState }) {
    * Cuyahoga County at 9.5¢/kWh, and before this the only things separating
    * their pages were a name and a population. The district names are the one
    * field in the city table that belongs to the city alone. */
-  const coverage = [];
+  /* Coverage, split into two sections that are mostly data rather than one
+   * paragraph of shared scaffolding.
+   *
+   * The version this replaces wrapped each city's unique districts and ZIPs in
+   * about thirty words of connective prose that was identical on all 144 pages,
+   * and a six-gram measure matches on exactly that scaffolding. A bare list of
+   * six district names shares almost no six-grams with a bare list of six other
+   * district names. */
   const neighborhoods = insights?.topZips && !city.zipCodes.length ? [] : city.neighborhoods || [];
   if (neighborhoods.length) {
-    coverage.push(
-      `Within ${city.name} we cover ${joinNames(neighborhoods, 8)} — supply is sold across the ` +
-        `whole city, so the plan available in one district is available in the next.`
-    );
-  }
-  if (city.zipCodes.length) {
-    coverage.push(
-      `ZIP codes covered include ${city.zipCodes.slice(0, 10).join(', ')}. Availability is settled ` +
-        `by ZIP rather than by city name, because utility territory boundaries do not follow city limits.`
-    );
-  }
-  if (cityUtility) {
-    coverage.push(
-      `Delivery in ${city.name} is handled by ${cityUtility.name}, which charges a regulated rate ` +
-        `no supplier can discount. Everything above is the supply half — the part you choose.`
-    );
-  }
-  if (coverage.length) {
     sections.push({
-      heading: `Areas and ZIP Codes We Cover in ${city.name}`,
-      paragraphs: coverage,
-      links: cityUtility ? [[cityUtility.path, `What ${cityUtility.name} does and does not charge for`]] : undefined,
+      heading: `Districts We Cover in ${city.name}`,
+      paragraphs: [
+        city.zipCodes.length
+          ? `${capitalize(countWord(neighborhoods.length))} ${city.name} districts, across ` +
+            `${countWord(city.zipCodes.length)} ZIP ${city.zipCodes.length === 1 ? 'code' : 'codes'}:`
+          : `${capitalize(countWord(neighborhoods.length))} ${city.name} districts:`,
+      ],
+      bullets: neighborhoods,
+    });
+  }
+
+  if (city.zipCodes.length) {
+    const prefixes = [...new Set(city.zipCodes.map((zip) => String(zip).slice(0, 3)))];
+    // A ZIP we also list for another covered city in the same state: two
+    // addresses that look alike on paper can sit in different territories.
+    const twins = (citiesByState[city.stateCode] || [])
+      .filter((other) => other.path !== city.path)
+      .filter((other) => (other.zipCodes || []).some((zip) => city.zipCodes.includes(zip)))
+      .map((other) => other.name);
+
+    const zipParagraphs = [
+      `${city.name} is covered by ${countWord(city.zipCodes.length)} ZIP ` +
+        `${city.zipCodes.length === 1 ? 'code' : 'codes'} — ${joinNames(city.zipCodes.map(String), 10)}.`,
+    ];
+    if (prefixes.length === 1) {
+      zipParagraphs.push(
+        `All of them sit in the ${prefixes[0]} range. Which offers reach a given address is ` +
+          `settled by utility territory rather than by city name, and territory boundaries do ` +
+          `not follow city limits.`
+      );
+    } else {
+      zipParagraphs.push(
+        `They span the ${joinNames(prefixes, 4)} ranges. Which offers reach a given address is ` +
+          `settled by utility territory rather than by city name, and a city spanning more than ` +
+          `one range often spans more than one territory.`
+      );
+    }
+    if (twins.length) {
+      zipParagraphs.push(
+        `${joinNames(twins, 3)} ${twins.length === 1 ? 'shares' : 'share'} at least one ZIP code ` +
+          `with ${city.name} in our coverage, so use the ZIP on your own bill rather than the ` +
+          `name of the town when you compare.`
+      );
+    }
+    sections.push({
+      heading: `Which ZIP Code Decides Your Plans in ${city.name}`,
+      paragraphs: zipParagraphs,
+    });
+  }
+
+  /* The county cohort. Present only where we cover another city in the same
+   * county, which is itself the differentiator: Houston is the only Harris
+   * County city we hold, so its page runs one section shorter than Dallas's. */
+  const countyPeers = sameCountyPeers(city, citiesByState[city.stateCode] || []);
+  if (countyPeers.length) {
+    sections.push({
+      heading: `${city.name} and the Other ${bareCounty(city.county)} County Cities We Cover`,
+      paragraphs: [
+        `Electric Scouts covers ${countWord(countyPeers.length + 1)} ${bareCounty(city.county)} ` +
+          `County ${countyPeers.length ? 'cities' : 'city'}. Delivery charges are set by territory ` +
+          `rather than by county, but neighbouring towns often share one.`,
+      ],
+      table: {
+        columns: ['City', 'Population', 'Average rate', 'Estimated monthly bill'],
+        rows: [
+          [{ text: `${city.name} (this page)` }, city.population, city.avgRate, city.avgMonthlyBill],
+          ...countyPeers.map((other) => [
+            { text: other.name, path: other.path },
+            other.population,
+            other.avgRate,
+            other.avgMonthlyBill,
+          ]),
+        ],
+      },
+    });
+  }
+
+  /* Size rank. The one axis that never ties: six Ohio cities we cover share a
+   * headline rate, but no two share a population. */
+  const sizeRank = populationRank(city, citiesByState[city.stateCode] || []);
+  if (sizeRank) {
+    const { rank, total, neighbours } = sizeRank;
+    const paragraphs = [
+      rank === 1
+        ? `${city.name} is the largest of the ${total} ${stateName} cities Electric Scouts ` +
+          `covers, at ${city.population} residents.`
+        : `${city.name} is the ${ordinal(rank)} largest of the ${total} ${stateName} cities ` +
+          `Electric Scouts covers, at ${city.population} residents.`,
+    ];
+    if (neighbours.length) {
+      paragraphs.push(
+        `The closest to it in size ${neighbours.length === 1 ? 'is' : 'are'} ` +
+          `${joinNames(neighbours.map((other) => `${other.name} (${other.population})`), 2)}. ` +
+          `Size does not set the rate — supply is priced statewide — but it does track how many ` +
+          `distinct utility territories a city sits across.`
+      );
+    }
+    sections.push({ heading: `How Big ${city.name} Is Next to the Rest of ${stateName}`, paragraphs });
+  }
+
+  if (cityUtility) {
+    sections.push({
+      heading: `Who Delivers Power in ${city.name}`,
+      paragraphs: [
+        `Delivery in ${city.name} is handled by ${cityUtility.name}, which charges a regulated ` +
+          `rate no supplier can discount. Everything you can shop is the supply half of the bill.`,
+      ],
+      links: [[cityUtility.path, `What ${cityUtility.name} does and does not charge for`]],
     });
   }
 
@@ -342,25 +628,35 @@ export function buildCitySections(route, { citiesByState }) {
   if (siblings.length) {
     sections.push({
       heading: `Other Cities We Cover in ${stateName}`,
-      links: siblings.slice(0, 12).map((other) => [other.path, `${other.name} electricity rates`]),
+      links: orderedSiblings(city, siblings),
     });
   }
 
-  const nextSteps = [
-    [city.statePath, `${stateName} electricity rates and market overview`],
-    ['/compare-rates', 'Compare plans for your ZIP code'],
-    ['/bill-analyzer', 'Check your current bill for overcharges'],
-  ];
+  /* "Compare plans for your ZIP code" is a dead end from a city that has no
+   * plans to compare, and the renewable and business comparison links below
+   * are the same. A reader here can still read their bill and cut usage, so
+   * those are what the page offers instead. */
+  const nextSteps = city.noRetailChoice
+    ? [
+        [city.statePath, `Where retail choice applies in ${stateName}`],
+        ['/bill-analyzer', 'Check your current bill for overcharges'],
+        ['/learning-center', 'Guides on cutting what you use'],
+      ]
+    : [
+        [city.statePath, `${stateName} electricity rates and market overview`],
+        ['/compare-rates', 'Compare plans for your ZIP code'],
+        ['/bill-analyzer', 'Check your current bill for overcharges'],
+      ];
   /* The delivery utility, where we publish a page for it. This is the link a
    * reader follows when they have worked out that the company on the bill is
    * not the company setting the rate. */
   if (cityUtility) {
     nextSteps.push([cityUtility.path, `What ${cityUtility.name} does and does not charge for`]);
   }
-  if (market?.businessPlans) {
+  if (!city.noRetailChoice && market?.businessPlans) {
     nextSteps.push(['/business-electricity', `Business electricity in ${stateName}`]);
   }
-  if (market?.renewablePlans) {
+  if (!city.noRetailChoice && market?.renewablePlans) {
     nextSteps.push(['/renewable-compare-rates', 'Compare 100% renewable plans']);
   }
   /* Nearest siblings by rate rather than the same alphabetical list on every
@@ -368,20 +664,15 @@ export function buildCitySections(route, { citiesByState }) {
    * this at least points each one somewhere slightly different, and a reader
    * comparing their own city against a similar one is better served than by a
    * link to whichever city sorts first. */
-  const localRate = parseRate(city.avgRate);
-  if (localRate !== null && siblings.length) {
-    const nearest = siblings
-      .map((other) => ({ other, gap: Math.abs((parseRate(other.avgRate) ?? localRate) - localRate) }))
-      .sort((a, b) => a.gap - b.gap)
-      .slice(0, 2);
-    for (const { other } of nearest) {
-      nextSteps.push([other.path, `${other.name} rates, the closest we cover to ${city.name}`]);
-    }
-  }
+  /* The nearest-by-rate links that used to sit here are gone. They tied for
+   * exactly the pairs that most needed separating — Lakewood and Parma have
+   * the same rate, so both pages proposed the same two neighbours in the same
+   * order — and the sibling block above now orders by county, ZIP range and
+   * size, which does not tie. */
   nextSteps.push(['/all-cities', 'Browse every city we cover']);
   sections.push({ heading: 'Next Steps', links: nextSteps });
 
-  return { intro, sections };
+  return { intro, image, sections };
 }
 
 /**
@@ -400,6 +691,43 @@ export function buildCitySections(route, { citiesByState }) {
  */
 function buildCityFaqs(city, market, insights, utility) {
   const faqs = [];
+
+  /* A city with no retail choice needs the opposite answers: the question its
+   * residents actually type is whether they can switch at all, and every FAQ
+   * below assumes they can. Answering "which parts of Austin can compare
+   * electricity plans? All of them." is not a small inaccuracy — it is the one
+   * thing the reader came to find out, answered backwards. */
+  if (city.noRetailChoice) {
+    faqs.push({
+      question: `Can I choose my electricity supplier in ${city.name}?`,
+      answer: city.noRetailChoice.reason,
+    });
+    faqs.push({
+      question: `Who sets the electricity rate in ${city.name}?`,
+      answer:
+        `${city.noRetailChoice.utility} does. Because it is not competing for your business, ` +
+        `its rates are set through a public process rather than by an offer you accept, and ` +
+        `they apply to every household in its service area. There is no cheaper supplier to ` +
+        `move to and no contract to sign.`,
+    });
+    if (city.avgRate) {
+      faqs.push({
+        question: `What is the average electricity rate in ${city.name}?`,
+        answer:
+          `Around ${city.avgRate}, which works out at roughly ${city.avgMonthlyBill} a month ` +
+          `for a typical household. That is an average for the area rather than a quote — what ` +
+          `you pay depends on the rate schedule you are on and how much you use.`,
+      });
+    }
+    faqs.push({
+      question: `Where in ${city.stateName} can you choose a supplier?`,
+      answer:
+        `In the parts of ${city.stateName} served by a competitive delivery utility rather ` +
+        `than a municipal one. Our ${city.stateName} page sets out which markets those are and ` +
+        `what is on offer in them.`,
+    });
+    return faqs;
+  }
 
   if (city.neighborhoods?.length) {
     faqs.push({
@@ -959,10 +1287,65 @@ function buildProviderFaqs(provider) {
  * that is intentional, so a new indexable page cannot be added without someone
  * deciding what it should actually say.
  */
+/** Headings match when they are the same words, ignoring case and punctuation. */
+function normalizeHeading(heading) {
+  return String(heading || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
 export function buildStaticSections(route, context) {
   const builder = STATIC_BUILDERS[route.path];
-  if (!builder) return { intro: [route.description].filter(Boolean), sections: [] };
-  return builder(route, context);
+  const base = builder
+    ? builder(route, context)
+    : { intro: [route.description].filter(Boolean), sections: [] };
+
+  /* The editorial body, where this page has one. It is merged in rather than
+   * replacing the builder's output: the builder owns the tables and link lists
+   * assembled from the snapshot, and this owns the prose. The drafted sections
+   * go in ahead of the page's closing "Next Steps" block so the page still ends
+   * on somewhere to go.
+   *
+   * Every sentence citing a figure is resolved here, and any that cites one we
+   * cannot compute is dropped — see src/seo/figures.js. */
+  const editorial = STATIC_PAGE_CONTENT[route.path];
+  if (!editorial) return base;
+
+  const drafted = resolveSections(editorial.sections);
+  if (!drafted.length) return base;
+
+  /* A drafted section whose heading the builder already uses is merged into it
+   * rather than appended. Several drafts extend a section that exists —
+   * "Deregulated States We Cover" is the builder's table plus the draft's
+   * explanation of what the table is — and appending would have printed the
+   * heading twice with half the content under each. */
+  const sections = (base.sections || []).map((section) => ({ ...section }));
+  const byHeading = new Map(sections.map((section, index) => [normalizeHeading(section.heading), index]));
+  const appended = [];
+
+  for (const section of drafted) {
+    const existingIndex = byHeading.get(normalizeHeading(section.heading));
+    if (existingIndex === undefined) {
+      appended.push(section);
+      byHeading.set(normalizeHeading(section.heading), sections.length + appended.length - 1);
+      continue;
+    }
+    const target = sections[existingIndex];
+    target.paragraphs = [...(target.paragraphs || []), ...(section.paragraphs || [])];
+    if (section.bullets) target.bullets = [...(target.bullets || []), ...section.bullets];
+    if (section.faqs) target.faqs = [...(target.faqs || []), ...section.faqs];
+    if (section.links && !target.links) target.links = section.links;
+  }
+
+  const closingIndex = sections.findIndex((section) => /^Next Steps$/i.test(section.heading || ''));
+  if (closingIndex === -1) sections.push(...appended);
+  else sections.splice(closingIndex, 0, ...appended);
+
+  // An intro line is added only where it says something the builder's does not.
+  const intro = [...(base.intro || [])];
+  for (const line of editorial.intro || []) {
+    if (!intro.some((existing) => existing.trim() === line.trim())) intro.push(line);
+  }
+
+  return { ...base, intro, sections };
 }
 
 export function hasStaticContent(path) {

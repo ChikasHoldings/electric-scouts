@@ -21,6 +21,7 @@ import ValidatedZipInput from "../components/ValidatedZipInput";
 
 // Comprehensive city data for all states
 import { cityData } from "@/data/cityRatesData";
+import { retailChoiceStatus } from "@/seo/locations";
 
 class CityRatesErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -85,6 +86,9 @@ function CityRatesInner() {
     'RI': { avgRate: "12.0¢/kWh", avgMonthlyBill: "$171", providers: 15, state: "Rhode Island", county: "Local County" }
   };
   
+  // Null for a normal competitive city; an object explaining why not otherwise.
+  const noChoice = retailChoiceStatus(displayCityName, stateCode);
+
   const city = cityData[cityKey] || {
     ...stateDefaults[stateCode],
     stateCode: stateCode,
@@ -206,20 +210,47 @@ function CityRatesInner() {
 
       {/* Hero Section - SEO Optimized */}
       <div className="relative bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <img src={city.image} alt={`${displayCityName} skyline`} className="w-full h-full object-cover" loading="lazy" />
-        </div>
+        {/* Only rendered where the city has a photograph of its own. Two generic
+            stock images used to be shared across 105 cities, each captioned as
+            that city's skyline — one image claiming to be both Parma, Ohio and
+            Sugar Land, Texas. A decorative gradient is better than a false
+            caption, so cities without their own photo simply have none. */}
+        {city.image && (
+          <div className="absolute inset-0 opacity-10">
+            <img
+              src={city.image}
+              alt={`${displayCityName}, ${city.state}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        )}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-3xl">
             {/* Breadcrumb Navigation */}
             <PageBreadcrumbs items={breadcrumbItems} variant="light" className="mb-4" />
 
+            {/* A city served by a municipal utility has no cheap rate to move
+                to and no supplier to compare, so it gets neither promise. The
+                prerendered H1 already said so; without this the mounted app
+                replaced it with the offer and Google indexes the mounted app. */}
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
-              Cheap Electricity Rates in {displayCityName}, {city.state}
+              {noChoice
+                ? `${displayCityName} Electricity Rates`
+                : `Cheap Electricity Rates in ${displayCityName}, ${city.state}`}
             </h1>
             <p className="text-lg text-blue-100 mb-5">
-              Compare electricity plans from the suppliers serving {city.county}. 
-              Average rates starting at {city.avgRate} with potential savings up to $800/year.
+              {noChoice ? (
+                <>
+                  Electricity in {displayCityName} is supplied by {noChoice.utility}. The average
+                  residential rate here is {city.avgRate}.
+                </>
+              ) : (
+                <>
+                  Compare electricity plans from the suppliers serving {city.county}.
+                  The average residential rate here is {city.avgRate}.
+                </>
+              )}
             </p>
 
             {/* Quick Stats */}
@@ -299,9 +330,10 @@ function CityRatesInner() {
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <DollarSign className="w-8 h-8 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Save Money</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">See Every Rate</h3>
                 <p className="text-gray-600">
-                  {displayCityName} residents can save up to $800 per year by switching to a better electricity plan
+                  Supply in {displayCityName} is sold by competing retailers at different rates. We show you
+                  all of them for your address, so you can compare yours against what is on offer.
                 </p>
               </CardContent>
             </Card>

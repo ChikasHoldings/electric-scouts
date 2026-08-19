@@ -141,8 +141,8 @@ export default function AllStates() {
               <div className="text-xs text-gray-600">Suppliers Tracked</div>
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-bold text-[#0A5C8C] mb-1">$700</div>
-              <div className="text-xs text-gray-600">Avg. Annual Savings</div>
+              <div className="text-xl sm:text-2xl font-bold text-[#0A5C8C] mb-1">{MARKET_TOTALS.activePlans}</div>
+              <div className="text-xs text-gray-600">Plans Tracked</div>
             </div>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function AllStates() {
             {[
               {
                 title: "Lower Rates",
-                description: "Competition drives prices down, with average savings of $600-$800 per year"
+                description: "Suppliers compete on price, and the plans we track span a wide range — the cheapest and dearest differ by more than 10¢/kWh in some states"
               },
               {
                 title: "More Choices",

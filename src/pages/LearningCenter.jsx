@@ -24,7 +24,7 @@ const fallbackArticles = [
     title: "Understanding Deregulated Electricity Markets: Your Complete Guide",
     description: "Learn how energy deregulation works and how it can save you hundreds on your electricity bills each year.",
     image: "/images/articles/article-1-deregulated-markets.jpg",
-    excerpt: "Discover how choosing your electricity provider can save you $500-800 per year in competitive energy markets across 12 states.",
+    excerpt: "How choosing your own electricity supplier works in the 12 states that allow it, and what actually changes on your bill.",
     readTime: "8 min",
     keywords: ["deregulated electricity", "energy deregulation", "choose electricity provider"],
     relatedArticles: [2, 3, 5]
@@ -34,7 +34,7 @@ const fallbackArticles = [
     category: "Saving Money",
     icon: DollarSign,
     color: "green",
-    title: "How to Compare Electricity Rates and Save $500+ Per Year",
+    title: "How to Compare Electricity Rates Step by Step",
     description: "Master the art of comparing electricity plans with this step-by-step guide used by thousands of smart consumers.",
     image: "/images/articles/article-2-compare-rates.jpg",
     excerpt: "Learn the exact process energy experts use to find the lowest rates and avoid hidden fees that cost you money.",
@@ -76,7 +76,7 @@ const fallbackArticles = [
     title: "Business Electricity Rates: Complete Commercial Power Guide 2026",
     description: "Compare business electricity rates and save thousands on commercial power bills. Expert guide for small business and enterprise.",
     image: "/images/articles/article-5-business-rates.jpg",
-    excerpt: "Small businesses save $2,000-10,000 annually by shopping commercial electricity rates. Here's your complete guide.",
+    excerpt: "How commercial electricity is priced — demand charges, load factor, and why a business rate is quoted rather than listed.",
     readTime: "11 min",
     keywords: ["business electricity rates", "commercial power", "small business energy"],
     relatedArticles: [1, 2, 3]
@@ -86,10 +86,10 @@ const fallbackArticles = [
     category: "City Guides",
     icon: MapPin,
     color: "teal",
-    title: "Nashua NH Electricity Rates 2026: Complete Guide to Save $550+ Annually",
+    title: "Nashua NH Electricity Rates: Complete Shopping Guide",
     description: "Compare Nashua NH electricity rates from 16+ suppliers. Find cheapest power in Hillsborough County.",
     image: "/images/articles/article-6-nashua-nh.jpg",
-    excerpt: "Nashua residents can choose from 16+ competitive electricity suppliers while Eversource delivers power. Save $550+ annually.",
+    excerpt: "Nashua residents buy supply from competing retailers while Eversource delivers the power. What that split means for your bill.",
     readTime: "9 min",
     keywords: ["Nashua electricity", "NH power rates", "Eversource Nashua"],
     relatedArticles: [107, 108, 1]
@@ -99,10 +99,10 @@ const fallbackArticles = [
     category: "City Guides",
     icon: MapPin,
     color: "teal",
-    title: "Concord NH Electricity Rates 2026: Capital City Power Guide - Save $540+",
+    title: "Concord NH Electricity Rates: Capital City Guide",
     description: "Compare Concord NH electricity rates from 16+ Eversource suppliers. Find cheapest power in Merrimack County.",
     image: "/images/articles/article-7-concord-nh.jpg",
-    excerpt: "Concord's state capital residents save an average of $540 annually by comparing 16+ competitive electricity suppliers.",
+    excerpt: "Concord sits in Eversource territory, and its supply is bought from competing retailers. What is on offer, and how to read it.",
     readTime: "9 min",
     keywords: ["Concord NH electricity", "Merrimack County power", "Eversource Concord"],
     relatedArticles: [106, 108, 1]
@@ -112,10 +112,10 @@ const fallbackArticles = [
     category: "City Guides",
     icon: MapPin,
     color: "teal",
-    title: "Warwick RI Electricity Rates 2026: Kent County Power Guide - Save $520+",
+    title: "Warwick RI Electricity Rates: Kent County Guide",
     description: "Compare Warwick RI electricity rates from 15+ National Grid suppliers. Find cheapest power in Kent County.",
     image: "/images/articles/article-8-warwick-ri.jpg",
-    excerpt: "Warwick residents save an average of $520 per year by shopping 15+ competitive electricity suppliers serving Kent County.",
+    excerpt: "Warwick sits in Kent County, served by Rhode Island Energy for delivery and by competing retailers for supply. How to compare them.",
     readTime: "9 min",
     keywords: ["Warwick electricity", "Kent County RI power", "National Grid Warwick"],
     relatedArticles: [106, 107, 1]
@@ -229,10 +229,10 @@ const fallbackArticles = [
     category: "Saving Money",
     icon: DollarSign,
     color: "green",
-    title: "How to Lower Your Electric Bill: 25 Proven Tips That Save $500+ Per Year",
+    title: "How to Lower Your Electric Bill: 25 Proven Tips",
     description: "Discover 25 proven tips to help you lower your electric bill and save over $500 annually. Learn how to reduce your energy consumption and keep more money in your pocket.",
     image: "/images/articles/article-17-lower-bill-tips.jpg",
-    excerpt: "Tired of high electricity bills? This comprehensive guide provides 25 actionable tips to help you save $500 or more per year on your energy costs. From simple habit changes to smart home upgrades, you'll find everything you need to know to start saving today.",
+    excerpt: "Twenty-five things that actually reduce what you pay for electricity, from habit changes to the contract itself, ordered by how much they move.",
     readTime: "15 min",
     keywords: ["how to lower electric bill", "save money on electricity", "reduce electric bill"],
     relatedArticles: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15]
@@ -1143,7 +1143,7 @@ export default function LearningCenter() {
               <span>Free Expert Guides</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
-              Master Electricity Shopping & Save $500+ Annually
+              Learn How Electricity Shopping Actually Works
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-blue-100 mb-5">
               Expert guides with real examples to help you find the lowest rates

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { generateProviderSlug, getProviderLogoUrl, getProviderPageUrl } from "@/utils/providerSlug";
 import { Button } from "@/components/ui/button";
+import { MARKET_TOTALS } from "@/seo/market";
 import { Input } from "@/components/ui/input";
 import { Search, Star, ArrowRight, CheckCircle, Leaf, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -127,8 +128,8 @@ export default function AllProviders() {
               <div className="text-xs sm:text-sm text-gray-600">Plans Available</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-[#0A5C8C] mb-1">$800</div>
-              <div className="text-xs sm:text-sm text-gray-600">Avg. Annual Savings</div>
+              <div className="text-2xl sm:text-3xl font-bold text-[#0A5C8C] mb-1">{MARKET_TOTALS.states}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Deregulated States</div>
             </div>
             <div>
               <div className="text-2xl sm:text-3xl font-bold text-[#0A5C8C] mb-1">100%</div>

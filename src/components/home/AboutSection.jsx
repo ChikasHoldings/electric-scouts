@@ -77,13 +77,13 @@ export default function AboutSection() {
               </div>
               <div className="w-px h-8 sm:h-10 bg-gray-200"></div>
               <div className="text-center">
-                <span className="text-xl sm:text-2xl font-bold text-[#084a6f]">12</span>
+                <span className="text-xl sm:text-2xl font-bold text-[#084a6f]">{MARKET_TOTALS.states}</span>
                 <span className="text-xs sm:text-sm text-gray-500 block">States covered</span>
               </div>
               <div className="w-px h-8 sm:h-10 bg-gray-200"></div>
               <div className="text-center">
-                <span className="text-xl sm:text-2xl font-bold text-[#FF6B35]">$600+</span>
-                <span className="text-xs sm:text-sm text-gray-500 block">Avg. annual savings</span>
+                <span className="text-xl sm:text-2xl font-bold text-[#FF6B35]">{MARKET_TOTALS.providersWithPlans}</span>
+                <span className="text-xs sm:text-sm text-gray-500 block">Suppliers compared</span>
               </div>
             </div>
 

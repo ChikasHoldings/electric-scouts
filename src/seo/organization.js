@@ -65,8 +65,7 @@ export function organizationSchema() {
     description:
       `Electric Scouts is a free, independent electricity comparison platform tracking ` +
       `${MARKET_TOTALS.activePlans} electricity plans from ${MARKET_TOTALS.providersWithPlans} ` +
-      `suppliers across ${MARKET_TOTALS.states} deregulated US states. ` +
-      `Save up to $800/year on your electricity bill.`,
+      `suppliers across ${MARKET_TOTALS.states} deregulated US states.`,
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Service',

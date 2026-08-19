@@ -27,7 +27,7 @@ export const fullArticles = {
 
 <ul>
 <li><strong>Competitive Pricing:</strong> Providers compete for your business by offering lower rates than monopoly utilities. The average household saves $500-800 annually by shopping for <a href="/compare-rates">better electricity rates</a>.</li>
-<li><strong>Diverse Plan Options:</strong> Choose from <a href="/learn/3">fixed rate plans</a> that lock in prices, <a href="/learn/3">variable rate plans</a> that fluctuate with market conditions, or specialized options like <a href="/learn/4">100% renewable energy</a> plans.</li>
+<li><strong>Diverse Plan Options:</strong> Choose from <a href="/learn/fixed-vs-variable-rate-electricity">fixed rate plans</a> that lock in prices, <a href="/learn/fixed-vs-variable-rate-electricity">variable rate plans</a> that fluctuate with market conditions, or specialized options like <a href="/learn/green-energy-plans">100% renewable energy</a> plans.</li>
 <li><strong>Improved Customer Service:</strong> In competitive markets, providers must earn your loyalty through excellent service. Poor performers lose customers quickly.</li>
 <li><strong>Innovation:</strong> Competition drives providers to offer unique features like free nights and weekends, smart home integration, mobile apps for usage tracking, and paperless billing incentives.</li>
 <li><strong>Environmental Options:</strong> Many providers offer <a href="/renewable-energy">green energy plans</a> powered by wind and solar at competitive prices.</li>
@@ -85,7 +85,7 @@ export const fullArticles = {
 <li><strong>YOU CANNOT CHOOSE THIS</strong> - determined by your address</li>
 </ul>
 
-<p>When you <a href="/learn/10">switch electricity providers</a>, only your billing company changes. The same utility company still delivers your power through the same infrastructure. Your service reliability never changes, and you never experience a power outage due to switching. Learn more about the difference between providers and utilities.</p>
+<p>When you <a href="/learn/how-to-read-your-electricity-bill">switch electricity providers</a>, only your billing company changes. The same utility company still delivers your power through the same infrastructure. Your service reliability never changes, and you never experience a power outage due to switching. Learn more about the difference between providers and utilities.</p>
 
 <h2>Real Example: How Deregulation Saves Money</h2>
 
@@ -100,15 +100,15 @@ export const fullArticles = {
 <li><strong>Annual savings:</strong> $594</li>
 </ul>
 
-<p>They never lost power during the switch. The process took 10 minutes online. Their savings paid for a family vacation that year. This is the power of energy choice - <a href="/learn/2">learning to compare electricity rates effectively</a> puts money back in your pocket.</p>
+<p>They never lost power during the switch. The process took 10 minutes online. Their savings paid for a family vacation that year. This is the power of energy choice - <a href="/learn/how-to-compare-electricity-rates">learning to compare electricity rates effectively</a> puts money back in your pocket.</p>
 
 <h2>Common Myths About Deregulated Electricity</h2>
 
 <p><strong>Myth #1: "Switching providers is complicated and risky"</strong><br>
-<strong>Reality:</strong> Switching takes 5-10 minutes online. Your power never goes off. The same utility maintains your service. <a href="/learn/10">Switching is simple and safe</a>.</p>
+<strong>Reality:</strong> Switching takes 5-10 minutes online. Your power never goes off. The same utility maintains your service. <a href="/learn/how-to-read-your-electricity-bill">Switching is simple and safe</a>.</p>
 
 <p><strong>Myth #2: "The cheapest rate must have hidden catches"</strong><br>
-<strong>Reality:</strong> All providers must disclose fees and terms in a standardized Electricity Facts Label (EFL). Learning to <a href="/learn/9">read your electricity bill</a> and contract prevents surprises.</p>
+<strong>Reality:</strong> All providers must disclose fees and terms in a standardized Electricity Facts Label (EFL). Learning to <a href="/learn/no-deposit-electricity-plans">read your electricity bill</a> and contract prevents surprises.</p>
 
 <p><strong>Myth #3: "My utility company provides the best rate"</strong><br>
 <strong>Reality:</strong> Default utility rates are typically 20-40% higher than competitive offers. Utilities have no incentive to offer low rates since they're guaranteed customers who don't shop around.</p>
@@ -120,7 +120,7 @@ export const fullArticles = {
 
 <p>Deregulation created diverse plan options to meet different consumer needs:</p>
 
-<p><strong><a href="/learn/3">Fixed Rate Plans:</a></strong> Lock in a specific rate for 6, 12, 24, or 36 months. Perfect for budget certainty and protection from market volatility. Typically offer the lowest rates when you shop during seasonal lows (October-November).</p>
+<p><strong><a href="/learn/fixed-vs-variable-rate-electricity">Fixed Rate Plans:</a></strong> Lock in a specific rate for 6, 12, 24, or 36 months. Perfect for budget certainty and protection from market volatility. Typically offer the lowest rates when you shop during seasonal lows (October-November).</p>
 
 <p><strong>Variable Rate Plans:</strong> Rates fluctuate monthly based on wholesale electricity costs. Can be cheaper in low-demand months but expensive during peak summer/winter. Best for consumers who actively monitor markets.</p>
 
@@ -130,13 +130,13 @@ export const fullArticles = {
 
 <p><strong>Free Nights/Weekends Plans:</strong> Free electricity during specific hours (typically 9pm-6am and weekends), but higher daytime rates. Calculate carefully - only saves money if you use 60%+ of electricity during free periods.</p>
 
-<p><strong><a href="/learn/4">100% Renewable Energy Plans:</a></strong> Powered entirely by wind, solar, and other clean sources. Often cost the same as traditional plans in competitive markets - <a href="/renewable-energy">go green without paying extra</a>.</p>
+<p><strong><a href="/learn/green-energy-plans">100% Renewable Energy Plans:</a></strong> Powered entirely by wind, solar, and other clean sources. Often cost the same as traditional plans in competitive markets - <a href="/renewable-energy">go green without paying extra</a>.</p>
 
 <h2>How to Maximize Savings in Deregulated Markets</h2>
 
 <p>Follow this proven strategy used by smart energy consumers who save the most:</p>
 
-<p><strong>1. Shop Annually (Save $400-800/year):</strong> Never let your contract auto-renew. Set a calendar reminder 60-90 days before contract expiration. <a href="/learn/7">Contract renewal strategy</a> is the #1 way people overpay.</p>
+<p><strong>1. Shop Annually (Save $400-800/year):</strong> Never let your contract auto-renew. Set a calendar reminder 60-90 days before contract expiration. <a href="/learn/how-to-switch-electricity-providers">Contract renewal strategy</a> is the #1 way people overpay.</p>
 
 <p><strong>2. Time Your Shopping (Save Extra $100-200/year):</strong> Electricity rates follow seasonal patterns. Shop in October-November when providers compete heavily before winter, offering rates 20-30% lower than summer months.</p>
 
@@ -146,7 +146,7 @@ export const fullArticles = {
 
 <p><strong>5. Read the Electricity Facts Label (EFL):</strong> This standardized document shows exact rates at different usage levels, all fees, contract terms, and early termination penalties. Learn to spot contract red flags before signing.</p>
 
-<p><strong>6. Check Provider Reputation:</strong> Use official state regulatory websites (TX PUC, PA PUC, PUCO) to check legitimate provider reviews and complaint ratios. <a href="/learn/6">Avoid electricity scams</a> by verifying licenses.</p>
+<p><strong>6. Check Provider Reputation:</strong> Use official state regulatory websites (TX PUC, PA PUC, PUCO) to check legitimate provider reviews and complaint ratios. <a href="/learn/average-electric-bill-by-state">Avoid electricity scams</a> by verifying licenses.</p>
 
 <h2>Real-World Savings: State-by-State Examples</h2>
 
@@ -184,9 +184,9 @@ Competitive supplier: 8.7¢/kWh = $63/month<br>
 
 <p><strong>Market Entry:</strong> New providers can enter the market with lower rates to attract customers from established players. This constant threat of competition keeps rates in check.</p>
 
-<p><strong>Price Transparency:</strong> All providers publish rates publicly, making it easy to <a href="/learn/2">compare electricity plans</a> side-by-side. This transparency prevents price gouging.</p>
+<p><strong>Price Transparency:</strong> All providers publish rates publicly, making it easy to <a href="/learn/how-to-compare-electricity-rates">compare electricity plans</a> side-by-side. This transparency prevents price gouging.</p>
 
-<p><strong>Customer Switching:</strong> The ability to switch providers anytime (after contracts end) means providers must consistently offer good value or lose customers. <a href="/learn/10">Switching is simple</a> and takes minutes.</p>
+<p><strong>Customer Switching:</strong> The ability to switch providers anytime (after contracts end) means providers must consistently offer good value or lose customers. <a href="/learn/how-to-read-your-electricity-bill">Switching is simple</a> and takes minutes.</p>
 
 <p><strong>Regulatory Oversight:</strong> State Public Utility Commissions still regulate competitive markets, licensing providers, investigating complaints, and enforcing consumer protection rules. You get competition benefits with safety guardrails.</p>
 
@@ -202,7 +202,7 @@ A: Your utility automatically switches you to a default provider at regulated ra
 A: Most providers check credit, but 25+ offer no-deposit plans even with poor credit. Prepaid electricity requires no credit check at all.</p>
 
 <p><strong>Q: How long does switching take?</strong><br>
-A: The online enrollment takes 5-10 minutes. Your new service activates within 1-2 billing cycles (typically 14-45 days). <a href="/learn/10">Learn the complete switching process</a>.</p>
+A: The online enrollment takes 5-10 minutes. Your new service activates within 1-2 billing cycles (typically 14-45 days). <a href="/learn/how-to-read-your-electricity-bill">Learn the complete switching process</a>.</p>
 
 <p><strong>Q: Can renters choose their provider?</strong><br>
 A: Yes! Renters have the same right as homeowners to choose electricity providers in deregulated states. Complete renter's electricity guide.</p>
@@ -223,7 +223,7 @@ A: Yes! Renters have the same right as homeowners to choose electricity provider
 
 <p>Don't let inertia cost you hundreds of dollars every year. Take 20 minutes to understand your options, compare what's available, and make an active choice rather than passively accepting default rates. The electricity market works for those who engage with it.</p>
 
-<p><strong>Next steps:</strong> <a href="/learn/2">Learn how to compare electricity rates effectively</a>, understand <a href="/learn/3">different plan types</a>, explore <a href="/all-states">state-specific electricity guides</a> for your area, and check out our <a href="/learning-center">complete learning center</a> for more money-saving strategies.</p>
+<p><strong>Next steps:</strong> <a href="/learn/how-to-compare-electricity-rates">Learn how to compare electricity rates effectively</a>, understand <a href="/learn/fixed-vs-variable-rate-electricity">different plan types</a>, explore <a href="/all-states">state-specific electricity guides</a> for your area, and check out our <a href="/learning-center">complete learning center</a> for more money-saving strategies.</p>
 `
   },
 
@@ -239,7 +239,7 @@ A: Yes! Renters have the same right as homeowners to choose electricity provider
 
 <p>With her 2,000 kWh monthly usage, that rate difference saves her <strong>$88 per month or $1,056 per year</strong>. That's a vacation. That's a new laptop. That's dinner out twice a month for a year. And all it cost was 20 minutes of her time.</p>
 
-<p>This is why <a href="/learn/1">understanding deregulated electricity markets</a> and actively comparing rates is one of the highest-ROI activities you can do. Yet 68% of eligible consumers never shop for better rates, leaving hundreds of dollars on the table annually.</p>
+<p>This is why <a href="/learn/deregulated-electricity-markets">understanding deregulated electricity markets</a> and actively comparing rates is one of the highest-ROI activities you can do. Yet 68% of eligible consumers never shop for better rates, leaving hundreds of dollars on the table annually.</p>
 
 <h2>Step 1: Gather Your Current Information</h2>
 
@@ -253,7 +253,7 @@ A: Yes! Renters have the same right as homeowners to choose electricity provider
 <li><strong>Current total monthly bill:</strong> Including all fees and charges for comparison</li>
 </ul>
 
-<p>Don't have your bill? <a href="/learn/9">Learn how to read your electricity bill</a> to find these critical details. Understanding your bill is the foundation of smart electricity shopping.</p>
+<p>Don't have your bill? <a href="/learn/no-deposit-electricity-plans">Learn how to read your electricity bill</a> to find these critical details. Understanding your bill is the foundation of smart electricity shopping.</p>
 
 <h2>Step 2: Determine Your True Average Usage</h2>
 
@@ -306,7 +306,7 @@ Energy: 9.5¢ + TDU delivery: 4.5¢ + Base charge: $9.95÷1000kWh = 1¢<br>
 
 <p>When evaluating electricity plans, compare these critical factors:</p>
 
-<p><strong>Rate Type:</strong> <a href="/learn/3">Fixed vs variable rates</a> have different risk/reward profiles. Fixed rates offer budget certainty, variable rates offer flexibility and potential savings during low-demand periods.</p>
+<p><strong>Rate Type:</strong> <a href="/learn/fixed-vs-variable-rate-electricity">Fixed vs variable rates</a> have different risk/reward profiles. Fixed rates offer budget certainty, variable rates offer flexibility and potential savings during low-demand periods.</p>
 
 <p><strong>Contract Length:</strong> 12-month plans typically offer best rates, while 24-36 month plans cost slightly more but provide longer price protection. Month-to-month plans cost 15-25% more but offer ultimate flexibility.</p>
 
@@ -316,7 +316,7 @@ Energy: 9.5¢ + TDU delivery: 4.5¢ + Base charge: $9.95÷1000kWh = 1¢<br>
 
 <p><strong>Customer Reviews:</strong> Check state regulatory websites for legitimate provider reviews and complaint ratios. Don't trust Google reviews alone.</p>
 
-<p><strong>Provider Reputation:</strong> Verify providers are licensed with your state's Public Utility Commission. <a href="/learn/6">Avoid unlicensed scam operations</a>.</p>
+<p><strong>Provider Reputation:</strong> Verify providers are licensed with your state's Public Utility Commission. <a href="/learn/average-electric-bill-by-state">Avoid unlicensed scam operations</a>.</p>
 
 <h2>Real-World Comparison Examples</h2>
 
@@ -371,7 +371,7 @@ Found rate: 8.2¢/kWh (was paying 10.9¢)<br>
 
 <p><strong>Contract Stacking Strategy:</strong> Some savvy consumers maintain two electricity accounts (perhaps a rental property or second home) with staggered contract expirations. This allows them to shop during optimal seasons for both accounts rather than being forced to shop whenever contracts happen to expire.</p>
 
-<p><strong>Negotiation Leverage:</strong> If you have excellent usage history and payment records, contact providers directly rather than just using online enrollment. High-value customers can sometimes negotiate rates 0.5-1¢ per kWh lower than publicly advertised, saving an additional $100-200 annually. This works especially well for <a href="/learn/5">business electricity accounts</a> with high consumption.</p>
+<p><strong>Negotiation Leverage:</strong> If you have excellent usage history and payment records, contact providers directly rather than just using online enrollment. High-value customers can sometimes negotiate rates 0.5-1¢ per kWh lower than publicly advertised, saving an additional $100-200 annually. This works especially well for <a href="/learn/business-electricity-rates-guide">business electricity accounts</a> with high consumption.</p>
 
 <p><strong>Multi-Property Discounts:</strong> Customers with multiple properties or <a href="/business-electricity">business locations</a> can aggregate their accounts for volume discounts. Even residential customers with a home plus a rental property might qualify for commercial rates that beat standard residential pricing.</p>
 
@@ -383,7 +383,7 @@ Found rate: 8.2¢/kWh (was paying 10.9¢)<br>
 
 <p>Remember: every dollar you overpay on electricity is a dollar that could go toward savings, paying down debt, or enjoying life. The return on investment for learning to compare electricity rates effectively is extraordinary - typically 2,000-4,000% annual ROI based on time invested versus money saved.</p>
 
-<p><strong>Next steps:</strong> <a href="/compare-rates">Compare rates in your area now</a>, learn about <a href="/learn/3">different plan types</a>, explore our <a href="/all-states">state-specific electricity guides</a> for targeted local advice, and bookmark our <a href="/learning-center">learning center</a> for ongoing electricity shopping education.</p>
+<p><strong>Next steps:</strong> <a href="/compare-rates">Compare rates in your area now</a>, learn about <a href="/learn/fixed-vs-variable-rate-electricity">different plan types</a>, explore our <a href="/all-states">state-specific electricity guides</a> for targeted local advice, and bookmark our <a href="/learning-center">learning center</a> for ongoing electricity shopping education.</p>
 `
   },
 
@@ -399,7 +399,7 @@ Found rate: 8.2¢/kWh (was paying 10.9¢)<br>
 
 <p><strong>Variable Rate Plans:</strong> Your rate changes every month based on wholesale electricity market prices. It might be 8.2¢ in April when demand is low, spike to 11.8¢ in August when air conditioners run constantly, then drop to 9.4¢ in October.</p>
 
-<p>The choice between fixed and variable rates is one of the most important decisions when <a href="/learn/2">comparing electricity plans</a>. Understanding the pros and cons of each helps you save the most money for your specific situation.</p>
+<p>The choice between fixed and variable rates is one of the most important decisions when <a href="/learn/how-to-compare-electricity-rates">comparing electricity plans</a>. Understanding the pros and cons of each helps you save the most money for your specific situation.</p>
 
 <h2>Fixed Rate Plans: Complete Analysis</h2>
 
@@ -531,7 +531,7 @@ Bill predictability: None</p>
 
 <p><strong>Market-Plus Pricing:</strong> Some providers price variable rates as "wholesale market price + 2¢ premium." This means when wholesale electricity spikes, your rate spikes even more. Understanding the pricing formula helps predict potential rate ranges.</p>
 
-<p><strong>Automatic Enrollment:</strong> When fixed contracts expire, many providers automatically roll customers to variable rates (often at inflated prices). This is why <a href="/learn/7">contract renewal strategy matters</a> - never let this happen by default.</p>
+<p><strong>Automatic Enrollment:</strong> When fixed contracts expire, many providers automatically roll customers to variable rates (often at inflated prices). This is why <a href="/learn/how-to-switch-electricity-providers">contract renewal strategy matters</a> - never let this happen by default.</p>
 
 <h2>The Bottom Line</h2>
 
@@ -541,9 +541,9 @@ Bill predictability: None</p>
 
 <p>Unless you have a specific reason to need month-to-month flexibility, lock in a competitive fixed rate and enjoy guaranteed savings with zero bill surprises. Your future self will thank you when summer heat waves don't spike your electricity bill 80%.</p>
 
-<p><strong>Action steps:</strong> <a href="/compare-rates">Compare both fixed and variable rates</a> at your exact usage level, read the contract terms carefully, choose based on your timeline and risk tolerance, and set a reminder to <a href="/learn/7">shop again before your contract expires</a>.</p>
+<p><strong>Action steps:</strong> <a href="/compare-rates">Compare both fixed and variable rates</a> at your exact usage level, read the contract terms carefully, choose based on your timeline and risk tolerance, and set a reminder to <a href="/learn/how-to-switch-electricity-providers">shop again before your contract expires</a>.</p>
 
-<p><strong>Related guides:</strong> Learn about optimal contract lengths, explore <a href="/learn/4">renewable energy plan options</a>, discover prepaid electricity alternatives, understand month-to-month plans, or check <a href="/all-states">your state's specific electricity guide</a>.</p>
+<p><strong>Related guides:</strong> Learn about optimal contract lengths, explore <a href="/learn/green-energy-plans">renewable energy plan options</a>, discover prepaid electricity alternatives, understand month-to-month plans, or check <a href="/all-states">your state's specific electricity guide</a>.</p>
 `
   },
 
@@ -557,7 +557,7 @@ Bill predictability: None</p>
 
 <p>100% renewable energy electricity plans power your home entirely with clean, sustainable energy sources like wind, solar, hydroelectric, and biomass. Through Renewable Energy Credits (RECs), providers guarantee that for every kilowatt-hour (kWh) you consume, an equivalent amount of renewable energy is generated and added to the electricity grid.</p>
 
-<p>Here's the surprising truth that shocks most consumers: In <a href="/learn/1">deregulated electricity markets</a> like <a href="/texas-electricity">Texas</a>, <a href="/pennsylvania-electricity">Pennsylvania</a>, and <a href="/ohio-electricity">Ohio</a>, renewable energy plans frequently cost <strong>the same or even less</strong> than traditional fossil fuel electricity. You can <a href="/renewable-energy">go green</a> without paying extra.</p>
+<p>Here's the surprising truth that shocks most consumers: In <a href="/learn/deregulated-electricity-markets">deregulated electricity markets</a> like <a href="/texas-electricity">Texas</a>, <a href="/pennsylvania-electricity">Pennsylvania</a>, and <a href="/ohio-electricity">Ohio</a>, renewable energy plans frequently cost <strong>the same or even less</strong> than traditional fossil fuel electricity. You can <a href="/renewable-energy">go green</a> without paying extra.</p>
 
 <h2>Do Renewable Energy Plans Cost More?</h2>
 
@@ -592,7 +592,7 @@ Traditional plans: 9.3-11.2¢/kWh<br>
 
 <p>Businesses increasingly choose renewable electricity for multiple reasons beyond environmental values:</p>
 
-<p><strong>Cost Savings:</strong> <a href="/business-electricity">Commercial renewable rates</a> often match or beat traditional electricity, saving thousands to millions annually depending on <a href="/learn/5">business size</a>.</p>
+<p><strong>Cost Savings:</strong> <a href="/business-electricity">Commercial renewable rates</a> often match or beat traditional electricity, saving thousands to millions annually depending on <a href="/learn/business-electricity-rates-guide">business size</a>.</p>
 
 <p><strong>Marketing Advantage:</strong> "Powered by 100% renewable energy" resonates with environmentally-conscious consumers and employees.</p>
 
@@ -694,7 +694,7 @@ Switching takes 5-10 minutes online. Service typically activates within 1-2 bill
 
 <p><strong>Action steps:</strong> <a href="/compare-rates">Compare renewable vs traditional rates</a> in your area right now, verify 100% renewable percentage in the EFL, choose a reputable licensed provider, and make the switch today. Your environmental impact starts immediately, and you'll likely save money too.</p>
 
-<p><strong>Related guides:</strong> Learn about community solar programs, compare solar panels vs electricity plans, explore different renewable energy types, understand <a href="/learn/2">how to compare green energy rates</a>, or check your <a href="/all-states">state electricity guide</a> for local renewable options.</p>
+<p><strong>Related guides:</strong> Learn about community solar programs, compare solar panels vs electricity plans, explore different renewable energy types, understand <a href="/learn/how-to-compare-electricity-rates">how to compare green energy rates</a>, or check your <a href="/all-states">state electricity guide</a> for local renewable options.</p>
 `
   },
 
@@ -756,7 +756,7 @@ Annual cost: $24,000-96,000</p>
 
 <h2>Understanding Demand Charges: The Hidden Cost</h2>
 
-<p>Demand charges are the biggest surprise for businesses new to <a href="/learn/1">deregulated electricity markets</a>:</p>
+<p>Demand charges are the biggest surprise for businesses new to <a href="/learn/deregulated-electricity-markets">deregulated electricity markets</a>:</p>
 
 <p><strong>What Are Demand Charges?</strong> You pay for your highest 15-minute average kW usage during the billing month, regardless of how briefly it occurred. If all equipment runs simultaneously for just 15 minutes creating 100 kW demand, you pay for 100 kW all month even if typical usage is 40 kW.</p>
 
@@ -768,7 +768,7 @@ Peak demand: 42 kW at $11/kW = $462<br>
 <strong>Total monthly bill: $1,270</strong><br>
 <strong>Effective rate: 14.9¢/kWh (not the advertised 9.5¢)</strong></p>
 
-<p>Understanding demand charges is crucial when <a href="/learn/2">comparing commercial electricity rates</a>. The lowest per-kWh rate isn't always the cheapest total cost if demand charges are high.</p>
+<p>Understanding demand charges is crucial when <a href="/learn/how-to-compare-electricity-rates">comparing commercial electricity rates</a>. The lowest per-kWh rate isn't always the cheapest total cost if demand charges are high.</p>
 
 <h2>Real Business Savings Examples</h2>
 
@@ -811,7 +811,7 @@ Monthly cost: $2,812<br>
 Annual cost: $33,744<br>
 <strong>Annual savings: $12,768</strong></p>
 
-<p>Valley Manufacturing's savings paid for a full-time employee's salary. This is the power of <a href="/learn/2">smart electricity shopping</a> combined with demand management for high-consumption businesses.</p>
+<p>Valley Manufacturing's savings paid for a full-time employee's salary. This is the power of <a href="/learn/how-to-compare-electricity-rates">smart electricity shopping</a> combined with demand management for high-consumption businesses.</p>
 
 <div class="cta-box">
 <h3>Get Competitive Commercial Quotes</h3>
@@ -821,7 +821,7 @@ Annual cost: $33,744<br>
 
 <h2>The Bottom Line</h2>
 
-<p>Small businesses and commercial facilities save $2,000-15,000 annually by shopping competitive electricity rates in <a href="/learn/1">deregulated markets</a>. Higher usage means bigger savings - a 20-minute rate shopping session can save $10,000+ annually for energy-intensive businesses.</p>
+<p>Small businesses and commercial facilities save $2,000-15,000 annually by shopping competitive electricity rates in <a href="/learn/deregulated-electricity-markets">deregulated markets</a>. Higher usage means bigger savings - a 20-minute rate shopping session can save $10,000+ annually for energy-intensive businesses.</p>
 
 <p><strong>Action steps for business owners:</strong></p>
 <ol>
@@ -850,7 +850,7 @@ Annual cost: $33,744<br>
 
 <h2>How Nashua's Deregulated Electricity Works</h2>
 
-<p>Understanding <a href="/learn/1">electricity deregulation in New Hampshire</a> helps you maximize savings:</p>
+<p>Understanding <a href="/learn/deregulated-electricity-markets">electricity deregulation in New Hampshire</a> helps you maximize savings:</p>
 
 <p><strong>Eversource (Your Utility Company):</strong></p>
 <ul>
@@ -989,7 +989,7 @@ Competitive rate: ~$1,068/month<br>
 
 <p><strong>Step 5:</strong> Receive confirmation and wait 1-2 billing cycles for service activation</p>
 
-<p>Switching is free and never interrupts your electricity service. <a href="/learn/10">Learn the complete electricity switching process</a>.</p>
+<p>Switching is free and never interrupts your electricity service. <a href="/learn/how-to-read-your-electricity-bill">Learn the complete electricity switching process</a>.</p>
 
 <h2>The Bottom Line for Nashua Residents</h2>
 
@@ -997,7 +997,7 @@ Competitive rate: ~$1,068/month<br>
 
 <p>The families and businesses in Nashua that save the most aren't lucky - they're informed and proactive about shopping electricity rates annually. Don't leave hundreds of dollars on the table by accepting default rates. Take 20 minutes to compare options and lock in competitive pricing.</p>
 
-<p><strong>Next steps:</strong> <a href="/compare-rates">Compare Nashua electricity rates</a> from all available suppliers, understand <a href="/learn/3">fixed vs variable rate plans</a>, explore <a href="/new-hampshire-electricity">New Hampshire electricity options</a>, or learn about <a href="/learn/4">100% renewable energy plans</a> available in Nashua.</p>
+<p><strong>Next steps:</strong> <a href="/compare-rates">Compare Nashua electricity rates</a> from all available suppliers, understand <a href="/learn/fixed-vs-variable-rate-electricity">fixed vs variable rate plans</a>, explore <a href="/new-hampshire-electricity">New Hampshire electricity options</a>, or learn about <a href="/learn/green-energy-plans">100% renewable energy plans</a> available in Nashua.</p>
 `
   },
 
@@ -1015,7 +1015,7 @@ Competitive rate: ~$1,068/month<br>
 
 <h2>Understanding Concord's Electricity Structure</h2>
 
-<p>New Hampshire's <a href="/learn/1">deregulated electricity market</a> separates supply and delivery functions:</p>
+<p>New Hampshire's <a href="/learn/deregulated-electricity-markets">deregulated electricity market</a> separates supply and delivery functions:</p>
 
 <p><strong>Eversource Energy (Regulated Utility):</strong></p>
 <ul>
@@ -1081,7 +1081,7 @@ Competitive cost: $97-132/month ($1,161-1,578 annually)<br>
 <li>Plus 11+ additional licensed competitive suppliers</li>
 </ul>
 
-<p>Always verify supplier licensing through the <a href="/new-hampshire-electricity">New Hampshire Public Utilities Commission (PUC)</a> official website. Licensed suppliers undergo regulatory oversight ensuring consumer protection and fair pricing practices. <a href="/learn/6">Avoid unlicensed electricity scams</a> by confirming PUC licensing before enrollment.</p>
+<p>Always verify supplier licensing through the <a href="/new-hampshire-electricity">New Hampshire Public Utilities Commission (PUC)</a> official website. Licensed suppliers undergo regulatory oversight ensuring consumer protection and fair pricing practices. <a href="/learn/average-electric-bill-by-state">Avoid unlicensed electricity scams</a> by confirming PUC licensing before enrollment.</p>
 
 <h2>Concord Neighborhoods and Coverage Areas</h2>
 
@@ -1153,7 +1153,7 @@ Gather your most recent Eversource bill showing current rate, monthly kWh usage,
 Use our <a href="/compare-rates">free comparison tool</a> with your Concord ZIP code and actual monthly usage to see personalized rate quotes from all licensed suppliers.</p>
 
 <p><strong>Step 3: Review Plan Details</strong><br>
-Download the Electricity Facts Label (EFL) for each plan. Compare total costs including all fees, not just advertised per-kWh rates. <a href="/learn/2">Learn how to compare electricity rates effectively</a>.</p>
+Download the Electricity Facts Label (EFL) for each plan. Compare total costs including all fees, not just advertised per-kWh rates. <a href="/learn/how-to-compare-electricity-rates">Learn how to compare electricity rates effectively</a>.</p>
 
 <p><strong>Step 4: Verify Supplier Licensing</strong><br>
 Confirm your chosen supplier is licensed through NH PUC. Check complaint history and customer reviews on official state websites.</p>
@@ -1169,7 +1169,7 @@ Calendar reminder 90 days before contract expiration to shop again and avoid exp
 
 <h2>Renewable Energy Options in Concord</h2>
 
-<p>Concord residents increasingly choose <a href="/learn/4">100% renewable electricity plans</a> to reduce environmental impact:</p>
+<p>Concord residents increasingly choose <a href="/learn/green-energy-plans">100% renewable electricity plans</a> to reduce environmental impact:</p>
 
 <p><strong>Available Green Options:</strong></p>
 <ul>
@@ -1187,7 +1187,7 @@ Calendar reminder 90 days before contract expiration to shop again and avoid exp
 
 <p>The most successful Concord electricity shoppers understand that competitive markets reward informed, proactive consumers. Taking 20-30 minutes annually to compare rates and switch suppliers consistently pays returns of 2,000-3,000% on time invested. Don't passively accept default rates when competitive alternatives can save hundreds of dollars every year.</p>
 
-<p><strong>Recommended next steps:</strong> <a href="/compare-rates">Compare current Concord electricity rates</a>, understand <a href="/learn/3">fixed vs variable rate plans</a>, explore <a href="/new-hampshire-electricity">statewide New Hampshire options</a>, or learn about <a href="/learn/4">renewable energy plans</a> available in Merrimack County.</p>
+<p><strong>Recommended next steps:</strong> <a href="/compare-rates">Compare current Concord electricity rates</a>, understand <a href="/learn/fixed-vs-variable-rate-electricity">fixed vs variable rate plans</a>, explore <a href="/new-hampshire-electricity">statewide New Hampshire options</a>, or learn about <a href="/learn/green-energy-plans">renewable energy plans</a> available in Merrimack County.</p>
 `
   },
 
@@ -1205,7 +1205,7 @@ Calendar reminder 90 days before contract expiration to shop again and avoid exp
 
 <h2>How Warwick's Electricity Market Works</h2>
 
-<p>Rhode Island's <a href="/learn/1">deregulated electricity system</a> separates power delivery from power supply:</p>
+<p>Rhode Island's <a href="/learn/deregulated-electricity-markets">deregulated electricity system</a> separates power delivery from power supply:</p>
 
 <p><strong>National Grid (Regulated Utility - Cannot Choose):</strong></p>
 <ul>
@@ -1272,7 +1272,7 @@ Competitive supplier cost: $95-126/month ($1,137-1,509 annually)<br>
 <li>Plus 10+ additional Rhode Island PUC-licensed suppliers</li>
 </ul>
 
-<p>Always verify supplier licensing through the <a href="/rhode-island-electricity">Rhode Island Public Utilities Commission (PUC)</a> official website before enrollment. Licensed suppliers undergo regulatory oversight ensuring consumer protection standards, fair pricing practices, and financial stability. <a href="/learn/6">Learn to identify and avoid electricity scams</a> by confirming PUC licensing status.</p>
+<p>Always verify supplier licensing through the <a href="/rhode-island-electricity">Rhode Island Public Utilities Commission (PUC)</a> official website before enrollment. Licensed suppliers undergo regulatory oversight ensuring consumer protection standards, fair pricing practices, and financial stability. <a href="/learn/average-electric-bill-by-state">Learn to identify and avoid electricity scams</a> by confirming PUC licensing status.</p>
 
 <h2>Warwick Neighborhoods and Service Coverage</h2>
 
@@ -1319,7 +1319,7 @@ Custom commercial contracts available<br>
 Volume pricing and flexible terms<br>
 <strong>Potential savings: $8,000-50,000+ annually</strong></p>
 
-<p>Warwick's diverse economy including retail centers (Warwick Mall, Airport Plaza), T.F. Green Airport facilities, hospitality sector, and manufacturing creates numerous high-electricity-consumption businesses. These commercial users gain significant negotiating leverage with competitive suppliers. <a href="/business-electricity">Explore Warwick commercial electricity options</a> and <a href="/learn/5">complete business electricity guide</a>.</p>
+<p>Warwick's diverse economy including retail centers (Warwick Mall, Airport Plaza), T.F. Green Airport facilities, hospitality sector, and manufacturing creates numerous high-electricity-consumption businesses. These commercial users gain significant negotiating leverage with competitive suppliers. <a href="/business-electricity">Explore Warwick commercial electricity options</a> and <a href="/learn/business-electricity-rates-guide">complete business electricity guide</a>.</p>
 
 <h2>Common Warwick Electricity Questions Answered</h2>
 
@@ -1347,7 +1347,7 @@ Collect your most recent National Grid electricity bill showing current supply r
 Use our <a href="/compare-rates">free comparison tool</a> entering your Warwick ZIP code and actual monthly usage. See personalized rate quotes from all 15+ licensed suppliers serving your area.</p>
 
 <p><strong>Step 3: Review Complete Plan Details</strong><br>
-Download the Electricity Facts Label (EFL) for each competitive plan. Compare total estimated monthly costs including all fees - not just advertised per-kWh supply rates. <a href="/learn/2">Master electricity rate comparison techniques</a>.</p>
+Download the Electricity Facts Label (EFL) for each competitive plan. Compare total estimated monthly costs including all fees - not just advertised per-kWh supply rates. <a href="/learn/how-to-compare-electricity-rates">Master electricity rate comparison techniques</a>.</p>
 
 <p><strong>Step 4: Verify Supplier Licensing and Reputation</strong><br>
 Confirm your chosen supplier is licensed through Rhode Island PUC official website. Check complaint history and customer satisfaction ratings on state regulatory sites. Learn to verify legitimate electricity provider reviews.</p>
@@ -1363,7 +1363,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 
 <h2>Renewable Energy Options in Warwick</h2>
 
-<p>Warwick residents increasingly choose <a href="/learn/4">100% renewable electricity plans</a> to reduce environmental footprint:</p>
+<p>Warwick residents increasingly choose <a href="/learn/green-energy-plans">100% renewable electricity plans</a> to reduce environmental footprint:</p>
 
 <p><strong>Available Green Energy Options:</strong></p>
 <ul>
@@ -1384,7 +1384,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 
 <p>Rhode Island's mature competitive electricity market combined with Warwick's diverse residential and commercial customer base creates an ideal environment for electricity savings. Take advantage of competition, lock in competitive rates during optimal shopping windows, and enjoy lower electricity bills while supporting market competition that benefits all Rhode Island consumers.</p>
 
-<p><strong>Recommended action steps:</strong> <a href="/compare-rates">Compare current Warwick electricity rates</a> from all available suppliers, understand <a href="/learn/3">fixed vs variable rate electricity plans</a>, explore <a href="/rhode-island-electricity">statewide Rhode Island electricity options</a>, or learn about <a href="/learn/4">renewable energy plans</a> available throughout Kent County.</p>
+<p><strong>Recommended action steps:</strong> <a href="/compare-rates">Compare current Warwick electricity rates</a> from all available suppliers, understand <a href="/learn/fixed-vs-variable-rate-electricity">fixed vs variable rate electricity plans</a>, explore <a href="/rhode-island-electricity">statewide Rhode Island electricity options</a>, or learn about <a href="/learn/green-energy-plans">renewable energy plans</a> available throughout Kent County.</p>
 `
   },
   6: {
@@ -1932,7 +1932,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   10: {
     title: "How to Read Your Electricity Bill: Find Hidden Charges and Save Money",
     metaTitle: "How to Read Your Electricity Bill | Electric Scouts",
-    metaDescription: "Learn how to read your electricity bill, understand charges, and find hidden fees. Our guide explains your electric bill so you can save money on your energy costs.",
+    metaDescription: "How to read your electricity bill: what each charge is, where the fees hide, and how to work out the rate you are actually paying.",
     tags: ["electricity bill", "save money", "hidden charges", "understand your bill", "energy costs"],
     content: `
 <h2>Understanding Your Electricity Bill is the First Step to Savings</h2>
@@ -5326,7 +5326,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   },
   38: {
     title: "TXU Energy vs Reliant Energy 2026: Which Texas Provider is Better?",
-    metaTitle: "TXU Energy vs Reliant Energy Compared | Electric Scouts",
+    metaTitle: "TXU vs Reliant: Which Texas Provider Wins? | Electric Scouts",
     metaDescription: "Compare TXU Energy and Reliant Energy on plan types, contract terms and fees, and work out which one suits your household usage.",
     tags: ["txu vs reliant", "txu energy reviews", "reliant energy reviews", "txu energy rates", "Texas energy providers"],
     content: `

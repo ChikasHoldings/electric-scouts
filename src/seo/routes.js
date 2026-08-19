@@ -18,9 +18,9 @@
  * serverless functions and by Node build scripts alike.
  */
 
-import { canonicalPath } from './site.js';
+import { canonicalPath, DESCRIPTION_MAX, SITE_NAME, stripBrand, withBrand } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
-import { getArticleRoutes } from './articles.js';
+import { ARTICLE_SLUGS, getArticleRoutes } from './articles.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
 import { COMPARE_HUB, getComparisons } from './comparisons.js';
 import { UTILITY_HUB, getUtilities } from './utilities.js';
@@ -33,8 +33,8 @@ export const STATIC_ROUTES = [
   {
     page: "Home",
     path: "/",
-    title: "Electric Scouts | Stop Overpaying for Electricity — We'll Prove It",
-    description: "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
+    title: "Compare Electricity Rates in 12 States | Electric Scouts",
+    description: "Compare electricity plans across the 12 US states where you choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     priority: 1.0,
     changefreq: "daily",
   },
@@ -50,7 +50,7 @@ export const STATIC_ROUTES = [
     page: "BillAnalyzer",
     path: "/bill-analyzer",
     title: "Electricity Bill Analyzer | Electric Scouts",
-    description: "Upload an electricity bill and see the rate you really pay once base charges, delivery and credits are counted, then compare it against plans sold at your address.",
+    description: "Upload an electricity bill and see the rate you really pay once base charges, delivery and credits are counted, then compare it against plans sold at your ZIP.",
     priority: 0.9,
     changefreq: "weekly",
   },
@@ -178,7 +178,7 @@ export const STATIC_ROUTES = [
     page: "TermsOfService",
     path: "/terms-of-service",
     title: "Terms of Service | Electric Scouts",
-    description: "The terms that apply when you use Electric Scouts to compare electricity plans, including accuracy of rates, affiliate relationships and limitation of liability.",
+    description: "The terms that apply when you use Electric Scouts to compare electricity plans: accuracy of rates, affiliate relationships and limitation of liability.",
     priority: 0.3,
     changefreq: "yearly",
   },
@@ -226,7 +226,7 @@ export const STATE_PAGE_COMPONENTS = {
 
 /** Title for a state landing page. Kept inside typical SERP truncation. */
 export function stateTitle(stateName) {
-  return `${stateName} Electricity Rates & Providers | Electric Scouts`;
+  return withBrand(`${stateName} Electricity Rates & Providers`);
 }
 
 /**
@@ -247,7 +247,16 @@ export function stateDescription(stateName, market) {
 
 /** Title for a city page: the phrasing people actually search for. */
 export function cityTitle(city) {
-  return `Compare Electricity Rates in ${city.name}, ${city.stateCode} | Electric Scouts`;
+  // "Compare rates in Austin" promises something an Austin address cannot do.
+  // The query people type is still "austin electricity rates", so that leads;
+  // what changes is that the title stops offering a comparison.
+  if (city.noRetailChoice) {
+    // The short label, not the full name: "Xcel Energy (Southwestern Public
+    // Service)" pushed this title to 72 characters.
+    const utility = city.noRetailChoice.shortName || city.noRetailChoice.utility;
+    return withBrand(`${city.name} Electricity Rates and ${utility}`);
+  }
+  return withBrand(`Compare Electricity Rates in ${city.name}, ${city.stateCode}`);
 }
 
 /**
@@ -260,12 +269,27 @@ export function cityDescription(city, market) {
   if (!market || !market.plans) {
     return `${local} Compare suppliers serving ${city.county} and switch for free with Electric Scouts.`;
   }
-  return `${local} Compare ${market.plans} ${city.stateName} plans from ${market.providers} suppliers by ZIP code.`;
+  // A city with no retail choice must not be offered the statewide plan count:
+  // none of those plans is available at this address.
+  if (city.noRetailChoice) {
+    const note = `${local} Supply comes from ${city.noRetailChoice.utility}, not a competing retailer, so there is no plan to shop here.`;
+    return note.length <= DESCRIPTION_MAX
+      ? note
+      : `${local} Supply comes from ${city.noRetailChoice.utility} — there is no plan to shop here.`;
+  }
+  const base = `${local} Compare ${market.plans} ${city.stateName} plans from ${market.providers} suppliers by ZIP code.`;
+  // 58 of these were landing at 112-119 characters against a limit near 160,
+  // leaving a third of the snippet unused on the pages that need to look
+  // distinct from each other most. The delivery utility is the most
+  // city-specific fact left, and it is the name the reader knows from their
+  // own bill — so it goes in wherever it fits.
+  const tail = city.utilityCompany ? ` ${city.utilityCompany} delivers the power.` : '';
+  return tail && (base + tail).length <= 158 ? base + tail : base;
 }
 
 /** Title for a provider detail page. */
 export function providerTitle(provider) {
-  return `${provider.name} Electricity Plans & Rates | Electric Scouts`;
+  return withBrand(`${provider.name} Electricity Plans & Rates`);
 }
 
 export function providerDescription(provider) {
@@ -315,7 +339,9 @@ export function getCityRoutes() {
       path: city.path,
       title: cityTitle(city),
       description: cityDescription(city, market),
-      heading: `Compare Electricity Rates in ${city.name}, ${city.stateName}`,
+      heading: city.noRetailChoice
+        ? `${city.name} Electricity Rates`
+        : `Compare Electricity Rates in ${city.name}, ${city.stateName}`,
       // Cities are ranked by how much distinct data stands behind them, so the
       // ones with local market notes are crawled ahead of the thinnest.
       priority: parseRate(city.avgRate) !== null ? 0.8 : 0.7,
@@ -336,12 +362,16 @@ export function getArticleRouteList(fullArticles) {
     // Carried through so the content model can find this article in the map it
     // was built from — the related-guide links are keyed on it.
     id: article.id,
+    slug: article.slug,
     path: article.path,
+    // The /learn/<id> URL this page used to live at, so the build can emit a
+    // 301 for it rather than leaving a duplicate behind.
+    legacyPath: article.legacyPath,
     // Left undefined when article data was not supplied. No generic fallback on
     // purpose: a shared placeholder title across 73 URLs is the exact failure
     // mode this registry exists to prevent, and the prerender build aborts if
     // any route reaches it without metadata.
-    title: article.title,
+    title: article.title ? withBrand(stripBrand(article.title)) : article.title,
     description: article.description,
     heading: article.heading,
     content: article.content,
@@ -441,24 +471,32 @@ export function getUtilityRoutes() {
 
   const pages = utilities.map((utility) => {
     const where = utility.stateCodes.map((code) => STATE_NAMES[code]).join(', ');
+
+    // The subtitle earns its place by saying what makes the page different, but
+    // not at the cost of a truncated result, so it is used only while the whole
+    // title still fits with the brand on it.
+    const longTitle = withBrand(`${utility.shortName} Electricity Rates: Delivery vs Supply`);
+    const title = longTitle.includes(SITE_NAME)
+      ? longTitle
+      : withBrand(`${utility.shortName} Electricity Rates and Delivery`);
+
+    // Utilities spanning several states pushed the description past the width a
+    // snippet shows. The short form keeps the correction, which is the whole
+    // point of the page, and drops the state list the H1 already gives.
+    const longDescription =
+      `${utility.shortName} delivers power in ${where} — it does not set your energy rate. ` +
+      `What it charges for, and the plans you can buy instead.`;
+    const description =
+      longDescription.length <= DESCRIPTION_MAX
+        ? longDescription
+        : `${utility.shortName} delivers your power but does not set your energy rate. ` +
+          `What it charges for, and the plans you can buy instead.`;
+
     return {
       type: 'utility',
       path: utility.path,
-      // The name people search is the utility's, so it leads. "Rates" is in the
-      // query too, and the page does answer it — by explaining which half of the
-      // bill the utility actually controls.
-      // Short name in the title: "Oncor Electric Delivery Electricity Rates" ran
-      // to 79 characters and was truncated in results. The name people type is
-      // the short one anyway.
-      // The subtitle earns its place by saying what makes the page different,
-      // but not at the cost of a truncated result. Long utility names drop it.
-      title:
-        `${utility.shortName} Electricity Rates: Delivery vs Supply | Electric Scouts`.length <= 70
-          ? `${utility.shortName} Electricity Rates: Delivery vs Supply | Electric Scouts`
-          : `${utility.shortName} Electricity Rates and Delivery | Electric Scouts`,
-      description:
-        `${utility.shortName} delivers power in ${where} — it does not set your energy rate. ` +
-        `What it charges for, and the plans you can buy instead.`,
+      title,
+      description,
       heading: `${utility.name} Electricity Rates`,
       // Delivery territories change far more slowly than plan prices, and the
       // page's own figures come from the state snapshot, so it does not need
@@ -516,6 +554,9 @@ export function getStaticRoutes() {
       type: path === '/' ? 'home' : 'static',
       ...route,
       path,
+      // Hand-written titles go through the same measurement as the generated
+      // ones, so the brand is dropped rather than the distinguishing tail.
+      title: withBrand(stripBrand(route.title)),
       heading: STATIC_HEADINGS[path],
     };
   });
@@ -541,9 +582,9 @@ export const ALIAS_ROUTES = [
     type: 'alias',
     path: '/landing',
     canonical: '/',
-    title: "Electric Scouts | Stop Overpaying for Electricity — We'll Prove It",
+    title: "Compare Electricity Rates in 12 States | Electric Scouts",
     description:
-      "Compare electricity plans across the 12 US states where you can choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
+      "Compare electricity plans across the 12 US states where you choose your supplier. Enter a ZIP code or upload a bill to see what you pay and what is available.",
     heading: 'Stop Overpaying for Electricity',
   },
 ];

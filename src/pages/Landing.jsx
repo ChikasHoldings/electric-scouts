@@ -31,7 +31,7 @@ export default function Landing() {
   const faqs = [
     {
       question: "How much can I save by switching electricity providers?",
-      answer: "The average Electric Scouts customer saves $67 per month, or over $800 per year, by comparing rates and switching to a better-matched plan. Your actual savings depend on your current rate and usage."
+      answer: "It depends entirely on what you pay now and how much you use. We do not publish an average saving because we hold plan rates, not customer bills — what we can show you is every rate available at your address, next to what you are paying, so you can do that subtraction yourself."
     },
     {
       question: "What is the Bill Analyzer and how does it work?",
@@ -50,7 +50,7 @@ export default function Landing() {
   return (
     <>
     <SEOHead
-      title="Electric Scouts | Stop Overpaying for Electricity — We'll Prove It"
+      title="Compare Electricity Rates in 12 States | Electric Scouts"
       description={`Upload your bill or enter your ZIP. Electric Scouts analyzes your usage, exposes hidden charges, and matches you with the lowest rate from ${MARKET_TOTALS.providersWithPlans} suppliers across ${MARKET_TOTALS.states} states. Free Bill Analyzer included.`}
       canonical="/"
       keywords="compare electricity rates, bill analyzer, electricity providers, energy comparison, electricity plans, save on electricity, deregulated electricity"

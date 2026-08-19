@@ -381,6 +381,371 @@
       "source": "/texaselectricity",
       "destination": "/texas-electricity",
       "permanent": true
+    },
+    {
+      "source": "/learn/1",
+      "destination": "/learn/deregulated-electricity-markets",
+      "permanent": true
+    },
+    {
+      "source": "/learn/2",
+      "destination": "/learn/how-to-compare-electricity-rates",
+      "permanent": true
+    },
+    {
+      "source": "/learn/3",
+      "destination": "/learn/fixed-vs-variable-rate-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/learn/4",
+      "destination": "/learn/green-energy-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/5",
+      "destination": "/learn/business-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/6",
+      "destination": "/learn/average-electric-bill-by-state",
+      "permanent": true
+    },
+    {
+      "source": "/learn/7",
+      "destination": "/learn/how-to-switch-electricity-providers",
+      "permanent": true
+    },
+    {
+      "source": "/learn/8",
+      "destination": "/learn/cheapest-electricity-plans-texas",
+      "permanent": true
+    },
+    {
+      "source": "/learn/9",
+      "destination": "/learn/no-deposit-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/10",
+      "destination": "/learn/how-to-read-your-electricity-bill",
+      "permanent": true
+    },
+    {
+      "source": "/learn/11",
+      "destination": "/learn/best-electricity-plans-for-apartments",
+      "permanent": true
+    },
+    {
+      "source": "/learn/12",
+      "destination": "/learn/solar-vs-traditional-electricity-cost",
+      "permanent": true
+    },
+    {
+      "source": "/learn/13",
+      "destination": "/learn/electricity-rates-forecast",
+      "permanent": true
+    },
+    {
+      "source": "/learn/14",
+      "destination": "/learn/how-to-lower-your-electric-bill",
+      "permanent": true
+    },
+    {
+      "source": "/learn/15",
+      "destination": "/learn/electricity-deregulation-explained",
+      "permanent": true
+    },
+    {
+      "source": "/learn/16",
+      "destination": "/learn/texas-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/17",
+      "destination": "/learn/illinois-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/18",
+      "destination": "/learn/ohio-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/19",
+      "destination": "/learn/pennsylvania-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/20",
+      "destination": "/learn/new-york-electricity-rates-esco-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/21",
+      "destination": "/learn/new-jersey-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/22",
+      "destination": "/learn/maryland-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/23",
+      "destination": "/learn/massachusetts-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/24",
+      "destination": "/learn/connecticut-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/25",
+      "destination": "/learn/maine-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/26",
+      "destination": "/learn/new-hampshire-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/27",
+      "destination": "/learn/rhode-island-electricity-rates-guide",
+      "permanent": true
+    },
+    {
+      "source": "/learn/28",
+      "destination": "/learn/cheapest-electricity-plans-houston",
+      "permanent": true
+    },
+    {
+      "source": "/learn/29",
+      "destination": "/learn/dallas-fort-worth-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/30",
+      "destination": "/learn/comed-alternatives-chicago",
+      "permanent": true
+    },
+    {
+      "source": "/learn/31",
+      "destination": "/learn/peco-alternatives-philadelphia",
+      "permanent": true
+    },
+    {
+      "source": "/learn/32",
+      "destination": "/learn/coned-alternatives-nyc",
+      "permanent": true
+    },
+    {
+      "source": "/learn/33",
+      "destination": "/learn/cps-energy-san-antonio-explained",
+      "permanent": true
+    },
+    {
+      "source": "/learn/34",
+      "destination": "/learn/austin-energy-explained",
+      "permanent": true
+    },
+    {
+      "source": "/learn/35",
+      "destination": "/learn/columbus-ohio-electricity-rates",
+      "permanent": true
+    },
+    {
+      "source": "/learn/36",
+      "destination": "/learn/bge-alternatives-baltimore",
+      "permanent": true
+    },
+    {
+      "source": "/learn/37",
+      "destination": "/learn/eversource-alternatives-boston",
+      "permanent": true
+    },
+    {
+      "source": "/learn/38",
+      "destination": "/learn/txu-vs-reliant-which-is-better",
+      "permanent": true
+    },
+    {
+      "source": "/learn/39",
+      "destination": "/learn/green-mountain-energy-review",
+      "permanent": true
+    },
+    {
+      "source": "/learn/40",
+      "destination": "/learn/octopus-energy-review",
+      "permanent": true
+    },
+    {
+      "source": "/learn/41",
+      "destination": "/learn/just-energy-review",
+      "permanent": true
+    },
+    {
+      "source": "/learn/42",
+      "destination": "/learn/rhythm-energy-review",
+      "permanent": true
+    },
+    {
+      "source": "/learn/43",
+      "destination": "/learn/prepaid-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/44",
+      "destination": "/learn/free-nights-and-weekends-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/45",
+      "destination": "/learn/month-to-month-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/46",
+      "destination": "/learn/summer-electricity-bills",
+      "permanent": true
+    },
+    {
+      "source": "/learn/47",
+      "destination": "/learn/winter-heating-costs-electric-vs-gas",
+      "permanent": true
+    },
+    {
+      "source": "/learn/48",
+      "destination": "/learn/best-time-to-switch-electricity-providers",
+      "permanent": true
+    },
+    {
+      "source": "/learn/49",
+      "destination": "/learn/moving-to-texas-electricity-setup",
+      "permanent": true
+    },
+    {
+      "source": "/learn/50",
+      "destination": "/learn/moving-set-up-electricity-service",
+      "permanent": true
+    },
+    {
+      "source": "/learn/51",
+      "destination": "/learn/ercot-electricity-market-explained",
+      "permanent": true
+    },
+    {
+      "source": "/learn/52",
+      "destination": "/learn/cheapest-electricity-rates-by-state",
+      "permanent": true
+    },
+    {
+      "source": "/learn/53",
+      "destination": "/learn/how-to-negotiate-your-electricity-rate",
+      "permanent": true
+    },
+    {
+      "source": "/learn/54",
+      "destination": "/learn/electricity-usage-calculator",
+      "permanent": true
+    },
+    {
+      "source": "/learn/55",
+      "destination": "/learn/smart-thermostat-savings",
+      "permanent": true
+    },
+    {
+      "source": "/learn/56",
+      "destination": "/learn/time-of-use-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/57",
+      "destination": "/learn/what-is-a-kwh",
+      "permanent": true
+    },
+    {
+      "source": "/learn/58",
+      "destination": "/learn/electricity-delivery-charges-explained",
+      "permanent": true
+    },
+    {
+      "source": "/learn/59",
+      "destination": "/learn/ppa-vs-buying-solar",
+      "permanent": true
+    },
+    {
+      "source": "/learn/60",
+      "destination": "/learn/community-solar-explained",
+      "permanent": true
+    },
+    {
+      "source": "/learn/61",
+      "destination": "/learn/ev-charging-at-home-cost",
+      "permanent": true
+    },
+    {
+      "source": "/learn/62",
+      "destination": "/learn/electricity-scams",
+      "permanent": true
+    },
+    {
+      "source": "/learn/63",
+      "destination": "/learn/electricity-customer-rights",
+      "permanent": true
+    },
+    {
+      "source": "/learn/64",
+      "destination": "/learn/electricity-contract-expires",
+      "permanent": true
+    },
+    {
+      "source": "/learn/65",
+      "destination": "/learn/how-to-file-electricity-complaint",
+      "permanent": true
+    },
+    {
+      "source": "/learn/66",
+      "destination": "/learn/small-business-electricity-rates",
+      "permanent": true
+    },
+    {
+      "source": "/learn/67",
+      "destination": "/learn/restaurant-electricity-costs",
+      "permanent": true
+    },
+    {
+      "source": "/learn/68",
+      "destination": "/learn/office-building-electricity-rates",
+      "permanent": true
+    },
+    {
+      "source": "/learn/69",
+      "destination": "/learn/demand-charges-explained",
+      "permanent": true
+    },
+    {
+      "source": "/learn/70",
+      "destination": "/learn/business-solar-vs-grid-electricity",
+      "permanent": true
+    },
+    {
+      "source": "/learn/106",
+      "destination": "/learn/nashua-nh-electricity-rates",
+      "permanent": true
+    },
+    {
+      "source": "/learn/107",
+      "destination": "/learn/concord-nh-electricity-rates",
+      "permanent": true
+    },
+    {
+      "source": "/learn/108",
+      "destination": "/learn/warwick-ri-electricity-rates",
+      "permanent": true
     }
   ],
   "rewrites": [

@@ -58,7 +58,6 @@ export const cityData = {
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 36,
     neighborhoods: ["Downtown Chicago", "Lincoln Park", "Wicker Park", "River North", "Loop", "Gold Coast", "West Loop"],
     description: "Chicago residents have access to competitive electricity rates from competing suppliers in the ComEd service territory.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Aurora-IL": {
     state: "Illinois", stateCode: "IL", county: "Kane County", population: "180,000+",
@@ -66,7 +65,6 @@ export const cityData = {
     avgRate: "9.9¢/kWh", avgMonthlyBill: "$143", providers: 34,
     neighborhoods: ["Downtown Aurora", "Fox Valley", "Far East", "West Aurora", "North Aurora", "Indian Prairie", "Aurora Highlands"],
     description: "Aurora residents benefit from competitive electricity rates with competing suppliers in the western Chicago suburbs.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Naperville-IL": {
     state: "Illinois", stateCode: "IL", county: "DuPage County", population: "149,000+",
@@ -408,7 +406,6 @@ export const cityData = {
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 36,
     neighborhoods: ["Downtown Chicago", "Lincoln Park", "Wicker Park", "River North", "Loop", "Gold Coast", "West Loop"],
     description: "Chicago residents have access to competitive electricity rates from competing suppliers in the ComEd service territory.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Aurora": {
     state: "Illinois", stateCode: "IL", county: "Kane County", population: "180,000+",
@@ -416,7 +413,6 @@ export const cityData = {
     avgRate: "9.9¢/kWh", avgMonthlyBill: "$143", providers: 34,
     neighborhoods: ["Downtown Aurora", "Fox Valley", "Far East", "West Aurora", "North Aurora", "Indian Prairie", "Aurora Highlands"],
     description: "Aurora residents benefit from competitive electricity rates with competing suppliers in the western Chicago suburbs.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Naperville": {
     state: "Illinois", stateCode: "IL", county: "DuPage County", population: "149,000+",
@@ -696,7 +692,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$110", providers: 30,
     neighborhoods: ["Merriman Valley", "Chapel Hill", "Highland Square", "Goodyear Heights", "Firestone Park", "Ellet"],
     description: "Akron has a deregulated electricity market, offering residents a choice of competing suppliers, leading to competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Annapolis-MD": {
     state: "Maryland", stateCode: "MD", county: "Anne Arundel", population: "40,812+",
@@ -704,7 +699,6 @@ export const cityData = {
     avgRate: "12.5¢/kWh", avgMonthlyBill: "$135", providers: 25,
     neighborhoods: ["Eastport", "West Annapolis", "Downtown Annapolis", "Admiral Heights", "Annapolis Roads", "Murray Hill"],
     description: "Annapolis residents can take advantage of Maryland's deregulated electricity market, choosing from over 25 retail electric suppliers to find competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Arlington-TX": {
     state: "Texas", stateCode: "TX", county: "Tarrant", population: "394,266+",
@@ -712,7 +706,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["West Arlington", "North Arlington", "Southwest Arlington", "Southeast Arlington", "East Arlington", "Central Arlington"],
     description: "As part of Texas's deregulated electricity market, Arlington residents can choose from over 40 competing providers, ensuring a wide range of competitive energy plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Auburn-ME": {
     state: "Maine", stateCode: "ME", county: "Androscoggin", population: "24,000+",
@@ -720,7 +713,6 @@ export const cityData = {
     avgRate: "16.5¢/kWh", avgMonthlyBill: "$149", providers: 14,
     neighborhoods: ["Auburn Southeast", "Auburn Plains", "East Auburn", "Haskell Corner", "Lewiston Junction", "Stevens Mill"],
     description: "Electricity in Auburn is part of Maine's deregulated energy market, offering residents a choice among approximately 14 competitive electricity providers.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Augusta-ME": {
     state: "Maine", stateCode: "ME", county: "Kennebec County", population: "19,000+",
@@ -728,7 +720,6 @@ export const cityData = {
     avgRate: "16.5¢/kWh", avgMonthlyBill: "$135", providers: 14,
     neighborhoods: ["Pelton Hill", "Augusta East", "North Augusta", "Summerhaven", "City Center", "Augusta Northeast"],
     description: "As the capital of Maine, Augusta benefits from a deregulated electricity market, offering residents a choice of competing suppliers for competitive rates.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Biddeford-ME": {
     state: "Maine", stateCode: "ME", county: "York County", population: "22,000+",
@@ -736,7 +727,6 @@ export const cityData = {
     avgRate: "12.8¢/kWh", avgMonthlyBill: "$185", providers: 15,
     neighborhoods: ["Downtown Biddeford", "Pool", "Hills Beach", "Biddeford Pool", "West Street", "Alfred Road"],
     description: "Biddeford residents in York County can compare electricity rates from competing suppliers in Maine's deregulated energy market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "South Portland-ME": {
     state: "Maine", stateCode: "ME", county: "Cumberland County", population: "26,000+",
@@ -744,7 +734,6 @@ export const cityData = {
     avgRate: "12.5¢/kWh", avgMonthlyBill: "$181", providers: 16,
     neighborhoods: ["Mill Creek", "Willard Beach", "Knightville", "Cash Corner", "Redbank", "Ferry Village"],
     description: "South Portland residents benefit from competing electricity suppliers offering competitive rates in Cumberland County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Bethlehem-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Northampton and Lehigh", population: "80,000+",
@@ -752,7 +741,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 30,
     neighborhoods: ["Historic Bethlehem", "South Bethlehem", "West Side", "East Side", "North Side", "Bethlehem Township"],
     description: "As a city in a deregulated state, Bethlehem residents can choose from over 30 competing electricity providers, ensuring a variety of rate options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Cambridge-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Middlesex County", population: "118,403+",
@@ -760,7 +748,6 @@ export const cityData = {
     avgRate: "19.5¢/kWh", avgMonthlyBill: "$173", providers: 20,
     neighborhoods: ["East Cambridge", "Cambridgeport", "Mid-Cambridge", "North Cambridge", "West Cambridge", "Riverside"],
     description: "As a city in a deregulated state, Cambridge residents can choose from competing electricity suppliers, fostering a competitive market for electricity rates.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Camden-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Camden", population: "71,791+",
@@ -768,7 +755,6 @@ export const cityData = {
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
     neighborhoods: ["Cooper Grant", "Cramer Hill", "Fairview", "Gateway", "Lanning Square", "Parkside"],
     description: "Camden has a deregulated electricity market with competing suppliers, offering residents a variety of choices for their energy needs.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Canton-OH": {
     state: "Ohio", stateCode: "OH", county: "Stark County", population: "70,000+",
@@ -776,7 +762,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$85", providers: 30,
     neighborhoods: ["Washington Square", "Avondale", "Martindale Park", "Historic Ridgewood", "Sippo Lake", "Meyers Lake"],
     description: "Canton's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Champaign-IL": {
     state: "Illinois", stateCode: "IL", county: "Champaign", population: "88,302+",
@@ -784,7 +769,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$115", providers: 34,
     neighborhoods: ["Robeson Meadows West-Prairie Ridge Place", "Pembroke Point", "Cherry Hills", "Ashland Park", "Boulder Ridge", "Clark Park"],
     description: "Champaign has a deregulated electricity market with competing suppliers, offering residents a wide range of choices for their energy needs.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Columbia-MD": {
     state: "Maryland", stateCode: "MD", county: "Howard County", population: "104,681+",
@@ -792,7 +776,6 @@ export const cityData = {
     avgRate: "12.5¢/kWh", avgMonthlyBill: "$113", providers: 25,
     neighborhoods: ["Allview Estates", "Banneker Place", "Beech Creek", "Clarys Forest", "Cross Fox", "Bryant Gardens"],
     description: "As part of Maryland's deregulated energy market, residents of Columbia can choose from over 25 competitive electricity providers, ensuring a variety of pricing and plan options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Corpus Christi-TX": {
     state: "Texas", stateCode: "TX", county: "Nueces", population: "317,863+",
@@ -800,7 +783,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$98", providers: 40,
     neighborhoods: ["Downtown", "Calallen", "South Side", "North Padre Island", "Flour Bluff", "Bay Area"],
     description: "As a city in the deregulated Texas electricity market, Corpus Christi offers residents a choice of over 40 retail electricity providers, promoting competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Dayton-OH": {
     state: "Ohio", stateCode: "OH", county: "Montgomery", population: "136,000+",
@@ -808,7 +790,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$83", providers: 30,
     neighborhoods: ["Downtown Dayton", "Oregon District", "South Park", "Dayton View", "Huffman", "McPherson Town"],
     description: "Dayton has a deregulated electricity market with competing suppliers, offering residents a wide range of choices for their energy needs.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Dover-NH": {
     state: "New Hampshire", stateCode: "NH", county: "Strafford County", population: "32,741+",
@@ -816,7 +797,6 @@ export const cityData = {
     avgRate: "17.5¢/kWh", avgMonthlyBill: "$105", providers: 15,
     neighborhoods: ["Downtown Dover", "Garrison Village", "Bellamy Woods", "Back River Road Area", "Dover Point", "City Center"],
     description: "As a city in New Hampshire's deregulated electricity market, Dover residents can choose from over 15 competitive energy suppliers, fostering a variety of rate options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "East Providence-RI": {
     state: "Rhode Island", stateCode: "RI", county: "Providence", population: "47,139+",
@@ -824,7 +804,6 @@ export const cityData = {
     avgRate: "19.5¢/kWh", avgMonthlyBill: "$175", providers: 15,
     neighborhoods: ["Rumford", "Phillipsdale", "Boyden Heights", "Kent Heights", "Riverside", "Watchemoket"],
     description: "East Providence's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Edison-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Middlesex", population: "107,588+",
@@ -832,7 +811,6 @@ export const cityData = {
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
     neighborhoods: ["Clara Barton", "Oak Tree", "Menlo Park", "North Edison", "New Durham", "Stephenville"],
     description: "Edison has a deregulated electricity market with competing suppliers, offering residents a wide range of choices for their energy supply.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "El Paso-TX": {
     state: "Texas", stateCode: "TX", county: "El Paso County", population: "865,657+",
@@ -840,7 +818,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Album Park", "Castner Heights", "Cielo Vista", "Mesa Hills", "North Hills", "Mountain View"],
     description: "El Paso has a deregulated electricity market with competing suppliers, giving residents the power to choose their energy supplier.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Elgin-IL": {
     "state": "Illinois", "stateCode": "IL", "county": "Kane County", "population": "114,797+",
@@ -856,7 +833,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 30,
     neighborhoods: ["Downtown", "West Bayfront", "East Bayfront", "Glenwood", "Frontier", "Little Italy"],
     description: "As a city in Pennsylvania, Erie benefits from a deregulated electricity market, offering residents a choice from around 30 competitive providers.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Frisco-TX": {
     state: "Texas", stateCode: "TX", county: "Collin and Denton", population: "219,000+",
@@ -864,7 +840,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Starwood", "Phillips Creek Ranch", "Newman Village", "Trails of Frisco", "Panther Creek", "Chapel Creek"],
     description: "As part of Texas's deregulated electricity market, Frisco residents can choose from competing suppliers, fostering competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Germantown-MD": {
     state: "Maryland", stateCode: "MD", county: "Montgomery", population: "91,000+",
@@ -872,7 +847,6 @@ export const cityData = {
     avgRate: "12.5¢/kWh", avgMonthlyBill: "$115", providers: 25,
     neighborhoods: ["Germantown Estates", "Germantown Park", "Greenfield Commons", "Gunners Lake Village", "Kingsview Village", "Neelsville"],
     description: "As a city in a state with a deregulated electricity market, Germantown residents can choose from over 25 competing energy providers, fostering competitive rates.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Hoboken-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Hudson", population: "59,000+",
@@ -880,7 +854,6 @@ export const cityData = {
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$120", providers: 25,
     neighborhoods: ["Castle Point", "Downtown Hoboken", "Southwest Hoboken", "The Waterfront", "Uptown Hoboken", "Midtown"],
     description: "Hoboken's deregulated electricity market offers residents a choice of competing suppliers, fostering competition and potentially lower rates.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Irving-TX": {
     state: "Texas", stateCode: "TX", county: "Dallas County", population: "256,684+",
@@ -888,7 +861,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$95", providers: 40,
     neighborhoods: ["Las Colinas", "Valley Ranch", "Hackberry Creek", "Song", "Lamar Brown", "University Hills"],
     description: "Irving is a city in the deregulated energy market of Texas, offering residents a choice of competing electricity suppliers.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Killeen-TX": {
     state: "Texas", stateCode: "TX", county: "Bell", population: "153,095+",
@@ -896,7 +868,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$112", providers: 40,
     neighborhoods: ["Yowell Ranch", "White Rock Estates", "Sunflower Estates", "Trimmier Estates", "The Highlands at Saegert", "Bellaire Heights"],
     description: "As a city in the deregulated Texas electricity market, Killeen offers residents a choice of competing suppliers, fostering competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Lancaster-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Lancaster", population: "58,039+",
@@ -904,7 +875,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$125", providers: 30,
     neighborhoods: ["West End", "Chestnut Hill", "Stadium District", "Cabbage Hill", "Southeast Lancaster", "Downtown"],
     description: "Lancaster has a deregulated electricity market, offering residents a choice among approximately 30 competitive suppliers for their energy needs.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Lowell-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Middlesex", population: "120,418+",
@@ -912,7 +882,6 @@ export const cityData = {
     avgRate: "19.5¢/kWh", avgMonthlyBill: "$117", providers: 20,
     neighborhoods: ["Pawtucketville", "Centralville", "Highlands", "The Acre", "Downtown", "Belvidere"],
     description: "As a city in a state with a deregulated electricity market, Lowell offers residents a choice of around 20 competing energy providers, fostering competitive rates.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Lubbock-TX": {
     state: "Texas", stateCode: "TX", county: "Lubbock", population: "272,086+",
@@ -920,7 +889,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Tech Terrace", "Maxey Park", "Heart of Lubbock", "Wheelock and Monterey", "Maedgen Area", "Rush"],
     description: "In Lubbock, the deregulated electricity market offers residents a wide array of choices, with suppliers competing to offer competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "McKinney-TX": {
     state: "Texas", stateCode: "TX", county: "Collin County", population: "200,000+",
@@ -928,7 +896,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Adriatica Villa District", "Arbor Glen", "Arbor Hollow", "Aspendale", "Auburn Hills", "Avalon"],
     description: "McKinney is a city in the deregulated energy market of Texas, offering residents a choice of competing electricity suppliers.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Midland-TX": {
     state: "Texas", stateCode: "TX", county: "Midland County", population: "170,000+",
@@ -936,7 +903,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 40,
     neighborhoods: ["Green Tree", "Grassland Estates", "Saddle Club", "Briarwood", "Trinity", "Kimber-Lea"],
     description: "Midland has a deregulated electricity market with competing suppliers, offering residents a wide range of competitive energy plans to choose from.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "New Bedford-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Bristol", population: "101,000+",
@@ -944,7 +910,6 @@ export const cityData = {
     avgRate: "20.5¢/kWh", avgMonthlyBill: "$185", providers: 22,
     neighborhoods: ["Acushnet Heights", "Far North End", "South End", "West End", "Downtown", "Clark's Point"],
     description: "Electricity in New Bedford is part of a deregulated market, offering residents a choice among approximately 22 competitive suppliers. This provides options for different rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Brockton-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Plymouth County", population: "105,000+",
@@ -952,7 +917,6 @@ export const cityData = {
     avgRate: "14.2¢/kWh", avgMonthlyBill: "$206", providers: 22,
     neighborhoods: ["Downtown Brockton", "Campello", "Montello", "East Side", "West Side", "Avon"],
     description: "Brockton residents in Plymouth County can compare electricity rates from competing suppliers to find savings on their energy bills.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Fall River-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Bristol County", population: "93,000+",
@@ -960,7 +924,6 @@ export const cityData = {
     avgRate: "14.5¢/kWh", avgMonthlyBill: "$210", providers: 21,
     neighborhoods: ["Downtown Fall River", "Highlands", "Flint", "South End", "Steep Brook", "Globe Corners"],
     description: "Fall River residents in Bristol County benefit from competing electricity suppliers offering competitive alternatives to Eversource rates.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Quincy-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Norfolk County", population: "101,000+",
@@ -968,7 +931,6 @@ export const cityData = {
     avgRate: "14.0¢/kWh", avgMonthlyBill: "$203", providers: 24,
     neighborhoods: ["Downtown Quincy", "Quincy Center", "Wollaston", "North Quincy", "South Quincy", "Marina Bay"],
     description: "Quincy, the City of Presidents, offers residents access to competing electricity suppliers with competitive rates south of Boston.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Somerville-MA": {
     state: "Massachusetts", stateCode: "MA", county: "Middlesex County", population: "81,000+",
@@ -976,7 +938,6 @@ export const cityData = {
     avgRate: "14.1¢/kWh", avgMonthlyBill: "$204", providers: 24,
     neighborhoods: ["Davis Square", "Union Square", "Assembly Row", "Ball Square", "Winter Hill", "East Somerville"],
     description: "Somerville residents near Boston benefit from competing electricity suppliers offering competitive rates in Middlesex County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Norwalk-CT": {
     state: "Connecticut", stateCode: "CT", county: "Fairfield", population: "91,000+",
@@ -984,7 +945,6 @@ export const cityData = {
     avgRate: "22.8¢/kWh", avgMonthlyBill: "$161", providers: 18,
     neighborhoods: ["Broad River", "South Norwalk", "East Norwalk", "West Norwalk", "Silvermine", "Cranbury"],
     description: "Norwalk has a deregulated electricity market, offering residents a choice among 18 competitive providers for their energy needs.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Pawtucket-RI": {
     state: "Rhode Island", stateCode: "RI", county: "Providence", population: "75,604+",
@@ -992,7 +952,6 @@ export const cityData = {
     avgRate: "19.5¢/kWh", avgMonthlyBill: "$135", providers: 15,
     neighborhoods: ["Darlington", "Woodlawn", "Quality Hill", "Pleasant View", "Fairlawn", "Oak Hill"],
     description: "Electricity in Pawtucket is part of Rhode Island's deregulated energy market, offering residents a choice among approximately 15 competitive electric suppliers.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Newport-RI": {
     state: "Rhode Island", stateCode: "RI", county: "Newport County", population: "25,000+",
@@ -1000,7 +959,6 @@ export const cityData = {
     avgRate: "13.8¢/kWh", avgMonthlyBill: "$200", providers: 18,
     neighborhoods: ["Downtown Newport", "Thames Street", "Bellevue Avenue", "Ocean Drive", "Middletown", "Portsmouth"],
     description: "Newport residents can compare electricity rates from competing suppliers to find savings in Rhode Island's deregulated energy market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Woonsocket-RI": {
     state: "Rhode Island", stateCode: "RI", county: "Providence County", population: "44,000+",
@@ -1008,7 +966,6 @@ export const cityData = {
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$195", providers: 19,
     neighborhoods: ["Downtown Woonsocket", "Social", "Bernon", "Fairmount", "Globe", "Hamlet"],
     description: "Woonsocket residents in Providence County benefit from competing electricity suppliers with competitive rates in northern Rhode Island.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Peoria-IL": {
     state: "Illinois", stateCode: "IL", county: "Peoria", population: "113,150+",
@@ -1016,7 +973,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$115", providers: 34,
     neighborhoods: ["Downtown", "North Peoria", "West Peoria", "East Peoria", "Morton", "Washington"],
     description: "As a resident of Peoria, you live in a deregulated electricity market, giving you the power to choose from over 34 different energy providers.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Plano-TX": {
     state: "Texas", stateCode: "TX", county: "Collin", population: "285,494+",
@@ -1024,7 +980,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$110", providers: 38,
     neighborhoods: ["Willow Bend", "Whiffletree", "Normandy Estates", "Lakeside on Preston", "Indian Creek", "Gleneagles"],
     description: "Plano's deregulated electricity market offers residents a wide selection of energy plans from competing suppliers, ensuring competitive rates and options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Amarillo-TX": {
     state: "Texas", stateCode: "TX", county: "Potter County", population: "200,000+",
@@ -1032,7 +987,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$133", providers: 35,
     neighborhoods: ["Downtown Amarillo", "Wolflin", "Sleepy Hollow", "Westover", "Bivins", "San Jacinto", "Belmar"],
     description: "Amarillo, located in the Texas Panhandle, offers residents access to competing electricity suppliers with competitive rates in the deregulated market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Beaumont-TX": {
     state: "Texas", stateCode: "TX", county: "Jefferson County", population: "115,000+",
@@ -1040,7 +994,6 @@ export const cityData = {
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 32,
     neighborhoods: ["Downtown Beaumont", "Old Town", "West End", "North End", "Pear Orchard", "Calder Highlands", "Amelia"],
     description: "Beaumont residents in the Golden Triangle region benefit from competitive electricity rates with competing suppliers serving Jefferson County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Brownsville-TX": {
     state: "Texas", stateCode: "TX", county: "Cameron County", population: "186,000+",
@@ -1048,7 +1001,6 @@ export const cityData = {
     avgRate: "9.4¢/kWh", avgMonthlyBill: "$136", providers: 28,
     neighborhoods: ["Downtown Brownsville", "Los Ebanos", "West Brownsville", "Palm Boulevard", "Southmost", "Four Corners", "Rancho Viejo"],
     description: "Brownsville, at the southern tip of Texas, offers residents access to competing electricity suppliers with plans suited to the Rio Grande Valley climate.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Denton-TX": {
     state: "Texas", stateCode: "TX", county: "Denton County", population: "150,000+",
@@ -1056,7 +1008,6 @@ export const cityData = {
     avgRate: "9.1¢/kWh", avgMonthlyBill: "$131", providers: 40,
     neighborhoods: ["Downtown Denton", "Rayzor Ranch", "Robson Ranch", "Corinth", "Highland Village", "Argyle", "University"],
     description: "Denton, a vibrant college town north of Dallas, provides residents with competing electricity suppliers and some of the most competitive rates in North Texas.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Garland-TX": {
     state: "Texas", stateCode: "TX", county: "Dallas County", population: "246,000+",
@@ -1064,7 +1015,6 @@ export const cityData = {
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 42,
     neighborhoods: ["Downtown Garland", "Firewheel", "Duck Creek", "Eastern Hills", "Buckingham", "Embree", "Spring Creek"],
     description: "Garland residents enjoy access to competing electricity suppliers in the Dallas-Fort Worth metroplex with competitive fixed and variable rate plans.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Grand Prairie-TX": {
     state: "Texas", stateCode: "TX", county: "Dallas County", population: "196,000+",
@@ -1072,7 +1022,6 @@ export const cityData = {
     avgRate: "9.0¢/kWh", avgMonthlyBill: "$130", providers: 41,
     neighborhoods: ["Downtown Grand Prairie", "Mira Lagos", "Lake Ridge", "Westchester", "Dalworth Park", "South Grand Prairie", "Lone Star Park"],
     description: "Grand Prairie, centrally located between Dallas and Fort Worth, offers residents competing electricity suppliers with diverse plan options.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Laredo-TX": {
     state: "Texas", stateCode: "TX", county: "Webb County", population: "261,000+",
@@ -1080,7 +1029,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 25,
     neighborhoods: ["Downtown Laredo", "Del Mar", "Heights", "Mines Road", "North Laredo", "Plantation", "Santa Rita"],
     description: "Laredo, one of the fastest-growing cities in Texas, provides residents with competing electricity suppliers and competitive rates along the border.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "McAllen-TX": {
     state: "Texas", stateCode: "TX", county: "Hidalgo County", population: "142,000+",
@@ -1088,7 +1036,6 @@ export const cityData = {
     avgRate: "9.3¢/kWh", avgMonthlyBill: "$135", providers: 27,
     neighborhoods: ["Downtown McAllen", "North McAllen", "Sharyland", "Tres Lagos", "La Plaza Mall Area", "Nolana", "Trenton"],
     description: "McAllen residents in the Rio Grande Valley benefit from competing electricity suppliers offering plans designed for the South Texas climate.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Round Rock-TX": {
     state: "Texas", stateCode: "TX", county: "Williamson County", population: "133,000+",
@@ -1096,7 +1043,6 @@ export const cityData = {
     avgRate: "9.2¢/kWh", avgMonthlyBill: "$133", providers: 38,
     neighborhoods: ["Downtown Round Rock", "Old Settlers Park", "Brushy Creek", "Cat Hollow", "Teravista", "Forest Creek", "Paloma Lake"],
     description: "Round Rock, a thriving suburb of Austin, offers residents access to competing electricity suppliers with competitive rates in Williamson County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Sugar Land-TX": {
     state: "Texas", stateCode: "TX", county: "Fort Bend County", population: "111,000+",
@@ -1104,7 +1050,6 @@ export const cityData = {
     avgRate: "8.9¢/kWh", avgMonthlyBill: "$128", providers: 43,
     neighborhoods: ["Sugar Land Town Square", "New Territory", "First Colony", "Telfair", "Riverstone", "Greatwood", "Commonwealth"],
     description: "Sugar Land, one of Houston's most affluent suburbs, provides residents with competing electricity suppliers and some of the best rates in Fort Bend County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Reading-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Berks County", population: "95,112+",
@@ -1112,7 +1057,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 30,
     neighborhoods: ["East Reading", "Glenside", "College Heights", "Northwest Reading", "Northeast Reading", "Centre Park"],
     description: "Reading, located in Berks County, is a city with a deregulated electricity market, offering residents a choice from over 30 competitive energy providers.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Rochester-NH": {
     state: "New Hampshire", stateCode: "NH", county: "Strafford", population: "32,000+",
@@ -1120,7 +1064,6 @@ export const cityData = {
     avgRate: "17.5¢/kWh", avgMonthlyBill: "$155", providers: 15,
     neighborhoods: ["Gonic", "East Rochester", "North Rochester", "City Center", "Meaderboro Corner", "Rochester West"],
     description: "Rochester residents can take advantage of New Hampshire's deregulated electricity market, choosing from around 15 competitive providers for the best rates.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Keene-NH": {
     state: "New Hampshire", stateCode: "NH", county: "Cheshire County", population: "23,000+",
@@ -1128,7 +1071,6 @@ export const cityData = {
     avgRate: "12.0¢/kWh", avgMonthlyBill: "$174", providers: 14,
     neighborhoods: ["Downtown Keene", "West Keene", "East Side", "Swanzey", "Marlborough", "Colony Mill"],
     description: "Keene residents in Cheshire County can compare electricity rates from competing suppliers in New Hampshire's deregulated market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Laconia-NH": {
     state: "New Hampshire", stateCode: "NH", county: "Belknap County", population: "17,000+",
@@ -1136,7 +1078,6 @@ export const cityData = {
     avgRate: "12.2¢/kWh", avgMonthlyBill: "$177", providers: 14,
     neighborhoods: ["Downtown Laconia", "Weirs Beach", "Lakeport", "The Weirs", "Gilford", "Belmont"],
     description: "Laconia residents in the Lakes Region benefit from competing electricity suppliers offering competitive rates in Belknap County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Rockford-IL": {
     state: "Illinois", stateCode: "IL", county: "Winnebago", population: "148,000+",
@@ -1144,7 +1085,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$95", providers: 34,
     neighborhoods: ["Bello Reserve", "Beverly Park", "Central Park", "Chestnut", "Edgewater", "Fairgrounds"],
     description: "Rockford's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Schaumburg-IL": {
     state: "Illinois", stateCode: "IL", county: "Cook", population: "78,000+",
@@ -1152,7 +1092,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$105", providers: 34,
     neighborhoods: ["Weathersfield", "Timbercrest", "Stone Bridge Court", "Lions Gate", "Plumwood Estates", "Park St. Claire"],
     description: "Schaumburg's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Scranton-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Lackawanna County", population: "76,000+",
@@ -1160,7 +1099,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$125", providers: 30,
     neighborhoods: ["Downtown Scranton", "West Mountain", "East Mountain", "Greenridge", "Minooka", "Hill Section"],
     description: "As the county seat of Lackawanna County, Scranton boasts a deregulated electricity market with competing suppliers, offering residents a wide range of competitive energy choices.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Chester-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Delaware County", population: "34,000+",
@@ -1168,7 +1106,6 @@ export const cityData = {
     avgRate: "10.8¢/kWh", avgMonthlyBill: "$156", providers: 30,
     neighborhoods: ["Downtown Chester", "Sun Village", "Highland Gardens", "Chester Township", "Upland", "Brookhaven"],
     description: "Chester residents in Delaware County can compare electricity rates from competing suppliers in Pennsylvania's deregulated energy market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Harrisburg-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Dauphin County", population: "50,000+",
@@ -1176,7 +1113,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$152", providers: 32,
     neighborhoods: ["Downtown Harrisburg", "Midtown", "Uptown", "Italian Lake", "Allison Hill", "Shipoke", "Penbrook"],
     description: "Harrisburg, the state capital, offers residents access to competing electricity suppliers with competitive rates in Dauphin County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Norristown-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Montgomery County", population: "35,000+",
@@ -1184,7 +1120,6 @@ export const cityData = {
     avgRate: "10.6¢/kWh", avgMonthlyBill: "$153", providers: 31,
     neighborhoods: ["Downtown Norristown", "East Norriton", "West Norriton", "Plymouth Meeting", "Whitemarsh", "Bridgeport"],
     description: "Norristown residents in Montgomery County benefit from competing electricity suppliers offering competitive rates in the Philadelphia suburbs.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "State College-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Centre County", population: "42,000+",
@@ -1192,7 +1127,6 @@ export const cityData = {
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$149", providers: 26,
     neighborhoods: ["Downtown State College", "Penn State Campus", "Toftrees", "Park Forest", "Boalsburg", "Lemont"],
     description: "State College, home to Penn State University, provides residents with competing electricity suppliers and competitive rates in Centre County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Wilkes-Barre-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "Luzerne County", population: "44,000+",
@@ -1200,7 +1134,6 @@ export const cityData = {
     avgRate: "10.4¢/kWh", avgMonthlyBill: "$150", providers: 28,
     neighborhoods: ["Downtown Wilkes-Barre", "Heights", "South Wilkes-Barre", "Parsons", "Kingston", "Edwardsville"],
     description: "Wilkes-Barre residents in the Wyoming Valley benefit from competing electricity suppliers with competitive rates in Luzerne County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "York-PA": {
     state: "Pennsylvania", stateCode: "PA", county: "York County", population: "44,000+",
@@ -1208,7 +1141,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$152", providers: 30,
     neighborhoods: ["Downtown York", "Springettsbury", "West York", "North York", "Dallastown", "Red Lion"],
     description: "York residents benefit from competing electricity suppliers offering competitive fixed and variable rate plans in York County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Silver Spring-MD": {
     state: "Maryland", stateCode: "MD", county: "Montgomery", population: "81,015+",
@@ -1216,7 +1148,6 @@ export const cityData = {
     avgRate: "12.5¢/kWh", avgMonthlyBill: "$125", providers: 25,
     neighborhoods: ["Woodmoor", "Indian Spring", "Downtown Silver Spring", "East Silver Spring", "Woodside", "Clifton Park Village"],
     description: "In Silver Spring's deregulated electricity market, residents can choose from competing suppliers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Bowie-MD": {
     state: "Maryland", stateCode: "MD", county: "Prince George's County", population: "58,000+",
@@ -1224,7 +1155,6 @@ export const cityData = {
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Old Town Bowie", "Northview", "Pointer Ridge", "Whitehall", "Kenilworth", "Mitchellville"],
     description: "Bowie residents in Prince George's County can compare electricity rates from competing suppliers in Maryland's deregulated market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Gaithersburg-MD": {
     state: "Maryland", stateCode: "MD", county: "Montgomery County", population: "68,000+",
@@ -1232,7 +1162,6 @@ export const cityData = {
     avgRate: "10.3¢/kWh", avgMonthlyBill: "$149", providers: 29,
     neighborhoods: ["Olde Towne", "Kentlands", "Lakeforest", "Quince Orchard", "Washingtonian Center", "Rio"],
     description: "Gaithersburg residents in Montgomery County benefit from competing electricity suppliers with competitive rates in the DC suburbs.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Hagerstown-MD": {
     state: "Maryland", stateCode: "MD", county: "Washington County", population: "44,000+",
@@ -1240,7 +1169,6 @@ export const cityData = {
     avgRate: "10.0¢/kWh", avgMonthlyBill: "$145", providers: 25,
     neighborhoods: ["Downtown Hagerstown", "North End", "South End", "West End", "Halfway", "Funkstown"],
     description: "Hagerstown residents in Western Maryland can compare electricity rates from competing suppliers in Washington County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Waldorf-MD": {
     state: "Maryland", stateCode: "MD", county: "Charles County", population: "77,000+",
@@ -1248,7 +1176,6 @@ export const cityData = {
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 27,
     neighborhoods: ["St. Charles", "Waldorf Center", "Pinefield", "Bennsville", "White Plains", "La Plata"],
     description: "Waldorf residents in Charles County benefit from competing electricity suppliers offering competitive rates south of Washington DC.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Springfield-IL": {
     state: "Illinois", stateCode: "IL", county: "Sangamon", population: "114,394+",
@@ -1256,7 +1183,6 @@ export const cityData = {
     avgRate: "10.5¢/kWh", avgMonthlyBill: "$115", providers: 34,
     neighborhoods: ["Washington Park", "Leland Grove", "Piper Glen", "Lake Pointe", "West Koke Mill", "Enos Park"],
     description: "As the state capital, Springfield benefits from Illinois's deregulated electricity market, offering residents a choice of over 34 energy providers and fostering competitive rates.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Bloomington-IL": {
     state: "Illinois", stateCode: "IL", county: "McLean County", population: "78,000+",
@@ -1264,7 +1190,6 @@ export const cityData = {
     avgRate: "10.1¢/kWh", avgMonthlyBill: "$146", providers: 30,
     neighborhoods: ["Downtown Bloomington", "Normal", "Towanda", "East Side", "West Side", "Miller Park", "Founders Grove"],
     description: "Bloomington-Normal residents benefit from competitive electricity rates with competing suppliers in the Ameren Illinois service territory.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Cicero-IL": {
     state: "Illinois", stateCode: "IL", county: "Cook County", population: "81,000+",
@@ -1272,7 +1197,6 @@ export const cityData = {
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 35,
     neighborhoods: ["Downtown Cicero", "Grant Works", "Hawthorne Works", "Warren Park", "Clyde Park", "Liberty Park"],
     description: "Cicero residents in the Chicago suburbs have access to competing electricity suppliers in the ComEd service territory.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Decatur-IL": {
     state: "Illinois", stateCode: "IL", county: "Macon County", population: "70,000+",
@@ -1280,7 +1204,6 @@ export const cityData = {
     avgRate: "10.2¢/kWh", avgMonthlyBill: "$148", providers: 28,
     neighborhoods: ["Downtown Decatur", "South Shores", "Millikin", "Lakeshore", "Johns Hill", "Fairview", "East End"],
     description: "Decatur residents can compare electricity rates from competing suppliers serving the Ameren Illinois territory in Macon County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Evanston-IL": {
     state: "Illinois", stateCode: "IL", county: "Cook County", population: "78,000+",
@@ -1288,7 +1211,6 @@ export const cityData = {
     avgRate: "9.7¢/kWh", avgMonthlyBill: "$140", providers: 36,
     neighborhoods: ["Downtown Evanston", "Central Evanston", "South Evanston", "North Evanston", "West Evanston", "Lakefront", "Northwestern"],
     description: "Evanston, home to Northwestern University, offers residents access to competing electricity suppliers with competitive rates in the ComEd territory.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Oak Park-IL": {
     state: "Illinois", stateCode: "IL", county: "Cook County", population: "52,000+",
@@ -1296,7 +1218,6 @@ export const cityData = {
     avgRate: "9.8¢/kWh", avgMonthlyBill: "$142", providers: 35,
     neighborhoods: ["Downtown Oak Park", "Frank Lloyd Wright District", "Ridgeland-Oak Park", "South Oak Park", "Gunderson", "Barrie Park"],
     description: "Oak Park, famous for its Frank Lloyd Wright architecture, provides residents with competing electricity suppliers in the ComEd service area.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Waukegan-IL": {
     state: "Illinois", stateCode: "IL", county: "Lake County", population: "89,000+",
@@ -1304,7 +1225,6 @@ export const cityData = {
     avgRate: "9.9¢/kWh", avgMonthlyBill: "$143", providers: 34,
     neighborhoods: ["Downtown Waukegan", "Lakehurst", "Glen Flora", "Clearview", "Bonnie Brook", "Beach Park"],
     description: "Waukegan residents in Lake County benefit from competing electricity suppliers offering competitive rates in the northern Chicago suburbs.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Stamford-CT": {
     state: "Connecticut", stateCode: "CT", county: "Fairfield", population: "139,000+",
@@ -1312,7 +1232,6 @@ export const cityData = {
     avgRate: "21.5¢/kWh", avgMonthlyBill: "$191", providers: 18,
     neighborhoods: ["Downtown", "Shippan", "Glenbrook", "Westover", "North Stamford", "Cove"],
     description: "Stamford's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Trenton-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Mercer", population: "83,000+",
@@ -1320,7 +1239,6 @@ export const cityData = {
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$119", providers: 25,
     neighborhoods: ["Downtown", "South Trenton", "Mill Hill", "Hiltonia", "East Trenton", "Wilbur"],
     description: "As a city in a state with a deregulated electricity market, Trenton residents can choose from over 25 different providers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Atlantic City-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Atlantic County", population: "38,000+",
@@ -1328,7 +1246,6 @@ export const cityData = {
     avgRate: "11.5¢/kWh", avgMonthlyBill: "$166", providers: 24,
     neighborhoods: ["Boardwalk", "Chelsea", "Ducktown", "Inlet", "Marina District", "Ventnor"],
     description: "Atlantic City residents can compare electricity rates from competing suppliers to find savings in the Atlantic City Electric service territory.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Bayonne-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Hudson County", population: "71,000+",
@@ -1336,7 +1253,6 @@ export const cityData = {
     avgRate: "11.8¢/kWh", avgMonthlyBill: "$171", providers: 26,
     neighborhoods: ["Downtown Bayonne", "Bergen Point", "Constable Hook", "Centerville", "Saltersville", "East Side"],
     description: "Bayonne residents in Hudson County benefit from competing electricity suppliers offering competitive alternatives to PSE&G rates.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Clifton-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Passaic County", population: "89,000+",
@@ -1344,7 +1260,6 @@ export const cityData = {
     avgRate: "11.6¢/kWh", avgMonthlyBill: "$168", providers: 27,
     neighborhoods: ["Main Avenue", "Botany Village", "Allwood", "Delawanna", "Athenia", "Richfield"],
     description: "Clifton residents in Passaic County can compare electricity rates from competing suppliers in New Jersey's deregulated energy market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Elizabeth-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Union County", population: "137,000+",
@@ -1352,7 +1267,6 @@ export const cityData = {
     avgRate: "11.7¢/kWh", avgMonthlyBill: "$169", providers: 27,
     neighborhoods: ["Downtown Elizabeth", "Elmora", "Bayway", "Peterstown", "Westminster", "North Elizabeth"],
     description: "Elizabeth, New Jersey's fourth-largest city, offers residents access to competing electricity suppliers with competitive rates in Union County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Toms River-NJ": {
     state: "New Jersey", stateCode: "NJ", county: "Ocean County", population: "95,000+",
@@ -1360,7 +1274,6 @@ export const cityData = {
     avgRate: "11.4¢/kWh", avgMonthlyBill: "$165", providers: 25,
     neighborhoods: ["Downtown Toms River", "Silver Ridge", "Holiday City", "North Dover", "Silverton", "Pine Beach"],
     description: "Toms River residents in Ocean County benefit from competing electricity suppliers offering competitive rates at the Jersey Shore.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Waterbury-CT": {
     state: "Connecticut", stateCode: "CT", county: "New Haven", population: "114,403+",
@@ -1368,7 +1281,6 @@ export const cityData = {
     avgRate: "21.5¢/kWh", avgMonthlyBill: "$150", providers: 18,
     neighborhoods: ["Bunker Hill", "Bucks Hill", "Town Plot", "Waterville", "Brooklyn", "East End"],
     description: "As a city in a state with a deregulated electricity market, Waterbury offers residents a choice of over 18 energy providers, leading to competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Danbury-CT": {
     state: "Connecticut", stateCode: "CT", county: "Fairfield County", population: "86,000+",
@@ -1376,7 +1288,6 @@ export const cityData = {
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$195", providers: 20,
     neighborhoods: ["Downtown Danbury", "Candlewood Lake", "Mill Plain", "Shelter Rock", "Great Plain", "Pembroke"],
     description: "Danbury residents in Fairfield County can compare electricity rates from competing suppliers in Connecticut's deregulated energy market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Meriden-CT": {
     state: "Connecticut", stateCode: "CT", county: "New Haven County", population: "60,000+",
@@ -1384,7 +1295,6 @@ export const cityData = {
     avgRate: "13.8¢/kWh", avgMonthlyBill: "$200", providers: 19,
     neighborhoods: ["Downtown Meriden", "South Meriden", "East Side", "West Side", "North End", "Yalesville"],
     description: "Meriden residents in New Haven County benefit from competing electricity suppliers offering competitive alternatives to Eversource rates.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "New Britain-CT": {
     state: "Connecticut", stateCode: "CT", county: "Hartford County", population: "74,000+",
@@ -1392,7 +1302,6 @@ export const cityData = {
     avgRate: "13.6¢/kWh", avgMonthlyBill: "$197", providers: 20,
     neighborhoods: ["Downtown New Britain", "East Side", "West End", "South Side", "Stanley Quarter", "Shuttle Meadow"],
     description: "New Britain residents in Hartford County can compare electricity rates from competing suppliers in the Eversource service territory.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Yonkers-NY": {
     state: "New York", stateCode: "NY", county: "Westchester", population: "211,569+",
@@ -1400,7 +1309,6 @@ export const cityData = {
     avgRate: "16.5¢/kWh", avgMonthlyBill: "$149", providers: 24,
     neighborhoods: ["Beech Hill", "Lawrence Park", "Cedar Knolls", "Crestwood", "Lincoln Park", "Colonial Heights"],
     description: "As a city in a state with a deregulated electricity market, Yonkers residents can choose from over 24 energy providers, ensuring competitive rates and plans.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Youngstown-OH": {
     state: "Ohio", stateCode: "OH", county: "Mahoning", population: "60,000+",
@@ -1408,7 +1316,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$105", providers: 30,
     neighborhoods: ["Brier Hill", "Brownlee Woods", "Downtown", "Hazelton", "Kirkmere", "Idora"],
     description: "Youngstown's deregulated electricity market offers residents a choice of competing suppliers, fostering competitive rates and energy options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Dublin-OH": {
     state: "Ohio", stateCode: "OH", county: "Franklin County", population: "49,000+",
@@ -1416,7 +1323,6 @@ export const cityData = {
     avgRate: "9.4¢/kWh", avgMonthlyBill: "$136", providers: 30,
     neighborhoods: ["Historic Dublin", "Bridge Street District", "Muirfield Village", "Ballantrae", "Tartan Fields", "Glacier Ridge"],
     description: "Dublin, an affluent Columbus suburb, offers residents access to competing electricity suppliers with competitive rates in Franklin County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Elyria-OH": {
     state: "Ohio", stateCode: "OH", county: "Lorain County", population: "54,000+",
@@ -1424,7 +1330,6 @@ export const cityData = {
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 28,
     neighborhoods: ["Downtown Elyria", "West Elyria", "South Elyria", "Gates Mills", "Cascade Park", "Midway Mall Area"],
     description: "Elyria residents in Lorain County can compare electricity rates from competing suppliers in Ohio's deregulated energy market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Hamilton-OH": {
     state: "Ohio", stateCode: "OH", county: "Butler County", population: "63,000+",
@@ -1432,7 +1337,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 29,
     neighborhoods: ["Downtown Hamilton", "German Village", "Lindenwald", "Ross", "Fairfield Township", "Beckett Ridge"],
     description: "Hamilton residents in Butler County benefit from competing electricity suppliers offering competitive fixed and variable rate plans.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Lakewood-OH": {
     state: "Ohio", stateCode: "OH", county: "Cuyahoga County", population: "50,000+",
@@ -1440,7 +1344,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 32,
     neighborhoods: ["Downtown Lakewood", "Birdtown", "Gold Coast", "Clifton Park", "Webb Road", "Madison Park"],
     description: "Lakewood, a vibrant Cleveland suburb, provides residents with competing electricity suppliers and competitive rates in Cuyahoga County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Lorain-OH": {
     state: "Ohio", stateCode: "OH", county: "Lorain County", population: "65,000+",
@@ -1448,7 +1351,6 @@ export const cityData = {
     avgRate: "9.6¢/kWh", avgMonthlyBill: "$139", providers: 28,
     neighborhoods: ["Downtown Lorain", "South Lorain", "Oakwood", "Sheffield", "Black River Landing", "Lakeview Park"],
     description: "Lorain residents on Lake Erie benefit from competing electricity suppliers with competitive rates in the deregulated Ohio market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Parma-OH": {
     state: "Ohio", stateCode: "OH", county: "Cuyahoga County", population: "81,000+",
@@ -1456,7 +1358,6 @@ export const cityData = {
     avgRate: "9.5¢/kWh", avgMonthlyBill: "$137", providers: 32,
     neighborhoods: ["Downtown Parma", "Parma Heights", "Seven Hills", "Ridgewood", "State Road", "Pleasant Valley"],
     description: "Parma, Cleveland's largest suburb, offers residents access to competing electricity suppliers with diverse plan options in Cuyahoga County.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Albany-NY": {
     state: "New York", stateCode: "NY", county: "Albany County", population: "99,000+",
@@ -1464,7 +1365,6 @@ export const cityData = {
     avgRate: "15.5¢/kWh", avgMonthlyBill: "$145", providers: 22,
     neighborhoods: ["Downtown Albany", "Center Square", "Pine Hills", "Buckingham Pond", "Delaware Avenue", "Lark Street"],
     description: "Albany, the capital of New York, offers residents access to competing electricity suppliers in the deregulated ESCO market, providing competitive rates and plan options.",
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   "Binghamton-NY": {
     state: "New York", stateCode: "NY", county: "Broome County", population: "47,000+",
@@ -1472,7 +1372,6 @@ export const cityData = {
     avgRate: "11.2¢/kWh", avgMonthlyBill: "$162", providers: 22,
     neighborhoods: ["Downtown Binghamton", "West Side", "North Side", "First Ward", "Prospect Terrace", "Chenango Bridge"],
     description: "Binghamton residents in the Southern Tier can compare electricity rates from competing suppliers in New York's deregulated energy market.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Hempstead-NY": {
     state: "New York", stateCode: "NY", county: "Nassau County", population: "55,000+",
@@ -1480,7 +1379,6 @@ export const cityData = {
     avgRate: "14.5¢/kWh", avgMonthlyBill: "$210", providers: 25,
     neighborhoods: ["Downtown Hempstead", "Garden City", "West Hempstead", "East Meadow", "Uniondale", "Roosevelt"],
     description: "Hempstead residents on Long Island benefit from competing electricity suppliers offering competitive alternatives to PSEG Long Island rates.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Long Beach-NY": {
     state: "New York", stateCode: "NY", county: "Nassau County", population: "34,000+",
@@ -1488,7 +1386,6 @@ export const cityData = {
     avgRate: "14.8¢/kWh", avgMonthlyBill: "$214", providers: 24,
     neighborhoods: ["West End", "East End", "North Park", "Canals", "Boardwalk Area", "City by the Sea"],
     description: "Long Beach residents on Long Island's barrier island can compare electricity rates from competing suppliers to find savings.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "New Rochelle-NY": {
     state: "New York", stateCode: "NY", county: "Westchester County", population: "80,000+",
@@ -1496,7 +1393,6 @@ export const cityData = {
     avgRate: "13.2¢/kWh", avgMonthlyBill: "$191", providers: 26,
     neighborhoods: ["Downtown New Rochelle", "Wykagyl", "Larchmont", "Pelham", "North End", "Huguenot Park"],
     description: "New Rochelle residents in Westchester County benefit from competing electricity suppliers with competitive rates north of New York City.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "Schenectady-NY": {
     state: "New York", stateCode: "NY", county: "Schenectady County", population: "67,000+",
@@ -1504,7 +1400,6 @@ export const cityData = {
     avgRate: "11.0¢/kWh", avgMonthlyBill: "$159", providers: 23,
     neighborhoods: ["Downtown Schenectady", "Stockade District", "GE Plot", "Woodlawn", "Mont Pleasant", "Bellevue"],
     description: "Schenectady residents in the Capital District can compare electricity rates from competing suppliers in the National Grid service area.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   "White Plains-NY": {
     state: "New York", stateCode: "NY", county: "Westchester County", population: "58,000+",
@@ -1512,7 +1407,6 @@ export const cityData = {
     avgRate: "13.5¢/kWh", avgMonthlyBill: "$195", providers: 26,
     neighborhoods: ["Downtown White Plains", "Battle Hill", "Gedney Farms", "Fisher Hill", "Highlands", "Mamaroneck Avenue"],
     description: "White Plains, the Westchester County seat, offers residents access to competing electricity suppliers with competitive rates.",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
 };
 

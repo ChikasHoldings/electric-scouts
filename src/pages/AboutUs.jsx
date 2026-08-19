@@ -82,8 +82,8 @@ export default function AboutUs() {
           {[
             { value: "12", label: "States Served", icon: Globe, color: "blue" },
             { value: String(MARKET_TOTALS.providersWithPlans), label: "Energy Suppliers", icon: Zap, color: "orange" },
-            { value: "$800", label: "Avg. Annual Savings", icon: TrendingDown, color: "green" },
-            { value: "4.8★", label: "Customer Rating", icon: Award, color: "purple" }
+            { value: String(MARKET_TOTALS.activePlans), label: "Plans Tracked", icon: TrendingDown, color: "green" },
+            { value: "144", label: "Cities Covered", icon: Award, color: "purple" }
           ].map((stat, i) => (
             <Card key={i} className="border-0 shadow-lg">
               <CardContent className="p-5 text-center">
@@ -333,7 +333,7 @@ export default function AboutUs() {
               <span className="text-blue-300">•</span>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                <span>Save Up to $800/Year</span>
+                <span>No Cost to Compare</span>
               </div>
             </div>
           </div>

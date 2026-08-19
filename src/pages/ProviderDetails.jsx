@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, CheckCircle, ArrowRight, Leaf, ExternalLink, Award, TrendingUp } from "lucide-react";
 import { calculateMonthlyBill } from "../components/compare/dataValidation";
 import { comparisonsForProvider } from "@/seo/comparisons";
+import { getProviderBySlug } from "@/seo/market";
 import { GitCompareArrows } from "lucide-react";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -40,14 +41,29 @@ export default function ProviderDetails() {
 
   const { getAffiliateUrl } = useAffiliateLinks();
 
+  /**
+   * The supplier this URL is about, taken from the build-time market snapshot.
+   *
+   * This page used to learn its own subject from the Supabase query below, so
+   * until that request came back there was no provider name, no H1 and no
+   * content — and the branch further down answered with "Provider Not Found"
+   * carrying a `noindex` tag. Googlebot renders with a finite budget and does
+   * not retry a slow or failed request, so any render where that query had not
+   * resolved published an explicit instruction to drop the URL from the index.
+   * Every one of these pages is prerendered from this same snapshot, so the
+   * identity is known before any request is made and there is no reason to
+   * wait for one to state it.
+   */
+  const snapshotProvider = params.slug ? getProviderBySlug(params.slug) : null;
+
   // Resolve provider name from slug or query param
   useEffect(() => {
     if (params.slug) {
-      // Find provider by matching slug
+      // Prefer the live record's spelling once it arrives; fall back to the
+      // snapshot so the page is never nameless.
       const found = providers.find(p => generateProviderSlug(p.name) === params.slug);
-      if (found) {
-        setProviderName(found.name);
-      }
+      const resolved = found?.name || snapshotProvider?.name;
+      if (resolved) setProviderName(resolved);
     } else {
       // Legacy: use query param
       const urlParams = new URLSearchParams(window.location.search);
@@ -56,12 +72,21 @@ export default function ProviderDetails() {
         setProviderName(provider);
       }
     }
-  }, [params.slug, providers]);
+  }, [params.slug, providers, snapshotProvider]);
 
   const providerFromDB = providers.find(p => p.name === providerName);
   const providerLogo = providerFromDB ? getProviderLogoUrl(providerFromDB) : null;
 
   
+  /**
+   * The live record when we have it, the snapshot when we do not.
+   *
+   * Falling back keeps the page whole while the query is in flight and if it
+   * never lands: the supplier's name, footprint and site are all in the
+   * snapshot this URL was published from. Only the affiliate link needs the
+   * live record, so it degrades to the supplier's own site rather than taking
+   * the rest of the page down with it.
+   */
   const providerInfo = providerFromDB ? {
     name: providerFromDB.name,
     logo: providerLogo,
@@ -75,6 +100,14 @@ export default function ProviderDetails() {
       ? providerFromDB.features
       : [],
     phone: providerFromDB.phone || null,
+  } : snapshotProvider ? {
+    name: snapshotProvider.name,
+    logo: null,
+    website: snapshotProvider.websiteUrl || "#",
+    states: snapshotProvider.supportedStates || [],
+    isRecommended: false,
+    features: snapshotProvider.features || [],
+    phone: null,
   } : null;
 
   const providerPlans = allPlans
@@ -127,14 +160,10 @@ export default function ProviderDetails() {
   ]);
 
   if (!providerName || !providerInfo) {
-    // Show loading state while providers are being fetched
-    if (params.slug && providers.length === 0) {
-      return (
-        <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0A5C8C] rounded-full animate-spin"></div>
-        </div>
-      );
-    }
+    // Reached only when the snapshot has no such supplier either — i.e. a slug
+    // this site never published. A known slug always has the snapshot behind
+    // it, so a pending or failed query can no longer land here, and the
+    // `noindex` below can no longer be emitted for a real provider page.
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         {/* An unknown or inactive provider slug renders no content — keep it out
