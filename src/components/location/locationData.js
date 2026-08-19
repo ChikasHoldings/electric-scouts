@@ -193,8 +193,11 @@ export const LOCATION_DATA = {
         population: "149,000",
         avgRate: "13.6¢/kWh",
         avgUsage: "850 kWh/month",
-        insights: "Naperville consistently ranks among Illinois' most desirable suburbs. Residents here tend to prefer premium plans with smart home integration and renewable energy options.",
-        utilityCompany: "ComEd",
+        insights: "Naperville consistently ranks among Illinois' most desirable suburbs.",
+        // Not ComEd. Naperville runs its own municipal electric utility, so
+        // this row was both naming the wrong company on the Naperville page and
+        // counting the city toward ComEd's coverage on /utilities/comed.
+        utilityCompany: "Naperville Electric Utility",
         topZips: ["60540", "60563", "60564", "60565"]
       },
       "Rockford": {

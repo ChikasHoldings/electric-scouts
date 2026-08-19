@@ -710,6 +710,93 @@ describe('registry stays in step with app data', () => {
  * Deployment configuration
  * ================================================================== */
 
+describe('no page offers a switch where retail choice does not exist', () => {
+  // Ten cities on this site are served by a municipal utility or sit outside
+  // the competitive market, and every one of their pages was telling residents
+  // they could choose a supplier and offering them the statewide plan count.
+  // That is the one fact those readers came to find out, answered backwards —
+  // and a page that cannot deliver what its title promises is exactly what
+  // Google's helpful-content systems are built to demote.
+  const routes = getCityRoutes();
+  const noChoice = routes.filter((route) => route.city.noRetailChoice);
+  const OFFERS_A_SWITCH = /\bcompare\b|\bswitch(?:ing)?\b|\bchoose (?:your|a) supplier\b|\bcompeting (?:suppliers?|retailers?|providers?)\b|\bshop\b/i;
+
+  test('the list is populated and every entry carries a reason', () => {
+    assert.ok(noChoice.length >= 7, `only ${noChoice.length} cities flagged`);
+    for (const route of noChoice) {
+      const status = route.city.noRetailChoice;
+      assert.ok(status.utility, `${route.path} has no utility named`);
+      assert.ok(status.reason && status.reason.length > 80, `${route.path} reason is too thin to be useful`);
+      assert.ok(['municipal', 'regulated'].includes(status.kind), `${route.path} has an unknown kind`);
+    }
+  });
+
+  test('their titles and descriptions do not promise a comparison', () => {
+    for (const route of noChoice) {
+      assert.doesNotMatch(route.title, /^Compare/i, `${route.path} title offers a comparison`);
+      assert.doesNotMatch(
+        route.description,
+        /Compare \d+ .* plans/i,
+        `${route.path} description offers plans that are not sold there`
+      );
+      assert.doesNotMatch(route.heading, /^Compare/i, `${route.path} H1 offers a comparison`);
+    }
+  });
+
+  test('they explain why instead, and say who sets the rate', () => {
+    for (const route of noChoice) {
+      const content = buildCitySections(route, { citiesByState: {} });
+      const headings = content.sections.map((section) => section.heading);
+      assert.ok(
+        headings.some((heading) => /cannot switch/i.test(heading)),
+        `${route.path} never explains that switching is not possible`
+      );
+      const faqs = content.sections.flatMap((section) => section.faqs || []);
+      assert.ok(faqs.length >= 3, `${route.path} has too few FAQs`);
+      assert.ok(
+        faqs.some((faq) => /can i choose my electricity supplier/i.test(faq.question)),
+        `${route.path} does not answer the question its readers actually have`
+      );
+      // The intro must not open on the statewide plan count, which reads as an offer.
+      assert.ok(
+        !/Electric Scouts tracks \d+ active/.test(content.intro.join(' ')),
+        `${route.path} opens by advertising plans it cannot sell`
+      );
+    }
+  });
+
+  test('they do not link to the comparison engine as a next step', () => {
+    for (const route of noChoice) {
+      const content = buildCitySections(route, { citiesByState: {} });
+      const links = content.sections.flatMap((section) => section.links || []).map(([href]) => href);
+      for (const dead of ['/compare-rates', '/renewable-compare-rates', '/business-compare-rates']) {
+        assert.ok(!links.includes(dead), `${route.path} sends the reader to ${dead}, which cannot help them`);
+      }
+    }
+  });
+
+  test('the prerendered page says so too', { skip: !distExists }, () => {
+    for (const route of noChoice) {
+      const html = readDist(distFileFor(route.path));
+      assert.match(html, /cannot switch/i, `${route.path} does not say it in the served HTML`);
+      assert.ok(
+        html.includes(route.city.noRetailChoice.utility),
+        `${route.path} does not name ${route.city.noRetailChoice.utility}`
+      );
+    }
+  });
+
+  test('a competitive city is untouched by all of this', () => {
+    const houston = routes.find((route) => route.city.name === 'Houston');
+    assert.ok(!houston.city.noRetailChoice);
+    assert.match(houston.title, /^Compare/);
+    const content = buildCitySections(houston, { citiesByState: {} });
+    const links = content.sections.flatMap((section) => section.links || []).map(([href]) => href);
+    assert.ok(links.includes('/compare-rates'), 'a competitive city lost its comparison link');
+    assert.ok(OFFERS_A_SWITCH.test(JSON.stringify(content)), 'a competitive city stopped offering a switch');
+  });
+});
+
 describe('metadata fits the result Google renders', () => {
   // 107 titles were over the width Google renders, every one of them because
   // of the " | Electric Scouts" suffix rather than the title itself, and 62

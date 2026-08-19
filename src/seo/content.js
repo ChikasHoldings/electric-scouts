@@ -167,6 +167,28 @@ export function getCityContext(city) {
   return { city, market, insights };
 }
 
+/**
+ * Opening sentence for a city whose blurb did not survive sanitizing.
+ *
+ * Built only from fields we hold for this city — county, population, the
+ * delivery utility — so it is factual and still differs city to city.
+ */
+function cityFallbackIntro(city) {
+  const parts = [`${city.name} is in ${city.county}, ${city.stateName}`];
+  if (city.population) parts.push(`with a population of ${city.population}`);
+  const opening = `${parts.join(', ')}.`;
+  if (city.noRetailChoice) {
+    return `${opening} Electricity here is supplied by ${city.noRetailChoice.utility}.`;
+  }
+  if (city.utilityCompany) {
+    return (
+      `${opening} ${city.utilityCompany} delivers the power, and the supply half of the ` +
+      `bill is bought from a competing retailer.`
+    );
+  }
+  return `${opening} Supply is bought from a competing retailer, separately from delivery.`;
+}
+
 export function buildCitySections(route, { citiesByState }) {
   const { city } = route;
   const { market, insights } = getCityContext(city);
@@ -176,8 +198,20 @@ export function buildCitySections(route, { citiesByState }) {
   // Resolved once: used both in the coverage section and in Next Steps.
   const cityUtility = utilityForCity(city);
 
-  /* Intro: the city's own description, then what we track in its market. */
-  const intro = [city.description];
+  /* Intro: the city's own description, then what we track in its market.
+   *
+   * 20 of the hand-written blurbs were a single sentence whose whole content
+   * was an invented supplier count ("a choice of over 40 retail electricity
+   * providers"), so sanitizing them leaves nothing. Rather than open those
+   * pages on the statewide sentence every city in the state shares, they get
+   * an opening built from what we do hold about this city specifically. */
+  /* A no-choice city's hand-written blurb is the problem, not the solution:
+   * Austin's opens "provides residents with competitive electricity rates and
+   * numerous green energy options from competing suppliers", which is exactly
+   * the claim the rest of this page now corrects. It is replaced wholesale. */
+  const intro = [
+    city.noRetailChoice ? cityFallbackIntro(city) : city.description || cityFallbackIntro(city),
+  ];
 
   /* The city's photograph. Carried on the model rather than added by either
    * renderer so the prerendered HTML and the mounted app show the same image
@@ -188,8 +222,15 @@ export function buildCitySections(route, { citiesByState }) {
     // A place label is accurate for a photo we do hold for this city.
     ? { url: city.image, alt: `${city.name}, ${city.stateName}` }
     : null;
-  const tracked = trackedSentence(stateName, market);
-  if (tracked) intro.push(tracked);
+  /* The statewide plan count is the wrong second sentence for a city whose
+   * residents cannot buy any of those plans — it reads as an offer. Those
+   * pages say why instead, which is the answer the reader actually needs. */
+  if (city.noRetailChoice) {
+    intro.push(city.noRetailChoice.reason);
+  } else {
+    const tracked = trackedSentence(stateName, market);
+    if (tracked) intro.push(tracked);
+  }
 
   /* At a glance — city-specific figures only.
    *
@@ -203,11 +244,18 @@ export function buildCitySections(route, { citiesByState }) {
     ['Average residential rate', city.avgRate],
     ['Estimated monthly bill', city.avgMonthlyBill],
   ];
-  if (market?.providers) {
+  // The statewide supplier count is a fact about the market, not about this
+  // city — and on a page that has just explained none of those suppliers sells
+  // here, printing it in the at-a-glance table undoes the explanation.
+  if (market?.providers && !city.noRetailChoice) {
     facts.push([`Suppliers with active ${stateName} plans`, String(market.providers)]);
   }
   facts.push(['County', city.county], ['Population', city.population]);
-  if (insights?.utilityCompany) facts.push(['Utility that delivers the power', insights.utilityCompany]);
+  if (city.noRetailChoice) {
+    facts.push(['Electricity supplied by', city.noRetailChoice.utility]);
+  } else if (insights?.utilityCompany) {
+    facts.push(['Utility that delivers the power', insights.utilityCompany]);
+  }
   if (insights?.avgUsage) facts.push(['Typical household usage', insights.avgUsage]);
   sections.push({
     heading: `${city.name} Electricity at a Glance`,
@@ -275,7 +323,29 @@ export function buildCitySections(route, { citiesByState }) {
   /* What a household here can buy. The full statewide breakdown lives on the
    * state page — repeating all of it here made every city page in a state
    * around half identical, so this is the summary plus the link. */
-  if (market?.plans) {
+  if (city.noRetailChoice) {
+    /* The section that would otherwise offer a switch. A reader here searched
+     * for their rate and deserves an answer, so the page explains who sets it,
+     * what that means for their bill, and where retail choice does apply — it
+     * just stops pretending they can shop. */
+    sections.push({
+      heading: `Why You Cannot Switch Suppliers in ${city.name}`,
+      paragraphs: [
+        city.noRetailChoice.reason,
+        `That makes ${city.name} an exception in ${stateName}. In the parts of the state ` +
+          `served by a competitive delivery utility, households buy the supply half of the ` +
+          `bill from a retailer of their choosing and the plan comparison on this site ` +
+          `applies to them. It does not apply at a ${city.name} address.`,
+        `What you can still do here is reduce how much you use, and check that you are on ` +
+          `the most suitable of the rate schedules ${city.noRetailChoice.utility} offers — ` +
+          `many municipal utilities publish more than one, including time-of-use options.`,
+      ],
+      links: [
+        [city.statePath, `Where retail choice does apply in ${stateName}`],
+        ['/learning-center', 'Guides on reading a bill and cutting usage'],
+      ],
+    });
+  } else if (market?.plans) {
     const options = [];
     if (market.residentialPlans) {
       options.push(
@@ -356,21 +426,31 @@ export function buildCitySections(route, { citiesByState }) {
     });
   }
 
-  const nextSteps = [
-    [city.statePath, `${stateName} electricity rates and market overview`],
-    ['/compare-rates', 'Compare plans for your ZIP code'],
-    ['/bill-analyzer', 'Check your current bill for overcharges'],
-  ];
+  /* "Compare plans for your ZIP code" is a dead end from a city that has no
+   * plans to compare, and the renewable and business comparison links below
+   * are the same. A reader here can still read their bill and cut usage, so
+   * those are what the page offers instead. */
+  const nextSteps = city.noRetailChoice
+    ? [
+        [city.statePath, `Where retail choice applies in ${stateName}`],
+        ['/bill-analyzer', 'Check your current bill for overcharges'],
+        ['/learning-center', 'Guides on cutting what you use'],
+      ]
+    : [
+        [city.statePath, `${stateName} electricity rates and market overview`],
+        ['/compare-rates', 'Compare plans for your ZIP code'],
+        ['/bill-analyzer', 'Check your current bill for overcharges'],
+      ];
   /* The delivery utility, where we publish a page for it. This is the link a
    * reader follows when they have worked out that the company on the bill is
    * not the company setting the rate. */
   if (cityUtility) {
     nextSteps.push([cityUtility.path, `What ${cityUtility.name} does and does not charge for`]);
   }
-  if (market?.businessPlans) {
+  if (!city.noRetailChoice && market?.businessPlans) {
     nextSteps.push(['/business-electricity', `Business electricity in ${stateName}`]);
   }
-  if (market?.renewablePlans) {
+  if (!city.noRetailChoice && market?.renewablePlans) {
     nextSteps.push(['/renewable-compare-rates', 'Compare 100% renewable plans']);
   }
   /* Nearest siblings by rate rather than the same alphabetical list on every
@@ -410,6 +490,43 @@ export function buildCitySections(route, { citiesByState }) {
  */
 function buildCityFaqs(city, market, insights, utility) {
   const faqs = [];
+
+  /* A city with no retail choice needs the opposite answers: the question its
+   * residents actually type is whether they can switch at all, and every FAQ
+   * below assumes they can. Answering "which parts of Austin can compare
+   * electricity plans? All of them." is not a small inaccuracy — it is the one
+   * thing the reader came to find out, answered backwards. */
+  if (city.noRetailChoice) {
+    faqs.push({
+      question: `Can I choose my electricity supplier in ${city.name}?`,
+      answer: city.noRetailChoice.reason,
+    });
+    faqs.push({
+      question: `Who sets the electricity rate in ${city.name}?`,
+      answer:
+        `${city.noRetailChoice.utility} does. Because it is not competing for your business, ` +
+        `its rates are set through a public process rather than by an offer you accept, and ` +
+        `they apply to every household in its service area. There is no cheaper supplier to ` +
+        `move to and no contract to sign.`,
+    });
+    if (city.avgRate) {
+      faqs.push({
+        question: `What is the average electricity rate in ${city.name}?`,
+        answer:
+          `Around ${city.avgRate}, which works out at roughly ${city.avgMonthlyBill} a month ` +
+          `for a typical household. That is an average for the area rather than a quote — what ` +
+          `you pay depends on the rate schedule you are on and how much you use.`,
+      });
+    }
+    faqs.push({
+      question: `Where in ${city.stateName} can you choose a supplier?`,
+      answer:
+        `In the parts of ${city.stateName} served by a competitive delivery utility rather ` +
+        `than a municipal one. Our ${city.stateName} page sets out which markets those are and ` +
+        `what is on offer in them.`,
+    });
+    return faqs;
+  }
 
   if (city.neighborhoods?.length) {
     faqs.push({

@@ -247,6 +247,15 @@ export function stateDescription(stateName, market) {
 
 /** Title for a city page: the phrasing people actually search for. */
 export function cityTitle(city) {
+  // "Compare rates in Austin" promises something an Austin address cannot do.
+  // The query people type is still "austin electricity rates", so that leads;
+  // what changes is that the title stops offering a comparison.
+  if (city.noRetailChoice) {
+    // The short label, not the full name: "Xcel Energy (Southwestern Public
+    // Service)" pushed this title to 72 characters.
+    const utility = city.noRetailChoice.shortName || city.noRetailChoice.utility;
+    return withBrand(`${city.name} Electricity Rates and ${utility}`);
+  }
   return withBrand(`Compare Electricity Rates in ${city.name}, ${city.stateCode}`);
 }
 
@@ -259,6 +268,14 @@ export function cityDescription(city, market) {
   const local = `Electricity in ${city.name}, ${city.stateCode} averages ${city.avgRate} (about ${city.avgMonthlyBill}/mo).`;
   if (!market || !market.plans) {
     return `${local} Compare suppliers serving ${city.county} and switch for free with Electric Scouts.`;
+  }
+  // A city with no retail choice must not be offered the statewide plan count:
+  // none of those plans is available at this address.
+  if (city.noRetailChoice) {
+    const note = `${local} Supply comes from ${city.noRetailChoice.utility}, not a competing retailer, so there is no plan to shop here.`;
+    return note.length <= DESCRIPTION_MAX
+      ? note
+      : `${local} Supply comes from ${city.noRetailChoice.utility} — there is no plan to shop here.`;
   }
   const base = `${local} Compare ${market.plans} ${city.stateName} plans from ${market.providers} suppliers by ZIP code.`;
   // 58 of these were landing at 112-119 characters against a limit near 160,
@@ -322,7 +339,9 @@ export function getCityRoutes() {
       path: city.path,
       title: cityTitle(city),
       description: cityDescription(city, market),
-      heading: `Compare Electricity Rates in ${city.name}, ${city.stateName}`,
+      heading: city.noRetailChoice
+        ? `${city.name} Electricity Rates`
+        : `Compare Electricity Rates in ${city.name}, ${city.stateName}`,
       // Cities are ranked by how much distinct data stands behind them, so the
       // ones with local market notes are crawled ahead of the thinnest.
       priority: parseRate(city.avgRate) !== null ? 0.8 : 0.7,
