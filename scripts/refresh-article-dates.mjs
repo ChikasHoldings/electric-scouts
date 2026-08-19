@@ -106,6 +106,20 @@ async function main() {
   const hashes = hashBlocks(head);
   const ids = Object.keys(hashes).sort((a, b) => Number(a) - Number(b));
 
+  /* An article that exists in the working tree but in no commit has no history
+   * to derive a date from. Writing the string "undefined" here would put
+   * datePublished: "undefined" into the Article markup of a live page, which is
+   * worse than having no date at all — so this refuses instead. Commit the
+   * article first, then run this; that ordering is what makes the dates true. */
+  const undated = ids.filter((id) => !published[id] || !modified[id]);
+  if (undated.length) {
+    throw new Error(
+      `${undated.length} article(s) are not in any commit yet: ${undated.join(', ')}.\n` +
+        `  Commit ${ARTICLE_FILE} first, then re-run this script — the dates are\n` +
+        `  derived from git history and there is nothing to read until then.`
+    );
+  }
+
   const rows = ids
     .map((id) => `  ${id}: ['${published[id]}', '${modified[id]}', '${hashes[id]}'],`)
     .join('\n');

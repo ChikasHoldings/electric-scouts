@@ -47,6 +47,9 @@ export const ARTICLE_IDS = [
   51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
   61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
   106, 107, 108,
+  // Texas cluster: the queries the site had no page for.
+  109, 110, 111, 112, 113, 114, 115, 116, 117, 118,
+  119, 120,
 ];
 
 /**
@@ -140,6 +143,20 @@ export const ARTICLE_SLUGS = {
   106: 'nashua-nh-electricity-rates',
   107: 'concord-nh-electricity-rates',
   108: 'warwick-ri-electricity-rates',
+
+  // Texas cluster.
+  109: 'texas-tdu-delivery-charges',
+  110: 'texas-electricity-facts-label',
+  111: 'power-to-choose-texas',
+  112: 'texas-bill-credit-electricity-plans',
+  113: 'texas-low-usage-electricity-plans',
+  114: 'why-texas-electric-bill-so-high',
+  115: 'texas-electricity-early-termination-fee',
+  116: 'texas-cities-without-electricity-choice',
+  117: 'el-paso-electricity-no-retail-choice',
+  118: 'texas-renewable-electricity-plans',
+  119: 'texas-commercial-electricity-rates',
+  120: 'moving-within-texas-electricity',
 };
 
 /** slug -> id, for resolving a URL back to an article. */

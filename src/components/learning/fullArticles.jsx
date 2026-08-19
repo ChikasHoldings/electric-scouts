@@ -9858,6 +9858,1061 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 <p><strong>Ready to see how much your business can save by switching to solar or finding better grid rates?</strong> Start by visiting our <a href="/compare-rates">rate comparison tool</a> and <a href="/bill-analyzer">bill analyzer</a> to get personalized insights today.</p>
 `
   },
+  109: {
+    title: "Texas TDU Delivery Charges: Why the Same Plan Bills Differently by City",
+    metaTitle: "Texas TDU Delivery Charges Explained | Electric Scouts",
+    metaDescription: "Oncor, CenterPoint, AEP Texas and TNMP each charge to deliver your power. Why one Texas plan bills differently by city, and what no retailer can change.",
+    tags: ["texas tdu", "tdu delivery charges texas", "oncor", "centerpoint", "delivery charges"],
+    content: `
+<h2>The Half of Your Texas Bill You Did Not Choose</h2>
+<p>A Texas electricity bill arrives from one company and reads like one charge. It is two. One half is <strong>supply</strong>: the electricity itself, sold to you by a retail electric provider you picked. The other half is <strong>delivery</strong>: moving that electricity along wires to your meter, done by a company you did not pick and cannot fire.</p>
+<p>The general shape of that split is the same in every deregulated state, and our guide to <a href="/learn/electricity-delivery-charges-explained">electricity delivery charges</a> covers it. What follows is the Texas machinery: who the delivery companies are, why their charge is identical at every retailer, and why one advertised cents-per-kWh figure bills differently in Dallas than in Houston.</p>
+
+<h2>What a TDU Actually Is</h2>
+<p>TDU stands for transmission and distribution utility. Bills and enrollment forms also say TDSP, for transmission and distribution service provider. Same thing.</p>
+<p>A TDU owns the physical grid between the power plant and your building: transmission towers, substations, the poles down your street, the transformer, and the meter on your wall. Its job list is short and entirely physical.</p>
+<ul>
+  <li><strong>Building and maintaining the wires,</strong> from high-voltage transmission down to the drop into your house.</li>
+  <li><strong>Reading your meter.</strong> The TDU owns the meter and produces the usage data. Your retailer bills you from numbers the TDU hands it.</li>
+  <li><strong>Restoring outages.</strong> When the power goes out, the crew that shows up works for the TDU. Calling your retailer gets you a referral, not a truck.</li>
+  <li><strong>Connecting and disconnecting service,</strong> which your retailer requests on your behalf.</li>
+</ul>
+<p>What a TDU does not do is sell you electricity. In the competitive part of Texas it is barred from it, so it has no stake in which retailer you use.</p>
+
+<h2>The Four TDUs of Competitive Texas</h2>
+<p>Four transmission and distribution utilities cover the great majority of deregulated Texas. Their territories are historical service areas, not political boundaries, and two are not even contiguous.</p>
+<table>
+  <thead>
+    <tr><th>TDU</th><th>Roughly where it delivers</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Oncor Electric Delivery</strong></td><td>Much of North, Central and West Texas: Dallas, Fort Worth, Arlington, Plano, Waco, Tyler, Killeen, Midland, Odessa.</td></tr>
+    <tr><td><strong>CenterPoint Energy Houston Electric</strong></td><td>Houston and much of the surrounding Gulf Coast, including Pasadena, Baytown and most of Harris County.</td></tr>
+    <tr><td><strong>AEP Texas</strong></td><td>Two separate blocks: South Texas and the Rio Grande Valley (Corpus Christi, McAllen, Laredo, Victoria), plus west-central Texas around Abilene and San Angelo.</td></tr>
+    <tr><td><strong>Texas-New Mexico Power (TNMP)</strong></td><td>Scattered pockets rather than one region: the Gulf Coast around Texas City and League City, North Texas near Lewisville, West Texas around Pecos and Fort Stockton.</td></tr>
+  </tbody>
+</table>
+<p>Oncor is the largest of the four, which is why so much Texas electricity advice quietly assumes Oncor rules; the <a href="/utilities/oncor-electric-delivery">Oncor delivery territory page</a> covers what being on its system means for switching. Treat all four as approximations: a city name gets you close, not certain.</p>
+
+<h2>Why Your TDU Charge Is Identical Whichever Retailer You Pick</h2>
+<p>Here is the part most people get wrong. The TDU charge is not something your retailer sets, marks up, or can compete on. It is a regulated tariff approved by the Public Utility Commission of Texas in a rate case, and it applies to every meter in that rate class on that utility's system at the same rate. Your retailer collects it and hands it over. That is the whole relationship.</p>
+<p>There is no volume discount for a big retailer, no negotiated rate for a small one, no loyalty tier. Two neighbors on the same street with different retailers pay the same delivery charges.</p>
+<p>This surprises people on fixed-rate contracts. TDU tariffs are revised periodically as the utility recovers new transmission and distribution investment, and standard Texas contract language lets those revisions flow through mid-contract. Your Electricity Facts Label says so directly: the price can change to reflect changes in TDU charges, ERCOT administrative fees and taxes. A fixed-rate plan fixes the energy charge. It does not freeze the bill.</p>
+
+<h2>How the TDU Charge Shows Up on Your Bill</h2>
+<p>TDU charges have two parts, and the second one catches people out.</p>
+<ul>
+  <li><strong>A per-kWh delivery charge.</strong> Scales with usage, like the energy charge.</li>
+  <li><strong>A fixed monthly charge.</strong> Also called a customer charge. It applies whether you use 2,000 kWh or none at all.</li>
+</ul>
+<p>That fixed piece is why an empty apartment still generates a bill, and why your effective cost per kWh falls as you use more. Spread a flat monthly charge over 500 kWh and it adds a visible number of cents per kWh. Spread the same charge over 2,000 kWh and it contributes a quarter as much. That is why the PUCT requires every Electricity Facts Label to quote an average price at 500, 1,000 and 2,000 kWh rather than one number.</p>
+<p>How the charge appears varies. Some retailers itemize, with a "TDU delivery charges" line separate from the energy charge. Others fold everything into one all-in rate per kWh. Both are legal, and the EFL discloses which you are looking at. Our guide to <a href="/learn/how-to-read-your-electricity-bill">reading an electricity bill</a> walks through where each line sits.</p>
+
+<h2>Why the Same Advertised Rate Bills Differently in Two Cities</h2>
+<p>Now the mechanism. The average price on an Electricity Facts Label is all-in: it includes the TDU delivery charges for the territory the plan is sold into. So a retailer does not sell one plan across Texas.</p>
+<p>It files a version for each TDU territory it serves, each with its own EFL. Same product name, same term, same energy charge, different average price, because each version has a different delivery tariff folded in. A Dallas household and a Houston household can sign what is marketed as the identical plan and see different numbers on the label before either has used a kilowatt-hour.</p>
+<p>The reverse case is worse. If a quoted rate excludes delivery, two quotes that match exactly still produce bills that do not, and the whole gap is the TDU. That is part of why the range in any Texas comparison looks so wide. Electric Scouts tracked 108 active Texas plans from 22 suppliers on August 14, 2026, running from 8.9¢ to 19.7¢ per kWh with a median of 14.35¢. Some of that spread is competition between suppliers. Some of it is which set of wires the plan was priced for.</p>
+<p>Availability moves with territory too. A supplier may push hard in one TDU area and not sell into another at all, so the shortlist a Houston household sees is not the one a Fort Worth household sees. Different markets that happen to share a state.</p>
+
+<h2>What You Can and Cannot Change</h2>
+<p>The line between the shoppable half and the fixed half is sharp.</p>
+<p><strong>You can change:</strong> your retailer, your energy rate, your contract length, whether the rate is fixed or variable, whether the plan is backed by renewable energy, and whether it carries an early termination fee. The same snapshot counts 96 residential plans and 12 built for business. Twenty-four plans are fixed-rate and 82 are variable. Forty-one are renewable, offered by 10 suppliers, and 20 carry no early termination fee. Contract terms run from 3 months to 60, alongside month-to-month.</p>
+<p><strong>You cannot change:</strong> your TDU, its delivery tariff, the fixed monthly delivery charge, who reads your meter, or who restores your power after a storm. No retailer can sell you out of any of it.</p>
+<p>In some Texas cities you cannot change the supply half either. Austin Energy and CPS Energy in San Antonio are municipally owned and never opened to retail competition, so their customers have one provider and no switching decision to make. Our guides to <a href="/learn/austin-energy-explained">Austin Energy</a> and <a href="/learn/cps-energy-san-antonio-explained">CPS Energy</a> explain what those customers can do instead. Most rural electric cooperatives sit outside the competitive market as well.</p>
+<p>Large non-residential sites have one more wrinkle. ERCOT allocates transmission cost to big loads by their demand during the single highest-demand interval in each of June, July, August and September: the four coincident peaks, or 4CP. A site that holds load down across those four intervals carries a smaller share of transmission cost the following year. That is a delivery-side lever, and no supply contract creates it.</p>
+
+<h2>Checking Which TDU Serves Your Address</h2>
+<p>The authoritative answer is not your city. It is your <strong>ESI ID</strong>, the Electric Service Identifier attached to your meter. Every point of delivery in competitive Texas has one, it is unique to that meter, and it is what a switch order actually names. Retailers enroll an ESI ID, not a mailing address.</p>
+<p>It is on your current bill, often printed as ESIID near the delivery charges, and that line names the TDU outright.</p>
+<p>Why a city name is not enough:</p>
+<ul>
+  <li><strong>Boundaries predate city limits.</strong> Service areas were drawn by whichever company built the lines. Annexation moves a city limit; it does not move the wires.</li>
+  <li><strong>Cities get split.</strong> Parts of the Houston metro are TNMP rather than CenterPoint, and parts of the Dallas-Fort Worth suburbs are TNMP rather than Oncor. Same skyline, different tariff.</li>
+  <li><strong>ZIP codes straddle territories.</strong> A ZIP code is a mail routing device, never drawn to match a utility footprint.</li>
+  <li><strong>Your mailing city may not be your city.</strong> Plenty of Texas addresses carry a postal city they do not sit inside, enough to point an online rate check at the wrong territory.</li>
+</ul>
+<p>If you are moving in without a bill for the new address, ask the landlord or seller for the ESI ID, or let the retailer look it up at signup. Confirm the TDU first, then <a href="/compare-rates">compare rates for your ZIP code</a> knowing the delivery half is fixed and identical whichever name you pick.</p>
+`
+  },
+  110: {
+    title: "How to Read a Texas Electricity Facts Label (EFL)",
+    metaTitle: "Texas Electricity Facts Label (EFL) Guide | Electric Scouts",
+    metaDescription: "Texas retailers must publish an Electricity Facts Label for every plan. How to read the three usage prices, the fees behind them, and the contract term.",
+    tags: ["EFL", "Texas", "Plan Shopping", "Contracts"],
+    content: `
+<h2>What an Electricity Facts Label Is</h2>
+
+<p>The Electricity Facts Label is the one-page disclosure a Texas retail electric provider must give you for every plan it sells. The Public Utility Commission of Texas sets its format, so the same fact sits in the same place on every label. It is not an advertisement but the priced summary of the contract, and it arrives with the Terms of Service and Your Rights as a Customer documents.</p>
+
+<p>An EFL describes a plan in one delivery territory. The same plan sold in Oncor's territory and in CenterPoint's has two labels with different prices, because the regulated delivery charges inside them differ. Check that the label names your utility. The market around it is covered in our <a href="/learn/texas-electricity-rates-guide">Texas electricity rates guide</a>.</p>
+
+<p>Not every Texan gets one. Austin Energy and CPS Energy are municipally owned, and their customers cannot switch retailer, so there is nothing to compare. The same holds for most cooperative members and for the regulated territories of Entergy Texas and El Paso Electric. Where retail choice does exist, Electric Scouts tracks 108 active Texas plans from 22 suppliers, each sold with a label.</p>
+
+<table>
+<thead>
+<tr>
+<th>Part of the label</th>
+<th>What it states</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Electricity price</td>
+<td>Average price per kWh at 500, 1,000 and 2,000 kWh, and the charges behind them</td>
+</tr>
+<tr>
+<td>Other key terms</td>
+<td>Product type, and whether the price can change</td>
+</tr>
+<tr>
+<td>Disclosure chart</td>
+<td>Term, early termination fee, renewable content percentage</td>
+</tr>
+<tr>
+<td>Issue date</td>
+<td>Which version of the plan it is</td>
+</tr>
+</tbody>
+</table>
+
+<h2>The Three Average Prices, and Why They Differ</h2>
+
+<p>The label prices the same plan three times: an average price per kWh at 500 kWh a month, at 1,000 and at 2,000. Not three plans, and not tiers you move between as usage grows. One plan, three usage levels, usually three different numbers.</p>
+
+<p>They differ because almost no plan is a single rate. Some charges scale with usage: the retailer's energy charge, and the per-kWh delivery charge from your transmission and distribution utility. Others do not scale at all — a monthly base charge from the retailer, and the utility's flat monthly customer charge. Divide a fixed charge by 500 kWh and it lands heavily on the average; divide it by 2,000 and it nearly disappears.</p>
+
+<p>Delivery charges are set in a tariff the PUCT approves for each utility — <a href="/utilities/oncor-electric-delivery">Oncor</a>, CenterPoint, AEP Texas, TNMP — and are identical whichever retailer bills you. They sit inside every average price on every EFL, which is why an EFL price is all-in rather than supply-only. What the averages leave out is sales tax and any municipal fee.</p>
+
+<h2>Why the 1,000 kWh Price Is the One Advertised</h2>
+
+<p>Of the three rows, the middle one became the market's shorthand: comparison tables quote it and retailers headline it. Once one row is the row everybody quotes, plans get built to win it.</p>
+
+<p>The usual tool is a bill credit: a fixed amount taken off once monthly usage crosses a threshold, often set at exactly 1,000 kWh. It does not apply at 500, so the top row is untouched. At 1,000 it is divided by exactly 1,000 kWh and cuts that average hard. At 2,000 it spreads over twice the usage and helps half as much.</p>
+
+<p>The result is a label whose middle row sits below the rows on either side of it, and that shape is the tell. A household finishing a mild October just under the threshold gets no credit and pays the undiscounted rate. Read the rows as a set: a steady fall from 500 to 2,000 means fixed charges are doing the work, and a dip in the middle means a threshold is.</p>
+
+<h2>Finding Your Own Usage Before You Compare</h2>
+
+<p>None of this is usable until you know your own number, and one bill is not it. Every Texas bill states the kWh used in the billing period, and our guide to <a href="/learn/how-to-read-your-electricity-bill">reading an electricity bill</a> shows where that line sits. But cooling load fills the summer bills and empties the spring ones, so the plan that wins against an April bill can be wrong in August. Retailers show a usage history in the online account, and Smart Meter Texas holds interval data for addresses metered by the competitive-market utilities. Price a candidate at your own average month and your own heaviest month.</p>
+
+<h2>Fixed, Variable and Indexed on an EFL</h2>
+
+<p>The label states a product type, and it belongs ahead of any price: it settles whether the prices underneath are a commitment or a description of one month.</p>
+
+<ul>
+<li><strong>Fixed.</strong> The energy charge holds for the term. The label still discloses that the price can change if delivery charges change, or if ERCOT or a regulator imposes a new one, so a fixed plan's bill can move without the retailer touching it.</li>
+<li><strong>Variable.</strong> The retailer resets the price each month at its own discretion. The EFL must describe how, which for most variable products means little more than a statement that it may go up or down. A low opening month tells you nothing about the fourth.</li>
+<li><strong>Indexed.</strong> The price follows a formula the EFL must publish, tied to a named index. You can read the formula in advance; you cannot know what it will produce.</li>
+</ul>
+
+<p>24 of the Texas plans we track are fixed-rate and 82 are variable, and month-to-month terms are available too. Our comparison of <a href="/learn/fixed-vs-variable-rate-electricity">fixed and variable rate electricity</a> covers what each commits you to.</p>
+
+<h2>Base Charges, Minimum Usage Fees and Bill Credits</h2>
+
+<p>Three fee structures separate an advertised price from what a plan costs you. All three sit in the itemized charges beneath the average prices, and none is visible in a headline rate.</p>
+
+<ul>
+<li><strong>Base charge.</strong> A fixed monthly amount from the retailer, owed in full in a month you were away and used almost nothing. It weighs most on your lightest months.</li>
+<li><strong>Minimum usage fee.</strong> A charge applied only when monthly usage falls below a stated level. It hides through the summer and lands in the shoulder months, on bills that were small anyway.</li>
+<li><strong>Bill credit.</strong> A fixed amount deducted once usage reaches a threshold. A cliff, not a slope: a month landing just under it can cost more in total than one landing comfortably over.</li>
+</ul>
+
+<p>The three average prices fold these back into a per-kWh figure, but only at 500, 1,000 and 2,000 kWh. If your own months land at 700 kWh and 1,400 kWh, none of the three rows is yours — but every input needed to redo the sum at your own usage is printed on the label.</p>
+
+<h2>Term Length and the Early Termination Fee</h2>
+
+<p>The disclosure chart gives the contract term in months and the early termination fee. Read them as one item: a term is only as binding as the cost of breaking it. Terms across our Texas catalog run from 3 to 60 months, and 20 of the 108 plans we track carry no early termination fee at all.</p>
+
+<p>The fee comes in two shapes and the label says which: a flat amount, the same whether you leave in month two or month twenty-three, or a per-remaining-month charge that shrinks as the term runs down. Under PUCT rules a residential customer is not charged the fee when they move out of the service address and provide evidence of the move.</p>
+
+<p>A Texas contract does not cancel itself, and it does not renew at the price you signed. The retailer sends an expiration notice before the term ends; ignore it and service continues on a default product at a rate the retailer sets. Calendar the end date the day you enroll.</p>
+
+<h2>Renewable Content and What It Means</h2>
+
+<p>The disclosure chart states renewable content as a percentage, a narrower claim than the marketing around it. Electricity on the ERCOT grid is not traced from a particular generator to a particular meter. Your house draws whatever the grid dispatched that second, the same supply as every other house on the street.</p>
+
+<p>The percentage is an accounting commitment instead. The retailer acquires and retires renewable energy credits covering that share of what you use, each representing renewable generation delivered onto the grid and tracked in the registry ERCOT operates. It is a real purchase, not a claim about the electrons at your meter.</p>
+
+<p>A figure below 100% means the commitment is partial, and the percentage on the EFL binds where an advertisement's wording does not. 41 of the 108 Texas plans in our catalog are backed by 100% renewable energy, from 10 of the 22 suppliers. Our <a href="/renewable-energy">renewable energy plans</a> page filters to them.</p>
+
+<h2>A Reading Order That Catches the Traps</h2>
+
+<p>Price first is how people get caught, because the price is the part most carefully arranged. Read the label out of order instead.</p>
+
+<ol>
+<li>Confirm the label is for your delivery utility, and note its issue date.</li>
+<li>Read the product type before any price.</li>
+<li>Read all three average prices together and look at their shape.</li>
+<li>Find the base charge, minimum usage fee and credit threshold behind that shape.</li>
+<li>Price the plan at your own kWh, average month and heaviest month.</li>
+<li>Read the term and the early termination fee together, and note the end date.</li>
+<li>Read the renewable percentage on the label, not in the advertisement.</li>
+</ol>
+
+<p>The EFL is short, plain and binding. Where it disagrees with an advertisement, a phone call, or a comparison page including this one, the label wins. Once you can read one, comparing plans is a matter of holding several labels against your own usage — which is what our <a href="/compare-rates">rate comparison</a> is built to do.</p>
+`
+  },
+  111: {
+    title: "Power to Choose Texas: How the State's Site Works and What It Leaves Out",
+    metaTitle: "Power to Choose Texas: How It Works | Electric Scouts",
+    metaDescription: "Power to Choose is the state-run Texas plan list. How it ranks offers, why the cheapest row is often not the cheapest plan, and what it does not show.",
+    tags: ["power to choose texas", "texas electricity plans", "electricity facts label", "puct", "comparing texas plans"],
+    content: `
+<h2>What Power to Choose Is</h2>
+<p>Power to Choose is the electricity plan listing run by the Public Utility Commission of Texas: the state's record of what retail electric providers are offering in the competitive parts of the market, in one place and one format.</p>
+<p>It is a disclosure tool, not a store. Retailers submit their offers, the PUCT sets the fields they must be described in, and the site prints them. It sells nothing and takes no position on which plan is better. Click a row and you leave for the retailer's enrollment page.</p>
+<p>The neutrality is the point and also the limit. A listing built so no supplier can be favored cannot tell you which plan suits your house. The comparing is still yours.</p>
+
+<h2>How the Ranking Works</h2>
+<p>You enter a ZIP code. The site returns the plans a retailer is licensed to sell, and is currently selling, into the transmission and distribution utility territory that ZIP falls in. Those territories — Oncor, CenterPoint, AEP Texas and Texas-New Mexico Power, chiefly — follow the wires, not city limits, so two ZIP codes in one metro can return different lists.</p>
+<p>Results are sorted by <strong>average price per kWh</strong>, cheapest first, at an assumed monthly usage. The PUCT prescribes three disclosure levels for Texas plans — 500, 1,000 and 2,000 kWh a month — and the listing ranks at one of them, defaulting to 1,000.</p>
+<p>What goes into that figure matters. Average price per kWh is not the energy charge. It is the whole monthly cost of the plan at that usage divided by that usage: energy charge, any base charge, and the regulated <a href="/learn/electricity-delivery-charges-explained">delivery charges</a> your wires company bills for carrying power to your meter. Those are set by tariff, identical across every retailer in your territory, and no plan discounts them.</p>
+<p>Base charges and usage credits scale differently against consumption, so moving the usage level does not just change the numbers. It reorders the page.</p>
+
+<h2>Why the Top Row Is Often Not the Cheapest for You</h2>
+<p>The ranked figure is one point on a curve shaped by two components pulling in opposite directions. A monthly base charge is a flat amount spread across whatever you use. Divided into 500 kWh it lands hard on the average price; divided into 2,000 kWh it barely registers. A plan with a large base charge and a low energy charge therefore looks expensive at the bottom of the range and cheap at the top.</p>
+<p>A bill credit works the other way, and more sharply, because it is conditional. A credit that pays out only when the month's usage clears a stated threshold does nothing below it. Set the threshold at the level the listing ranks on, and the plan is priced at the single best point on its own curve. A household that finishes a mild April just under the threshold gets nothing, and its bill bears no relation to the number that ranked the plan first.</p>
+<p>Underneath sits a second problem. Your usage is not a number, it is twelve numbers. A Texas August and a Texas March are not the same month, and in a house with electric cooling the gap is wide enough to move a plan from first place to unremarkable. Rank at the level nearest your own, then price the shortlist at your highest and lowest months.</p>
+
+<h2>What the Listing Does Not Tell You</h2>
+<p>The standard format makes offers comparable. It also means the page carries only what fits it.</p>
+<ul>
+  <li><strong>Service quality.</strong> No complaint history, no billing-accuracy record. Two neighboring rows can be very different companies.</li>
+  <li><strong>Whether you will be approved.</strong> Deposits and credit checks are decided by the retailer at enrollment.</li>
+  <li><strong>What happens when the term ends.</strong> An expiring contract does not cancel itself. It rolls onto a month-to-month holdover rate the retailer sets, not the rate that was ranked.</li>
+  <li><strong>How many companies you are looking at.</strong> A list of offers, not of suppliers. One retailer selling several products fills several rows.</li>
+  <li><strong>Your own consumption.</strong> The site cannot see your meter. Every figure on it prices a hypothetical household.</li>
+</ul>
+
+<h2>Reading the EFL Behind Each Row</h2>
+<p>Every row links to an <strong>Electricity Facts Label</strong>. The EFL is the document the PUCT requires for each plan, in a set structure, and where the terms actually live. Alongside it sit the Terms of Service and Your Rights as a Customer.</p>
+<p>The EFL prices the plan at all three levels rather than one, which is the fastest way to see the shape of the curve. It separates the energy charge from the base charge, states TDU charges on their own line, and gives the product type, the term, the early termination fee and how it is calculated, the renewable percentage, and the conditions under which the price can change.</p>
+<p>That last line matters on a fixed-rate plan. Fixed means the energy charge is fixed for the term, not that the total is frozen: a retailer may pass through changes in regulated delivery charges and certain regulatory fees, and the EFL says which.</p>
+<p>Two rows showing the same average price can have entirely different labels behind them — one built almost wholly from an energy charge, the other from a high base charge offset by a conditional credit. On the listing they are neighbors; over a year they are not comparable. The EFL is part of the agreement you sign. The listing row is not.</p>
+
+<h2>Filters Worth Using and Filters Worth Ignoring</h2>
+<p>Filters narrow the list before the ranking runs, so the ones reflecting a real constraint are the ones that help.</p>
+<table>
+<thead>
+<tr>
+<th>Filter</th>
+<th>What it does</th>
+<th>How useful</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contract term</td>
+<td>Restricts the list to a given contract length</td>
+<td>Use it. Term is a commitment you can make or not, and expensive to revisit</td>
+</tr>
+<tr>
+<td>Plan type</td>
+<td>Separates fixed, variable and indexed products</td>
+<td>Use it. A variable rate can be reset month to month, so it is a price with nothing behind it</td>
+</tr>
+<tr>
+<td>Cancellation fee</td>
+<td>Surfaces plans with no early termination fee</td>
+<td>Use it if you may move or shop again inside the term</td>
+</tr>
+<tr>
+<td>Renewable content</td>
+<td>Filters on the percentage stated on the EFL</td>
+<td>Use it if it matters, and read the result as a contract term</td>
+</tr>
+<tr>
+<td>Promotions</td>
+<td>Flags plans carrying an incentive</td>
+<td>Ignore it as a ranking signal. The EFL conditions decide the cost, not the incentive</td>
+</tr>
+</tbody>
+</table>
+<p>The renewable filter invites one misreading. Every electron on the ERCOT grid comes from the same pool. A 100% renewable plan commits the retailer to retire renewable energy certificates matching your consumption — a real obligation, and checkable, but an accounting statement rather than wind routed to your address. Electric Scouts tracks 41 Texas plans backed by 100% renewable energy from 10 suppliers, starting at 9.5 cents per kWh, as of August 14, 2026.</p>
+
+<h2>Who Cannot Use It</h2>
+<p>Retail choice covers most of Texas, not all of it. Enter a ZIP outside a competitive territory and there is nothing to shop.</p>
+<p>Municipal utilities are the largest exception. <a href="/learn/austin-energy-explained">Austin Energy</a> and <a href="/learn/cps-energy-san-antonio-explained">CPS Energy</a> are owned by their cities, set rates through a city process rather than competition, and their customers cannot switch supplier. Smaller city-owned systems, including those serving Denton and Brownsville, work the same way.</p>
+<p>Electric cooperatives are the second. Co-ops are member-owned and decided for themselves whether to open to competition. Most did not. If yours stayed out, you have one supplier, and your influence over its rates runs through its board.</p>
+<p>The third is geographic. Retail competition is tied to the <a href="/learn/ercot-electricity-market-explained">ERCOT grid</a>, and parts of the state are not on it — El Paso, the Panhandle and South Plains around Amarillo, and a stretch of East and Southeast Texas that takes in Beaumont. Those areas are served by vertically integrated utilities under traditional rate regulation: no supplier to choose, and rates set in a rate case.</p>
+
+<h2>Using It Alongside Your Own Numbers</h2>
+<p>The listing becomes useful when you stop asking what is cheapest and start asking what a plan would have cost you.</p>
+<p>Start with your bills. Take three kWh figures from the last twelve months: lowest month, highest month, average. If you do not have twelve, a summer bill and a winter bill bracket the range well enough to beat the site's default.</p>
+<p>Then work out your current all-in cost: divide your total bill by the kWh you used in that period. Because the average price on an EFL already includes TDU delivery charges, that whole-bill figure — not the supply section alone — is what a ranked row compares to. Holding the supply portion against a Power to Choose price produces a mismatch that looks like an error and is not. Our guide to <a href="/learn/how-to-read-your-electricity-bill">reading an electricity bill</a> shows where each line sits.</p>
+<p>Now take three or four rows, open each EFL, and price it at your own usage levels from the energy charge, the base charge and any credit threshold on the label. That arithmetic reorders a shortlist often enough to be worth the time.</p>
+<p>For scale, here is the Texas market Electric Scouts tracked on August 14, 2026: 108 active plans from 22 suppliers, rates from 8.9 to 19.7 cents per kWh, median 14.35 cents. The catalog holds 24 fixed-rate plans and 82 variable ones, and 20 that carry no early termination fee. Terms run from 3 to 60 months, alongside month-to-month service. That is a long list at a default usage level and a short one once you have priced it at your own. <a href="/compare-rates">Compare current rates</a> with your own usage entered, then check the shortlist against the EFLs before signing.</p>
+`
+  },
+  112: {
+    title: "Texas Bill Credit Electricity Plans: How Usage Thresholds Work",
+    metaTitle: "Texas Bill Credit Electricity Plans | Electric Scouts",
+    metaDescription: "Bill credit plans hand back a fixed sum if you cross a usage threshold. Why they look cheap on paper and what happens in the months you fall short.",
+    tags: ["texas bill credit plans", "bill credit electricity", "minimum usage fee", "electricity facts label", "texas electricity plans"],
+    content: `
+<h2>What a Bill Credit Plan Is</h2>
+<p>A bill credit plan has two moving parts. The first is an ordinary energy charge, a price per kilowatt-hour applied to everything you use. The second is a fixed dollar amount the retailer subtracts from your bill in any month your usage reaches a stated threshold. That threshold is commonly 1,000 kWh, the usage level Texas plans are advertised at, though a plan can set it higher or lower, or stack more than one band.</p>
+<p>The credit is not a discount on the rate, and it does not change what a kilowatt-hour costs. It is a lump sum taken off after the energy and delivery charges have been worked out, the way a promotional credit comes off a phone bill. Your consumption decides only whether it appears at all.</p>
+<p>That distinction drives everything else. A rate discount scales with usage; a credit does not. The same amount lands whether you clear the threshold by one kilowatt-hour or by four hundred.</p>
+
+<h2>Why It Makes the Advertised Rate Look Low</h2>
+<p>The Public Utility Commission of Texas requires every competitive offer to publish an Electricity Facts Label, and the label must show the plan's average price per kilowatt-hour at 500, 1,000 and 2,000 kWh of monthly usage. The middle figure is the one that reaches marketing pages and the top of sorted comparison lists, so Texas plans are effectively advertised at 1,000 kWh of usage.</p>
+<p>On a bill credit plan, that middle figure already has the credit baked into it. Divide the credit by 1,000 kWh: every dollar of credit takes a tenth of a cent per kWh off the published average. A large credit can drag the headline number well below the energy charge the plan actually bills you at.</p>
+<p>This is why cheap-looking plans and bill credit structures tend to arrive together. Our Texas market snapshot of August 14, 2026 holds 108 active plans — 96 residential and 12 business — with a median rate of 14.35¢ per kWh and residential rates starting at 9.5¢. When you <a href="/compare-rates">compare rates</a>, or read up on the <a href="/learn/cheapest-electricity-plans-texas">cheapest plans in Texas</a>, what you sort on is an average at one level of consumption, not a price.</p>
+
+<h2>The Cliff Edge</h2>
+<p>Threshold tests are absolute. Reach the threshold and the credit lands in full. Fall one kilowatt-hour short and it does not land at all. There is no proration.</p>
+<p>At 999 kWh you paid the full energy charge on every unit. At 1,000 you paid the full energy charge and then got the credit back. The single kilowatt-hour between the two is worth the entire credit, which makes the month you just miss the most expensive electricity you buy. If leaving the air conditioning running an extra evening in late October saves you money, the plan is not priced the way a supply contract normally is.</p>
+<p>Billing cycles make this harder to control than it sounds. Meter read dates move, so one cycle can run several days longer or shorter than the last. A household using the same electricity every day can clear the threshold in a long cycle and miss it in a short one. A smaller credit at a lower band softens the drop rather than removing it.</p>
+
+<h2>Seasonality Is the Real Risk</h2>
+<p>Texas household consumption is dominated by cooling, which is why ERCOT's annual system peak arrives on a hot weekday afternoon and not on a winter morning. All-electric homes add a smaller winter peak.</p>
+<p>Between those peaks sit the shoulder months, roughly March through May and October into November, when neither the air conditioning nor the heat runs much. Those are the months a threshold plan fails you, and they are not rare. A household that clears 1,000 kWh comfortably from June through September, and again in the coldest weeks of winter, can still fall short in every month in between.</p>
+<p>Notice the asymmetry. You collect the credit in the months your bill was already going to be large, and lose it in the months it would have been small anyway. A one-bedroom apartment may never reach 1,000 kWh in a mild month; a large all-electric house may never fall below it. Households in between cross the line several times a year, which is the worst place to be.</p>
+
+<h2>Working Out Whether One Suits You</h2>
+<p>The answer is in your billing history, not in the offer. Pull twelve consecutive months of kWh totals. Texas bills carry a twelve-month usage history, and smart meter interval data is available through Smart Meter Texas. Our <a href="/bill-analyzer">bill analyzer</a> will read the figures off a bill and price the market against them.</p>
+<p>Then count. How many of those months reached the threshold? That count is most of the decision. Twelve out of twelve and the plan behaves like a fixed rate with a discount built into it. Six out of twelve and you should halve the credit before you compare it against anything else. Look at the margin as well as the count: a month that cleared the line by a handful of kilowatt-hours is not a month you can rely on next year, because weather moves usage more than habits do.</p>
+<p>Check whether last year still describes you: a new occupant, a bigger home, a heat pump, someone now working from home. The rest is arithmetic. For each month, multiply usage by the energy charge, add the base charge and the delivery charges, then subtract the credit only in the months that qualify. Total the twelve, then run the same months against a flat plan. The lower total will not always belong to the plan with the lower advertised rate.</p>
+
+<h2>Bill Credits Versus a Flat Fixed Rate</h2>
+<p>A flat fixed-rate plan charges one price per kWh for every unit for the whole term, so the bill scales smoothly and you can predict it from a thermostat setting.</p>
+<p>One confusion is worth clearing up: a bill credit plan can itself be a fixed-rate contract. <strong>Fixed</strong> describes whether the energy charge can change during the term; the credit is a separate condition attached to the bill. A plan can hold its rate steady for 24 months and still produce a very different effective price in March than in August. The snapshot holds 24 fixed-rate Texas plans and 82 variable ones, and the <a href="/learn/fixed-vs-variable-rate-electricity">difference between fixed and variable</a> tells you nothing on its own about whether a threshold is attached.</p>
+<p>The trade-off is best case against predictability. A flat rate gives up the best case for a bill that behaves the same way every month. If your usage is high and steady — a large all-electric home, a business with year-round load — a threshold plan can come out ahead. If your usage swings, you are buying variance.</p>
+<p>Neither structure touches the other half of the bill. Your TDU's delivery charges are regulated and identical across every retailer serving your address. A credit reduces the total you pay, but it changes nothing about how <a href="/learn/electricity-delivery-charges-explained">delivery charges</a> are calculated.</p>
+
+<h2>Minimum Usage Fees, the Mirror Image</h2>
+<p>The same logic runs in reverse. Instead of paying you for crossing a line, a minimum usage fee charges you for falling below one. The structure is identical: a fixed dollar amount, a stated kWh level, an absolute test applied per billing cycle.</p>
+<p>Who it catches is predictable: apartments, small well-insulated homes, anyone who travels for weeks at a time. A month you spent away from the house can cost more than a month you spent in it. A plan can carry both mechanisms, leaving one narrow band of usage where it is priced as advertised.</p>
+<p>There is a reliable tell for both, and it does not need the fine print. Compare the three average prices the label has to show. With no thresholds in the plan they sit fairly close together, differing only because the base monthly charge spreads across more kilowatt-hours as usage rises. A credit at 1,000 kWh pulls the 1,000 and 2,000 kWh figures well below the 500 kWh figure. A minimum usage fee pushes the 500 kWh figure well above the other two. The direction of the gap tells you which mechanism is in the plan.</p>
+
+<h2>What to Check on the EFL Before Signing</h2>
+<p>The retailer has to make the label available before you enroll, and the label is the document that governs — not the marketing page you found the plan on.</p>
+<table>
+<thead>
+<tr>
+<th>What to look for</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The three average prices</td>
+<td>A wide spread across the 500, 1,000 and 2,000 kWh figures means a threshold is in the plan.</td>
+</tr>
+<tr>
+<td>The threshold wording</td>
+<td>"At or above" and "more than" are different tests, and the boundary is where this plan lives.</td>
+</tr>
+<tr>
+<td>Base monthly charge</td>
+<td>It sits underneath the credit and is billed whether or not you qualify.</td>
+</tr>
+<tr>
+<td>Minimum usage fee</td>
+<td>Often listed under fees rather than beside the price, which is where people skim.</td>
+</tr>
+<tr>
+<td>TDU pass-through</td>
+<td>Regulated delivery rates can change mid-term, and a pass-through moves with them.</td>
+</tr>
+<tr>
+<td>Early termination fee</td>
+<td>It sets the cost of being wrong. Twenty of the 108 plans in the snapshot carry none.</td>
+</tr>
+<tr>
+<td>Term length</td>
+<td>Snapshot terms run from 3 to 60 months, with month-to-month available.</td>
+</tr>
+</tbody>
+</table>
+<p>All of this applies only where you can choose a retailer. Municipal utilities such as Austin Energy and CPS Energy in San Antonio generate and deliver power themselves, and their customers cannot switch, so neither a label nor a bill credit is on offer to them. The same holds across the cooperative and municipal territories elsewhere in the state. Everyone else can read our guide to <a href="/texas-electricity">Texas electricity</a> for how the rest of the pieces fit together.</p>
+`
+  },
+  113: {
+    title: "Texas Electricity Plans for Low-Usage Homes: Read the 500 kWh Row",
+    metaTitle: "Low-Usage Electricity Plans in Texas | Electric Scouts",
+    metaDescription: "Texas plans are advertised at 1,000 kWh. Use less and that rate is not your rate. How base charges, bill credits and the 500 kWh EFL row decide your bill.",
+    tags: ["low usage electricity plans", "electricity facts label", "500 kwh efl", "minimum usage fee", "bill credit electricity plans"],
+    content: `
+<h2>Why Low-Usage Homes Pay a Higher Rate</h2>
+<p>A one-bedroom apartment, a small house with good shade, a place that sits empty half the month — these households shop hardest for a low rate and often end up paying a high one. Not because retailers single them out. Because of arithmetic.</p>
+<p>Your bill is not one price times one quantity. Part of it scales with what you use; part does not. The fixed part is your transmission and distribution utility's monthly customer charge for the meter and connection, which the retailer passes through, plus, on many plans, a base charge the retailer adds on top. Those amounts are the same whether you burn 1,800 kWh in a month or 400.</p>
+<p>An effective rate is the whole bill divided by the kilowatt-hours. When the fixed part stays put and the kilowatt-hours fall, that division gets worse. Advertised rates are conventionally quoted at 1,000 kWh a month, sometimes 2,000. If your home is nothing like that, the ad is describing someone else's bill.</p>
+
+<h2>The 500 kWh Row Is Your Row</h2>
+<p>Texas requires the disclosure that fixes this, and most shoppers walk straight past it. The Public Utility Commission of Texas requires every retail plan to be sold with an <strong>Electricity Facts Label</strong>, and the EFL does not state one price. It states the average price per kWh at three usage levels: <strong>500, 1,000 and 2,000 kWh a month</strong>.</p>
+<p>Those are not three plans, and not tiers you move between. They are one plan priced three times, because it genuinely costs a different amount per kWh depending on how much you use. Plan cards nearly always quote the middle figure.</p>
+<p>If your usage sits closer to 500 than to 1,000, the 500 kWh figure is the one that describes you, and the only one worth ranking plans by. Two plans that look the same at 1,000 kWh can pull apart at 500, and the cheaper of the two can swap.</p>
+<p>An EFL average price also includes the regulated delivery charges from your local wires company, which is why it reads higher than the energy rate in the ad, and why EFL against EFL is the only honest comparison. Our guide to <a href="/learn/electricity-delivery-charges-explained">electricity delivery charges</a> covers those lines and why no retailer can discount them.</p>
+<p>One precondition: all of this assumes you can choose a retailer. A home served by a municipal utility — Austin Energy, or CPS Energy in San Antonio — or by a cooperative that has not opened its territory buys from that utility at its published rates. No EFL, no plan to shop.</p>
+
+<h2>Base Charges Hurt More the Less You Use</h2>
+<p>A base charge adds a fixed number of cents to every kilowatt-hour, and how many depends entirely on the denominator.</p>
+<table>
+<thead>
+<tr><th>Your monthly usage</th><th>What each $1 of monthly base charge adds</th></tr>
+</thead>
+<tbody>
+<tr><td>2,000 kWh</td><td>0.05¢ per kWh</td></tr>
+<tr><td>1,000 kWh</td><td>0.10¢ per kWh</td></tr>
+<tr><td>500 kWh</td><td>0.20¢ per kWh</td></tr>
+<tr><td>350 kWh</td><td>0.29¢ per kWh</td></tr>
+</tbody>
+</table>
+<p>Take whatever base charge is on the label in front of you and multiply. A charge a 2,000 kWh household barely notices weighs four times as much on a 500 kWh household and nearly six times as much at 350. The ratio holds whatever the charge is.</p>
+<p>That is usually the whole explanation for the gap between the 500 and 1,000 rows on an EFL. Both come from the same energy rate. The difference is fixed charges divided by different numbers.</p>
+<p>Part of that fixed amount is the delivery utility's customer charge, set in a regulated tariff and identical whichever retailer you buy from. In <a href="/utilities/oncor-electric-delivery">Oncor</a> territory every plan carries the same Oncor charges, and the same holds in every TDU territory. So the piece worth shopping is the retailer's base charge — the only fixed cost that differs between the plans on your screen.</p>
+
+<h2>Bill Credit Plans Are Usually Wrong for You</h2>
+<p>A bill credit plan works like this: use at least a stated amount in a billing cycle and the retailer subtracts a flat sum from the bill. Thresholds sit at round numbers, 1,000 kWh being the common one. It is a cliff, not a slope. Cross it by one kilowatt-hour and you get the whole credit. Miss it by one and you get nothing.</p>
+<p>That structure is built for a household that sits above the line every month. A low-usage home may clear the threshold in August, miss it for the rest of the year, or never clear it at all.</p>
+<p>The trap is that the energy rate underneath a credit plan is often set high precisely because the credit is expected to do the discounting. Miss the threshold and you are not back to an ordinary price; you are on an expensive plan with a feature you never used. The EFL shows it plainly: on these plans the 500 kWh figure usually sits well above the 1,000 kWh figure, and that gap is the credit disappearing.</p>
+
+<h2>Minimum Usage Fees Are Worse</h2>
+<p>A minimum usage fee is the same threshold logic pointed the other way: instead of withholding a discount when usage falls below a stated level, the plan adds a charge. A missed bill credit costs you an opportunity. A minimum usage fee costs you money you would not otherwise owe, and it lands in the months when your bill should have been smallest — mild weeks in spring and fall, a month you traveled, a month the place was mostly empty.</p>
+<p>Any minimum usage fee has to be disclosed on the EFL. Look for it before the rate. For a household that regularly lands under 500 kWh, a plan carrying one is disqualified, whatever the headline says.</p>
+
+<h2>What a Good Low-Usage Plan Looks Like</h2>
+<p>The target is easy to describe.</p>
+<ul>
+<li><strong>No retailer base charge.</strong> The TDU's monthly charge is unavoidable. A second fixed charge from the retailer is not.</li>
+<li><strong>No bill credit.</strong> A discount you are unlikely to trigger is worth nothing, and the rate underneath it is usually worse than a plain one.</li>
+<li><strong>No minimum usage fee.</strong> Non-negotiable at low usage.</li>
+<li><strong>A flat energy rate.</strong> One price per kWh at every usage level, no tiers and no seasonal step. Flat is not the same as fixed: fixed means the rate cannot change during the term, flat means it does not change with how much you use. Low usage wants both.</li>
+<li><strong>Three EFL figures close together.</strong> The fastest test there is. When the 500, 1,000 and 2,000 kWh prices are nearly the same number, the plan has almost no fixed or conditional component. When they are far apart, at 500 kWh you are on the wrong side of it.</li>
+</ul>
+<p>Expect this to reorder your shortlist: the cheapest plan at 1,000 kWh and the cheapest at 500 kWh are frequently not the same plan. Our Texas catalog held 108 active plans on August 14, 2026 — 96 residential and 12 business, from 22 retailers — with a median rate of 14.35¢ per kWh and rates running from 8.9¢ to 19.7¢. Nothing in a range that wide tells you which plan is cheapest for your home. The row you read does. Our guide to the <a href="/learn/cheapest-electricity-plans-texas">cheapest electricity plans in Texas</a> covers where the low advertised numbers come from.</p>
+
+<h2>Estimating Your Usage Before You Have a Bill</h2>
+<p>New address, no history, a plan to choose anyway. You can still do better than guessing.</p>
+<ul>
+<li><strong>Get twelve months, not one.</strong> A seller or a previous occupant can hand over old bills, and what you want from them is the range — lightest month and heaviest — rather than an average.</li>
+<li><strong>Find out what runs on electricity.</strong> Heating is the biggest fork. A home with a gas furnace, gas water heater and gas range uses far less winter electricity than an otherwise identical all-electric one, and in buildings where heating and cooling run off a central system the meter sees less again.</li>
+<li><strong>Buy time instead of certainty.</strong> Take a short commitment first, get one real summer bill and one real winter bill, then shop with a number instead of a guess. That same catalog held terms of 3, 4, 5 and 6 months, month-to-month service, and 20 plans with no early termination fee.</li>
+</ul>
+<p>Locking a guess into a 36-month contract is the expensive version of this mistake. Locking one into something you can leave for free barely counts as one.</p>
+
+<h2>Checking a Plan Against Your Own Number</h2>
+<p>Once you have a usage figure, stop reading rows and compute the bill.</p>
+<ul>
+<li>Multiply your monthly kWh by the plan's energy charge.</li>
+<li>Add the retailer's monthly base charge, if the plan has one.</li>
+<li>Add the TDU's fixed monthly charge and its per-kWh delivery charge — unless you are working from the EFL average price, which contains both.</li>
+<li>Subtract a bill credit only if your usage clears the threshold that month.</li>
+<li>Add a minimum usage fee if your usage falls below its trigger.</li>
+<li>Divide the total by your kWh. That is your effective rate.</li>
+</ul>
+<p>Run it twice, at your lightest month and your heaviest. A plan that looks fine against your annual average can be wrong for most of the year, and the light months are where structure costs you most.</p>
+<p>If you already have Texas bills, our <a href="/bill-analyzer">bill analyzer</a> pulls your usage and charges out of them, and <a href="/compare-rates">comparing rates</a> with your own usage entered prices every plan at your consumption rather than someone else's. If the line items are unclear, start with <a href="/learn/how-to-read-your-electricity-bill">how to read your electricity bill</a>, which names each charge and says which a switch can change.</p>
+<p>Never rank a plan on a rate quoted at a usage level that is not yours.</p>
+`
+  },
+  114: {
+    title: "Why Is My Texas Electric Bill So High? Diagnose It in Order",
+    metaTitle: "Why Is My Texas Electric Bill So High? | Electric Scouts",
+    metaDescription: "Your Texas electric bill jumped. Work through it in order: usage, an expired contract, variable pricing, bill credit thresholds and delivery charges.",
+    tags: ["high electric bill texas", "texas electricity bill", "holdover rate", "bill credit threshold", "minimum usage fee"],
+    content: `
+<h2>Start With Usage, Not the Rate</h2>
+<p>A high Texas bill has two possible causes at the top level: you used more kilowatt-hours, or you paid more per kilowatt-hour. The rate is the usual suspect. Check the other number first.</p>
+<p>Open your online account and find the usage history. Compare this month against <strong>the same month last year</strong>, not against last month — August always beats April, which tells you nothing. If kWh is up sharply year over year, no plan change fixes it: look at a failing air conditioner, a pool pump, a water heater on resistance backup, or more people at home. Check the service period dates too: Texas cycles are not all the same length, and a longer one is more days of consumption in a single bill.</p>
+<p>Then compute one number: amount due divided by kWh billed. That is your all-in cost per kWh, delivery included, and the only figure comparable across plans. Our <a href="/bill-analyzer">bill analyzer</a> does that arithmetic on a bill you upload, and <a href="/learn/how-to-read-your-electricity-bill">how to read your electricity bill</a> covers where each line comes from.</p>
+
+<h2>Did Your Contract Expire?</h2>
+<p>This is a common reason a Texas bill jumps, and it produces nothing dramatic to notice. Your fixed term simply ends.</p>
+<p>Texas retailers must notify you in writing before a fixed-term plan expires. The notice arrives with a bill and is easy to miss. If you do nothing, service continues, but on the retailer's default month-to-month product — sometimes called a holdover rate — priced at the provider's discretion. It is not the price you signed, and it can change every cycle.</p>
+<p>The tell is on the bill. Find the plan name and the contract end date. If the plan name now reads <strong>month to month</strong>, <strong>variable</strong>, or <strong>default</strong>, you rolled over. A holdover product has no term and no early termination fee, so you can leave the day you find it.</p>
+
+<h2>Are You on a Variable Rate?</h2>
+<p>A variable rate can change from one billing cycle to the next. The Electricity Facts Label, which the Public Utility Commission of Texas requires every plan to publish, sets out how that price is determined. In most cases it is not pegged to a published index. It is the retailer's own number, moved at their discretion within the terms the EFL states.</p>
+<p>Variable is the default shape of this market, not the exception. Our August 14, 2026 snapshot holds 108 Texas plans, and <strong>82 of them are variable</strong>. Only 24 are fixed. Terms run from 3 months to 60, and month-to-month offers are widely available.</p>
+<p>A variable price follows the ERCOT wholesale market with a lag, and wholesale prices are most volatile on summer afternoons when demand peaks. A variable plan is not automatically wrong — the flexibility is real — but it should be a decision you made, not one made for you when a contract lapsed. <a href="/learn/fixed-vs-variable-rate-electricity">Fixed versus variable</a> covers the trade.</p>
+
+<h2>Did You Miss a Bill Credit Threshold?</h2>
+<p>Many Texas plans do not price electricity smoothly. They attach a flat dollar credit that applies only when usage for the cycle reaches a level the plan states. Below that level the credit does not shrink. It disappears.</p>
+<p>That creates a cliff. A month just under the threshold can cost more in dollars than a month just over it on the same plan, which is strange enough that people assume a billing error. It is not an error. It is the design.</p>
+<p>It is also why every EFL shows an average price per kWh at 500, 1,000, and 2,000 kWh, and why those three figures can sit far apart on a credit plan. Read all three, then check where your usage actually lands each month. If you hover near the threshold, the plan is a poor fit whatever the headline says.</p>
+
+<h2>Is a Minimum Usage Fee Being Applied?</h2>
+<p>This is the mirror image of the bill credit. Some plans charge a flat fee in any cycle where usage falls below a stated level. It appears as its own line item — minimum usage fee, base charge, names vary — and must be disclosed in the EFL.</p>
+<p>In a low-usage month that fee can be a large share of what the retailer charges, and it wrecks the effective rate. A plan that looks competitive at the EFL's 1,000 kWh disclosure point can read very differently at 500. Small apartments, second homes, and mild spring and fall months are where it bites.</p>
+<p>The worst case is both mechanisms firing at once. Usage drops below the credit threshold and below the minimum usage line in the same cycle, so you lose the credit and pay the fee in a month when you used less electricity than usual. That is often the answer to a bill that went up while nobody was home.</p>
+
+<h2>How Much of the Bill Is Delivery?</h2>
+<p>Part of every Texas bill is not the part you shop. Your retailer sells the supply. A transmission and distribution utility — Oncor, CenterPoint Energy, AEP Texas, or Texas-New Mexico Power, depending on your address — owns the poles and wires, reads the meter, and restores power after a storm. Its charges are set through a regulated process at the PUCT and are identical whichever retailer you buy from. No provider can discount them.</p>
+<p>TDU charges are typically a fixed monthly customer charge plus a per-kWh delivery charge, adjusted periodically through regulatory filings. Those adjustments reach your bill regardless of what your contract says, which is why a fixed-rate bill can rise mid-term: what is fixed is the energy charge, not the total. Find the TDU lines and add them up, because shopping cannot touch that share. <a href="/learn/electricity-delivery-charges-explained">Delivery charges explained</a> breaks out the components.</p>
+<p>Then check that you can shop at all. If you are served by <a href="/learn/austin-energy-explained">Austin Energy</a> or CPS Energy in San Antonio, none of the shopping advice applies: both are municipally owned and their customers cannot switch retailers. Nor can customers in El Paso, Denton, Brownsville, the Entergy Texas territory around Beaumont, the Panhandle around Amarillo, or on most electric cooperatives. There, a high bill is a usage or rate-schedule question for the utility.</p>
+
+<h2>Weather and the Texas Summer</h2>
+<p>Cooling load does not scale politely with temperature. An air conditioner runs to close the gap between the outdoor temperature and your thermostat setting, so a hotter afternoon means a disproportionate increase in runtime, not a proportional one.</p>
+<p>Before drawing conclusions from a year-over-year comparison, check whether the two months were comparable. Many Texas bills print an average temperature or degree-day figure for the service period next to the prior year's. If this August ran hotter, part of the increase is weather, and no plan change recovers it.</p>
+<p>Businesses carry an extra summer exposure. Under ERCOT's four coincident peak method, the highest 15-minute system demand interval in each of June, July, August, and September sets how transmission costs are allocated to large loads the following year.</p>
+
+<h2>Meter and Billing Errors</h2>
+<p>Check the read type first: if the utility could not read your meter, the bill is estimated and says so. An estimate followed by an actual read produces a true-up that lands in one cycle and looks exactly like a price spike.</p>
+<p>Ask your retailer for four things:</p>
+<ul>
+<li>The <strong>read type</strong> for the disputed cycle — actual or estimated.</li>
+<li>The <strong>beginning and ending meter register readings</strong>, to check the difference against the kWh billed.</li>
+<li>Your <strong>15-minute interval data</strong>. Nearly all meters in the competitive area are advanced meters, and you can pull this yourself through Smart Meter Texas.</li>
+<li>A <strong>billing dispute</strong> with the TDU, plus a meter test, if the readings and the billed kWh do not reconcile.</li>
+</ul>
+<p>Check what else is riding on the total. A deposit, a late fee, a reconnection charge, or a carried-forward balance inflates an amount due without any change to your rate or usage. If a genuine dispute goes nowhere, the PUCT takes consumer complaints.</p>
+
+<h2>What to Do Next, in Order</h2>
+<ol>
+<li>Divide the amount due by the kWh billed. That is your all-in cost per kWh.</li>
+<li>Pull the EFL for your current plan. Note the rate type, term end date, bill credit threshold, minimum usage fee, and early termination fee.</li>
+<li>Compare kWh against the same month last year, adjusting for cycle length and temperature. If usage explains the increase, the fix is the house, not the contract.</li>
+<li>If price explains it, check whether you owe an exit fee. On a holdover or month-to-month product you do not.</li>
+<li>Compare your all-in figure against each plan's EFL average price at <em>your</em> usage level. Both include delivery. Headline rates do not.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Most likely cause</th>
+<th>Where to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bill up, kWh flat</td>
+<td>Contract rolled to a holdover rate</td>
+<td>Plan name and term end date</td>
+</tr>
+<tr>
+<td>Bill moves every cycle</td>
+<td>Variable rate</td>
+<td>Rate type on the EFL</td>
+</tr>
+<tr>
+<td>Bill up in a low-usage month</td>
+<td>Lost bill credit, minimum usage fee, or both</td>
+<td>Usage thresholds on the EFL</td>
+</tr>
+<tr>
+<td>Fixed plan, bill still rose</td>
+<td>Delivery charge adjustment</td>
+<td>TDU lines on the bill</td>
+</tr>
+</tbody>
+</table>
+<p>For scale, the 108 Texas plans we track as of August 14, 2026 come from 22 providers and run from 8.9¢ to 19.7¢ per kWh, with a median of 14.35¢. The lowest residential plan is 9.5¢, the lowest business plan 8.9¢, and 20 plans carry no early termination fee. <a href="/compare-rates">Compare current rates</a> against the figure from step one.</p>
+<p>Switching does not interrupt service and nobody comes to your home. A standard switch takes effect at your next scheduled meter read, and the same utility keeps delivering.</p>
+`
+  },
+  115: {
+    title: "Texas Electricity Early Termination Fees: When You Pay and When You Do Not",
+    metaTitle: "Texas Electricity Early Termination Fees | Electric Scouts",
+    metaDescription: "What an early termination fee is on a Texas plan, the moving exemption, the end-of-contract switching window, and how to leave without paying one.",
+    tags: ["Early Termination", "Contracts", "Texas", "Switching"],
+    content: `
+<h2>What an Early Termination Fee Is</h2>
+
+<p>An early termination fee is what a retail electric provider charges when you end a fixed-term contract before its end date. It is also called a cancellation fee or an exit fee, and it lands on your final bill after the switch has gone through.</p>
+
+<p>It exists because of how a REP buys power. Sign a 12-month fixed plan and the supplier buys power forward to cover your expected usage for those twelve months, at the prices available the week you signed. Leave in month four and it holds eight months of power with no customer attached to it, and has to sell that back into the ERCOT wholesale market at whatever it is worth that day. The fee is a pre-agreed estimate of that cost.</p>
+
+<p>Two mental models are worth correcting. The fee is not a charge for switching. A standard switch carries no fee of its own, and the company that owns the poles keeps delivering your power whichever retailer bills you. The fee attaches to breaking a term. It is also a supplier charge rather than a regulated one: <a href="/learn/electricity-delivery-charges-explained">delivery charges</a> are set by your utility and identical whichever REP sends the bill, while the termination fee is written by the REP into its own contract.</p>
+
+<p>It only arises in the competitive part of the state. <a href="/learn/austin-energy-explained">Austin Energy</a> and CPS Energy in San Antonio are municipal utilities, and their customers cannot choose a retailer, so they never sign a REP contract and never meet one of these fees. The rest of the <a href="/texas-electricity">Texas market</a> is where the question lives.</p>
+
+<h2>How Texas Termination Fees Are Structured</h2>
+
+<p>Texas termination fees come in two shapes, and which one you have changes the arithmetic of leaving.</p>
+
+<table>
+<thead>
+<tr>
+<th>Structure</th>
+<th>How the EFL states it</th>
+<th>What happens as the term runs down</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flat fee</td>
+<td>One dollar amount for canceling before the end of the term</td>
+<td>Nothing. The same in month one and month eleven, so leaving costs relatively more the nearer the end.</td>
+</tr>
+<tr>
+<td>Per month remaining</td>
+<td>A dollar amount multiplied by the months left in the term</td>
+<td>The fee shrinks every month, and late in a term can fall to a figure worth paying.</td>
+</tr>
+</tbody>
+</table>
+
+<p>The shape matters more the longer the term. Texas contracts in our catalog run from 3 months to 60 months, and a per-month fee on a 36-month contract behaves very differently in month two than in month thirty. Check how the contract defines a month remaining, too: some count the current month and some do not.</p>
+
+<h2>The Moving Exemption</h2>
+
+<p>This is the protection most Texans do not know they have. Public Utility Commission of Texas rules tie a retail contract to service at the address named in it. Move out of that address and you are under no obligation to carry the contract to a new one, and no early termination fee may be assessed because you relocated. It covers residential and small commercial customers.</p>
+
+<p>The conditions are procedural. Give the supplier a forwarding address and, if it asks, reasonable evidence that you no longer occupy the address on the contract. A lease at the new place or a closing statement does it.</p>
+
+<p>Three things people get wrong. It turns on leaving the premises named in the contract, not on where you go next. It does not cover switching retailers while you stay put, which is the case the fee was written for. And it is not automatic, so raise it when you place the move-out order and keep the confirmation.</p>
+
+<p>A supplier may offer to carry your plan to the new address instead. Treat that as an offer to compare, not a courtesy to accept, because the move is the one moment the plan costs nothing to leave. Our guide to <a href="/learn/moving-to-texas-electricity-setup">setting up electricity when you move to Texas</a> covers the rest.</p>
+
+<h2>The Last 14 Days of the Term</h2>
+
+<p>The second exemption is timing. A REP may not charge a termination fee to a residential or small commercial customer whose switch takes effect in the last 14 days of the contract. The contract expiration notice your supplier is required to send, which for a residential fixed-term contract goes out at least 30 days and no more than 60 days before the end date, is your cue that the window is coming.</p>
+
+<p>The window exists because switch timing is not entirely yours to control. A switch takes effect on a meter read, and the read cycle belongs to your transmission and distribution utility. Without a grace period, a customer who shopped in good time could still land a switch two days short of the end date and be billed for it. <a href="/compare-rates">Compare plans</a> while the notice is in your hand, and pick your switch date deliberately.</p>
+
+<h2>Plans With No Termination Fee</h2>
+
+<p>Some plans carry no exit fee at all. In our Texas market snapshot of August 14, 2026, 20 of the 108 plans we track had no early termination fee, and month-to-month service was available.</p>
+
+<p>The trade-off follows from the hedging logic above. A supplier that cannot hold you to a term cannot buy power forward against your usage with much confidence, so it prices that uncertainty another way: a fixed rate set higher than a comparable plan with a fee, or a variable rate it is free to move. Our guide to <a href="/learn/fixed-vs-variable-rate-electricity">fixed versus variable rates</a> covers how far that price can travel.</p>
+
+<p>No termination fee does not mean no contract. You still have a terms of service document, and it can still carry a monthly base charge, a minimum usage fee, a late payment fee and reconnection charges. The exit is free; the plan is not necessarily cheap. These plans earn their place when your tenure is genuinely uncertain, and stop earning it once that uncertainty resolves.</p>
+
+<h2>When Paying the Fee Is Worth It</h2>
+
+<p>Buying out of a contract is often the right call. It is a calculation, not a judgment. Work it in months.</p>
+
+<ul>
+<li><strong>Monthly difference:</strong> the gap between your current supply rate and the new one in cents per kWh, multiplied by your monthly usage, divided by 100. Use the all-in price at your own usage level, not the headline rate, because base charges and usage credits pull the effective rate around.</li>
+<li><strong>Break-even months:</strong> the termination fee divided by that monthly difference.</li>
+<li><strong>The comparison:</strong> if break-even months is smaller than the months left in your term, paying the fee costs less than sitting still. Delivery charges are identical across every REP and unchanged by the switch, so leave them out of both sides.</li>
+</ul>
+
+<p>If your fee is the per-month-remaining kind, compare the monthly difference to the per-month amount directly. If the difference is bigger, leaving now beats waiting: each month you delay costs more in overpaid supply than it saves in shrinking fee. And before you pay anything, ask your current supplier what a new term with them looks like and whether the fee still applies. That answer sits in their offer, not in the rule.</p>
+
+<h2>Where the Fee Is Written Down</h2>
+
+<p>Every competitive plan in Texas comes with three documents, which the PUCT requires suppliers to provide at enrollment and on request.</p>
+
+<ul>
+<li><strong>The Electricity Facts Label (EFL).</strong> One page, standardized. It states the average price at 500, 1,000 and 2,000 kWh, the rate type, the term length, the renewable content and the termination fee. If the plan has no fee, the EFL says so.</li>
+<li><strong>The Terms of Service (TOS).</strong> The contract itself, where the fee is defined rather than quoted: how it is calculated, when it applies, and when it does not.</li>
+<li><strong>Your Rights as a Customer (YRAC).</strong> Your protections, including the complaint process and the deposit and disconnection rules.</li>
+</ul>
+
+<p>Where a sales call or a listing disagrees with the EFL and the TOS, the documents govern. Save all three the day you enroll and write down your term end date.</p>
+
+<h2>When You Cannot Switch at All</h2>
+
+<p>A switch hold is a different thing, and the two get confused. It is a block on the account that stops any other retailer from enrolling you at all, applied where a customer agreed to one as a condition of a deferred payment plan, or where there is evidence of meter tampering. Paying a termination fee does not lift it. Satisfying the underlying obligation does, and until then no plan on the market is open to you, whatever its exit terms say.</p>
+
+<h2>If You Are Billed One You Do Not Owe</h2>
+
+<p>Wrongly billed termination fees are usually administrative rather than deliberate: a move-out logged as a switch, an exemption granted on the phone and never recorded, a switch that landed a day outside the 14-day window.</p>
+
+<p>Start with the supplier. Name the reason the fee does not apply, point to the clause in the terms of service or the rule behind it, and ask for a corrected final bill. Put it in writing so the dispute has a date on it, and attach the evidence: for a move, the forwarding address and the lease or closing document; for an end-of-term switch, the enrollment confirmation showing the switch date against your contract end date. If the supplier will not correct the bill, the complaint goes to the PUCT's Customer Protection Division.</p>
+
+<p>One practical note. An unpaid final bill can go to collections and can affect the deposit a future supplier asks of you. If the amount is small and the dispute looks slow, paying it and chasing the refund is sometimes the cheaper route, and it does not stop you disputing the charge.</p>
+`
+  },
+  116: {
+    title: "Texas Cities Where You Cannot Choose Your Electricity Provider",
+    metaTitle: "Texas Cities Without Electricity Choice | Electric Scouts",
+    metaDescription: "Austin, San Antonio, El Paso and much of rural Texas sit outside retail choice. Which parts of the state cannot switch electricity providers, and why.",
+    tags: ["Municipal Utilities", "Electric Cooperatives", "Texas", "Deregulation", "Retail Choice"],
+    content: `
+<h2>Deregulation Did Not Cover All of Texas</h2>
+<p>The common shorthand is that Texas is a deregulated electricity state. It is more accurate to say that part of Texas is. Senate Bill 7, passed in 1999, opened retail competition on January 1, 2002, and it did so for a defined set of customers: those served by the large investor-owned utilities inside the ERCOT grid. Those utilities had to split apart: the wires business stayed regulated and became a transmission and distribution utility, while selling the electricity was handed to competing retailers.</p>
+<p>Two categories were treated differently. Municipally owned utilities and electric cooperatives were not forced to unbundle. The legislature let each decide, through its own governing body, whether to open its territory to competition. Almost none did.</p>
+<p>That decision is why a Houston household can pick from dozens of offers while an Austin Energy household has exactly one supplier. Nothing about the grid separates them. What separates them is who owns the poles.</p>
+
+<h2>Municipally Owned Utilities</h2>
+<p>A municipal utility is owned by the city it serves. There are no shareholders. Rates are not negotiated with you; they are set in public by a city council or by a board the council appoints.</p>
+<p>The two largest are the ones people know. <strong>Austin Energy</strong> is a department of the City of Austin. <strong>CPS Energy</strong> in San Antonio is city-owned and among the largest municipal utilities in the country. Both sit inside ERCOT, both buy and sell in the same wholesale market as every competitive retailer, and neither has a competitor at the retail level. We cover each in our guides to <a href="/learn/austin-energy-explained">Austin Energy</a> and <a href="/learn/cps-energy-san-antonio-explained">CPS Energy</a>.</p>
+<p>They are not the only ones. Denton Municipal Electric, Brownsville Public Utilities Board, Garland Power &amp; Light, Bryan Texas Utilities, New Braunfels Utilities and Greenville Electric Utility System run the same model in smaller cities. In several, the electricity charge arrives on the same statement as water and trash, because it is all one city department.</p>
+<p>One consequence worth naming: municipal utilities commonly transfer a share of their revenue into the city's general fund, so part of what you pay for electricity funds parks and streets. That is a policy choice made by an elected council — a different kind of accountability from a competitive market, not an absence of one.</p>
+
+<h2>Electric Cooperatives</h2>
+<p>An electric cooperative is owned by the people it serves. You are not a customer, you are a member, and you elect the board that sets the rates. Texas co-ops were built out from the late 1930s to electrify rural areas the investor-owned utilities would not run lines to, and they still serve much of rural Texas.</p>
+<p>Pedernales Electric Cooperative in the Hill Country, Bluebonnet Electric Cooperative east of Austin, CoServ north of Dallas and Guadalupe Valley Electric Cooperative east of San Antonio are among the larger ones. Under Senate Bill 7 each of them could have voted to open its territory. Very few did. Nueces Electric Cooperative, near Corpus Christi, is the example usually cited.</p>
+<p>The reasons most stayed out are structural rather than ideological. A co-op has no profit margin to defend, so competition is not obviously an improvement for members. Many are locked into long-term wholesale power contracts with a generation and transmission cooperative, and neither those contracts nor the debt behind them dissolves because a board votes. Unbundling also costs money — new billing systems, new market registration — paid for by the members themselves.</p>
+
+<h2>The Parts of Texas Outside ERCOT</h2>
+<p>ERCOT covers most of the state's electricity load but not all of its territory, and the edges of Texas sit on other grids entirely. This matters because retail choice in Texas was written for ERCOT.</p>
+<p><strong>El Paso</strong> is on the Western Interconnection. El Paso Electric is an investor-owned utility regulated by the Public Utility Commission of Texas, and it is still vertically integrated: it generates, delivers and sells. There are no retailers to choose between in El Paso, and the reason is not municipal ownership. The competitive market was never extended to a region with no competitive wholesale market to support it.</p>
+<p>The <strong>Panhandle and South Plains</strong> are largely in the Southwest Power Pool, served by Xcel Energy's Southwestern Public Service Company, Amarillo among them. Deep <strong>East Texas</strong>, including Beaumont and Port Arthur, is on the Eastern Interconnection under Entergy Texas, and the northeast corner falls to SWEPCO. All are regulated utilities whose rates are set in PUCT rate cases, not by an offer you accept.</p>
+<p>Lubbock is the exception in reverse. Lubbock Power &amp; Light, a municipal utility, moved most of its load onto the ERCOT grid. Being connected to ERCOT is not the same as being open to retail competition. The first is an engineering matter and the second a legal one, and they are settled separately.</p>
+
+<h2>Why a City Can Be Split</h2>
+<p>Service territory in Texas is defined by a Certificate of Convenience and Necessity, granted by the PUCT to one utility for a specific area. A CCN boundary is drawn on one map. City limits are drawn on another, and they move when a city annexes land. The two do not track each other, and annexation does not transfer a CCN.</p>
+<p>The practical answer to "can I switch in Austin?" is that it depends on the address, not the city. Parts of the Austin city limits are served by <a href="/utilities/oncor-electric-delivery">Oncor</a>, Pedernales or Bluebonnet rather than Austin Energy, and households at those addresses shop like anyone in Dallas. The same is true around San Antonio, where growth pushed the city boundary across cooperative territory.</p>
+<p>This is also why ZIP-code-level advice fails here. A ZIP code can straddle two utilities. The unit that settles your options is the meter.</p>
+
+<h2>How to Tell Which You Are In</h2>
+<p>Your bill answers this faster than any lookup. In a competitive ERCOT area the bill comes from a retail provider you chose, and it separately identifies your TDU's delivery charges. You signed up against an Electricity Facts Label, the standardized disclosure the PUCT requires for every retail plan, and there is a contract term and usually an early termination fee. Our guide to <a href="/learn/how-to-read-your-electricity-bill">reading an electricity bill</a> walks through those lines.</p>
+<p>The definitive marker is the ESI ID, the Electric Service Identifier that ERCOT assigns to each meter in competitive territory. If your bill carries one, you can shop. Municipal and cooperative customers have an account number instead, because there is no market registry to be listed in.</p>
+<table>
+<thead>
+<tr>
+<th>Where you are</th>
+<th>Who bills you</th>
+<th>EFL and contract term</th>
+<th>ESI ID on the bill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Competitive ERCOT area</td>
+<td>A retailer you chose; TDU delivery charges itemized</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Municipal utility</td>
+<td>The city utility, sometimes alongside water and trash</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Electric cooperative</td>
+<td>The co-op, which also owns the lines</td>
+<td>No</td>
+<td>Only if the co-op opted in</td>
+</tr>
+<tr>
+<td>Outside ERCOT</td>
+<td>One regulated utility that generates and delivers</td>
+<td>No</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+<h2>What You Can Still Do About Your Bill</h2>
+<p>Not being able to switch is not the same as having no options. Three are worth checking.</p>
+<ul>
+<li><strong>The rate schedule you are on.</strong> Municipal utilities and co-ops publish tariffs, and many publish more than one — a standard residential schedule plus time-of-use, an electric vehicle charging rate, budget or average payment billing, and in some cases a medically vulnerable designation. Being left on the default schedule is common. Moving to one that fits your usage better is usually a phone call.</li>
+<li><strong>The adjustment line.</strong> These utilities typically recover fuel and purchased power through a separate rider that changes month to month, distinct from the base energy charge. When your bill rises without your usage rising, that line is the usual reason. Knowing it exists tells you whether to look at your thermostat or at the tariff.</li>
+<li><strong>Programs run by the utility itself.</strong> Because it owns the whole relationship, the utility also runs the efficiency rebates, the demand response programs, and the terms for connecting rooftop solar. Austin Energy credits rooftop solar through a value-of-solar tariff rather than conventional net metering, which changes the arithmetic of installing panels.</li>
+</ul>
+<p>Co-op members have one more lever: margins are allocated back as capital credits, retired at the discretion of a board the membership elects. Municipal customers have the equivalent in the council that approves rates. Either way, the people who set your rate stand for election.</p>
+
+<h2>Where Choice Does Apply</h2>
+<p>The exclusions above cover a lot of ground. They are still exclusions. Dallas–Fort Worth and Houston, the two largest metropolitan areas in the state, are both fully competitive. The competitive footprint is Oncor across Dallas–Fort Worth and much of North and West Texas, CenterPoint around Houston, AEP Texas along the coast and the Rio Grande Valley outside Brownsville, and Texas-New Mexico Power's scattered territories.</p>
+<p>Inside that footprint, our snapshot of August 14, 2026 tracked <strong>108 Texas plans from 22 providers</strong>, 96 residential and 12 business, at rates from 8.9¢ to 19.7¢ per kWh with a median of 14.35¢. The cheapest residential plan was 9.5¢ and the cheapest business plan 8.9¢. Of the plans tracked, 41 from 10 providers are backed by 100% renewable energy, starting at 9.5¢; 24 are fixed-rate and 82 variable; and 20 carry no early termination fee. Terms ran from 3 months to 60 months, and month-to-month plans were available.</p>
+<p>Those figures move. The market structure behind them does not. If your address sits inside that footprint, you can <a href="/compare-rates">compare current rates</a> against what you are paying now. If it does not, the useful move is to stop looking for a supplier that does not exist and work the levers above instead. Our <a href="/texas-electricity">Texas electricity overview</a> sets out which parts of the state are open.</p>
+`
+  },
+  117: {
+    title: "El Paso Electricity: Why There Is No Retail Choice, and What You Can Do",
+    metaTitle: "El Paso Electricity: No Retail Choice | Electric Scouts",
+    metaDescription: "El Paso sits outside ERCOT and outside the Texas competitive market. Why you cannot switch supplier there, who sets the rate, and how to cut the bill.",
+    tags: ["El Paso", "Texas", "Regulated Utility", "Eligibility"],
+    content: `
+<h2>The Short Answer</h2>
+<p>No. At an El Paso address you cannot switch electricity suppliers, because there is only one. El Paso Electric both delivers the power and sells it to you, and no competing retailer may sign you up. This is not a gap that will fill in next year. It is how the law and the grid were drawn.</p>
+<p>Texas opened retail competition on 1 January 2002 under Senate Bill 7. That law did not open the whole state. It opened the parts of Texas served by investor-owned utilities <em>inside the ERCOT grid</em>. El Paso has an investor-owned utility, but it is not inside ERCOT, and it was left out of restructuring.</p>
+<p>So there is no plan to shop, no Electricity Facts Label, no contract term, no early termination fee, no switch date. Any site showing plans for a 799xx ZIP code is showing you something you cannot buy. What you do have is a published tariff, a regulator, a rate schedule you may be able to change, and a large cooling load.</p>
+
+<h2>El Paso Is Not on the ERCOT Grid</h2>
+<p>The continental United States runs on three synchronous grids: the Eastern Interconnection, the Western Interconnection, and ERCOT. ERCOT covers most of Texas and is deliberately isolated from the other two, joined only by a few direct-current ties. El Paso sits in the Western Interconnection, synchronized with New Mexico, Arizona, Nevada and on to the Pacific coast. El Paso Electric also serves southern New Mexico, under a different regulator.</p>
+<p>Three things follow from that.</p>
+<ul>
+<li><strong>Federal jurisdiction.</strong> ERCOT's isolation is the legal reason Texas can run an intrastate wholesale market largely outside federal reach. A utility in the Western Interconnection selling across a state line gets no such carve-out.</li>
+<li><strong>Different generation.</strong> El Paso's power comes from a southwestern fleet, including local gas units and a share of the Palo Verde nuclear station in Arizona. Your costs move for southwestern reasons, not ERCOT ones.</li>
+<li><strong>Different price signals.</strong> The ERCOT price events that make Texas energy news do not set your rate, and neither do ERCOT's reforms. Our guide to <a href="/learn/ercot-electricity-market-explained">how the ERCOT market works</a> describes the system El Paso is not in.</li>
+</ul>
+
+<h2>How a Regulated Utility Sets Its Rate</h2>
+<p>In a competitive market a price is whatever a retailer thinks it can sell at. In El Paso the price is the output of a legal proceeding called a rate case, and it moves only when that proceeding runs.</p>
+<p>The utility picks a recent twelve-month test year and builds a revenue requirement from it: prudent operating costs, depreciation, taxes, and an authorized return on its rate base, meaning the depreciated value of the plant and wires it has put into service. In Texas, cities hold original jurisdiction over rates charged inside their limits, so the City of El Paso reviews rates within the city, with appeal to the Public Utility Commission of Texas, which handles the rest.</p>
+<p>Other parties intervene — city representatives, consumer advocates, large industrial customers — contesting the return on equity and which costs belong in rate base. Most cases settle. What comes out is a tariff, and it holds until the next case: a cadence in years, not weeks.</p>
+<p>Fuel is handled separately, and a regulated utility does not profit on it. It recovers fuel and purchased-power costs through a factor set in advance and later reconciled against what was actually spent: under-recovery becomes a surcharge, over-recovery is refunded. Your rate can therefore move without anyone having reopened a rate case.</p>
+
+<h2>What Your Bill Is Made Of Here</h2>
+<p>Your bill is bundled. One company buys or generates the power, moves it, meters it and bills you. There is no supply half and delivery half to separate. Expect a fixed monthly customer charge regardless of usage, an energy charge per kilowatt-hour, the fuel factor on its own line, any approved riders, a municipal franchise fee, and sales tax. Many regulated southwestern tariffs price summer differently from winter, so check whether your energy charge shifts with season or usage block.</p>
+<p>Compare a competitive Texas bill. There the delivery charge belongs to the transmission and distribution utility, is set by the PUCT, and is identical no matter which retailer you sign with. Only the supply half competes. That separation is the whole architecture of the competitive market, and it does not exist here. Two levers are left: the schedule you are billed on, and the kilowatt-hours you use.</p>
+
+<h2>Rate Schedules You May Be Able to Change</h2>
+<p>A regulated utility publishes a tariff book: rate schedules for different customer classes and usage patterns. You cannot choose the seller. Within the eligibility rules you can often choose the schedule, and most people never look.</p>
+<ul>
+<li><strong>Standard residential versus time-of-use.</strong> Where a residential time-of-use schedule exists, it charges more during on-peak hours and less outside them. It pays only if you can move load: charge the car overnight, run the pool pump off-peak, precool the house before the peak window. If you cannot shift, it costs you money.</li>
+<li><strong>Which commercial schedule a small business sits on.</strong> Schedules divide by demand in kilowatts and by usage, and a business just over a threshold can pick up a demand charge it did not need. The ERCOT playbook does not transfer: 4CP, which sets a large customer's transmission cost for the next year from its demand during ERCOT's four monthly system peaks in June to September, is an ERCOT mechanism. Here it follows the utility's own approved tariff.</li>
+<li><strong>Rooftop solar.</strong> The applicable schedule and interconnection rider decide what your exported kilowatt-hours are worth. That, not shopping, is the economics of solar here.</li>
+<li><strong>Averaged or budget billing.</strong> It flattens the summer spike. It does not reduce what you pay.</li>
+</ul>
+<p>Ask the utility what a schedule change would have done to your last twelve months of usage. Moving between schedules is a request, not a contract.</p>
+
+<h2>Cutting the Bill Without Switching</h2>
+<p>With supply price off the table, usage is the lever, and in El Paso usage means cooling. In dry desert air an evaporative cooler uses a fraction of the electricity a compressor-based refrigerated air system does, which is why so many El Paso houses have both. The trade-off is humidity: through the monsoon weeks of mid-summer, evaporative cooling loses much of its effect and refrigerated air earns its keep. Running the swamp cooler on dry days and saving refrigerated air for humid ones is the largest usage decision most households here can make.</p>
+<p>Then, roughly in order of effect:</p>
+<ul>
+<li>Duct leakage. Ducts crossing an attic far hotter than outdoor air lose a real share of what you paid to cool, and sealing them is cheap.</li>
+<li>West-facing glass. Shade, exterior screens or reflective film blunt the late-afternoon load.</li>
+<li>Attic insulation and radiant barriers, which cut heat before the system fights it.</li>
+<li>Thermostat setpoint, and a real setback for the hours the house is empty.</li>
+<li>A second refrigerator or freezer in an uncooled garage, which runs hard all summer.</li>
+</ul>
+<p>El Paso also has one of the country's strongest solar resources, so on-site generation is worth costing out.</p>
+
+<h2>If You Move Elsewhere in Texas</h2>
+<p>Move to Dallas, Houston, Fort Worth, Corpus Christi or Midland and almost every assumption you built here stops being true. You must pick a retailer before service starts; nobody is assigned by default. Your bill splits in two: supply from the retailer you chose, and delivery from the transmission and distribution utility whose poles serve the property, at PUCT-set rates identical whichever retailer you signed with. You also get an Electricity Facts Label, a one-page disclosure the PUCT requires for every offer, giving average price at 500, 1,000 and 2,000 kWh a month, the term, the rate type and the early termination fee. Compare labels, not advertisements.</p>
+<p>The market is large. In the snapshot behind this site, taken on 14 August 2026, there were 108 active plans from 22 suppliers, 96 of them residential. Rates across the full set ran from 8.9 to 19.7 cents per kilowatt-hour, median 14.35, with the cheapest residential rate at 9.5 cents. Twenty-four plans were fixed and 82 variable, 41 backed by 100% renewable energy, 20 with no early termination fee, terms from 3 to 60 months plus month-to-month. Our <a href="/learn/moving-to-texas-electricity-setup">guide to setting up electricity when you move to Texas</a> covers the sequence, and you can <a href="/compare-rates">compare current plans</a> once you have the new ZIP code.</p>
+
+<h2>Where Texas Retail Choice Applies</h2>
+<p>What decides whether you can switch is not city size or region or the word "deregulated" on a state map. It is which utility owns the wires at your address.</p>
+<table>
+<thead>
+<tr>
+<th>Type of territory</th>
+<th>Examples</th>
+<th>Can you choose a supplier?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Investor-owned delivery utility inside ERCOT</td>
+<td>Oncor, CenterPoint Energy Houston Electric, AEP Texas, Texas-New Mexico Power</td>
+<td>Yes, and you have to</td>
+</tr>
+<tr>
+<td>City-owned municipal utility</td>
+<td>Austin Energy, CPS Energy, Denton Municipal Electric, Brownsville Public Utilities Board</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Electric cooperative</td>
+<td>Most Texas co-ops, including Pedernales and Bluebonnet</td>
+<td>No, unless the co-op has opted in</td>
+</tr>
+<tr>
+<td>Investor-owned utility outside ERCOT</td>
+<td>El Paso Electric, Xcel Energy (Southwestern Public Service), Entergy Texas</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>El Paso is in the last row, and the reason is grid membership. The municipal cities are excluded for a different reason: <a href="/learn/austin-energy-explained">Austin Energy</a> and <a href="/learn/cps-energy-san-antonio-explained">CPS Energy</a> are city-owned and were given the option to open to competition and declined it. Their customers cannot switch either, but a city council sets their rates, not a state regulator.</p>
+<p>So "Texas is a deregulated state" is shorthand that fits most Texans, not all of them. Start from the utility named on your bill rather than the state, and see <a href="/texas-electricity">how the Texas market is divided</a>.</p>
+`
+  },
+  118: {
+    title: "100% Renewable Electricity Plans in Texas: What a Green Plan Actually Buys",
+    metaTitle: "100% Renewable Electricity Plans in Texas | Electric Scouts",
+    metaDescription: "What a 100% renewable Texas electricity plan actually buys, how RECs are retired and certified, and why green plans are not automatically priced higher.",
+    tags: ["texas renewable electricity plans", "100% renewable energy texas", "renewable energy certificates", "texas wind power", "green electricity plans"],
+    content: `
+<h2>What You Are Actually Buying</h2>
+<p>A 100% renewable plan does not send wind-generated electrons down your service drop. It cannot. The grid is a pool: every generator in ERCOT pushes power into the same synchronized system, every home pulls power out of it, and physics decides the path — impedance, not contracts. The house on a green plan and the house next door on a standard plan get the same electricity.</p>
+<p>What you are buying is a claim on generation, tracked with a certificate. One renewable energy certificate, or REC, is created for each megawatt-hour of renewable electricity delivered to the grid. ERCOT runs the certificate program for Texas under rules set by the Public Utility Commission. Sign a 100% renewable plan and your supplier retires certificates matching what your meter records. Retired means permanently removed — nobody else can sell that megawatt-hour as green.</p>
+<p>That is a real transaction, not a gesture. It routes your money toward renewable generators and stops anyone else selling the same clean megawatt-hour twice. It just is not a private wire. The <a href="/renewable-energy">renewable energy hub</a> covers these plans generally; what follows is specific to the ERCOT market.</p>
+
+<h2>Why Texas Is Different</h2>
+<p>Texas has more installed wind capacity than any other state. The resource sits in West Texas, the Panhandle, and along the Gulf Coast — far from the Houston and Dallas–Fort Worth load centers, where the demand is. The state solved that with the Competitive Renewable Energy Zones: high-voltage transmission approved and built before most of the wind farms existed, on the bet that generation would follow the wires. It did.</p>
+<p>The consequence shows up in the wholesale market. Wind and solar have almost no marginal cost — no fuel to buy — so they bid in near zero and are dispatched ahead of fuel-burning generation. When West Texas wind runs hard overnight in spring it displaces gas at the margin and drags the clearing price down, and ERCOT prices occasionally clear negative in those hours. Solar does the same in the middle of the day, though the tightest hours on the Texas grid now tend to arrive in the evening, as solar output falls off while demand is still high. Our <a href="/learn/ercot-electricity-market-explained">explainer on the ERCOT market</a> walks through how that clearing price is set.</p>
+<p>Renewable generation here is abundant rather than scarce, and the certificates it produces are plentiful. Green pricing in Texas therefore looks nothing like a green tariff in a state with little renewable build.</p>
+
+<h2>How a Plan Gets Certified as 100% Renewable</h2>
+<p>The mechanism is bookkeeping, and the bookkeeping is the product. A qualifying generator registers with the program. For every megawatt-hour it delivers, a certificate is issued carrying a serial number, a generation date, and a fuel type. Suppliers buy those certificates on an open market and retire them against what the customers on the plan consume.</p>
+<p>The Public Utility Commission requires that a retailer's renewable claim be backed by that retirement and disclosed on the plan's label. A supplier cannot simply call a plan green in an ad. Some go further and buy certification from a voluntary third-party standard, which adds independent auditing on top of the state requirement. That is an extra layer, not a different product.</p>
+<p>What is not part of the mechanism: any guarantee of which wind farm, or that the generation happened in the same hour you used the power. Standard certificate matching is annual and statewide, not hourly and local.</p>
+
+<h2>What Renewable Plans Cost on the Texas Board</h2>
+<p>The Texas board as of August 14, 2026, from the plans Electric Scouts tracks.</p>
+<table>
+<thead>
+<tr><th>Figure</th><th>Texas</th></tr>
+</thead>
+<tbody>
+<tr><td>Plans tracked</td><td>108</td></tr>
+<tr><td>Backed by 100% renewable energy</td><td>41</td></tr>
+<tr><td>Suppliers offering at least one renewable plan</td><td>10 of 22</td></tr>
+<tr><td>Lowest renewable rate</td><td>9.5¢/kWh</td></tr>
+<tr><td>Lowest residential rate, any plan type</td><td>9.5¢/kWh</td></tr>
+<tr><td>Median rate, all plans</td><td>14.35¢/kWh</td></tr>
+<tr><td>Full rate range</td><td>8.9¢ to 19.7¢/kWh</td></tr>
+</tbody>
+</table>
+<p>Read the two 9.5¢ lines together. The cheapest renewable rate on the Texas board and the cheapest residential rate of any kind are the same number, so choosing a renewable plan does not move you off the bottom of the market. The only rate below it, 8.9¢, is a business plan: commercial supply is quoted against a load profile rather than listed off a rate card.</p>
+<p>And 41 of 108 is a bit under two in five plans, offered by 10 of the 22 suppliers with active Texas plans. Renewable is a normal, well-populated segment here, not a boutique corner of the market.</p>
+
+<h2>Why Renewable Is Not Automatically More Expensive Here</h2>
+<p>The intuition that green costs more comes from markets where clean generation is scarce and certificates get bid up. Texas is the opposite case. The state wrote a renewable capacity target into its restructuring law and passed it well ahead of schedule, so mandatory demand for Texas certificates was satisfied long ago. What remains is voluntary demand against a very large supply, and the certificate component prices accordingly.</p>
+<p>Look at what makes up your rate. The energy charge is dominated by the supplier's wholesale hedge — what it paid to lock in power for your contract term. On top of that sit the regulated delivery charges from your transmission and distribution utility, identical no matter which retailer you buy from, plus the supplier's margin. The certificate is a small adder on all of that.</p>
+<p>So the green label is a weak predictor of price. When a renewable plan is priced well above a standard one, the difference is usually contract length, when the supplier bought its power, and how the plan is structured — not the certificates. The spread inside each category is wider than the gap between them.</p>
+
+<h2>Reading the Renewable Percentage on an EFL</h2>
+<p>Every retail plan sold in the competitive Texas market comes with an Electricity Facts Label, required by the PUCT. It is a one-page standardized disclosure, built so two plans can be read line for line, giving the average price per kWh at 500, 1,000, and 2,000 kWh of monthly usage, the contract term, the early termination fee, whether the rate can change, and a line stating the plan's renewable content as a percentage.</p>
+<p>Two things about that percentage. It applies to the supply portion of your service only — <a href="/learn/electricity-delivery-charges-explained">delivery is delivery</a> regardless. And no amount of sustainability language in the marketing changes a low number on that line.</p>
+
+<h2>Partial Renewable Plans</h2>
+<p>Not every green plan sits at 100%. Suppliers sell intermediate percentages too, and the mechanism is the same scaled down: certificates retired for that fraction of your usage, the rest bought as ordinary power. The 41 above counts only plans backed at 100%.</p>
+<p>Two cautions. A large share of ERCOT generation already comes from wind and solar, so a plan advertising a small single-digit renewable percentage offers little beyond what the grid delivers to everyone anyway. And a partial plan is not reliably cheaper than a full one, because the certificate component is a small part of a Texas rate to begin with. Compare the label prices at your usage level and let those decide.</p>
+
+<h2>What a Renewable Plan Does Not Do</h2>
+<p>It does not change what physically arrives at your meter. It does not keep your lights on in an outage — restoration is your transmission and distribution utility's job, done identically for every retail customer in its territory, whichever retailer bills you. And it does not touch your delivery charges, which regulators set and every retailer passes through alike.</p>
+<p>It also does not, on its own, cause a new wind farm to be built. Certificate purchases add demand to the renewable market, and at scale that is a real signal, but no single residential contract commissions a turbine. Suppliers who imply otherwise are overselling the instrument.</p>
+<p>And none of it applies if you cannot switch. Retail choice does not cover all of Texas. Austin Energy and CPS Energy in San Antonio are municipal utilities: their customers buy from the city-owned utility and cannot choose a retail provider, green or otherwise. El Paso and much of the territory served by electric cooperatives sit outside the competitive market too. Municipal utilities generally run their own green programs instead, a different purchase on different terms — our <a href="/learn/austin-energy-explained">Austin Energy explainer</a> covers how one of them works.</p>
+
+<h2>Choosing Between Two Renewable Plans</h2>
+<p>Once both plans are backed at 100%, the certificates cancel out of the comparison. What is left is every ordinary question you would ask about any Texas plan.</p>
+<ul>
+<li><strong>Price at your usage, not at 1,000 kWh.</strong> The label's three price points exist because a plan with a usage credit can look very different at 500 kWh than at 2,000. Read the row that matches your real bills.</li>
+<li><strong>Rate type.</strong> Of the Texas plans we track, 82 are variable and 24 are fixed. A variable renewable plan can be repriced month to month; being green does nothing to prevent that. Our comparison of <a href="/learn/fixed-vs-variable-rate-electricity">fixed versus variable pricing</a> covers the tradeoff.</li>
+<li><strong>Term.</strong> Texas terms run from 3 to 60 months, with month-to-month available. Longer is not automatically better: fixing your price also fixes your exposure to a market that may fall.</li>
+<li><strong>Exit cost.</strong> 20 of the plans we track carry no early termination fee. If you might move, or want the option to reprice mid-term, weigh that flexibility against the headline rate.</li>
+</ul>
+<p>Filter for 100% renewable first, rank what survives on price at your usage, then check the exit terms. <a href="/compare-rates">Compare current rates</a> for your ZIP code — the renewable plans and the standard plans sit on the same board, priced against each other, which is exactly how to read them.</p>
+`
+  },
+  119: {
+    title: "Texas Commercial Electricity Rates: Contracts, Demand Charges and 4CP",
+    metaTitle: "Texas Commercial Electricity Rates & 4CP | Electric Scouts",
+    metaDescription: "How Texas business electricity is priced: demand charges, load factor, 4CP transmission cost allocation, and why a commercial rate is quoted not listed.",
+    tags: ["Commercial", "Texas", "Demand Charges", "4CP"],
+    content: `
+<h2>Why a Business Rate Is Quoted, Not Listed</h2>
+<p>A residential Texas plan can be printed on a page because the Public Utility Commission of Texas requires every retailer to publish an Electricity Facts Label, and that label states an average price at 500, 1,000 and 2,000 kWh a month. Three numbers describe a house well enough, because houses consume in broadly the same shape: hot afternoons, cooking in the evening, almost nothing at 4 a.m.</p>
+<p>Businesses do not share a shape. A bakery pulls hard from 3 a.m. and is dark by lunch. A church sits empty six days a week. Two such sites can consume the same annual kWh and still cost a supplier different amounts to serve, because a supplier is not buying you a year of energy. It is buying the particular hours you consume in. Power in <a href="/learn/ercot-electricity-market-explained">ERCOT</a> is priced continuously through the day and by location, so an hour in August at 5 p.m. and an hour in March at 5 a.m. are not the same product.</p>
+<p>There is a line in the rules where listing stops. The PUCT treats a non-residential account under 50 kW of peak demand as a small commercial customer, and those accounts get the same disclosure documents a household gets. That is why a small commercial plan appears in a catalog at all: the Electric Scouts Texas snapshot of 14 August 2026 holds 12 listed business plans among 108 Texas plans from 22 suppliers, and the lowest rate in the entire Texas catalog, 8.9&cent;/kWh, sits on a business plan. Above the 50 kW line, listing stops and quoting starts.</p>
+
+<h2>What a Demand Charge Measures</h2>
+<p>Kilowatt-hours measure how much energy you used. Kilowatts measure how fast you were using it at the worst moment. A demand charge bills the second thing.</p>
+<p>The meter at a demand-billed site averages your draw over each 15-minute interval and keeps the highest. That interval sets billing demand for the month. Run every compressor, oven and rooftop unit together for one quarter of an hour and you pay for that capacity all month, even if you never approach it again.</p>
+<p>In Texas the bulk of that charge does not come from your retailer. It comes from your transmission and distribution utility, under a tariff the PUCT approves. <a href="/utilities/oncor-electric-delivery">Oncor</a>, CenterPoint, AEP Texas and TNMP each publish demand-based schedules for larger non-residential accounts, and those rates are identical no matter which retailer you sign with. Shopping suppliers does not move them; reducing your peak does. Some tariffs also carry a ratchet, setting billing demand at the greater of this month's peak or a share of the highest peak in preceding months, so one bad afternoon in July follows you into the winter. Read the <a href="/learn/electricity-delivery-charges-explained">delivery charge structure</a> before assuming a quote can fix it.</p>
+
+<h2>Load Factor and Why It Decides Your Price</h2>
+<p>Load factor is the ratio of average demand to peak demand: kWh used, divided by peak kW multiplied by the hours in the period.</p>
+<p>Take two sites that each use 30,000 kWh in a 720-hour month. One peaks at 50 kW and runs steadily, giving a load factor near 83%. The other peaks at 200 kW for a single afternoon interval and idles the rest of the time, giving roughly 21%. Same energy, very different accounts.</p>
+<p>Load factor is the first number a supplier looks at, because it stands in for risk. A high load factor means flat consumption that can be hedged cheaply with forward blocks. A low load factor means buying for a peak that will rarely be used, and that uncertainty goes into the per-kWh number. Low load factor also spreads fixed demand and delivery costs across fewer kWh, so the all-in unit cost rises twice over.</p>
+
+<h2>4CP: The Texas Transmission Charge</h2>
+<p>Texas allocates transmission cost in a way no other market copies. Four quarter-hours a year set it.</p>
+<p>ERCOT records the 15-minute interval of highest system-wide demand in each of June, July, August and September. Those are the four coincident peaks. A large customer's average demand across exactly those four intervals sets the ratio used to bill it for transmission service for the following calendar year. Not its own peak. Its draw at the moment the whole state peaked.</p>
+<p>Two things follow. The cost is set in four windows and paid over twelve months, so the leverage is enormous relative to the time involved. And nobody knows in advance which intervals they will be. You are forecasting: hot weekday, late afternoon, high statewide load. Industrial users, cold storage operators and campuses run curtailment programs all summer, dropping load on candidate days on a forecast that may be wrong. Getting all four right is why notification services exist.</p>
+<p>4CP is also why a Texas business can cut transmission cost without cutting a single kilowatt-hour. Moving the same work to another hour changes next year's allocation.</p>
+
+<h2>Who 4CP Applies To</h2>
+<p>Most Texas businesses are not on a 4CP-allocated tariff, and chasing peaks would be wasted effort for them.</p>
+<p>The mechanism follows the meter and the rate class. Transmission cost is allocated on 4CP for accounts billed under demand-based TDU tariffs with interval data recording, typically larger commercial and industrial premises. Smaller accounts recover transmission cost volumetrically, buried in a per-kWh delivery charge, with no coincident interval to avoid.</p>
+<p>The practical test is your bill. If the delivery section shows a billing demand in kW and a transmission charge that resets with the calendar year rather than moving with usage, you are in scope. If delivery is a monthly fixed charge plus cents per kWh, you are not. Your TDU can confirm the rate class; the tariff decides it, not your retailer.</p>
+<p>Two large Texas cities sit outside all of this. <a href="/learn/austin-energy-explained">Austin Energy</a> and CPS Energy in San Antonio are municipally owned, their customers cannot choose a retailer, and their commercial tariffs are set by the city rather than by competition. A business there is negotiating with a city utility, not shopping a market.</p>
+
+<h2>Contract Structures Beyond Fixed and Variable</h2>
+<p>The <a href="/texas-electricity">Texas retail market</a> is usually described as fixed versus variable, and for a household that is the whole story: the snapshot of 14 August 2026 counts 24 fixed and 82 variable Texas plans, with terms from 3 up to 60 months. Commercial contracts use those two poles and everything between them.</p>
+<ul>
+  <li><strong>Fixed all-in.</strong> One price per kWh covering energy and delivery. Easy to budget; the supplier charges for taking that risk off you.</li>
+  <li><strong>Fixed energy with pass-through.</strong> The energy component is fixed; TDU charges, ERCOT administrative fees and taxes flow through at cost. This is the common commercial structure, and it is why a fixed price can still change.</li>
+  <li><strong>Block and index.</strong> You hedge a block of volume at a set price and settle the remainder against the wholesale index. Suits a site with a solid base load and a variable top.</li>
+  <li><strong>Full index.</strong> Everything settles at market, month by month. Cheapest on average in calm conditions and unbounded in a scarcity event, which in ERCOT is not theoretical.</li>
+</ul>
+<p>Term length is a live lever here in a way it is not for households. Longer terms let a supplier hedge further out; whether that helps depends on the forward curve the day you sign it.</p>
+
+<h2>What a Supplier Needs to Quote You</h2>
+<p>A commercial quote is priced against your own data, so the process starts by handing it over.</p>
+<ul>
+  <li><strong>Your ESI ID.</strong> The Electric Service Identifier for each premise, printed on the bill. It identifies the meter, not the address, which matters when a building has several meters.</li>
+  <li><strong>Twelve months of usage history.</strong> Monthly kWh and, for demand-billed accounts, the recorded monthly peak kW. A year captures a full summer.</li>
+  <li><strong>Interval data.</strong> For advanced-metered premises the 15-minute record is available through Smart Meter Texas. This is what lets a supplier price your shape instead of guessing.</li>
+  <li><strong>A letter of authorization.</strong> Signed permission for a broker or supplier to pull your historical usage from the TDU on your behalf.</li>
+  <li><strong>Dates and entity details.</strong> Current contract end date, desired start, legal entity name, and enough for a credit review, which decides whether a deposit is required.</li>
+</ul>
+<p>Gather this once and send the identical package to every supplier. Quotes built on different assumptions are not comparable.</p>
+
+<h2>Reading a Commercial Quote</h2>
+<p>The number at the top of a commercial quote is rarely the number you pay. The boundary drawn around it is what matters.</p>
+<table>
+  <tr><th>Component</th><th>Inside or outside the quoted price</th></tr>
+  <tr><td>Energy</td><td>Inside. What the supplier competes on.</td></tr>
+  <tr><td>TDU delivery and demand charges</td><td>Often outside, passed through at the regulated rate. Identical across retailers.</td></tr>
+  <tr><td>ERCOT administrative and ancillary costs</td><td>Varies. A common pass-through; ask.</td></tr>
+  <tr><td>Sales tax, gross receipts tax, municipal fees</td><td>Outside, added to the invoice.</td></tr>
+  <tr><td>Volume outside the contracted bandwidth</td><td>Outside. Settled at market, where surprises live.</td></tr>
+</table>
+<p>Three clauses deserve a direct question. The bandwidth or swing clause sets how far consumption may drift from forecast before the excess settles at market; raise it before signing if you plan to add a shift. The material change clause lets a supplier reprice if your load shape moves. And commercial termination liability is normally a mark-to-market calculation, not a flat early termination fee, so the cost of leaving depends on where prices sit when you leave.</p>
+<p>A commercial energy price is quoted off a forward curve and usually expires the same day, so collect competing quotes on one day against one data set. Start from the <a href="/business-electricity">business electricity</a> side of the site rather than the residential listings; the advertised residential rate was never available to a demand-metered account anyway.</p>
+`
+  },
+  120: {
+    title: "Moving Within Texas: Transfer Your Electricity Plan or Switch Providers?",
+    metaTitle: "Moving Within Texas: Electricity Transfer | Electric Scouts",
+    metaDescription: "Moving house inside Texas: when you can take your plan with you, when moving voids the termination fee, and the timing that stops the lights being off.",
+    tags: ["Moving", "Texas", "Transfer", "Switching"],
+    content: `
+<h2>Two Different Questions</h2>
+
+<p>Moving from one Texas address to another raises two questions people tend to merge. Will the lights be on when I arrive? And what will I pay once they are? They are separate: the answer to the first does not constrain the second.</p>
+
+<p>Keeping the lights on is a transaction, not a decision. Your retailer sends a move-in request to the wires company that owns the meter at the new address, and it is energized on the date you gave. That works the same way whether you stay with your current retailer or sign with a different one. Nobody in Texas ends up in the dark because they shopped.</p>
+
+<p>What you pay is the decision. <strong>Transferring</strong> means asking your current retailer to carry your existing contract, or something close to it, to the new premises. <strong>Switching</strong> means letting the old contract end and signing a new one, with the same company or another. Most movers transfer, because the retailer offers it first and it takes one call. That is a reason it is easy, not a reason it is cheap.</p>
+
+<p>This guide covers a move inside Texas, not <a href="/learn/moving-to-texas-electricity-setup">arriving from another state</a>.</p>
+
+<h2>Can You Take Your Plan With You?</h2>
+
+<p>Your contract is not attached to you. It is attached to a meter. Every service point in competitive Texas carries an ESI ID, and your enrollment sits against that identifier, not your name. Whether your price survives depends on which utility territory the new meter sits in.</p>
+
+<p>Delivery is handled by transmission and distribution utilities: Oncor across North Texas, CenterPoint Energy around Houston, AEP Texas, and Texas-New Mexico Power. Plans are priced per TDU territory, because the delivery charges built into the advertised price are. The same plan name in two territories is two products, with two Electricity Facts Labels and two sets of numbers.</p>
+
+<table>
+<tr><th>New address served by</th><th>What happens to your contract</th><th>What to do</th></tr>
+<tr><td>The same TDU, and your retailer serves it</td><td>Usually moves across at the same energy charge and end date</td><td>Confirm it in writing, and check the end date has not reset</td></tr>
+<tr><td>A different TDU</td><td>The label you signed does not exist there. The retailer offers its equivalent at that territory's price, or ends the contract</td><td>Treat the offer as a new plan, because it is one</td></tr>
+<tr><td>A municipal utility or a cooperative</td><td>Nothing transfers. There is no retail contract to hold</td><td>Close the retail account and open service with the local utility</td></tr>
+</table>
+
+<p>The third row catches people out. <a href="/learn/austin-energy-explained">Austin Energy</a> and <a href="/learn/cps-energy-san-antonio-explained">CPS Energy in San Antonio</a> are municipally owned, and much of rural Texas is served by cooperatives. A move from Houston to Austin is not a switch but an exit from the competitive market, and no retailer can follow you there.</p>
+
+<h2>Moving Voids the Early Termination Fee</h2>
+
+<p>A Texas retailer cannot charge an early termination fee for ending a fixed-term contract because you are moving out of the premises. The waiver sits in the terms of service of essentially every fixed-rate plan, because the Public Utility Commission requires it.</p>
+
+<p>It is not automatic. Close the account as a move-out rather than a plain cancellation, and give the retailer reasonable evidence you no longer occupy the property: a forwarding address plus a lease, closing statement, or mortgage document. Send it with the request, not after a fee appears on the final bill. The exemption is for leaving an address, not for changing your mind, and covers the fee and nothing else: usage, an unpaid balance, and any deferred payment arrangement all follow you.</p>
+
+<p>For the length of a fixed term, the fee is the thing holding you in place. On the day you move, it is gone. That makes a transfer offer something you can decline, and every plan at the new address available.</p>
+
+<h2>Why a New Address May Mean a New Price</h2>
+
+<p>Half of a Texas bill is not sold by the retailer at all. TDU delivery charges are set in the utility's regulated tariff and passed through identically by every retailer in that territory. They combine a fixed monthly charge with a per-kWh charge, both differing from one TDU to the next, as our guide to <a href="/learn/electricity-delivery-charges-explained">delivery charges</a> sets out. An unchanged energy charge therefore produces a changed bill across a territory line. Because the average price on an Electricity Facts Label is quoted at 500, 1,000, and 2,000 kWh with delivery included, two territories mean two sets of averages.</p>
+
+<p>The house changes too. Plans are built around a usage shape: a bill credit that triggers at a monthly threshold rewards a big house in August and does nothing for a one-bedroom apartment. Moving somewhere smaller can turn a good plan into a bad one without a number in the contract changing.</p>
+
+<p>Across the Texas plans in our catalog on August 14, 2026, there were <strong>108 active plans from 22 retailers</strong>, 96 of them residential. Rates ran from 8.9 to 19.7 cents per kWh, median 14.35, with the lowest residential rate at 9.5 cents. Terms ran from 3 months to 60, month-to-month included, across 24 fixed-rate plans and 82 variable, and 20 plans carried no early termination fee.</p>
+
+<h2>The Timing That Matters</h2>
+
+<p>The move-in date is the date you give the retailer, not the day the truck arrives. Use the day you take possession. Power on an empty house for two days costs little; power two days late costs you the move.</p>
+
+<p>A standard move-in requested before the wires company's daily cutoff is generally scheduled for the next business day; weekends and holidays do not count. Priority and same-day connections exist in most TDU territories, but carry a utility fee the retailer passes on and are not guaranteed. Overlap the two accounts rather than starting the new one the morning after the old stops.</p>
+
+<p>A switch hold is the failure mode specific to in-state moves: a wires company can place a hold on a meter that blocks new enrollment. Holds arise from meter tampering at a premises, and from defaulting on a deferred payment arrangement. If the hold is yours, clear the balance with your current retailer before anyone can enroll you. If it belongs to the previous occupant, you will be asked to prove you are a new occupant, usually with a lease or affidavit. Find out three weeks ahead, not on moving day.</p>
+
+<h2>Closing the Old Account Properly</h2>
+
+<p>Service does not stop because you left. It stops when a move-out order is filed and the meter is read for the last time. Until then the account is yours, and so is everything the next occupant uses.</p>
+
+<p>A transfer is two transactions: a move-in at the new ESI ID and a move-out at the old. Retailers usually file both from one request, but not always, and a missed move-out is how a household ends up paying for two properties. Check the first bill after the move: it should cover the new service point, with the old address appearing once, on a final read, and never again. Our guide to <a href="/learn/how-to-read-your-electricity-bill">reading your electricity bill</a> points at the ESI ID and the read dates.</p>
+
+<p>Photograph the meter the day you hand back the keys; final reads are sometimes estimated, and that photograph is your only evidence. Leave a forwarding address, because the final bill comes weeks after you have gone and a refund cannot reach you without one.</p>
+
+<h2>Deposits on a Move</h2>
+
+<p>A deposit is a credit decision, not a moving fee. Transferring with your existing retailer usually means no fresh credit check, and a deposit already on file follows the account, though some retailers re-run credit on a move-in. A new retailer means a new credit check, which is where deposit requests come from.</p>
+
+<p>Texas rules give you ways around it. A letter of credit history from your current retailer, showing about a year of service, no disconnection for non-payment and at most one late payment, is accepted in place of a deposit by most retailers. Request it while your account is still open, because it is much harder to get afterwards. Customers aged 65 and over who are not currently delinquent cannot be required to post a deposit; certified victims of family violence are also exempt. Deposits are refundable, returned after a period of on-time payment or applied against your final bill.</p>
+
+<h2>A Sequence That Works</h2>
+
+<p>Each step depends on the one before it, and once the requests are in, the timing is the wires company's.</p>
+
+<ul>
+<li><strong>Three weeks out:</strong> confirm the service address exactly as the utility records it, unit number included, and which TDU delivers to it. Territory decides everything downstream.</li>
+<li><strong>Three weeks out:</strong> note your contract's end date and fee, and read the terms of service paragraph covering moves.</li>
+<li><strong>Two weeks out:</strong> <a href="/compare-rates">compare plans priced for the new address</a> against your retailer's transfer offer, at the usage the new home will have.</li>
+<li><strong>Two weeks out:</strong> ask your current retailer for a letter of credit history, whether or not you intend to leave.</li>
+<li><strong>One week out:</strong> enroll, transfer or new, with the start date set to the day you take possession.</li>
+<li><strong>The same week:</strong> file the move-out on the old address with its own date, and get written confirmation of both.</li>
+<li><strong>Move-out day:</strong> photograph the meter and note the reading and the date.</li>
+<li><strong>First bill after:</strong> check it covers one service point and that the old address closed on a final read.</li>
+</ul>
+
+<p>Done in that order, an in-state move is unremarkable. Done in the wrong order, it becomes a rate somebody else picked, at a property where the account is still open behind you.</p>
+`
+  },
 };
 export const getFullArticle = (articleId) => {
   return fullArticles[articleId] || null;

@@ -746,6 +746,66 @@
       "source": "/learn/108",
       "destination": "/learn/warwick-ri-electricity-rates",
       "permanent": true
+    },
+    {
+      "source": "/learn/109",
+      "destination": "/learn/texas-tdu-delivery-charges",
+      "permanent": true
+    },
+    {
+      "source": "/learn/110",
+      "destination": "/learn/texas-electricity-facts-label",
+      "permanent": true
+    },
+    {
+      "source": "/learn/111",
+      "destination": "/learn/power-to-choose-texas",
+      "permanent": true
+    },
+    {
+      "source": "/learn/112",
+      "destination": "/learn/texas-bill-credit-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/113",
+      "destination": "/learn/texas-low-usage-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/114",
+      "destination": "/learn/why-texas-electric-bill-so-high",
+      "permanent": true
+    },
+    {
+      "source": "/learn/115",
+      "destination": "/learn/texas-electricity-early-termination-fee",
+      "permanent": true
+    },
+    {
+      "source": "/learn/116",
+      "destination": "/learn/texas-cities-without-electricity-choice",
+      "permanent": true
+    },
+    {
+      "source": "/learn/117",
+      "destination": "/learn/el-paso-electricity-no-retail-choice",
+      "permanent": true
+    },
+    {
+      "source": "/learn/118",
+      "destination": "/learn/texas-renewable-electricity-plans",
+      "permanent": true
+    },
+    {
+      "source": "/learn/119",
+      "destination": "/learn/texas-commercial-electricity-rates",
+      "permanent": true
+    },
+    {
+      "source": "/learn/120",
+      "destination": "/learn/moving-within-texas-electricity",
+      "permanent": true
     }
   ],
   "rewrites": [
