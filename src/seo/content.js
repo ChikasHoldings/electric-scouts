@@ -197,6 +197,107 @@ function cityFallbackIntro(city) {
   return `${opening} Supply is bought from a competing retailer, separately from delivery.`;
 }
 
+/* ------------------------------------------------------------------ *
+ * City differentiation helpers
+ *
+ * Two cities in the same state used to differ only in their rate, and the
+ * rate is exactly what ties: six of the fourteen Ohio cities we cover share
+ * 9.5¢/kWh, and Lakewood and Parma match on the bill as well. Every
+ * rate-derived sentence on those two pages therefore rendered character for
+ * character identical. What never ties is population, and what is unique by
+ * construction is the ZIP set, the district list and the county cohort — so
+ * those are what the page is built to differ on.
+ * ------------------------------------------------------------------ */
+
+const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+
+/** "three" for small counts, "27" beyond the point words stop helping. */
+function countWord(n) {
+  return n <= 10 ? NUMBER_WORDS[n] : String(n);
+}
+
+function capitalize(text) {
+  return String(text).charAt(0).toUpperCase() + String(text).slice(1);
+}
+
+function ordinal(n) {
+  const rest = n % 100;
+  if (rest >= 11 && rest <= 13) return `${n}th`;
+  return `${n}${['th', 'st', 'nd', 'rd'][n % 10] || 'th'}`;
+}
+
+/** "Harris County" -> "Harris"; "Collin and Denton" keeps both. */
+function bareCounty(county) {
+  return String(county || '').replace(/\s+County$/i, '').trim();
+}
+
+/** Covered cities sharing this city's county. Empty is a meaningful answer. */
+function sameCountyPeers(city, siblings) {
+  const mine = bareCounty(city.county).toLowerCase();
+  if (!mine) return [];
+  return siblings
+    .filter((other) => other.path !== city.path)
+    .filter((other) => bareCounty(other.county).toLowerCase() === mine)
+    .sort((a, b) => parsePopulation(b.population) - parsePopulation(a.population));
+}
+
+/** "2,300,000+" -> 2300000; null when it does not parse. */
+function parsePopulation(value) {
+  const digits = String(value ?? '').replace(/[^0-9]/g, '');
+  return digits ? Number(digits) : null;
+}
+
+/** Where this city sits by size among the ones we cover in its state. */
+function populationRank(city, siblings) {
+  const mine = parsePopulation(city.population);
+  if (mine === null) return null;
+  const all = [city, ...siblings.filter((other) => other.path !== city.path)]
+    .map((entry) => ({ entry, size: parsePopulation(entry.population) }))
+    .filter((row) => row.size !== null)
+    .sort((a, b) => b.size - a.size);
+  if (all.length < 3) return null;
+  const index = all.findIndex((row) => row.entry.path === city.path);
+  if (index === -1) return null;
+  const neighbours = [all[index - 1], all[index + 1]]
+    .filter(Boolean)
+    .map((row) => row.entry);
+  return { rank: index + 1, total: all.length, neighbours };
+}
+
+/**
+ * Sibling cities, ordered by how related they actually are and labelled with
+ * why. The list this replaces printed the same twelve names in the same order
+ * on every page in the state, which is twelve identical link labels across
+ * fourteen Ohio pages.
+ */
+function orderedSiblings(city, siblings) {
+  const county = bareCounty(city.county).toLowerCase();
+  const prefixes = new Set((city.zipCodes || []).map((zip) => String(zip).slice(0, 3)));
+  const mine = parsePopulation(city.population);
+
+  return siblings
+    .map((other) => {
+      const sameCounty = county && bareCounty(other.county).toLowerCase() === county;
+      const sharesPrefix = (other.zipCodes || []).some((zip) => prefixes.has(String(zip).slice(0, 3)));
+      const theirs = parsePopulation(other.population);
+      const sizeGap = mine !== null && theirs !== null ? Math.abs(mine - theirs) : Number.MAX_SAFE_INTEGER;
+      const rank = sameCounty ? 0 : sharesPrefix ? 1 : 2;
+      const label = sameCounty
+        ? `also in ${bareCounty(city.county)} County`
+        : sharesPrefix
+          ? 'shares a ZIP range'
+          : null;
+      return { other, rank, sizeGap, label };
+    })
+    .sort((a, b) => a.rank - b.rank || a.sizeGap - b.sizeGap)
+    .slice(0, 12)
+    .map(({ other, label }, index) => {
+      // The two nearest in size earn their own label where nothing closer applies.
+      const reason = label || (index < 4 ? `closest to ${city.name} in size` : null);
+      return [other.path, reason ? `${other.name} electricity rates — ${reason}` : `${other.name} electricity rates`];
+    });
+}
+
 export function buildCitySections(route, { citiesByState }) {
   const { city } = route;
   const { market, insights } = getCityContext(city);
@@ -392,31 +493,125 @@ export function buildCitySections(route, { citiesByState }) {
    * Cuyahoga County at 9.5¢/kWh, and before this the only things separating
    * their pages were a name and a population. The district names are the one
    * field in the city table that belongs to the city alone. */
-  const coverage = [];
+  /* Coverage, split into two sections that are mostly data rather than one
+   * paragraph of shared scaffolding.
+   *
+   * The version this replaces wrapped each city's unique districts and ZIPs in
+   * about thirty words of connective prose that was identical on all 144 pages,
+   * and a six-gram measure matches on exactly that scaffolding. A bare list of
+   * six district names shares almost no six-grams with a bare list of six other
+   * district names. */
   const neighborhoods = insights?.topZips && !city.zipCodes.length ? [] : city.neighborhoods || [];
   if (neighborhoods.length) {
-    coverage.push(
-      `Within ${city.name} we cover ${joinNames(neighborhoods, 8)} — supply is sold across the ` +
-        `whole city, so the plan available in one district is available in the next.`
-    );
-  }
-  if (city.zipCodes.length) {
-    coverage.push(
-      `ZIP codes covered include ${city.zipCodes.slice(0, 10).join(', ')}. Availability is settled ` +
-        `by ZIP rather than by city name, because utility territory boundaries do not follow city limits.`
-    );
-  }
-  if (cityUtility) {
-    coverage.push(
-      `Delivery in ${city.name} is handled by ${cityUtility.name}, which charges a regulated rate ` +
-        `no supplier can discount. Everything above is the supply half — the part you choose.`
-    );
-  }
-  if (coverage.length) {
     sections.push({
-      heading: `Areas and ZIP Codes We Cover in ${city.name}`,
-      paragraphs: coverage,
-      links: cityUtility ? [[cityUtility.path, `What ${cityUtility.name} does and does not charge for`]] : undefined,
+      heading: `Districts We Cover in ${city.name}`,
+      paragraphs: [
+        city.zipCodes.length
+          ? `${capitalize(countWord(neighborhoods.length))} ${city.name} districts, across ` +
+            `${countWord(city.zipCodes.length)} ZIP ${city.zipCodes.length === 1 ? 'code' : 'codes'}:`
+          : `${capitalize(countWord(neighborhoods.length))} ${city.name} districts:`,
+      ],
+      bullets: neighborhoods,
+    });
+  }
+
+  if (city.zipCodes.length) {
+    const prefixes = [...new Set(city.zipCodes.map((zip) => String(zip).slice(0, 3)))];
+    // A ZIP we also list for another covered city in the same state: two
+    // addresses that look alike on paper can sit in different territories.
+    const twins = (citiesByState[city.stateCode] || [])
+      .filter((other) => other.path !== city.path)
+      .filter((other) => (other.zipCodes || []).some((zip) => city.zipCodes.includes(zip)))
+      .map((other) => other.name);
+
+    const zipParagraphs = [
+      `${city.name} is covered by ${countWord(city.zipCodes.length)} ZIP ` +
+        `${city.zipCodes.length === 1 ? 'code' : 'codes'} — ${joinNames(city.zipCodes.map(String), 10)}.`,
+    ];
+    if (prefixes.length === 1) {
+      zipParagraphs.push(
+        `All of them sit in the ${prefixes[0]} range. Which offers reach a given address is ` +
+          `settled by utility territory rather than by city name, and territory boundaries do ` +
+          `not follow city limits.`
+      );
+    } else {
+      zipParagraphs.push(
+        `They span the ${joinNames(prefixes, 4)} ranges. Which offers reach a given address is ` +
+          `settled by utility territory rather than by city name, and a city spanning more than ` +
+          `one range often spans more than one territory.`
+      );
+    }
+    if (twins.length) {
+      zipParagraphs.push(
+        `${joinNames(twins, 3)} ${twins.length === 1 ? 'shares' : 'share'} at least one ZIP code ` +
+          `with ${city.name} in our coverage, so use the ZIP on your own bill rather than the ` +
+          `name of the town when you compare.`
+      );
+    }
+    sections.push({
+      heading: `Which ZIP Code Decides Your Plans in ${city.name}`,
+      paragraphs: zipParagraphs,
+    });
+  }
+
+  /* The county cohort. Present only where we cover another city in the same
+   * county, which is itself the differentiator: Houston is the only Harris
+   * County city we hold, so its page runs one section shorter than Dallas's. */
+  const countyPeers = sameCountyPeers(city, citiesByState[city.stateCode] || []);
+  if (countyPeers.length) {
+    sections.push({
+      heading: `${city.name} and the Other ${bareCounty(city.county)} County Cities We Cover`,
+      paragraphs: [
+        `Electric Scouts covers ${countWord(countyPeers.length + 1)} ${bareCounty(city.county)} ` +
+          `County ${countyPeers.length ? 'cities' : 'city'}. Delivery charges are set by territory ` +
+          `rather than by county, but neighbouring towns often share one.`,
+      ],
+      table: {
+        columns: ['City', 'Population', 'Average rate', 'Estimated monthly bill'],
+        rows: [
+          [{ text: `${city.name} (this page)` }, city.population, city.avgRate, city.avgMonthlyBill],
+          ...countyPeers.map((other) => [
+            { text: other.name, path: other.path },
+            other.population,
+            other.avgRate,
+            other.avgMonthlyBill,
+          ]),
+        ],
+      },
+    });
+  }
+
+  /* Size rank. The one axis that never ties: six Ohio cities we cover share a
+   * headline rate, but no two share a population. */
+  const sizeRank = populationRank(city, citiesByState[city.stateCode] || []);
+  if (sizeRank) {
+    const { rank, total, neighbours } = sizeRank;
+    const paragraphs = [
+      rank === 1
+        ? `${city.name} is the largest of the ${total} ${stateName} cities Electric Scouts ` +
+          `covers, at ${city.population} residents.`
+        : `${city.name} is the ${ordinal(rank)} largest of the ${total} ${stateName} cities ` +
+          `Electric Scouts covers, at ${city.population} residents.`,
+    ];
+    if (neighbours.length) {
+      paragraphs.push(
+        `The closest to it in size ${neighbours.length === 1 ? 'is' : 'are'} ` +
+          `${joinNames(neighbours.map((other) => `${other.name} (${other.population})`), 2)}. ` +
+          `Size does not set the rate — supply is priced statewide — but it does track how many ` +
+          `distinct utility territories a city sits across.`
+      );
+    }
+    sections.push({ heading: `How Big ${city.name} Is Next to the Rest of ${stateName}`, paragraphs });
+  }
+
+  if (cityUtility) {
+    sections.push({
+      heading: `Who Delivers Power in ${city.name}`,
+      paragraphs: [
+        `Delivery in ${city.name} is handled by ${cityUtility.name}, which charges a regulated ` +
+          `rate no supplier can discount. Everything you can shop is the supply half of the bill.`,
+      ],
+      links: [[cityUtility.path, `What ${cityUtility.name} does and does not charge for`]],
     });
   }
 
@@ -430,7 +625,7 @@ export function buildCitySections(route, { citiesByState }) {
   if (siblings.length) {
     sections.push({
       heading: `Other Cities We Cover in ${stateName}`,
-      links: siblings.slice(0, 12).map((other) => [other.path, `${other.name} electricity rates`]),
+      links: orderedSiblings(city, siblings),
     });
   }
 
@@ -466,16 +661,11 @@ export function buildCitySections(route, { citiesByState }) {
    * this at least points each one somewhere slightly different, and a reader
    * comparing their own city against a similar one is better served than by a
    * link to whichever city sorts first. */
-  const localRate = parseRate(city.avgRate);
-  if (localRate !== null && siblings.length) {
-    const nearest = siblings
-      .map((other) => ({ other, gap: Math.abs((parseRate(other.avgRate) ?? localRate) - localRate) }))
-      .sort((a, b) => a.gap - b.gap)
-      .slice(0, 2);
-    for (const { other } of nearest) {
-      nextSteps.push([other.path, `${other.name} rates, the closest we cover to ${city.name}`]);
-    }
-  }
+  /* The nearest-by-rate links that used to sit here are gone. They tied for
+   * exactly the pairs that most needed separating — Lakewood and Parma have
+   * the same rate, so both pages proposed the same two neighbours in the same
+   * order — and the sibling block above now orders by county, ZIP range and
+   * size, which does not tie. */
   nextSteps.push(['/all-cities', 'Browse every city we cover']);
   sections.push({ heading: 'Next Steps', links: nextSteps });
 

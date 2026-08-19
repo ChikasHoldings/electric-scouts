@@ -710,6 +710,89 @@ describe('registry stays in step with app data', () => {
  * Deployment configuration
  * ================================================================== */
 
+describe('same-state city pages do not read alike', () => {
+  // 25 pairs of city pages exceeded 0.50 six-gram Jaccard similarity, worst
+  // 0.547. The cause was not the template — it was that the pages were asked
+  // to differ on their rate, and the rate ties: six of the fourteen Ohio
+  // cities share 9.5¢/kWh, and Lakewood and Parma match on the bill too, so
+  // every rate-derived sentence rendered character for character identical.
+  // The page now differs on what never ties (population) and what is unique
+  // by construction (ZIP set, district list, county cohort).
+  const cities = getCityRoutes();
+  const byState = {};
+  for (const route of cities) (byState[route.city.stateCode] ||= []).push(route);
+
+  const shingles = (text, n = 6) => {
+    const words = text.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+    const set = new Set();
+    for (let i = 0; i + n <= words.length; i++) set.add(words.slice(i, i + n).join(' '));
+    return set;
+  };
+  const jaccard = (a, b) => {
+    let shared = 0;
+    for (const gram of a) if (b.has(gram)) shared++;
+    return shared / (a.size + b.size - shared || 1);
+  };
+  const context = {
+    citiesByState: Object.fromEntries(
+      Object.entries(byState).map(([code, list]) => [code, list.map((r) => r.city)])
+    ),
+  };
+  /** The prose a reader sees — not the JSON, whose repeated keys inflate the score. */
+  const textOf = (route) => {
+    const content = buildCitySections(route, context);
+    const parts = [...(content.intro || [])];
+    for (const section of content.sections) {
+      parts.push(section.heading);
+      parts.push(...(section.paragraphs || []), ...(section.bullets || []));
+      for (const fact of section.facts || []) parts.push(fact.join(' '));
+      for (const faq of section.faqs || []) parts.push(faq.question, faq.answer);
+      for (const [, label] of section.links || []) parts.push(label);
+      for (const row of section.table?.rows || []) {
+        parts.push(row.map((cell) => (cell && typeof cell === 'object' ? cell.text : cell)).join(' '));
+      }
+    }
+    return parts.filter(Boolean).join(' ');
+  };
+
+  test('no two cities in a state exceed 0.50 similarity', () => {
+    const offenders = [];
+    for (const list of Object.values(byState)) {
+      const prepared = list.map((route) => ({ route, grams: shingles(textOf(route)) }));
+      for (let i = 0; i < prepared.length; i++) {
+        for (let j = i + 1; j < prepared.length; j++) {
+          const score = jaccard(prepared[i].grams, prepared[j].grams);
+          if (score > 0.5) {
+            offenders.push(`${score.toFixed(3)} ${prepared[i].route.path} <-> ${prepared[j].route.path}`);
+          }
+        }
+      }
+    }
+    assert.deepEqual(offenders, [], 'city pages that read alike');
+  });
+
+  test('the sections that differentiate are conditional, not universal', () => {
+    // A block present on one page and absent on its twin is the strongest
+    // dedup signal there is, so at least one of these must genuinely vary.
+    const headingSets = cities.slice(0, 60).map((route) => {
+      const content = buildCitySections(route, { citiesByState: {} });
+      return content.sections.map((section) => section.heading).join('|');
+    });
+    assert.ok(new Set(headingSets).size > 1, 'every city page has the identical section list');
+  });
+
+  test('sibling links are ordered per city, not alphabetically for the whole state', () => {
+    const ohio = byState.OH.map((route) => route.city);
+    const first = buildCitySections(byState.OH[0], { citiesByState: { OH: ohio } });
+    const second = buildCitySections(byState.OH[1], { citiesByState: { OH: ohio } });
+    const linksOf = (content) =>
+      (content.sections.find((section) => /^Other Cities We Cover/.test(section.heading))?.links || [])
+        .map(([, label]) => label)
+        .join('|');
+    assert.notEqual(linksOf(first), linksOf(second), 'two cities print the same sibling list');
+  });
+});
+
 describe('no page offers a switch where retail choice does not exist', () => {
   // Ten cities on this site are served by a municipal utility or sit outside
   // the competitive market, and every one of their pages was telling residents
