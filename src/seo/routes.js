@@ -20,7 +20,7 @@
 
 import { canonicalPath, SITE_NAME, stripBrand, withBrand } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
-import { getArticleRoutes } from './articles.js';
+import { ARTICLE_SLUGS, getArticleRoutes } from './articles.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
 import { COMPARE_HUB, getComparisons } from './comparisons.js';
 import { UTILITY_HUB, getUtilities } from './utilities.js';
@@ -336,7 +336,11 @@ export function getArticleRouteList(fullArticles) {
     // Carried through so the content model can find this article in the map it
     // was built from — the related-guide links are keyed on it.
     id: article.id,
+    slug: article.slug,
     path: article.path,
+    // The /learn/<id> URL this page used to live at, so the build can emit a
+    // 301 for it rather than leaving a duplicate behind.
+    legacyPath: article.legacyPath,
     // Left undefined when article data was not supplied. No generic fallback on
     // purpose: a shared placeholder title across 73 URLs is the exact failure
     // mode this registry exists to prevent, and the prerender build aborts if

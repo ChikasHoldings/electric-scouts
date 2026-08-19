@@ -33,7 +33,8 @@ import {
   getArticleRouteList,
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
-import { ARTICLE_IDS } from '../src/seo/articles.js';
+import { ARTICLE_IDS, ARTICLE_SLUGS, articlePath } from '../src/seo/articles.js';
+import { TITLE_MAX } from '../src/seo/site.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
 import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket, providersInState, renewableProvidersInState } from '../src/seo/market.js';
 import { buildCitySections, buildStateSections, buildProviderSections, buildComparisonSections, buildUtilitySections } from '../src/seo/content.js';
@@ -348,16 +349,49 @@ describe('sitemap.xml', () => {
   });
 
   test('advertises only article URLs the app can actually resolve', () => {
-    // /learn/:id resolves by numeric id. The previous sitemap also emitted
-    // /learn/<slug> for database articles, and every one of those rendered
-    // "Article Not Found" behind a 200 — a soft 404 we asked Google to crawl.
+    // Articles are published at their keyword slug. The sitemap must advertise
+    // the canonical form only: a /learn/<id> URL in here would be asking Google
+    // to crawl a redirect, and a slug with no article behind it would be the
+    // soft 404 this suite exists to prevent.
+    const slugs = new Set(Object.values(ARTICLE_SLUGS));
     const articleLocs = entries.map((e) => e.loc).filter((loc) => loc.includes('/learn/'));
     for (const loc of articleLocs) {
       const identifier = loc.split('/learn/')[1];
-      assert.match(identifier, /^\d+$/, `${loc} is not an article id the route resolves`);
-      assert.ok(ARTICLE_IDS.includes(Number(identifier)), `${loc} has no article behind it`);
+      assert.doesNotMatch(identifier, /^\d+$/, `${loc} is a legacy id URL, not the canonical slug`);
+      assert.ok(slugs.has(identifier), `${loc} has no article behind it`);
     }
     assert.equal(articleLocs.length, ARTICLE_IDS.length);
+  });
+
+  test('every legacy /learn/<id> URL 301s to its slug', () => {
+    // The numeric URLs are what Google already has indexed and what existing
+    // links point at. Without a redirect for each one they become 73 dead URLs
+    // and 73 orphaned slugs, and the equity on both halves is lost.
+    const vercelConfig = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+    const redirects = new Map(
+      vercelConfig.redirects
+        .filter((entry) => /^\/learn\/\d+$/.test(entry.source))
+        .map((entry) => [entry.source, entry])
+    );
+    assert.equal(redirects.size, ARTICLE_IDS.length, 'article redirect count has drifted');
+    for (const id of ARTICLE_IDS) {
+      const entry = redirects.get(`/learn/${id}`);
+      assert.ok(entry, `/learn/${id} has no redirect`);
+      assert.equal(entry.destination, `/learn/${ARTICLE_SLUGS[id]}`, `/learn/${id} points at the wrong slug`);
+      assert.equal(entry.permanent, true, `/learn/${id} must be a 301, not a 302`);
+    }
+  });
+
+  test('every article has a slug, and no two share one', () => {
+    const slugs = ARTICLE_IDS.map((id) => ARTICLE_SLUGS[id]);
+    for (const [index, slug] of slugs.entries()) {
+      assert.ok(slug, `article ${ARTICLE_IDS[index]} has no slug`);
+      assert.match(slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/, `${slug} is not a clean slug`);
+      assert.doesNotMatch(slug, /^\d+$/, `${slug} is still numeric`);
+      // A year in a permanent URL dates the page the moment it turns over.
+      assert.doesNotMatch(slug, /-20\d\d(?:-|$)/, `${slug} pins a year into a permanent URL`);
+    }
+    assert.equal(new Set(slugs).size, slugs.length, 'two articles share a slug');
   });
 
   test('every sitemap URL was prerendered by this build', { skip: !distExists }, () => {
@@ -439,7 +473,7 @@ describe('prerendered output in dist/', () => {
     ['residential landing', '/residential-electricity'],
     ['commercial landing', '/business-electricity'],
     ['renewable landing', '/renewable-energy'],
-    ['article page', '/learn/1'],
+    ['article page', articlePath(1)],
     ['provider directory', '/all-providers'],
   ];
 
@@ -540,7 +574,7 @@ describe('prerendered output in dist/', () => {
   test('the landing pages are reachable from every prerendered page', () => {
     // The site nav is rendered into every prerendered page, so a new landing
     // page is one hop from anywhere rather than orphaned behind the header.
-    for (const routePath of ['/', '/compare-rates', '/texas-electricity', '/learn/1']) {
+    for (const routePath of ['/', '/compare-rates', '/texas-electricity', articlePath(1)]) {
       const links = new Set(internalLinks(readDist(distFileFor(routePath))));
       for (const landing of LANDING_PAGES) {
         assert.ok(links.has(landing), `${routePath} does not link to ${landing}`);
@@ -779,7 +813,7 @@ describe('invalid dynamic URLs do not masquerade as pages', { skip: !distExists 
   });
 
   test('valid dynamic URLs still resolve to their prerendered page', () => {
-    for (const url of ['/electricity-rates/texas/houston', '/learn/1', ...getProviderRoutes(getPublishableProviders()).map((r) => r.path)]) {
+    for (const url of ['/electricity-rates/texas/houston', articlePath(1), ...getProviderRoutes(getPublishableProviders()).map((r) => r.path)]) {
       const result = resolve(url);
       assert.equal(result.status, 200, `${url} should resolve`);
       assert.ok(parseHtml(result.html).prerendered, `${url} served a shell with no prerendered body`);
@@ -931,7 +965,7 @@ describe('pages carry content that justifies indexing', () => {
  * ================================================================== */
 
 describe('article metadata is ours and is supportable', { skip: !distExists }, () => {
-  const articleFiles = ARTICLE_IDS.map((id) => ({ id, file: `learn/${id}/index.html` })).filter(
+  const articleFiles = ARTICLE_IDS.map((id) => ({ id, file: `learn/${ARTICLE_SLUGS[id]}/index.html` })).filter(
     ({ file }) => fs.existsSync(path.join(DIST, file))
   );
 
@@ -955,13 +989,28 @@ describe('article metadata is ours and is supportable', { skip: !distExists }, (
     }
   });
 
-  test('every article title ends with the site brand', () => {
+  test('article titles carry the brand whenever it fits, and never overflow', () => {
+    // The brand is dropped rather than allowed to push a title past the width
+    // Google renders — see withBrand() in src/seo/site.js. So the contract is
+    // not "always branded", it is "branded unless branding would truncate it".
+    // Measured decoded: "&amp;" is five characters in the source and one in the
+    // result, and it is the result Google truncates.
+    const decode = (value) =>
+      value
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
     for (const { id, file } of articleFiles) {
-      const title = tag.title(readDist(file));
-      assert.ok(
-        title.endsWith('| Electric Scouts'),
-        `/learn/${id} title is not branded Electric Scouts: ${title}`
-      );
+      const title = decode(tag.title(readDist(file)));
+      assert.ok(title.length <= TITLE_MAX, `/learn/${id} title overflows at ${title.length}: ${title}`);
+      if (!title.endsWith('| Electric Scouts')) {
+        assert.ok(
+          title.length + ' | Electric Scouts'.length > TITLE_MAX,
+          `/learn/${id} dropped the brand but had room for it: ${title}`
+        );
+      }
     }
   });
 
@@ -1034,7 +1083,7 @@ describe('structured data describes what the page shows', { skip: !distExists },
   });
 
   test('breadcrumb markup matches the on-page breadcrumb trail', () => {
-    for (const routePath of ['/electricity-rates/texas/houston', '/texas-electricity', '/learn/1']) {
+    for (const routePath of ['/electricity-rates/texas/houston', '/texas-electricity', articlePath(1)]) {
       const html = readDist(distFileFor(routePath));
       const graph = jsonLdOf(routePath).flatMap((doc) => doc['@graph'] || [doc]);
       const crumbs = graph.find((node) => node['@type'] === 'BreadcrumbList');
@@ -1066,7 +1115,7 @@ describe('crawl paths reach every indexable page', { skip: !distExists }, () => 
   test('the learning centre links to every article', () => {
     const links = new Set(internalLinks(readDist(distFileFor('/learning-center'))));
     for (const id of ARTICLE_IDS) {
-      assert.ok(links.has(`/learn/${id}`), `/learn/${id} is not linked from the learning centre`);
+      assert.ok(links.has(articlePath(id)), `${articlePath(id)} is not linked from the learning centre`);
     }
   });
 

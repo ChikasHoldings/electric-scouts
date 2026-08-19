@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { articleIdForSlug } from "@/seo/articles";
 import { createPageUrl } from "@/utils";
 import { Article } from "@/api/supabaseEntities";
 import { useQuery } from "@tanstack/react-query";
@@ -987,11 +988,17 @@ const colorClasses = {
 export default function ArticleDetail() {
   const location = window.location;
   
-  // Support both clean URLs (/learn/:slug) and legacy query params (?id=6)
+  // Clean URLs carry a keyword slug (/learn/how-to-read-your-electricity-bill).
+  // The numeric form is 301'd to the slug at the edge, but it is still resolved
+  // here so a legacy ?id= link, an in-app link that has not been updated, or a
+  // local run without the redirect table all land on the article rather than on
+  // "Article Not Found".
   const pathParts = location.pathname.split('/');
   const isCleanUrl = pathParts[1] === 'learn' && pathParts[2];
   const urlParams = new URLSearchParams(location.search);
-  const articleId = isCleanUrl ? decodeURIComponent(pathParts[2]) : urlParams.get('id');
+  const identifier = isCleanUrl ? decodeURIComponent(pathParts[2]) : urlParams.get('id');
+  const resolvedId = articleIdForSlug(identifier);
+  const articleId = resolvedId === null ? identifier : String(resolvedId);
 
   // Fetch articles from database
   const { data: dbArticles, isLoading } = useQuery({
