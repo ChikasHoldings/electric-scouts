@@ -15,6 +15,7 @@
 import { SITE_NAME, SITE_URL, absoluteUrl } from './site.js';
 import { organizationSchema } from './organization.js';
 import { getComparisons } from './comparisons.js';
+import { articleModifiedDate, articlePublishedDate } from './articleDates.js';
 import {
   buildArticleSections,
   buildCitySections,
@@ -192,13 +193,27 @@ export function structuredDataFor(route, content) {
   if (trail.length > 1) graph.push(breadcrumbSchema(trail));
 
   if (route.type === 'article') {
+    // Dates come from src/seo/articleDates.js, which is derived from this
+    // repository's git history — the commit that introduced an article and the
+    // last one that changed its own text. They were absent entirely before, and
+    // a date in structured data is a claim about the world: inventing one to
+    // look fresh is the kind of thing that costs a site its rich results.
+    const published = articlePublishedDate(route.id);
+    const modified = articleModifiedDate(route.id);
     graph.push({
       '@type': 'Article',
       headline: route.heading || route.title,
       description: route.description,
       mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(route.path) },
+      // The author is the organization, not an invented byline. This site has
+      // no named authors, and fabricating one is worse for E-E-A-T than being
+      // straightforward about who stands behind the page.
       author: { '@id': `${SITE_URL}/#organization` },
       publisher: { '@id': `${SITE_URL}/#organization` },
+      image: `${SITE_URL}${ogImageFor(route)}`,
+      inLanguage: 'en-US',
+      ...(published ? { datePublished: published } : {}),
+      ...(modified ? { dateModified: modified } : {}),
     });
   }
 
@@ -474,6 +489,31 @@ export function buildPageContent(route, context = {}) {
   }
 }
 
+/**
+ * "Published 1 March 2026 · Last updated 14 August 2026" for an article.
+ *
+ * Rendered from src/seo/articleDates.js, the same table the Article markup
+ * reads, so the visible date and the structured one cannot disagree.
+ */
+export function articleByline(id) {
+  const published = articlePublishedDate(id);
+  const modified = articleModifiedDate(id);
+  if (!published && !modified) return '';
+  const format = (iso) =>
+    new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    });
+  const parts = [];
+  if (published) parts.push(`Published <time datetime="${escapeHtml(published)}">${escapeHtml(format(published))}</time>`);
+  if (modified && modified !== published) {
+    parts.push(`Last updated <time datetime="${escapeHtml(modified)}">${escapeHtml(format(modified))}</time>`);
+  }
+  return `<p class="article-byline">${parts.join(' &middot; ')}</p>`;
+}
+
 function renderBreadcrumbNav(route) {
   const trail = breadcrumbsFor(route);
   if (trail.length < 2) return '';
@@ -501,11 +541,17 @@ export function renderBody(route, content, context) {
   // same markup ArticleDetail renders — so they are inserted verbatim.
   const articleBody = route.type === 'article' && route.content ? route.content : '';
 
+  // Google will not use a date it cannot see on the page, and structured data
+  // that states one the page does not show is a mismatch. This renders the same
+  // two dates the Article markup carries, from the same source.
+  const byline = route.type === 'article' ? articleByline(route.id) : '';
+
   return [
     '<div data-seo-prerender="true" style="max-width:1100px;margin:0 auto;padding:24px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;line-height:1.6">',
     siteNav(context.states || []),
     renderBreadcrumbNav(route),
     `<main><h1>${escapeHtml(heading)}</h1>`,
+    byline,
     intro,
     articleBody,
     sections,

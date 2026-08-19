@@ -43,6 +43,25 @@ export function getPublishableProviders() {
   return marketData.providers.filter((provider) => provider.isActive && provider.plans > 0);
 }
 
+/**
+ * The cheapest and dearest rate across every plan in the snapshot.
+ *
+ * Exists so the surfaces that want to tell a visitor what is at stake have a
+ * figure they can actually stand behind. The site used to answer that question
+ * with "save up to $800/year" — in the footer of every page, in the homepage
+ * hero, and inside the Organization JSON-LD — and nothing on this site
+ * supports it: we hold plan rates, not anybody's bill, not the utility default
+ * rate, and not a single switched customer's before-and-after. The spread
+ * between the plans we do hold is a fact, and it makes the same point.
+ */
+export function getRateSpread() {
+  const rates = marketData.providers
+    .flatMap((provider) => [provider.minRate, provider.maxRate])
+    .filter((rate) => typeof rate === 'number');
+  if (!rates.length) return null;
+  return { min: Math.min(...rates), max: Math.max(...rates) };
+}
+
 export function getProviderBySlug(slug) {
   return marketData.providers.find((provider) => provider.slug === slug) || null;
 }

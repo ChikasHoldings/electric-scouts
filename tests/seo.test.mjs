@@ -382,6 +382,38 @@ describe('sitemap.xml', () => {
     }
   });
 
+  test('article dates are recorded, plausible, and still describe the article', async () => {
+    // src/seo/articleDates.js is a snapshot of git history (Vercel clones at
+    // depth 1, so it cannot be computed during the build). The hash is what
+    // stops it going stale: edit an article without re-running
+    // scripts/refresh-article-dates.mjs and this fails rather than shipping a
+    // dateModified that quietly contradicts the page.
+    const { ARTICLE_DATES } = await import('../src/seo/articleDates.js');
+    const { hashBlocks } = await import('../scripts/refresh-article-dates.mjs');
+    const source = fs.readFileSync(
+      path.join(ROOT, 'src/components/learning/fullArticles.jsx'),
+      'utf8'
+    );
+    const current = hashBlocks(source);
+    const today = new Date().toISOString().slice(0, 10);
+
+    for (const id of ARTICLE_IDS) {
+      const entry = ARTICLE_DATES[id];
+      assert.ok(entry, `article ${id} has no recorded dates`);
+      const [published, modified, hash] = entry;
+      assert.match(published, /^\d{4}-\d{2}-\d{2}$/, `article ${id} datePublished is not an ISO date`);
+      assert.match(modified, /^\d{4}-\d{2}-\d{2}$/, `article ${id} dateModified is not an ISO date`);
+      assert.ok(published <= today, `article ${id} claims to be published in the future`);
+      assert.ok(modified <= today, `article ${id} claims to be modified in the future`);
+      assert.ok(modified >= published, `article ${id} was modified before it was published`);
+      assert.equal(
+        hash,
+        current[id],
+        `article ${id} has changed since its dates were recorded — run "node scripts/refresh-article-dates.mjs"`
+      );
+    }
+  });
+
   test('every article has a slug, and no two share one', () => {
     const slugs = ARTICLE_IDS.map((id) => ARTICLE_SLUGS[id]);
     for (const [index, slug] of slugs.entries()) {
@@ -677,6 +709,76 @@ describe('registry stays in step with app data', () => {
 /* ================================================================== *
  * Deployment configuration
  * ================================================================== */
+
+describe('no unsourced savings or review claims reach a page', () => {
+  // This site holds plan rates. It does not hold anybody's bill, the utility
+  // default rate, a switched customer's before-and-after, or a single review —
+  // so a savings figure or a star rating is not a number it can produce. These
+  // had accumulated in the footer of every page, the homepage hero, the
+  // Organization JSON-LD, the About page's trust strip, and as a fabricated
+  // per-city "potential savings" on all 144 rows of the city index.
+  //
+  // For a site in a financial category these are the claims that cost trust
+  // with readers and with Google's quality systems, so the rule is enforced
+  // rather than remembered.
+  const SOURCE_DIRS = ['src/pages', 'src/components', 'src/seo'];
+  const CLAIMS = [
+    { pattern: /save\s+(?:up\s+to\s+)?\$\s?\d/i, what: 'a savings figure in dollars' },
+    { pattern: /\bavg\.?\s+annual\s+savings\b/i, what: 'an average annual savings claim' },
+    // Only when a figure is attached: /savings-calculator computes a number
+    // from the visitor's own rate and usage, which is arithmetic on their
+    // input rather than a claim this site is making.
+    { pattern: /\bpotential\s+savings\b[^.]{0,40}\$\s?\d|\$\s?\d[^.]{0,40}\bpotential\s+savings\b/i, what: 'a potential-savings figure' },
+    { pattern: /\b\d\.\d\s*(?:★|\/\s*5\b)/, what: 'a star rating' },
+    { pattern: /\b\d[\d,]*\s*\+?\s*(?:happy|satisfied)\s+customers\b/i, what: 'a customer count' },
+  ];
+
+  /** Source files that render, excluding the article bodies and the admin app. */
+  function sourceFiles() {
+    const out = [];
+    const walk = (dir) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name !== 'admin' && entry.name !== 'ui') walk(full);
+        } else if (/\.(jsx|js)$/.test(entry.name) && entry.name !== 'fullArticles.jsx') {
+          out.push(full);
+        }
+      }
+    };
+    for (const dir of SOURCE_DIRS) walk(path.join(ROOT, dir));
+    return out;
+  }
+
+  /** Strip comments so an explanation of a removed claim is not read as one. */
+  function stripComments(text) {
+    return text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
+  }
+
+  for (const { pattern, what } of CLAIMS) {
+    test(`no source file states ${what}`, () => {
+      const offenders = [];
+      for (const file of sourceFiles()) {
+        const body = stripComments(fs.readFileSync(file, 'utf8'));
+        for (const line of body.split('\n')) {
+          if (pattern.test(line)) offenders.push(`${path.relative(ROOT, file)}: ${line.trim().slice(0, 110)}`);
+        }
+      }
+      assert.deepEqual(offenders, [], `unsourced claim(s) found:\n  ${offenders.join('\n  ')}`);
+    });
+  }
+
+  test('the prerendered HTML states none of them either', { skip: !distExists }, () => {
+    const offenders = [];
+    for (const routePath of ['/', '/all-cities', '/all-providers', '/about-us', '/texas-electricity', '/electricity-rates/texas/houston']) {
+      const html = readDist(distFileFor(routePath));
+      for (const { pattern, what } of CLAIMS) {
+        if (pattern.test(html)) offenders.push(`${routePath} carries ${what}`);
+      }
+    }
+    assert.deepEqual(offenders, []);
+  });
+});
 
 describe('vercel.json routing', () => {
   const config = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));

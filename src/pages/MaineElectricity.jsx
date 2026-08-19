@@ -176,9 +176,10 @@ export default function MaineElectricity() {
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <DollarSign className="w-8 h-8 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Save $620/Year</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">See Every Rate</h3>
                 <p className="text-gray-600">
-                  Maine residents save an average of $620 annually with competitive suppliers
+                  Suppliers price the same Maine power differently. We show what each one
+                  charges, so you can compare it against the rate you pay now.
                 </p>
               </CardContent>
             </Card>

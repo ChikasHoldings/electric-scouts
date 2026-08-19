@@ -218,8 +218,8 @@ function CityRatesInner() {
               Cheap Electricity Rates in {displayCityName}, {city.state}
             </h1>
             <p className="text-lg text-blue-100 mb-5">
-              Compare electricity plans from the suppliers serving {city.county}. 
-              Average rates starting at {city.avgRate} with potential savings up to $800/year.
+              Compare electricity plans from the suppliers serving {city.county}.
+              The average residential rate here is {city.avgRate}.
             </p>
 
             {/* Quick Stats */}
@@ -299,9 +299,10 @@ function CityRatesInner() {
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <DollarSign className="w-8 h-8 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Save Money</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">See Every Rate</h3>
                 <p className="text-gray-600">
-                  {displayCityName} residents can save up to $800 per year by switching to a better electricity plan
+                  Supply in {displayCityName} is sold by competing retailers at different rates. We show you
+                  all of them for your address, so you can compare yours against what is on offer.
                 </p>
               </CardContent>
             </Card>

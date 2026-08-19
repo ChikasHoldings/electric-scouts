@@ -18,14 +18,14 @@ const announcements = [
   },
   {
     icon: Award,
-    text: "4.8★ Rated - Trusted by thousands of satisfied customers",
+    text: "Independent comparison - we are not owned by a supplier",
     bgColor: "from-yellow-50 to-orange-50",
     textColor: "text-orange-700",
     iconColor: "text-orange-600"
   },
   {
     icon: Users,
-    text: "Join 10,000+ happy customers who switched and saved",
+    text: "Switching is free and your power never goes out",
     bgColor: "from-purple-50 to-pink-50",
     textColor: "text-purple-700",
     iconColor: "text-purple-600"

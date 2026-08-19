@@ -478,7 +478,7 @@ export default function Layout({ children, currentPageName }) {
                 </picture>
               </Link>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                Compare electricity rates from {MARKET_TOTALS.providersWithPlans} suppliers across {MARKET_TOTALS.states} deregulated states. Save up to $800/year.
+                Compare electricity rates from {MARKET_TOTALS.providersWithPlans} suppliers across {MARKET_TOTALS.states} deregulated states.
               </p>
               <div className="flex gap-2">
                 <a href="https://facebook.com/electricscouts" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
@@ -651,7 +651,7 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h3 className="text-white text-sm font-bold mb-3 uppercase tracking-wider">Why Choose Your Electricity Provider</h3>
               <p className="text-gray-400 text-xs leading-relaxed max-w-5xl">
-                Energy deregulation gives you the power to choose — but only if you can see what’s available. Electric Scouts puts every option on the table: budget-friendly fixed rates, flexible month-to-month plans, green energy from certified renewable sources, and business-grade contracts for commercial properties. Our comparison tool is 100% free, requires no credit card, and carries zero obligation. On average, people who switch through Electric Scouts save around $800 per year.
+                Energy deregulation gives you the power to choose — but only if you can see what’s available. Electric Scouts puts every option on the table: budget-friendly fixed rates, flexible month-to-month plans, green energy from certified renewable sources, and business-grade contracts for commercial properties. Our comparison tool is 100% free, requires no credit card, and carries zero obligation.
               </p>
             </div>
           </div>

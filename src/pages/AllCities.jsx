@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { getCityUrl } from "@/utils/cityUrls";
 import { Button } from "@/components/ui/button";
+import { getStateMarket, MARKET_TOTALS } from "@/seo/market";
+import { LOCATION_DATA } from "@/components/location/locationData";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Users, Zap, ArrowRight, CheckCircle, TrendingDown } from "lucide-react";
+import { Search, MapPin, Users, Zap, ArrowRight, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import SEOHead, { getOrganizationSchema, getBreadcrumbSchema } from "@/components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
@@ -18,7 +20,6 @@ const cities = [
     population: "2.3M",
     avgRate: "8.9¢/kWh",
     providers: 45,
-    savings: "$850/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b92baf13-dff3-4777-8e8a-b25f73b10b8d.jpg"
   },
   {
@@ -28,7 +29,6 @@ const cities = [
     population: "1.3M",
     avgRate: "9.1¢/kWh",
     providers: 42,
-    savings: "$820/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8d19f65b-9e9f-4d66-b5f9-6d0cc6de9965.jpg"
   },
   {
@@ -38,7 +38,6 @@ const cities = [
     population: "978K",
     avgRate: "9.3¢/kWh",
     providers: 38,
-    savings: "$780/yr",
     image: "https://images.unsplash.com/photo-1531218150217-54595bc2b934?w=400&h=300&fit=crop"
   },
   {
@@ -48,7 +47,6 @@ const cities = [
     population: "1.5M",
     avgRate: "8.8¢/kWh",
     providers: 40,
-    savings: "$830/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/136ff412-03e2-40c7-8934-8517d2404665.jpg"
   },
   {
@@ -58,7 +56,6 @@ const cities = [
     population: "927K",
     avgRate: "9.0¢/kWh",
     providers: 41,
-    savings: "$810/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/87a80756-c4b5-44c5-bc05-259fef05ca68.jpg"
   },
   // Illinois Cities
@@ -69,7 +66,6 @@ const cities = [
     population: "2.7M",
     avgRate: "9.8¢/kWh",
     providers: 36,
-    savings: "$750/yr",
     image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
   },
   {
@@ -79,7 +75,6 @@ const cities = [
     population: "180K",
     avgRate: "9.9¢/kWh",
     providers: 34,
-    savings: "$720/yr",
     image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
   },
   {
@@ -89,7 +84,6 @@ const cities = [
     population: "149K",
     avgRate: "9.7¢/kWh",
     providers: 35,
-    savings: "$740/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/403443a6-48b5-4052-ac9e-6600f43ab721.jpg"
   },
   {
@@ -99,7 +93,6 @@ const cities = [
     population: "150K",
     avgRate: "9.8¢/kWh",
     providers: 33,
-    savings: "$730/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/58463eb0-e880-4c1a-b78b-be40c42fb456.jpg"
   },
   // Ohio Cities
@@ -110,7 +103,6 @@ const cities = [
     population: "905K",
     avgRate: "9.5¢/kWh",
     providers: 38,
-    savings: "$780/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/03fe81c8-162d-4692-be26-32e20095399c.jpg"
   },
   {
@@ -120,7 +112,6 @@ const cities = [
     population: "372K",
     avgRate: "9.6¢/kWh",
     providers: 37,
-    savings: "$770/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/0566fb7e-4b0b-46d4-bdc4-04a2189962bf.jpg"
   },
   {
@@ -130,7 +121,6 @@ const cities = [
     population: "309K",
     avgRate: "9.7¢/kWh",
     providers: 36,
-    savings: "$760/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/e1e2ce07-4723-4b43-b55c-8e6a0251d472.jpg"
   },
   {
@@ -140,7 +130,6 @@ const cities = [
     population: "270K",
     avgRate: "9.6¢/kWh",
     providers: 35,
-    savings: "$750/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c3d7d2f5-d102-4ed8-aa7f-f2e9c6e02764.jpg"
   },
   // Pennsylvania Cities
@@ -151,7 +140,6 @@ const cities = [
     population: "1.6M",
     avgRate: "10.2¢/kWh",
     providers: 32,
-    savings: "$680/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/01dc15fd-0434-4dd9-ac68-9123c6a14f33.jpg"
   },
   {
@@ -161,7 +149,6 @@ const cities = [
     population: "303K",
     avgRate: "10.1¢/kWh",
     providers: 30,
-    savings: "$690/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/162bc2ea-2c58-4a65-bab4-76e96955cc5c1.jpg"
   },
   {
@@ -171,7 +158,6 @@ const cities = [
     population: "125K",
     avgRate: "10.3¢/kWh",
     providers: 28,
-    savings: "$670/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/cfe7691c-4b4d-4429-966f-1475a915d13d.jpg"
   },
   // New York Cities
@@ -182,7 +168,6 @@ const cities = [
     population: "8.3M",
     avgRate: "11.5¢/kWh",
     providers: 28,
-    savings: "$620/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b030ead7-1805-4ab1-9b11-5ef8764baa82.jpg"
   },
   {
@@ -192,7 +177,6 @@ const cities = [
     population: "278K",
     avgRate: "10.8¢/kWh",
     providers: 25,
-    savings: "$650/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/7c7a75cb-3931-4991-b608-275c44e5dd84.jpg"
   },
   {
@@ -202,7 +186,6 @@ const cities = [
     population: "211K",
     avgRate: "10.9¢/kWh",
     providers: 24,
-    savings: "$640/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/dfd8afa3-67b9-425f-9616-5dd340a3c534.jpg"
   },
   {
@@ -212,7 +195,6 @@ const cities = [
     population: "148K",
     avgRate: "11.0¢/kWh",
     providers: 23,
-    savings: "$630/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8af97b79-9633-405b-a443-c8df9b48d0cf.jpg"
   },
   // New Jersey Cities
@@ -223,7 +205,6 @@ const cities = [
     population: "311K",
     avgRate: "10.5¢/kWh",
     providers: 27,
-    savings: "$660/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/1a6aeb64-6311-486c-baba-c7cff53a3d5c.jpg"
   },
   {
@@ -233,7 +214,6 @@ const cities = [
     population: "292K",
     avgRate: "10.6¢/kWh",
     providers: 26,
-    savings: "$650/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/29c455be-4263-4009-8e75-1475730b0b76.jpg"
   },
   {
@@ -243,7 +223,6 @@ const cities = [
     population: "159K",
     avgRate: "10.7¢/kWh",
     providers: 25,
-    savings: "$640/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/8bb83b32-7b38-4635-9279-d5fe12f4d755.jpg"
   },
   // Maryland Cities
@@ -254,7 +233,6 @@ const cities = [
     population: "576K",
     avgRate: "10.4¢/kWh",
     providers: 29,
-    savings: "$670/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f10f5df1-6404-4618-b8c3-314d3f6a0d29.jpg"
   },
   {
@@ -264,7 +242,6 @@ const cities = [
     population: "79K",
     avgRate: "10.5¢/kWh",
     providers: 27,
-    savings: "$660/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/98350fd0-49c8-4087-8479-0d390c853bf3.jpg"
   },
   {
@@ -274,7 +251,6 @@ const cities = [
     population: "68K",
     avgRate: "10.3¢/kWh",
     providers: 28,
-    savings: "$680/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/46fe92cb-3aa8-4914-8974-bde36dd806af.jpg"
   },
   // Massachusetts Cities
@@ -285,7 +261,6 @@ const cities = [
     population: "675K",
     avgRate: "11.2¢/kWh",
     providers: 22,
-    savings: "$600/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/6e33a452-8111-4711-a6e7-b49128f6bc5a.jpg"
   },
   {
@@ -295,7 +270,6 @@ const cities = [
     population: "206K",
     avgRate: "11.3¢/kWh",
     providers: 21,
-    savings: "$590/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/d4fa1135-c2c6-4c43-8184-540993ddd4db.jpg"
   },
   {
@@ -305,7 +279,6 @@ const cities = [
     population: "155K",
     avgRate: "11.4¢/kWh",
     providers: 20,
-    savings: "$580/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/45362c2b-5e37-45ca-a6ab-ac06564ed343.jpg"
   },
   // Connecticut Cities
@@ -316,7 +289,6 @@ const cities = [
     population: "121K",
     avgRate: "11.8¢/kWh",
     providers: 19,
-    savings: "$550/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ottawa-street.jpg"
   },
   {
@@ -326,7 +298,6 @@ const cities = [
     population: "135K",
     avgRate: "11.7¢/kWh",
     providers: 19,
-    savings: "$560/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ab8c9932-5234-436a-b781-91c450b67ab0.jpg"
   },
   {
@@ -336,7 +307,6 @@ const cities = [
     population: "148K",
     avgRate: "11.9¢/kWh",
     providers: 18,
-    savings: "$540/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/770d9cd5-f0df-4175-80a1-078211ed206a.jpg"
   },
   // Maine Cities
@@ -347,7 +317,6 @@ const cities = [
     population: "68K",
     avgRate: "11.5¢/kWh",
     providers: 17,
-    savings: "$570/yr",
     image: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400&h=300&fit=crop"
   },
   {
@@ -357,7 +326,6 @@ const cities = [
     population: "37K",
     avgRate: "11.6¢/kWh",
     providers: 16,
-    savings: "$560/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/35c3c8a7-86a1-4171-93f9-2a876c9ff35a.jpg"
   },
   {
@@ -367,7 +335,6 @@ const cities = [
     population: "32K",
     avgRate: "11.7¢/kWh",
     providers: 16,
-    savings: "$550/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/f9cc9f9f-03e1-4bc8-bb2c-a8bdf40d7b5d.jpg"
   },
   // New Hampshire Cities
@@ -378,7 +345,6 @@ const cities = [
     population: "115K",
     avgRate: "11.6¢/kWh",
     providers: 17,
-    savings: "$560/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/b89134a8-4b49-4280-b376-c9c36d77a3a1.jpg"
   },
   {
@@ -388,7 +354,6 @@ const cities = [
     population: "91K",
     avgRate: "11.7¢/kWh",
     providers: 16,
-    savings: "$550/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/89e68724-f3a0-408a-b82b-21c7f26fe660.jpg"
   },
   {
@@ -398,7 +363,6 @@ const cities = [
     population: "43K",
     avgRate: "11.8¢/kWh",
     providers: 16,
-    savings: "$540/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/c2b6c002-b461-43af-873e-02caf45e467b.jpg"
   },
   // Rhode Island Cities
@@ -409,7 +373,6 @@ const cities = [
     population: "190K",
     avgRate: "11.9¢/kWh",
     providers: 15,
-    savings: "$530/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/3de2f374-e6c7-4415-a731-3588f4dc57b8.jpg"
   },
   {
@@ -419,7 +382,6 @@ const cities = [
     population: "83K",
     avgRate: "12.0¢/kWh",
     providers: 15,
-    savings: "$520/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/a37c566e-4168-4be1-a823-20bf311f7ed9.jpg"
   },
   {
@@ -429,7 +391,6 @@ const cities = [
     population: "82K",
     avgRate: "12.0¢/kWh",
     providers: 14,
-    savings: "$520/yr",
     image: "https://iwguavsojnbzveutwzpw.supabase.co/storage/v1/object/public/content/cities/ccdd3a45-7050-4bd0-89d9-81c846e9fcdc.jpg"
   }
 ];
@@ -506,8 +467,8 @@ export default function AllCities() {
               <div className="text-sm text-gray-600">Residents</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">$700</div>
-              <div className="text-sm text-gray-600">Avg. Annual Savings</div>
+              <div className="text-3xl font-bold text-[#0A5C8C] mb-1">{MARKET_TOTALS.activePlans}</div>
+              <div className="text-sm text-gray-600">Plans Tracked</div>
             </div>
           </div>
         </div>
@@ -559,8 +520,14 @@ export default function AllCities() {
                       <Zap className="w-4 h-4 text-green-600" />
                     </div>
                     <div>
-                      <div className="text-xs text-gray-600">Providers</div>
-                      <div className="text-sm font-bold text-gray-900">{city.providers}</div>
+                      {/* Was city.providers — a legacy per-city estimate claiming
+                          45 suppliers for Houston while the plan snapshot holds 22
+                          for the whole of Texas. The snapshot figure is the one we
+                          can show, so it is labelled with the scope it actually has. */}
+                      <div className="text-xs text-gray-600">Suppliers in {city.state}</div>
+                      <div className="text-sm font-bold text-gray-900">
+                        {getStateMarket(city.state)?.providers ?? "—"}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -572,11 +539,15 @@ export default function AllCities() {
                       <div className="text-xs text-gray-600 mb-1">Avg. Rate</div>
                       <div className="text-xl font-bold text-[#0A5C8C]">{city.avgRate}</div>
                     </div>
+                    {/* A per-city "potential savings" figure used to sit here —
+                        $850/yr for one city, $620/yr for another. None of it came
+                        from anywhere: this site holds plan rates, not bills. The
+                        utility that delivers the power is a real, checkable fact
+                        about the city and is what a reader actually needs next. */}
                     <div className="text-right">
-                      <div className="text-xs text-gray-600 mb-1">Potential Savings</div>
-                      <div className="text-lg font-bold text-green-600 flex items-center gap-1">
-                        <TrendingDown className="w-4 h-4" />
-                        {city.savings}
+                      <div className="text-xs text-gray-600 mb-1">Utility</div>
+                      <div className="text-sm font-semibold text-gray-900">
+                        {LOCATION_DATA[city.state]?.cities?.[city.name]?.utilityCompany || "—"}
                       </div>
                     </div>
                   </div>
