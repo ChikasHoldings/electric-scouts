@@ -710,6 +710,87 @@ describe('registry stays in step with app data', () => {
  * Deployment configuration
  * ================================================================== */
 
+describe('city pages offer an image to the crawler', () => {
+  // Every prerendered page carried zero <img> elements, so nothing on this site
+  // was eligible for image search and no page could hand Google a primary image.
+  //
+  // The data was worse than missing, though. Two generic stock photographs were
+  // shared across 105 of the 144 cities, and each page captioned the one it got
+  // as that city's skyline — a single image asserting it was both Parma, Ohio
+  // and Sugar Land, Texas. Publishing that is a false claim and 105 duplicate
+  // images, so the shared photos were removed rather than rendered: 40 cities
+  // have a photograph of their own and those are the ones that get one.
+  const cityRoutes = getCityRoutes();
+  const withImage = cityRoutes.filter((route) => route.city.image);
+
+  const graphOf = (routePath) =>
+    tag
+      .jsonLd(readDist(distFileFor(routePath)))
+      .map((raw) =>
+        JSON.parse(raw.replace(/\\u003c/g, '<').replace(/\\u003e/g, '>').replace(/\\u0026/g, '&'))
+      )
+      .flatMap((doc) => doc['@graph'] || [doc]);
+
+  test('no photograph is shared between two cities', () => {
+    const seen = new Map();
+    const shared = [];
+    for (const route of withImage) {
+      if (seen.has(route.city.image)) {
+        shared.push(`${seen.get(route.city.image)} and ${route.path}`);
+      } else {
+        seen.set(route.city.image, route.path);
+      }
+    }
+    assert.deepEqual(shared, [], 'the same image is published as two different cities');
+  });
+
+  test('enough cities carry one to be worth having', () => {
+    assert.ok(withImage.length >= 30, `only ${withImage.length} cities have an image`);
+  });
+
+  test('the prerendered HTML renders it with alt text', { skip: !distExists }, () => {
+    for (const route of withImage.slice(0, 12)) {
+      const html = readDist(distFileFor(route.path));
+      const img = html.match(/<img\s[^>]*>/);
+      assert.ok(img, `${route.path} renders no <img>`);
+      assert.match(img[0], /alt="[^"]+"/, `${route.path} image has no alt text`);
+      // The src is HTML-escaped in the document, so compare against that form.
+      assert.ok(
+        img[0].includes(route.city.image.replace(/&/g, '&amp;')),
+        `${route.path} renders an image that is not the city's own`
+      );
+      // "skyline" asserted what the photo shows, which we do not know.
+      assert.doesNotMatch(img[0], /alt="[^"]*skyline/i, `${route.path} alt claims the photo is a skyline`);
+    }
+  });
+
+  test('a city with no photograph of its own renders none', { skip: !distExists }, () => {
+    const without = cityRoutes.filter((route) => !route.city.image);
+    for (const route of without.slice(0, 8)) {
+      const html = readDist(distFileFor(route.path));
+      assert.ok(!/<img\s/.test(html), `${route.path} has no image of its own but renders one`);
+    }
+  });
+
+  test('the image is declared as the page primary image', { skip: !distExists }, () => {
+    for (const route of withImage.slice(0, 6)) {
+      const node = graphOf(route.path).find((entry) => entry['@type'] === 'ImageObject');
+      assert.ok(node, `${route.path} declares no ImageObject`);
+      assert.equal(node.url, route.city.image);
+      assert.ok(node.caption, `${route.path} ImageObject has no caption`);
+    }
+  });
+
+  test('a page with its own photo does not claim the placeholder dimensions', { skip: !distExists }, () => {
+    // og:image:width/height describe the authored 1200x630 placeholder set. A
+    // city photo is a different shape, so it must ship without them rather
+    // than with a size that is wrong.
+    const html = readDist(distFileFor(withImage[0].path));
+    assert.ok(html.includes('og:image'), 'no og:image at all');
+    assert.ok(!html.includes('og:image:width'), 'city page asserts placeholder dimensions for its own photo');
+  });
+});
+
 describe('no unsourced savings or review claims reach a page', () => {
   // This site holds plan rates. It does not hold anybody's bill, the utility
   // default rate, a switched customer's before-and-after, or a single review —

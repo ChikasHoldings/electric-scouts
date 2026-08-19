@@ -73,6 +73,11 @@ export function getCities() {
         // dropped here, so the sentence in content.js that lists them read
         // `undefined` and never rendered — on all 144 pages.
         neighborhoods: Array.isArray(value.neighborhoods) ? value.neighborhoods : [],
+        // Every one of the 144 cities has a photograph, and none of them
+        // reached the crawlable HTML: the prerendered pages carried no <img>
+        // at all, so nothing on this site was eligible for image search and
+        // no page could offer Google a primary image.
+        image: value.image || null,
         path: cityPath(name, value.stateCode),
         statePath: STATE_PAGE_PATHS[value.stateCode],
       };

@@ -178,6 +178,16 @@ export function buildCitySections(route, { citiesByState }) {
 
   /* Intro: the city's own description, then what we track in its market. */
   const intro = [city.description];
+
+  /* The city's photograph. Carried on the model rather than added by either
+   * renderer so the prerendered HTML and the mounted app show the same image
+   * with the same alt text — and so the ImageObject in the markup describes
+   * something that is actually on the page. */
+  const image = city.image
+    // "skyline" was asserting what the photograph shows, which we do not know.
+    // A place label is accurate for a photo we do hold for this city.
+    ? { url: city.image, alt: `${city.name}, ${city.stateName}` }
+    : null;
   const tracked = trackedSentence(stateName, market);
   if (tracked) intro.push(tracked);
 
@@ -381,7 +391,7 @@ export function buildCitySections(route, { citiesByState }) {
   nextSteps.push(['/all-cities', 'Browse every city we cover']);
   sections.push({ heading: 'Next Steps', links: nextSteps });
 
-  return { intro, sections };
+  return { intro, image, sections };
 }
 
 /**

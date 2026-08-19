@@ -65,8 +65,7 @@ const cities = [
     county: "Cook County",
     population: "2.7M",
     avgRate: "9.8¢/kWh",
-    providers: 36,
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=300&fit=crop"
+    providers: 36
   },
   {
     name: "Aurora",
@@ -74,8 +73,7 @@ const cities = [
     county: "Kane County",
     population: "180K",
     avgRate: "9.9¢/kWh",
-    providers: 34,
-    image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&h=300&fit=crop"
+    providers: 34
   },
   {
     name: "Naperville",
@@ -489,13 +487,18 @@ export default function AllCities() {
           {filteredCities.map((city, index) => (
             <Card key={index} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-[#FF6B35] group overflow-hidden">
               {/* City Image */}
-              <div className="relative h-48 overflow-hidden">
-                <img 
-                  src={city.image} 
-                  alt={`${city.name}, ${city.state}`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  loading="lazy"
-                />
+              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[#0A5C8C] to-[#084a6f]">
+                {/* Only where the city has a photograph of its own — see the
+                    note in CityRates on the two stock images that were shared
+                    across 105 cities under 105 different captions. */}
+                {city.image && (
+                  <img
+                    src={city.image}
+                    alt={`${city.name}, ${city.state}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div className="absolute bottom-4 left-4">
                   <h3 className="text-2xl font-bold text-white mb-1">{city.name}</h3>

@@ -236,6 +236,17 @@ export function structuredDataFor(route, content) {
     });
   }
 
+  // A page-level image, declared only where the page actually shows one.
+  if (content?.image?.url) {
+    graph.push({
+      '@type': 'ImageObject',
+      '@id': `${absoluteUrl(route.path)}#primaryimage`,
+      url: content.image.url,
+      contentUrl: content.image.url,
+      caption: content.image.alt,
+    });
+  }
+
   const faqs = (content?.sections || []).flatMap((section) => section.faqs || []);
   if (faqs.length) graph.push(faqSchema(faqs));
 
@@ -295,7 +306,13 @@ export function renderHead(route, content) {
   const canonical = absoluteUrl(route.canonical || route.path);
   const title = route.title;
   const description = route.description || '';
-  const image = `${SITE_URL}${ogImageFor(route)}`;
+  // A city's own photograph beats the section-wide placeholder in a share card.
+  // A city's own photograph beats the section-wide placeholder in a share card.
+  // The dimensions below only describe the placeholder set, which is authored at
+  // 1200x630; a city photo is a different shape, so it goes out without them
+  // rather than with a size that is wrong.
+  const ownImage = content?.image?.url || null;
+  const image = ownImage || `${SITE_URL}${ogImageFor(route)}`;
   const robots = route.noindex ? ROBOTS_NOINDEX : ROBOTS_INDEXABLE;
   const ogType = route.type === 'article' ? 'article' : 'website';
 
@@ -314,8 +331,9 @@ export function renderHead(route, content) {
     `<meta property="og:title" content="${escapeHtml(title)}" />`,
     `<meta property="og:description" content="${escapeHtml(description)}" />`,
     `<meta property="og:image" content="${escapeHtml(image)}" />`,
-    `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
+    ...(ownImage
+      ? []
+      : [`<meta property="og:image:width" content="1200" />`, `<meta property="og:image:height" content="630" />`]),
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:site" content="@electricscouts" />`,
     `<meta name="twitter:url" content="${escapeHtml(canonical)}" />`,
@@ -529,7 +547,7 @@ function renderBreadcrumbNav(route) {
  * Full initial HTML for a route's #root container.
  *
  * @param {object} route
- * @param {{intro: string[], sections: object[]}} content
+ * @param {{intro: string[], sections: object[], image?: {url: string, alt: string}|null}} content
  * @param {{states: Array, citiesByState: Record<string, Array>}} context
  */
 export function renderBody(route, content, context) {
@@ -546,12 +564,21 @@ export function renderBody(route, content, context) {
   // two dates the Article markup carries, from the same source.
   const byline = route.type === 'article' ? articleByline(route.id) : '';
 
+  // The city photograph, in the crawlable HTML. Width and height are declared
+  // so the browser reserves the space instead of shifting the page under the
+  // reader, and it is eager rather than lazy because it sits at the top.
+  const figure = content.image
+    ? `<figure><img src="${escapeHtml(content.image.url)}" alt="${escapeHtml(content.image.alt)}" ` +
+      `decoding="async" style="max-width:100%;height:auto" /></figure>`
+    : '';
+
   return [
     '<div data-seo-prerender="true" style="max-width:1100px;margin:0 auto;padding:24px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;line-height:1.6">',
     siteNav(context.states || []),
     renderBreadcrumbNav(route),
     `<main><h1>${escapeHtml(heading)}</h1>`,
     byline,
+    figure,
     intro,
     articleBody,
     sections,

@@ -206,9 +206,21 @@ function CityRatesInner() {
 
       {/* Hero Section - SEO Optimized */}
       <div className="relative bg-gradient-to-r from-[#0A5C8C] to-[#084a6f] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <img src={city.image} alt={`${displayCityName} skyline`} className="w-full h-full object-cover" loading="lazy" />
-        </div>
+        {/* Only rendered where the city has a photograph of its own. Two generic
+            stock images used to be shared across 105 cities, each captioned as
+            that city's skyline — one image claiming to be both Parma, Ohio and
+            Sugar Land, Texas. A decorative gradient is better than a false
+            caption, so cities without their own photo simply have none. */}
+        {city.image && (
+          <div className="absolute inset-0 opacity-10">
+            <img
+              src={city.image}
+              alt={`${displayCityName}, ${city.state}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        )}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="max-w-3xl">
             {/* Breadcrumb Navigation */}
