@@ -1895,6 +1895,70 @@ describe('comparison pages are neither thin nor near-duplicates', () => {
  * one another, and substantial enough to deserve indexing.
  * ================================================================== */
 
+describe('the client-side article list stays in step with the routes', () => {
+  // ArticleDetail resolves a /learn/ slug to an id, then looks that id up in a
+  // hand-maintained `fallbackArticles` list for the card metadata — category,
+  // title, read time. Nothing found means it renders "Article Not Found".
+  //
+  // The twelve Texas guides were added to fullArticles.jsx, to ARTICLE_IDS and
+  // to ARTICLE_SLUGS, and not to that list. Their prerendered HTML was
+  // perfectly correct, so the audit reported nothing; in a browser all twelve
+  // rendered a not-found page. Twelve soft 404s on brand-new URLs, which is
+  // precisely the failure this whole exercise exists to remove — and invisible
+  // to every check that reads served HTML instead of the rendered DOM.
+  //
+  // The list cannot be derived from fullArticles.jsx: that module is a 925 kB
+  // chunk deliberately loaded only when an article is opened, and importing it
+  // for card metadata would put it in the main bundle. So it stays hand-written
+  // and this asserts it, which is the trade made explicit.
+  const FILES = ['src/pages/ArticleDetail.jsx', 'src/pages/LearningCenter.jsx'];
+
+  /** The ids listed in a file's fallbackArticles array. */
+  function fallbackIds(file) {
+    const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+    const start = text.indexOf('const fallbackArticles = [');
+    assert.ok(start >= 0, `${file} has no fallbackArticles array`);
+    let depth = 0;
+    let end = -1;
+    for (let i = text.indexOf('[', start); i < text.length; i++) {
+      if (text[i] === '[') depth++;
+      else if (text[i] === ']' && --depth === 0) { end = i; break; }
+    }
+    assert.ok(end > start, `${file} has an unterminated fallbackArticles array`);
+    return [...text.slice(start, end).matchAll(/^\s{4}id:\s*(\d+),/gm)].map((m) => Number(m[1]));
+  }
+
+  for (const file of FILES) {
+    test(`${file} lists every published article`, () => {
+      const ids = fallbackIds(file);
+      const missing = ARTICLE_IDS.filter((id) => !ids.includes(id));
+      assert.deepEqual(
+        missing,
+        [],
+        `${file} is missing ${missing.length} published article(s): ${missing.join(', ')}.\n` +
+          '  Each one renders "Article Not Found" in a browser while its prerendered\n' +
+          '  HTML looks correct. Add an entry per id to fallbackArticles.'
+      );
+    });
+
+    test(`${file} lists no article that is not published`, () => {
+      const extra = fallbackIds(file).filter((id) => !ARTICLE_IDS.includes(id));
+      assert.deepEqual(extra, [], `${file} lists unpublished article(s): ${extra.join(', ')}`);
+    });
+
+    test(`${file} lists each article once`, () => {
+      const ids = fallbackIds(file);
+      const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+      assert.deepEqual([...new Set(dupes)], [], `${file} lists duplicate ids`);
+    });
+  }
+
+  test('both files agree on the same set of articles', () => {
+    const [a, b] = FILES.map((f) => fallbackIds(f).sort((x, y) => x - y));
+    assert.deepEqual(a, b, 'ArticleDetail and LearningCenter list different articles');
+  });
+});
+
 describe('utility territory pages', () => {
   const utilities = getUtilities();
 

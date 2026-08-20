@@ -965,6 +965,167 @@ const fallbackArticles = [
     keywords: ["business solar roi", "commercial solar vs grid", "business solar savings"],
     relatedArticles: [66, 67, 68]
   },
+  /* Texas cluster. These twelve exist only in fullArticles.jsx and not in
+   * the database, so without an entry here ArticleDetail found no article
+   * and rendered "Article Not Found" — a soft 404 on twelve live URLs whose
+   * served HTML was perfectly correct. A test now asserts this list against
+   * ARTICLE_IDS so the next addition cannot drift the same way. */
+  {
+    id: 109,
+    category: "Understanding Bills",
+    icon: FileText,
+    color: "orange",
+    title: "Texas TDU Delivery Charges: Why the Same Plan Bills Differently by City",
+    description: "Oncor, CenterPoint, AEP Texas and TNMP each charge to deliver your power. Why one Texas plan bills differently by city, and what no retailer can change.",
+    image: "/images/placeholder.jpg",
+    excerpt: "The delivery half of a Texas bill is set by the wires company, not the retailer — and it is why an identical plan costs different amounts in Dallas and Houston.",
+    readTime: "8 min",
+    keywords: ["texas tdu", "tdu delivery charges texas", "oncor", "centerpoint", "delivery charges"],
+    relatedArticles: [110, 114, 111]
+  },
+  {
+    id: 110,
+    category: "Understanding Bills",
+    icon: FileText,
+    color: "orange",
+    title: "How to Read a Texas Electricity Facts Label (EFL)",
+    description: "Texas retailers must publish an Electricity Facts Label for every plan. How to read the three usage prices, the fees behind them, and the contract terms.",
+    image: "/images/placeholder.jpg",
+    excerpt: "Every Texas plan comes with a one-page label that states what it really costs. Reading it properly settles most plan comparisons in about a minute.",
+    readTime: "8 min",
+    keywords: ["EFL", "texas electricity facts label", "plan shopping", "contracts"],
+    relatedArticles: [113, 112, 111]
+  },
+  {
+    id: 111,
+    category: "Getting Started",
+    icon: BookOpen,
+    color: "blue",
+    title: "Power to Choose Texas: How the State's Site Works and What It Leaves Out",
+    description: "Power to Choose is the state-run Texas plan list. How it ranks offers, why the cheapest row is often not the cheapest plan, and what it does not show.",
+    image: "/images/placeholder.jpg",
+    excerpt: "The PUCT runs its own plan listing. It is genuinely neutral, and the row at the top of it is still frequently the wrong plan for your usage.",
+    readTime: "8 min",
+    keywords: ["power to choose texas", "texas electricity plans", "electricity facts label", "puct"],
+    relatedArticles: [110, 113, 112]
+  },
+  {
+    id: 112,
+    category: "Plan Types",
+    icon: Zap,
+    color: "purple",
+    title: "Texas Bill Credit Electricity Plans: How Usage Thresholds Work",
+    description: "Bill credit plans hand back a fixed sum if you cross a usage threshold. Why they look cheap on paper and what happens in the months you fall short.",
+    image: "/images/placeholder.jpg",
+    excerpt: "A bill credit turns your electricity rate into a cliff. Cross the threshold and the plan is cheap; miss it by a few kWh and it is one of the dearest on the board.",
+    readTime: "8 min",
+    keywords: ["texas bill credit plans", "bill credit electricity", "minimum usage fee", "texas electricity plans"],
+    relatedArticles: [113, 110, 114]
+  },
+  {
+    id: 113,
+    category: "Plan Types",
+    icon: Zap,
+    color: "purple",
+    title: "Texas Electricity Plans for Low-Usage Homes: Read the 500 kWh Row",
+    description: "Texas plans are advertised at 1,000 kWh. Use less and that rate is not your rate. How base charges, bill credits and the 500 kWh EFL row decide your bill.",
+    image: "/images/placeholder.jpg",
+    excerpt: "Apartments and small households are quoted a rate built for a house. The label carries the number that actually applies to you, one row up.",
+    readTime: "8 min",
+    keywords: ["low usage electricity plans", "electricity facts label", "500 kwh efl", "minimum usage fee"],
+    relatedArticles: [112, 110, 114]
+  },
+  {
+    id: 114,
+    category: "Saving Money",
+    icon: DollarSign,
+    color: "green",
+    title: "Why Is My Texas Electric Bill So High? Diagnose It in Order",
+    description: "Your Texas electric bill jumped. Work through it in order: usage, an expired contract, variable pricing, bill credit thresholds and delivery charges.",
+    image: "/images/placeholder.jpg",
+    excerpt: "A bill that doubled has a cause, and there are only about six of them. Checked in the right order, most are identifiable from the statement itself.",
+    readTime: "8 min",
+    keywords: ["high electric bill texas", "texas electricity bill", "holdover rate", "bill credit threshold"],
+    relatedArticles: [112, 115, 109]
+  },
+  {
+    id: 115,
+    category: "Consumer Protection",
+    icon: Shield,
+    color: "purple",
+    title: "Texas Electricity Early Termination Fees: When You Pay and When You Do Not",
+    description: "What an early termination fee is on a Texas plan, the moving exemption, the end-of-contract switching window, and how to leave without paying one.",
+    image: "/images/placeholder.jpg",
+    excerpt: "Leaving a Texas contract early usually costs money, and there are three well-defined situations in which it costs nothing at all.",
+    readTime: "8 min",
+    keywords: ["early termination fee texas", "texas electricity contracts", "switching", "moving exemption"],
+    relatedArticles: [120, 114, 110]
+  },
+  {
+    id: 116,
+    category: "State Guides",
+    icon: MapPin,
+    color: "teal",
+    title: "Texas Cities Where You Cannot Choose Your Electricity Provider",
+    description: "Austin, San Antonio, El Paso and much of rural Texas sit outside retail choice. Which parts of the state cannot switch electricity providers, and why.",
+    image: "/images/placeholder.jpg",
+    excerpt: "Texas runs the largest competitive electricity market in the country, and several of its biggest cities are not in it. Here is which, and what they can do instead.",
+    readTime: "8 min",
+    keywords: ["texas cities without electricity choice", "municipal utilities", "electric cooperatives", "retail choice"],
+    relatedArticles: [117, 111, 109]
+  },
+  {
+    id: 117,
+    category: "City Guides",
+    icon: MapPin,
+    color: "teal",
+    title: "El Paso Electricity: Why There Is No Retail Choice, and What You Can Do",
+    description: "El Paso sits outside ERCOT and outside the Texas competitive market. Why you cannot switch supplier there, who sets the rate, and how to cut the bill.",
+    image: "/images/placeholder.jpg",
+    excerpt: "El Paso is in Texas but not in the Texas electricity market. The reason is geography as much as policy, and it changes what is worth doing about your bill.",
+    readTime: "8 min",
+    keywords: ["el paso electricity", "el paso electric", "regulated utility", "texas retail choice"],
+    relatedArticles: [116, 114, 118]
+  },
+  {
+    id: 118,
+    category: "Renewable Energy",
+    icon: Leaf,
+    color: "green",
+    title: "100% Renewable Electricity Plans in Texas: What a Green Plan Actually Buys",
+    description: "What a 100% renewable Texas electricity plan actually buys, how RECs are retired and certified, and why green plans are not automatically priced higher.",
+    image: "/images/placeholder.jpg",
+    excerpt: "Texas generates more wind power than any other state, which is why a renewable plan there often costs the same as a standard one rather than more.",
+    readTime: "8 min",
+    keywords: ["texas renewable electricity plans", "100% renewable energy texas", "renewable energy certificates", "texas wind power"],
+    relatedArticles: [110, 113, 111]
+  },
+  {
+    id: 119,
+    category: "Business Energy",
+    icon: Building2,
+    color: "blue",
+    title: "Texas Commercial Electricity Rates: Contracts, Demand Charges and 4CP",
+    description: "How Texas business electricity is priced: demand charges, load factor, 4CP transmission cost allocation, and why a commercial rate is quoted not listed.",
+    image: "/images/placeholder.jpg",
+    excerpt: "Commercial supply in Texas is priced against your load shape and four summer intervals nobody knows in advance. What that means for a quote.",
+    readTime: "8 min",
+    keywords: ["texas commercial electricity rates", "demand charges", "4cp", "business electricity texas"],
+    relatedArticles: [109, 114, 120]
+  },
+  {
+    id: 120,
+    category: "Switching Providers",
+    icon: TrendingDown,
+    color: "orange",
+    title: "Moving Within Texas: Transfer Your Electricity Plan or Switch Providers?",
+    description: "Moving house inside Texas: when you can take your plan with you, when moving voids the termination fee, and the timing that stops the lights being off.",
+    image: "/images/placeholder.jpg",
+    excerpt: "A move inside Texas is a decision, not an errand: the plan may transfer, the termination fee may be waived, and the dates matter more than either.",
+    readTime: "8 min",
+    keywords: ["moving within texas", "transfer electricity plan", "texas electricity move", "switching providers"],
+    relatedArticles: [115, 114, 110]
+  }
 ];
 
 const colorClasses = {
