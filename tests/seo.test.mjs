@@ -1939,6 +1939,85 @@ describe('utility territory pages', () => {
     }
   });
 
+  test('county lists survive the three shapes the city table records them in', () => {
+    // The source data mixes "Cook County" with a bare "Cook", records a city
+    // straddling a line as "Collin and Denton", and puts Baltimore in
+    // "Baltimore City" — a Maryland independent city belonging to no county.
+    // Each one broke the sentence differently: a county printed twice, a
+    // compound printed as though it were one place, and "Baltimore City
+    // County", which does not exist.
+    const seen = [];
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { sections } = buildUtilitySections(route);
+      const place = sections.find((s) => /Actually Serves$/.test(s.heading || ''));
+      assert.ok(place, `${route.path} has no territory section`);
+      const sentence = (place.paragraphs || []).find((line) => line.startsWith('They fall across'));
+      if (!sentence) continue;
+      seen.push(route.path);
+
+      assert.ok(!/\band\s+\w+ County,/.test(sentence), `${route.path} left a compound county unsplit: ${sentence}`);
+      assert.ok(!/City County/.test(sentence), `${route.path} suffixed an independent city: ${sentence}`);
+
+      const names = sentence
+        .replace(/^They fall across\s+/, '')
+        .split(/\.\s/)[0]
+        .split(/,\s*|\s+and\s+/)
+        .map((part) => part.trim())
+        .filter(Boolean);
+      const bare = names.map((n) => n.replace(/\s+County$/, '').toLowerCase());
+      assert.equal(
+        new Set(bare).size,
+        bare.length,
+        `${route.path} lists a county twice: ${sentence}`
+      );
+      for (const name of names) {
+        assert.ok(
+          /(?: County| City)$/.test(name),
+          `${route.path} lists "${name}" with no county or city suffix`
+        );
+      }
+    }
+    assert.ok(seen.length >= 8, `only ${seen.length} territory pages carried a county list`);
+  });
+
+  test('two territories in one state are told apart by the pages themselves', () => {
+    // ComEd and Ameren Illinois share a state and a regulatory model, so the
+    // correction section, the supplier table and every rate figure on the two
+    // pages were identical — the pair measured 0.53 six-gram overlap, the
+    // highest of any two pages on the site. What separates them honestly is
+    // the thing we hold: which cities sit on which wires.
+    const routes = getUtilityRoutes().filter((r) => r.type === 'utility');
+    const byState = new Map();
+    for (const route of routes) {
+      for (const code of route.utility.stateCodes) {
+        byState.set(code, [...(byState.get(code) || []), route]);
+      }
+    }
+    const shared = [...byState.entries()].filter(([, list]) => list.length > 1);
+    assert.ok(shared.length > 0, 'expected at least one state with two published territories');
+
+    for (const [code, list] of shared) {
+      for (const route of list) {
+        const { sections } = buildUtilitySections(route);
+        const text = sections
+          .flatMap((s) => [...(s.paragraphs || []), ...(s.faqs || []).map((f) => `${f.question} ${f.answer}`)])
+          .join(' ');
+        const others = list.filter((other) => other.path !== route.path);
+        for (const other of others) {
+          const otherShort = other.utility.shortName || other.utility.name;
+          assert.ok(
+            text.includes(otherShort),
+            `${route.path} never names ${otherShort}, the other ${code} territory a reader could confuse it with`
+          );
+        }
+        assert.ok(
+          sections.some((s) => (s.links || []).some(([href]) => others.some((o) => o.path === href))),
+          `${route.path} does not link the other ${code} territory`
+        );
+      }
+    }
+  });
+
   test('the delivery/supply explanation differs by regulatory model', () => {
     // Texas has no utility default supply at all, the Northeast sells a
     // regulated default, and Illinois and Ohio add municipal aggregation.
