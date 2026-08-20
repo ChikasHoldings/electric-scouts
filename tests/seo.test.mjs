@@ -1035,6 +1035,17 @@ describe('no unsourced savings or review claims reach a page', () => {
     { pattern: /\bpotential\s+savings\b[^.]{0,40}\$\s?\d|\$\s?\d[^.]{0,40}\bpotential\s+savings\b/i, what: 'a potential-savings figure' },
     { pattern: /\b\d\.\d\s*(?:★|\/\s*5\b)/, what: 'a star rating' },
     { pattern: /\b\d[\d,]*\s*\+?\s*(?:happy|satisfied)\s+customers\b/i, what: 'a customer count' },
+    /* The dollar patterns above missed the same claim written as a percentage,
+     * which is how it survived the first sweep: "Save 15-20% on average" sat in
+     * a BusinessHub card, "Save 25-35% on average" in the next one, and
+     * "Businesses typically save 10-30%" inside FAQPage structured data, where
+     * Google can surface it as an answer in its own right. A percentage is not
+     * a softer claim than a dollar figure — it is the same claim, and this site
+     * holds plan rates rather than anyone's bill, so it can substantiate
+     * neither. Article bodies are exempt from this scan (see sourceFiles), so a
+     * guide may still quote a percentage it attributes to a source. */
+    { pattern: /\b(?:save|saves|saving|savings)\b[^.<>"']{0,35}?\b(?:up\s+to\s+)?\d{1,3}\s*(?:-|–|to)?\s*\d{0,3}\s*%/i, what: 'a savings percentage' },
+    { pattern: /\bsavings\s+of\s*\$\s?\d/i, what: 'a savings figure written as "savings of"' },
   ];
 
   /** Source files that render, excluding the article bodies and the admin app. */
@@ -1952,6 +1963,56 @@ describe('the client-side article list stays in step with the routes', () => {
       assert.deepEqual([...new Set(dupes)], [], `${file} lists duplicate ids`);
     });
   }
+
+  test('a fallback title never contradicts the article it describes', () => {
+    // ArticleDetail renders the fallback title as the page's H1, so a stale one
+    // is not a cosmetic mismatch — it is a different headline from the one the
+    // prerendered HTML carries, and Google reads the rendered one.
+    //
+    // Exactly one had drifted, and it was carrying an unsourced savings claim:
+    // the article is called "Small Business Electricity Rates: How to Cut
+    // Costs" and the H1 said "...2026: How to Save 20-30%". The claim scan
+    // above now blocks the percentage; this blocks the drift that let a title
+    // the article had already moved away from stay on the page.
+    //
+    // fullArticles.jsx is read as text rather than imported: it is a .jsx
+    // module and plain Node cannot load it, which is the same reason
+    // scripts/refresh-article-dates.mjs parses it instead of importing it.
+    const articleSource = fs.readFileSync(
+      path.join(ROOT, 'src/components/learning/fullArticles.jsx'),
+      'utf8'
+    );
+    const marks = [...articleSource.matchAll(/^ {2}(\d+): \{$/gm)];
+    const articleTitles = new Map();
+    for (let i = 0; i < marks.length; i++) {
+      const from = marks[i].index;
+      const to = i + 1 < marks.length ? marks[i + 1].index : articleSource.length;
+      const block = articleSource.slice(from, to);
+      const title =
+        block.match(/^\s+title:\s*'((?:[^'\\]|\\.)*)'/m) ||
+        block.match(/^\s+title:\s*"((?:[^"\\]|\\.)*)"/m);
+      if (title) articleTitles.set(Number(marks[i][1]), title[1].replace(/\\'/g, "'"));
+    }
+    assert.ok(
+      articleTitles.size >= ARTICLE_IDS.length,
+      `parsed only ${articleTitles.size} article titles from fullArticles.jsx`
+    );
+
+    const text = fs.readFileSync(path.join(ROOT, 'src/pages/ArticleDetail.jsx'), 'utf8');
+    const entries = [
+      ...text.matchAll(/^\s{4}id:\s*(\d+),\n(?:.*\n)*?\s{4}title:\s*"((?:[^"\\]|\\.)*)"/gm),
+    ];
+    assert.ok(entries.length >= ARTICLE_IDS.length, `parsed only ${entries.length} fallback titles`);
+
+    const drifted = [];
+    for (const [, id, title] of entries) {
+      const real = articleTitles.get(Number(id));
+      if (real && real !== title) {
+        drifted.push(`  ${id}\n    article : ${real}\n    fallback: ${title}`);
+      }
+    }
+    assert.deepEqual(drifted, [], `fallback title(s) out of step with the article:\n${drifted.join('\n')}`);
+  });
 
   test('both files agree on the same set of articles', () => {
     const [a, b] = FILES.map((f) => fallbackIds(f).sort((x, y) => x - y));

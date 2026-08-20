@@ -256,7 +256,7 @@ export default function BusinessHub() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Save 15-20% on average</span>
+                    <span>Quoted from your monthly kWh</span>
                   </div>
                 </div>
                 <Link to={createPageUrl("BusinessCompareRates")}>
@@ -309,7 +309,7 @@ export default function BusinessHub() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Save 25-35% on average</span>
+                    <span>Priced on load profile and peak demand</span>
                   </div>
                 </div>
                 <Link to={createPageUrl("BusinessCompareRates")}>

@@ -919,7 +919,7 @@ const fallbackArticles = [
     category: "Business Energy",
     icon: Building2,
     color: "blue",
-    title: "Small Business Electricity Rates 2026: How to Save 20-30%",
+    title: "Small Business Electricity Rates: How to Cut Costs",
     description: "How small businesses can cut electricity costs in 2026: what drives a commercial rate, and where the savings usually are.",
     image: "/images/articles/article-66.jpg",
     excerpt: "Unlock significant savings on small business electricity rates in 2026. Learn expert tips to cut costs and boost your business energy efficiency now.",

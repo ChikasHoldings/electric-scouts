@@ -712,7 +712,7 @@ Switching takes 5-10 minutes online. Service typically activates within 1-2 bill
 
 <ul>
 <li><strong>Higher Usage Volume:</strong> Average small business uses 5,000-50,000 kWh monthly versus 900 kWh for homes. This higher volume means both bigger bills and bigger savings opportunities when you <a href="/compare-rates">shop commercial rates</a>.</li>
-<li><strong>Demand Charges:</strong> Businesses pay for peak kW demand (highest usage in any 15-minute interval) plus total kWh consumption. Understanding and managing demand charges can save 20-40% on bills.</li>
+<li><strong>Demand Charges:</strong> Businesses pay for peak kW demand (highest usage in any 15-minute interval) plus total kWh consumption. On a demand-heavy account the demand charge can rival the energy charge, so understanding it is often worth more than shopping the rate.</li>
 <li><strong>Complex Rate Structures:</strong> Time-of-use pricing, seasonal rates, and tiered pricing are common in <a href="/business-electricity">commercial electricity plans</a>.</li>
 <li><strong>Contract Flexibility:</strong> Businesses can negotiate custom terms, especially with usage above 20,000 kWh monthly.</li>
 <li><strong>Better Rates Available:</strong> High consumption gives businesses negotiating leverage for rates 1-3¢/kWh lower than residential plans.</li>
@@ -3523,7 +3523,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   <li><strong>Enroll with your chosen supplier:</strong> Switching is typically seamless with no service interruption.</li>
 </ol>
 
-<p>By exploring a range of plans, you can often reduce your electricity costs by 10-20% compared to the default Eversource supply rate.</p>
+<p>Comparing the plans on offer against the default Eversource supply rate is the comparison that matters, because that default is what you pay by doing nothing.</p>
 
 <h2>Practical Tips to Save on Connecticut Electricity Bills</h2>
 
@@ -9184,9 +9184,9 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
     metaDescription: "How small business electricity is priced, why quotes vary by load profile, and what to prepare before requesting supplier quotes.",
     tags: ["small business electricity rates", "commercial electricity rates", "business energy savings", "energy cost reduction", "2026 electricity rates"],
     content: `
-<h2>Small Business Electricity Rates 2026: How to Save 20-30%</h2>
+<h2>Small Business Electricity Rates: Where the Money Actually Goes</h2>
 
-<p>For small businesses, managing operational costs effectively is essential for maintaining profitability and competitiveness. Among these costs, electricity expenses often represent a significant portion of the monthly budget. With electricity rates varying widely across deregulated markets, understanding <strong>small business electricity rates</strong> and how to optimize your energy spend can lead to substantial <strong>business energy savings</strong>. In this guide, we will explore current trends in <strong>commercial electricity rates</strong> for 2026 and provide practical strategies to help your small business save 20-30% on energy costs.</p>
+<p>For small businesses, managing operational costs effectively is essential for maintaining profitability and competitiveness. Among these costs, electricity expenses often represent a significant portion of the monthly budget. With electricity rates varying widely across deregulated markets, understanding <strong>small business electricity rates</strong> and how to optimize your energy spend can lead to substantial <strong>business energy savings</strong>. This guide covers how <strong>commercial electricity rates</strong> are built and what a small business can actually act on. It does not promise a percentage: what a switch is worth depends on the rate you are on now, and that is a number only your own bill holds.</p>
 
 <h2>Understanding Small Business Electricity Rates in 2026</h2>
 
@@ -9206,7 +9206,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   <li><strong>Contract Terms:</strong> Length of contract and fixed vs. variable pricing affect stability and potential savings.</li>
 </ul>
 
-<h2>How Small Businesses Can Save 20-30% on Electricity in 2026</h2>
+<h2>Where a Small Business Can Actually Reduce Its Electricity Cost</h2>
 
 <p>Achieving significant savings on commercial electricity bills requires a combination of smart shopping and energy efficiency. Here are key strategies your business can implement:</p>
 
@@ -9300,7 +9300,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 
 <h2>Conclusion: Take Control of Your Small Business Electricity Costs Today</h2>
 
-<p>Small businesses have more power than ever to control their electricity expenses by understanding commercial electricity rates and leveraging market options. By comparing rates, optimizing your plan selection, investing in efficiency, and adopting smart energy practices, you can realistically save 20-30% on your electricity bills in 2026.</p>
+<p>Small businesses have more power than ever to control their electricity expenses by understanding commercial electricity rates and leveraging market options. Comparing rates, choosing the plan structure that matches your usage, and reducing consumption each move the bill independently of the others. What that adds up to is set by the rate you are leaving and the one you sign, so the arithmetic to do is your current supply rate against the quotes you receive.</p>
 
 <p>Ready to start saving? Use Electric Scouts to <a href="/compare-rates">compare electricity rates</a> in your area and find the best plan for your business today. Whether you operate in Texas, Illinois, New York, or any other deregulated state, our tools and resources make it easy to cut costs and power your business efficiently.</p>
 `
@@ -9799,7 +9799,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 <p>On average, commercial solar systems produce savings by offsetting grid electricity consumption. Key ROI metrics include:</p>
 <ul>
   <li><strong>Payback Period:</strong> Typically between 5 and 10 years depending on system size, location, and incentives.</li>
-  <li><strong>Lifetime Savings:</strong> Over 25 years, solar systems often save businesses 20% to 40% on energy costs compared to staying on the grid.</li>
+  <li><strong>Lifetime Position:</strong> A commercial solar system is a capital purchase judged over decades against a grid rate that itself moves, so the comparison worth running is your own installed cost and generation estimate against your current supply rate — not a headline percentage.</li>
   <li><strong>Internal Rate of Return (IRR):</strong> Commercial solar projects often deliver IRRs of 10% to 20%, outperforming many traditional investments.</li>
 </ul>
 

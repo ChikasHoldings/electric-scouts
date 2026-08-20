@@ -65,7 +65,37 @@ function gitCommits() {
   });
 }
 
+/**
+ * Refuse to run against an article file with uncommitted changes.
+ *
+ * The dates come from git history and the hashes come from the working tree.
+ * Run this before committing an edit and the two describe different things: the
+ * hash matches the text you just wrote, and the dateModified beside it is from
+ * whenever that article last landed in a commit. The hash is what the
+ * regression suite checks, so a satisfied hash would then be vouching for a
+ * date that predates the edit — the exact drift the hash exists to catch,
+ * signed off by the tool that was supposed to catch it.
+ *
+ * Found by running this against a dirty tree and watching four hashes change
+ * while every date stayed put.
+ */
+function requireCleanArticleFile() {
+  const dirty = execSync(`git status --porcelain -- ${ARTICLE_FILE}`, {
+    cwd: ROOT,
+    encoding: 'utf8',
+  }).trim();
+  if (dirty) {
+    throw new Error(
+      `${ARTICLE_FILE} has uncommitted changes.\n` +
+        '  Commit them first. Dates are derived from git history and hashes from the\n' +
+        '  working tree, so running now would record a dateModified from before your\n' +
+        '  edit and stamp it with a hash that says it is current.'
+    );
+  }
+}
+
 async function main() {
+  requireCleanArticleFile();
   const commits = gitCommits();
   if (commits.length < 2) {
     throw new Error(
