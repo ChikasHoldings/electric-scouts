@@ -18,12 +18,14 @@
  */
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
+import { canonicalPath } from './site.js';
 import { getCities, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { UTILITY_ROOT, getUtilities, utilitiesForState, utilityForCity } from './utilities.js';
 import { articlesForState, relatedArticles } from './articleLinks.js';
 import { STATIC_PAGE_CONTENT } from './staticContent.js';
-import { resolveSections, setDerivedCounts } from './figures.js';
+import { resolveSections, resolveText, setDerivedCounts } from './figures.js';
 import {
+  COMPARE_ROOT,
   comparisonsForProvider,
   comparisonsForState,
   getPlanComparisons,
@@ -1292,31 +1294,41 @@ function normalizeHeading(heading) {
   return String(heading || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-export function buildStaticSections(route, context) {
-  const builder = STATIC_BUILDERS[route.path];
-  const base = builder
-    ? builder(route, context)
-    : { intro: [route.description].filter(Boolean), sections: [] };
+/** Resolve the figure tokens in a draft's intro lines, dropping any that miss. */
+function resolveIntro(lines) {
+  return (lines || []).map(resolveText).filter(Boolean);
+}
 
-  /* The editorial body, where this page has one. It is merged in rather than
-   * replacing the builder's output: the builder owns the tables and link lists
-   * assembled from the snapshot, and this owns the prose. The drafted sections
-   * go in ahead of the page's closing "Next Steps" block so the page still ends
-   * on somewhere to go.
-   *
-   * Every sentence citing a figure is resolved here, and any that cites one we
-   * cannot compute is dropped — see src/seo/figures.js. */
-  const editorial = STATIC_PAGE_CONTENT[route.path];
+/**
+ * Merge a page's drafted editorial body into the sections a builder assembled.
+ *
+ * The builder owns the tables and link lists computed from the snapshot; the
+ * draft in staticContent.js owns the prose. They are merged rather than
+ * concatenated because several drafts extend a section that already exists —
+ * "Deregulated States We Cover" is the builder's table plus the draft's
+ * explanation of what the table shows — and appending would have printed the
+ * heading twice with half the content under each.
+ *
+ * Where the appended sections land is the draft's decision. `insertBefore`
+ * names the heading to sit in front of, which matters because a page whose
+ * builder output is mostly navigation would otherwise read as links first and
+ * substance last. With no anchor given they go ahead of "Next Steps" where
+ * there is one, so the page still ends on somewhere to go, and at the end
+ * otherwise.
+ *
+ * Every sentence citing a figure is resolved here, and any that cites one we
+ * cannot compute is dropped — see src/seo/figures.js.
+ *
+ * @param {{intro?: string[], sections?: object[]}} base the builder's output
+ * @param {string} path the route path, used to look up the draft
+ */
+function mergeEditorialContent(base, path) {
+  const editorial = STATIC_PAGE_CONTENT[path];
   if (!editorial) return base;
 
   const drafted = resolveSections(editorial.sections);
   if (!drafted.length) return base;
 
-  /* A drafted section whose heading the builder already uses is merged into it
-   * rather than appended. Several drafts extend a section that exists —
-   * "Deregulated States We Cover" is the builder's table plus the draft's
-   * explanation of what the table is — and appending would have printed the
-   * heading twice with half the content under each. */
   const sections = (base.sections || []).map((section) => ({ ...section }));
   const byHeading = new Map(sections.map((section, index) => [normalizeHeading(section.heading), index]));
   const appended = [];
@@ -1335,17 +1347,29 @@ export function buildStaticSections(route, context) {
     if (section.links && !target.links) target.links = section.links;
   }
 
-  const closingIndex = sections.findIndex((section) => /^Next Steps$/i.test(section.heading || ''));
-  if (closingIndex === -1) sections.push(...appended);
-  else sections.splice(closingIndex, 0, ...appended);
+  const anchor = editorial.insertBefore
+    ? sections.findIndex(
+        (section) => normalizeHeading(section.heading) === normalizeHeading(editorial.insertBefore)
+      )
+    : sections.findIndex((section) => /^Next Steps$/i.test(section.heading || ''));
+  if (anchor === -1) sections.push(...appended);
+  else sections.splice(anchor, 0, ...appended);
 
   // An intro line is added only where it says something the builder's does not.
   const intro = [...(base.intro || [])];
-  for (const line of editorial.intro || []) {
+  for (const line of resolveIntro(editorial.intro)) {
     if (!intro.some((existing) => existing.trim() === line.trim())) intro.push(line);
   }
 
   return { ...base, intro, sections };
+}
+
+export function buildStaticSections(route, context) {
+  const builder = STATIC_BUILDERS[route.path];
+  const base = builder
+    ? builder(route, context)
+    : { intro: [route.description].filter(Boolean), sections: [] };
+  return mergeEditorialContent(base, route.path);
 }
 
 export function hasStaticContent(path) {
@@ -2717,7 +2741,7 @@ export function buildCompareHubSections() {
     ],
   });
 
-  return { intro, sections };
+  return mergeEditorialContent({ intro, sections }, canonicalPath(COMPARE_ROOT));
 }
 
 /* ------------------------------------------------------------------ *
@@ -2771,6 +2795,170 @@ export function buildArticleSections(route, context = {}) {
  * price. Everything on the page is arranged around correcting that and
  * then answering what they actually wanted to know.
  * ================================================================== */
+
+/**
+ * Facts about a utility that are true of it and of no other utility we
+ * publish, derived from the cities already on the site.
+ *
+ * WHY THIS EXISTS
+ *
+ * The body of a utility page was written per regulatory model — Texas, default
+ * service, aggregation — which is the right way to explain three genuinely
+ * different arrangements, but it meant two utilities sharing a model and a
+ * state shared almost the whole page. ComEd and Ameren Illinois are the worst
+ * case: same model, same state, so the correction section, the supplier table
+ * and every rate figure were identical, and only the opening note and the city
+ * table told them apart. Measured as six-gram overlap the pair sat at 0.53,
+ * the highest of any two pages on the site.
+ *
+ * Nothing here is invented to fix that. Every value comes from the cities we
+ * already cover in the territory, or from the other territories we publish in
+ * the same state. Delivery tariffs would be the natural way to separate these
+ * pages and we do not hold them, so this separates them on what we do hold.
+ */
+function utilityFacts(utility) {
+  const cities = utility.cities || [];
+  const all = getUtilities();
+
+  /* The city table records counties three different ways and each one broke the
+   * sentence differently: "Cook County" for one city and "Cook" for another
+   * printed the same county twice, a city straddling a line is recorded as
+   * "Collin and Denton", and Baltimore is in "Baltimore City" — a Maryland
+   * independent city that belongs to no county and must not be handed a
+   * "County" suffix. So: strip the suffix, split the compounds, drop the
+   * duplicates, and put the suffix back only where it belongs. */
+  const counties = [
+    ...new Map(
+      cities
+        .flatMap((city) =>
+          String(city.county || '')
+            .replace(/\s+County$/i, '')
+            .split(/\s+and\s+/i)
+        )
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .map((bare) => [bare.toLowerCase(), /\bCity$/i.test(bare) ? bare : `${bare} County`])
+    ).values(),
+  ];
+
+  const rated = cities
+    .map((city) => ({ city, rate: parseRate(city.avgRate) }))
+    .filter((entry) => entry.rate != null)
+    .sort((a, b) => a.rate - b.rate);
+
+  const populous = cities
+    .map((city) => ({ city, size: Number(String(city.population || '').replace(/[^0-9]/g, '')) || 0 }))
+    .sort((a, b) => b.size - a.size);
+
+  /* Another territory we publish that delivers in the same state. This is the
+   * question people actually type — "am I ComEd or Ameren" — and it is the one
+   * fact that most cleanly separates two pages a reader could confuse. */
+  const siblings = all.filter(
+    (other) =>
+      other.slug !== utility.slug &&
+      other.stateCodes.some((code) => utility.stateCodes.includes(code))
+  );
+
+  return {
+    counties,
+    cheapest: rated[0]?.city || null,
+    cheapestRate: rated[0]?.rate ?? null,
+    dearest: rated.length > 1 ? rated[rated.length - 1].city : null,
+    dearestRate: rated.length > 1 ? rated[rated.length - 1].rate : null,
+    largest: populous[0]?.city || null,
+    smallest: populous.length > 1 ? populous[populous.length - 1].city : null,
+    siblings,
+    rank: all.findIndex((other) => other.slug === utility.slug),
+    total: all.length,
+  };
+}
+
+/**
+ * The section that makes one territory page unlike the others: which of our
+ * cities sit in it, which counties they fall in, and — where a state has more
+ * than one published territory — which company covers the rest of it.
+ */
+function buildUtilityPlaceSection(utility, facts) {
+  const { name, cities, states, multiState } = utility;
+  const short = utility.shortName || name;
+  const stateNames = states.map((entry) => entry.name);
+  const paragraphs = [];
+
+  /* Where it sits among the territories we publish. The hub orders them by how
+   * much of each we cover, so the position is a real statement about coverage
+   * rather than about the size of the utility. */
+  const position =
+    facts.rank === 0
+      ? `the widest coverage of the ${facts.total} delivery territories on this site`
+      : facts.rank === facts.total - 1
+        ? `the narrowest coverage of the ${facts.total} delivery territories on this site`
+        : `the ${facts.rank + 1}${facts.rank + 1 === 2 ? 'nd' : facts.rank + 1 === 3 ? 'rd' : 'th'}-widest of the ${facts.total} delivery territories on this site`;
+
+  if (cities.length) {
+    const cityList = joinNames(cities.map((city) => city.name), 12);
+    paragraphs.push(
+      multiState
+        ? `The ${cities.length} cities we cover on ${name} wires are ${cityList} — ${position}, ` +
+          `spread across ${joinNames(stateNames)}.`
+        : `The ${cities.length} cities we cover on ${name} wires are ${cityList}. That is ${position}.`
+    );
+  }
+
+  if (facts.counties.length) {
+    paragraphs.push(
+      facts.counties.length === 1
+        ? `All of them fall in ${facts.counties[0]}, so what is written here about supply applies ` +
+          `across that county rather than to one city in it.`
+        : `They fall across ${joinNames(facts.counties, 8)}. A delivery territory follows the ` +
+          `network rather than any administrative boundary, which is why one can cover part of a ` +
+          `county and stop partway through the next.`
+    );
+  }
+
+  if (facts.largest?.population && facts.smallest?.population) {
+    paragraphs.push(
+      `${facts.largest.name} is the largest of them at ${facts.largest.population} residents and ` +
+        `${facts.smallest.name} the smallest at ${facts.smallest.population} — one delivery ` +
+        `territory, and a range of places wide enough that the supply market is the only thing ` +
+        `they reliably have in common.`
+    );
+  } else if (facts.largest?.population) {
+    paragraphs.push(
+      `${facts.largest.name} is the largest of them at ${facts.largest.population} residents.`
+    );
+  }
+
+  /* The disambiguation. Two utilities in one state is the case a reader is most
+   * likely to get wrong, and the fix is naming the cities on each side. */
+  const sameState = facts.siblings.filter((other) =>
+    other.stateCodes.some((code) => utility.stateCodes.includes(code))
+  );
+  const links = [];
+  if (sameState.length) {
+    for (const other of sameState) {
+      const sharedCode = other.stateCodes.find((code) => utility.stateCodes.includes(code));
+      const sharedState = STATE_NAMES[sharedCode];
+      const otherCities = (other.cities || []).filter((city) => city.stateCode === sharedCode);
+      const mine = cities.filter((city) => city.stateCode === sharedCode);
+      if (!otherCities.length || !mine.length) continue;
+      paragraphs.push(
+        `${short} is not the only delivery utility we cover in ${sharedState}. ` +
+          `${other.name} serves ${joinNames(otherCities.map((city) => city.name), 6)}, while ` +
+          `${joinNames(mine.map((city) => city.name), 6)} ${mine.length === 1 ? 'is' : 'are'} on ` +
+          `${short} wires. The supply choice is the same on both sides of that line — it is the ` +
+          `delivery company, and therefore the delivery charges, that differ.`
+      );
+      links.push([other.path, `${other.name} territory`]);
+    }
+  }
+
+  if (!paragraphs.length) return null;
+  return {
+    heading: `Which Places ${short} Actually Serves`,
+    paragraphs,
+    ...(links.length ? { links } : {}),
+  };
+}
 
 export function buildUtilitySections(route) {
   const utility = route.utility;
@@ -2856,11 +3044,29 @@ export function buildUtilitySections(route) {
     });
   }
 
+  /* What is true of this territory and of no other one we publish. Placed
+   * ahead of the tables because it is the part a reader cannot get from the
+   * state page, and because without it two utilities sharing a state and a
+   * regulatory model produce very nearly the same page. */
+  const facts = utilityFacts(utility);
+  const place = buildUtilityPlaceSection(utility, facts);
+  if (place) sections.push(place);
+
   /* Cities, ordered cheapest first — the table a reader came for. */
   if (cities.length) {
     const spread = utility.highestCityRate != null && utility.lowestCityRate != null
       ? Math.round((utility.highestCityRate - utility.lowestCityRate) * 10) / 10
       : null;
+    /* Named rather than described. "Rates span 11.6¢" is a sentence any
+     * territory could carry; "Boston at 11.2¢ and Nashua at 22.8¢" is one only
+     * this territory can. */
+    const named =
+      facts.cheapest && facts.dearest
+        ? `${facts.cheapest.name} is the cheapest of them at ${facts.cheapest.avgRate} and ` +
+          `${facts.dearest.name} the dearest at ${facts.dearest.avgRate}.`
+        : facts.cheapest
+          ? `${facts.cheapest.name} averages ${facts.cheapest.avgRate}.`
+          : null;
     sections.push({
       heading: `Cities We Cover in the ${name} Territory`,
       paragraphs: [
@@ -2871,7 +3077,8 @@ export function buildUtilitySections(route) {
           : `Average residential rates across these ${cities.length} cities sit close together, ` +
             `which is what a single delivery territory usually looks like. What separates two ` +
             `households here is the supply contract each one signed, not where they live.`,
-      ],
+        named,
+      ].filter(Boolean),
       table: {
         columns: ['City', 'Average residential rate', 'Estimated monthly bill'],
         rows: cities.map((city) => [
@@ -2914,7 +3121,7 @@ export function buildUtilitySections(route) {
 
   sections.push({
     heading: `${name} Questions`,
-    faqs: buildUtilityFaqs(utility),
+    faqs: buildUtilityFaqs(utility, facts),
   });
 
   sections.push({
@@ -2930,7 +3137,7 @@ export function buildUtilitySections(route) {
   return { intro, sections };
 }
 
-function buildUtilityFaqs(utility) {
+function buildUtilityFaqs(utility, facts) {
   const { name, states, cities, multiState } = utility;
   const primary = states[0];
   const cheapest = states
@@ -2971,15 +3178,51 @@ function buildUtilityFaqs(utility) {
   }
 
   if (cheapest?.market) {
+    /* Two utilities in one state used to get an identical answer here, because
+     * the figures are the state's. Leading with the cheapest city in this
+     * territory anchors it, and forces the distinction between an area average
+     * and a rate you can sign — two numbers this site keeps separate. */
+    const local = facts?.cheapest
+      ? `Inside the territory, ${facts.cheapest.name} carries the lowest area average of the ` +
+        `cities we cover, ${facts.cheapest.avgRate}. That is an average of what households there ` +
+        `pay rather than an offer, so it is not a rate anyone can sign up to. `
+      : '';
     faqs.push({
       question: `What is the cheapest electricity rate in the ${name} area?`,
       answer:
-        `The lowest supply rate we currently hold in ${cheapest.name} is ` +
+        `${local}The rate you can buy is a supply rate. The lowest we hold in ${cheapest.name} is ` +
         `${formatRate(cheapest.market.minRate)}, against a median of ` +
         `${formatRate(cheapest.market.medianRate)} across ${cheapest.market.plans} plans ` +
         `(${asOf}). Delivery charges are added on top of whichever supply rate you pick, and they ` +
         `do not change with the supplier.`,
     });
+  }
+
+  /* "Am I on ComEd or Ameren" is a real query with a real answer, and it is the
+   * one question that cannot be templated across a state: the answer is the
+   * list of cities on each side of the boundary. */
+  const sibling = (facts?.siblings || []).find((other) =>
+    other.stateCodes.some((code) => utility.stateCodes.includes(code))
+  );
+  if (sibling) {
+    const sharedCode = sibling.stateCodes.find((code) => utility.stateCodes.includes(code));
+    const otherShort = sibling.shortName || sibling.name;
+    const mine = cities.filter((city) => city.stateCode === sharedCode).map((city) => city.name);
+    const theirs = (sibling.cities || [])
+      .filter((city) => city.stateCode === sharedCode)
+      .map((city) => city.name);
+    if (mine.length && theirs.length) {
+      faqs.push({
+        question: `Am I on ${short} or ${otherShort}?`,
+        answer:
+          `Your bill settles it — the delivery charges name the company. Of the ` +
+          `${STATE_NAMES[sharedCode]} cities we cover, ${joinNames(mine, 6)} ` +
+          `${mine.length === 1 ? 'is' : 'are'} on ${short} wires and ` +
+          `${joinNames(theirs, 6)} on ${otherShort}'s. The two are neighbours rather than ` +
+          `competitors: neither sells into the other's territory and neither is something you ` +
+          `can choose. What you can choose is the supplier, and that choice is identical on both sides.`,
+      });
+    }
   }
 
   faqs.push({
@@ -3095,5 +3338,5 @@ export function buildUtilityHubSections() {
     ],
   });
 
-  return { intro, sections };
+  return mergeEditorialContent({ intro, sections }, canonicalPath(UTILITY_ROOT));
 }

@@ -65,7 +65,37 @@ function gitCommits() {
   });
 }
 
+/**
+ * Refuse to run against an article file with uncommitted changes.
+ *
+ * The dates come from git history and the hashes come from the working tree.
+ * Run this before committing an edit and the two describe different things: the
+ * hash matches the text you just wrote, and the dateModified beside it is from
+ * whenever that article last landed in a commit. The hash is what the
+ * regression suite checks, so a satisfied hash would then be vouching for a
+ * date that predates the edit — the exact drift the hash exists to catch,
+ * signed off by the tool that was supposed to catch it.
+ *
+ * Found by running this against a dirty tree and watching four hashes change
+ * while every date stayed put.
+ */
+function requireCleanArticleFile() {
+  const dirty = execSync(`git status --porcelain -- ${ARTICLE_FILE}`, {
+    cwd: ROOT,
+    encoding: 'utf8',
+  }).trim();
+  if (dirty) {
+    throw new Error(
+      `${ARTICLE_FILE} has uncommitted changes.\n` +
+        '  Commit them first. Dates are derived from git history and hashes from the\n' +
+        '  working tree, so running now would record a dateModified from before your\n' +
+        '  edit and stamp it with a hash that says it is current.'
+    );
+  }
+}
+
 async function main() {
+  requireCleanArticleFile();
   const commits = gitCommits();
   if (commits.length < 2) {
     throw new Error(
@@ -105,6 +135,20 @@ async function main() {
   const head = await fs.readFile(path.join(ROOT, ARTICLE_FILE), 'utf8');
   const hashes = hashBlocks(head);
   const ids = Object.keys(hashes).sort((a, b) => Number(a) - Number(b));
+
+  /* An article that exists in the working tree but in no commit has no history
+   * to derive a date from. Writing the string "undefined" here would put
+   * datePublished: "undefined" into the Article markup of a live page, which is
+   * worse than having no date at all — so this refuses instead. Commit the
+   * article first, then run this; that ordering is what makes the dates true. */
+  const undated = ids.filter((id) => !published[id] || !modified[id]);
+  if (undated.length) {
+    throw new Error(
+      `${undated.length} article(s) are not in any commit yet: ${undated.join(', ')}.\n` +
+        `  Commit ${ARTICLE_FILE} first, then re-run this script — the dates are\n` +
+        `  derived from git history and there is nothing to read until then.`
+    );
+  }
 
   const rows = ids
     .map((id) => `  ${id}: ['${published[id]}', '${modified[id]}', '${hashes[id]}'],`)

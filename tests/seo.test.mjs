@@ -34,6 +34,7 @@ import {
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS, ARTICLE_SLUGS, articlePath } from '../src/seo/articles.js';
+import { mergeArticleSources } from '../src/lib/articleSources.js';
 import { TITLE_MAX } from '../src/seo/site.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
 import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket, providersInState, renewableProvidersInState } from '../src/seo/market.js';
@@ -207,7 +208,10 @@ describe('route registry', () => {
     assert.ok(getStaticRoutes().length >= 18, 'static pages missing');
     assert.equal(getStateRoutes().length, 12, 'expected 12 deregulated state pages');
     assert.ok(getCityRoutes().length >= 140, 'city pages missing');
-    assert.equal(ARTICLE_IDS.length, 73, 'expected 73 articles');
+    // A floor, not an equality: adding a guide should not fail this. That
+    // ARTICLE_IDS and fullArticles agree is asserted separately, and that is
+    // the property that actually matters.
+    assert.ok(ARTICLE_IDS.length >= 73, `expected at least 73 articles, got ${ARTICLE_IDS.length}`);
     assert.ok(indexable.length > 240, `expected 240+ indexable routes, got ${indexable.length}`);
   });
 
@@ -1032,6 +1036,17 @@ describe('no unsourced savings or review claims reach a page', () => {
     { pattern: /\bpotential\s+savings\b[^.]{0,40}\$\s?\d|\$\s?\d[^.]{0,40}\bpotential\s+savings\b/i, what: 'a potential-savings figure' },
     { pattern: /\b\d\.\d\s*(?:★|\/\s*5\b)/, what: 'a star rating' },
     { pattern: /\b\d[\d,]*\s*\+?\s*(?:happy|satisfied)\s+customers\b/i, what: 'a customer count' },
+    /* The dollar patterns above missed the same claim written as a percentage,
+     * which is how it survived the first sweep: "Save 15-20% on average" sat in
+     * a BusinessHub card, "Save 25-35% on average" in the next one, and
+     * "Businesses typically save 10-30%" inside FAQPage structured data, where
+     * Google can surface it as an answer in its own right. A percentage is not
+     * a softer claim than a dollar figure — it is the same claim, and this site
+     * holds plan rates rather than anyone's bill, so it can substantiate
+     * neither. Article bodies are exempt from this scan (see sourceFiles), so a
+     * guide may still quote a percentage it attributes to a source. */
+    { pattern: /\b(?:save|saves|saving|savings)\b[^.<>"']{0,35}?\b(?:up\s+to\s+)?\d{1,3}\s*(?:-|–|to)?\s*\d{0,3}\s*%/i, what: 'a savings percentage' },
+    { pattern: /\bsavings\s+of\s*\$\s?\d/i, what: 'a savings figure written as "savings of"' },
   ];
 
   /** Source files that render, excluding the article bodies and the admin app. */
@@ -1383,12 +1398,24 @@ describe('article metadata is ours and is supportable', { skip: !distExists }, (
     // (Power to Choose Texas, PA PUC, TXU, Octopus Energy).
     const foreign =
       /YourBrand|\[Brand|PowerUp|PowerSmart|PowerNY|PowerChoice|PowerHub|PowerHelp|PowerPro|PowerBrand|PowerCompare|PowerSave|EcoEnergy|SolarSmart|SolarBrand|GreenEnergy|EnergyShield|Power Insights|Power to Choose|PA PUC/i;
+    // One exemption, keyed to the single article whose subject that name is.
+    // "Power to Choose" is the Public Utility Commission of Texas's own plan
+    // listing. Borrowing the name to look official is the abuse this guard
+    // exists to catch; a guide explaining how the state's site ranks offers
+    // and what it leaves out is the opposite of an endorsement, and it is the
+    // phrase people search. Keyed by slug so no other article can use it.
+    const SUBJECT_EXEMPTION = { 'power-to-choose-texas': /Power to Choose/i };
     for (const { id, file } of articleFiles) {
       const html = readDist(file);
       const title = tag.title(html);
       const description = tag.description(html);
-      assert.ok(!foreign.test(title), `/learn/${id} title carries a foreign brand: ${title}`);
-      assert.ok(!foreign.test(description), `/learn/${id} description carries a foreign brand`);
+      const allowed = SUBJECT_EXEMPTION[ARTICLE_SLUGS[id]];
+      const check = (value) => {
+        const stripped = allowed ? value.replace(allowed, '') : value;
+        return !foreign.test(stripped);
+      };
+      assert.ok(check(title), `/learn/${id} title carries a foreign brand: ${title}`);
+      assert.ok(check(description), `/learn/${id} description carries a foreign brand`);
     }
   });
 
@@ -1880,6 +1907,195 @@ describe('comparison pages are neither thin nor near-duplicates', () => {
  * one another, and substantial enough to deserve indexing.
  * ================================================================== */
 
+describe('articles resolve whether or not the database knows about them', () => {
+  // The bug this guards is the one that made adding the twelve ids to
+  // fallbackArticles a fix that would have changed nothing in production.
+  //
+  // ArticleDetail and LearningCenter both chose between their two sources with
+  // `dbArticles.length > 0 ? dbArticles : fallbackArticles`. Either/or, and the
+  // database wins on a single row — so every article that exists only in the
+  // source resolved to nothing on the live site and rendered "Article Not
+  // Found", while rendering perfectly in any environment without database
+  // credentials, because there the query returns nothing and the fallback is
+  // used. The bug is invisible exactly where it is not happening, which is why
+  // a browser check against a local build could not see it either.
+  //
+  // These cases are written against the shape production actually has: a
+  // database holding the older articles and knowing nothing about the new ones.
+  const staticList = ARTICLE_IDS.map((id) => ({ id, title: `static ${id}`, source: 'static' }));
+  const find = (articles, id) => articles.find((a) => String(a.id).trim() === String(id).trim());
+
+  test('a database that has never heard of an article still resolves it', () => {
+    // Production: rows for the original guides, nothing for the Texas cluster.
+    const older = ARTICLE_IDS.filter((id) => id < 100).map((id) => ({ id, title: `db ${id}`, source: 'db' }));
+    const merged = mergeArticleSources(staticList, older);
+
+    const missing = ARTICLE_IDS.filter((id) => !find(merged, id));
+    assert.deepEqual(missing, [], `unresolvable with a populated database: ${missing.join(', ')}`);
+    assert.equal(find(merged, 110).source, 'static', 'the static copy should supply an article the database lacks');
+  });
+
+  test('the database copy wins where it has one', () => {
+    // An editor changing a title in the database must not be overridden by the
+    // compiled-in copy, which is the reason the database is consulted at all.
+    const merged = mergeArticleSources(staticList, [{ id: 1, title: 'db 1', source: 'db' }]);
+    assert.equal(find(merged, 1).source, 'db');
+    assert.equal(find(merged, 1).title, 'db 1');
+  });
+
+  test('an empty database leaves the static list intact', () => {
+    const merged = mergeArticleSources(staticList, []);
+    assert.equal(merged.length, staticList.length);
+    assert.ok(merged.every((entry) => entry.source === 'static'));
+  });
+
+  test('string and number ids are the same article', () => {
+    // The database returns ids as strings and the static list holds numbers.
+    // Without normalising, every article would appear twice and the find could
+    // return either copy.
+    const merged = mergeArticleSources([{ id: 7, source: 'static' }], [{ id: '7', source: 'db' }]);
+    assert.equal(merged.length, 1);
+    assert.equal(merged[0].source, 'db');
+  });
+
+  test('a row with no id cannot displace a real article', () => {
+    const merged = mergeArticleSources([{ id: 1, source: 'static' }], [{ id: null }, { title: 'orphan' }]);
+    assert.equal(merged.length, 1);
+    assert.equal(merged[0].source, 'static');
+  });
+
+  test('neither page picks between the two sources any more', () => {
+    // A regression here reads as a one-word change and silently restores the
+    // production-only failure, so it is asserted rather than trusted.
+    for (const file of ['src/pages/ArticleDetail.jsx', 'src/pages/LearningCenter.jsx']) {
+      const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+      const body = text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
+      assert.ok(
+        body.includes('mergeArticleSources('),
+        `${file} no longer merges its two article sources`
+      );
+      assert.ok(
+        !/dbArticles[^\n]*\?[^\n]*fallbackArticles|dbArticles\.length === 0[\s\S]{0,80}return fallbackArticles/.test(body),
+        `${file} chooses between the database and the static list again`
+      );
+    }
+  });
+});
+
+describe('the client-side article list stays in step with the routes', () => {
+  // ArticleDetail resolves a /learn/ slug to an id, then looks that id up in a
+  // hand-maintained `fallbackArticles` list for the card metadata — category,
+  // title, read time. Nothing found means it renders "Article Not Found".
+  //
+  // The twelve Texas guides were added to fullArticles.jsx, to ARTICLE_IDS and
+  // to ARTICLE_SLUGS, and not to that list. Their prerendered HTML was
+  // perfectly correct, so the audit reported nothing; in a browser all twelve
+  // rendered a not-found page. Twelve soft 404s on brand-new URLs, which is
+  // precisely the failure this whole exercise exists to remove — and invisible
+  // to every check that reads served HTML instead of the rendered DOM.
+  //
+  // The list cannot be derived from fullArticles.jsx: that module is a 925 kB
+  // chunk deliberately loaded only when an article is opened, and importing it
+  // for card metadata would put it in the main bundle. So it stays hand-written
+  // and this asserts it, which is the trade made explicit.
+  const FILES = ['src/pages/ArticleDetail.jsx', 'src/pages/LearningCenter.jsx'];
+
+  /** The ids listed in a file's fallbackArticles array. */
+  function fallbackIds(file) {
+    const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+    const start = text.indexOf('const fallbackArticles = [');
+    assert.ok(start >= 0, `${file} has no fallbackArticles array`);
+    let depth = 0;
+    let end = -1;
+    for (let i = text.indexOf('[', start); i < text.length; i++) {
+      if (text[i] === '[') depth++;
+      else if (text[i] === ']' && --depth === 0) { end = i; break; }
+    }
+    assert.ok(end > start, `${file} has an unterminated fallbackArticles array`);
+    return [...text.slice(start, end).matchAll(/^\s{4}id:\s*(\d+),/gm)].map((m) => Number(m[1]));
+  }
+
+  for (const file of FILES) {
+    test(`${file} lists every published article`, () => {
+      const ids = fallbackIds(file);
+      const missing = ARTICLE_IDS.filter((id) => !ids.includes(id));
+      assert.deepEqual(
+        missing,
+        [],
+        `${file} is missing ${missing.length} published article(s): ${missing.join(', ')}.\n` +
+          '  Each one renders "Article Not Found" in a browser while its prerendered\n' +
+          '  HTML looks correct. Add an entry per id to fallbackArticles.'
+      );
+    });
+
+    test(`${file} lists no article that is not published`, () => {
+      const extra = fallbackIds(file).filter((id) => !ARTICLE_IDS.includes(id));
+      assert.deepEqual(extra, [], `${file} lists unpublished article(s): ${extra.join(', ')}`);
+    });
+
+    test(`${file} lists each article once`, () => {
+      const ids = fallbackIds(file);
+      const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+      assert.deepEqual([...new Set(dupes)], [], `${file} lists duplicate ids`);
+    });
+  }
+
+  test('a fallback title never contradicts the article it describes', () => {
+    // ArticleDetail renders the fallback title as the page's H1, so a stale one
+    // is not a cosmetic mismatch — it is a different headline from the one the
+    // prerendered HTML carries, and Google reads the rendered one.
+    //
+    // Exactly one had drifted, and it was carrying an unsourced savings claim:
+    // the article is called "Small Business Electricity Rates: How to Cut
+    // Costs" and the H1 said "...2026: How to Save 20-30%". The claim scan
+    // above now blocks the percentage; this blocks the drift that let a title
+    // the article had already moved away from stay on the page.
+    //
+    // fullArticles.jsx is read as text rather than imported: it is a .jsx
+    // module and plain Node cannot load it, which is the same reason
+    // scripts/refresh-article-dates.mjs parses it instead of importing it.
+    const articleSource = fs.readFileSync(
+      path.join(ROOT, 'src/components/learning/fullArticles.jsx'),
+      'utf8'
+    );
+    const marks = [...articleSource.matchAll(/^ {2}(\d+): \{$/gm)];
+    const articleTitles = new Map();
+    for (let i = 0; i < marks.length; i++) {
+      const from = marks[i].index;
+      const to = i + 1 < marks.length ? marks[i + 1].index : articleSource.length;
+      const block = articleSource.slice(from, to);
+      const title =
+        block.match(/^\s+title:\s*'((?:[^'\\]|\\.)*)'/m) ||
+        block.match(/^\s+title:\s*"((?:[^"\\]|\\.)*)"/m);
+      if (title) articleTitles.set(Number(marks[i][1]), title[1].replace(/\\'/g, "'"));
+    }
+    assert.ok(
+      articleTitles.size >= ARTICLE_IDS.length,
+      `parsed only ${articleTitles.size} article titles from fullArticles.jsx`
+    );
+
+    const text = fs.readFileSync(path.join(ROOT, 'src/pages/ArticleDetail.jsx'), 'utf8');
+    const entries = [
+      ...text.matchAll(/^\s{4}id:\s*(\d+),\n(?:.*\n)*?\s{4}title:\s*"((?:[^"\\]|\\.)*)"/gm),
+    ];
+    assert.ok(entries.length >= ARTICLE_IDS.length, `parsed only ${entries.length} fallback titles`);
+
+    const drifted = [];
+    for (const [, id, title] of entries) {
+      const real = articleTitles.get(Number(id));
+      if (real && real !== title) {
+        drifted.push(`  ${id}\n    article : ${real}\n    fallback: ${title}`);
+      }
+    }
+    assert.deepEqual(drifted, [], `fallback title(s) out of step with the article:\n${drifted.join('\n')}`);
+  });
+
+  test('both files agree on the same set of articles', () => {
+    const [a, b] = FILES.map((f) => fallbackIds(f).sort((x, y) => x - y));
+    assert.deepEqual(a, b, 'ArticleDetail and LearningCenter list different articles');
+  });
+});
+
 describe('utility territory pages', () => {
   const utilities = getUtilities();
 
@@ -1921,6 +2137,85 @@ describe('utility territory pages', () => {
         `${route.path} opens identically to ${openings.get(first)}`
       );
       openings.set(first, route.path);
+    }
+  });
+
+  test('county lists survive the three shapes the city table records them in', () => {
+    // The source data mixes "Cook County" with a bare "Cook", records a city
+    // straddling a line as "Collin and Denton", and puts Baltimore in
+    // "Baltimore City" — a Maryland independent city belonging to no county.
+    // Each one broke the sentence differently: a county printed twice, a
+    // compound printed as though it were one place, and "Baltimore City
+    // County", which does not exist.
+    const seen = [];
+    for (const route of getUtilityRoutes().filter((r) => r.type === 'utility')) {
+      const { sections } = buildUtilitySections(route);
+      const place = sections.find((s) => /Actually Serves$/.test(s.heading || ''));
+      assert.ok(place, `${route.path} has no territory section`);
+      const sentence = (place.paragraphs || []).find((line) => line.startsWith('They fall across'));
+      if (!sentence) continue;
+      seen.push(route.path);
+
+      assert.ok(!/\band\s+\w+ County,/.test(sentence), `${route.path} left a compound county unsplit: ${sentence}`);
+      assert.ok(!/City County/.test(sentence), `${route.path} suffixed an independent city: ${sentence}`);
+
+      const names = sentence
+        .replace(/^They fall across\s+/, '')
+        .split(/\.\s/)[0]
+        .split(/,\s*|\s+and\s+/)
+        .map((part) => part.trim())
+        .filter(Boolean);
+      const bare = names.map((n) => n.replace(/\s+County$/, '').toLowerCase());
+      assert.equal(
+        new Set(bare).size,
+        bare.length,
+        `${route.path} lists a county twice: ${sentence}`
+      );
+      for (const name of names) {
+        assert.ok(
+          /(?: County| City)$/.test(name),
+          `${route.path} lists "${name}" with no county or city suffix`
+        );
+      }
+    }
+    assert.ok(seen.length >= 8, `only ${seen.length} territory pages carried a county list`);
+  });
+
+  test('two territories in one state are told apart by the pages themselves', () => {
+    // ComEd and Ameren Illinois share a state and a regulatory model, so the
+    // correction section, the supplier table and every rate figure on the two
+    // pages were identical — the pair measured 0.53 six-gram overlap, the
+    // highest of any two pages on the site. What separates them honestly is
+    // the thing we hold: which cities sit on which wires.
+    const routes = getUtilityRoutes().filter((r) => r.type === 'utility');
+    const byState = new Map();
+    for (const route of routes) {
+      for (const code of route.utility.stateCodes) {
+        byState.set(code, [...(byState.get(code) || []), route]);
+      }
+    }
+    const shared = [...byState.entries()].filter(([, list]) => list.length > 1);
+    assert.ok(shared.length > 0, 'expected at least one state with two published territories');
+
+    for (const [code, list] of shared) {
+      for (const route of list) {
+        const { sections } = buildUtilitySections(route);
+        const text = sections
+          .flatMap((s) => [...(s.paragraphs || []), ...(s.faqs || []).map((f) => `${f.question} ${f.answer}`)])
+          .join(' ');
+        const others = list.filter((other) => other.path !== route.path);
+        for (const other of others) {
+          const otherShort = other.utility.shortName || other.utility.name;
+          assert.ok(
+            text.includes(otherShort),
+            `${route.path} never names ${otherShort}, the other ${code} territory a reader could confuse it with`
+          );
+        }
+        assert.ok(
+          sections.some((s) => (s.links || []).some(([href]) => others.some((o) => o.path === href))),
+          `${route.path} does not link the other ${code} territory`
+        );
+      }
     }
   });
 

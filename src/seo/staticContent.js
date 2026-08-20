@@ -5,13 +5,28 @@
  *
  * WHY IT LIVES HERE RATHER THAN IN content.js
  *
- * These ten pages were the thinnest indexable URLs on the site — /all-states
- * carried 197 words, /business-hub 197, /renewable-energy 207 — against
- * competitors running well over a thousand on the same queries. The depth they
- * needed is prose, and prose does not belong interleaved with the builders in
- * content.js that assemble tables and links from the snapshot. Keeping it as
- * data means the sections can be read and edited as writing, and means
- * content.js stays a place where structure is decided rather than authored.
+ * These were the thinnest indexable URLs on the site. The first ten written —
+ * /all-states carried 197 words, /business-hub 197, /renewable-energy 207 —
+ * were hub and tool pages competing against rivals running well over a
+ * thousand words on the same queries. The six added after them are the ones
+ * that survived that pass: the homepage at 240 words, the FAQ hub at 357, the
+ * comparison and utility hubs, and the two comparison tools that filter to
+ * renewable and to business plans.
+ *
+ * The depth they needed is prose, and prose does not belong interleaved with
+ * the builders in content.js that assemble tables and links from the snapshot.
+ * Keeping it as data means the sections can be read and edited as writing, and
+ * means content.js stays a place where structure is decided rather than
+ * authored.
+ *
+ * PLACEMENT
+ *
+ * A draft is merged into its builder's output, not appended to it: a section
+ * whose heading the builder already uses extends that section rather than
+ * repeating the heading. Where the new sections land is set by `insertBefore`,
+ * naming the builder heading to sit in front of. Without it they go ahead of
+ * "Next Steps", or last. Pages whose builder output is mostly navigation set
+ * it, so they do not read as links first and substance afterwards.
  *
  * FIGURES
  *
@@ -970,6 +985,405 @@ export const STATIC_PAGE_CONTENT = {
             '/faq',
             'Short answers to common switching questions',
           ],
+        ],
+      },
+    ],
+  },
+
+  /* The homepage carried 240 words: two intro lines, a state table and three
+   * lists of links. It is the page with the most authority on the domain and
+   * the broadest set of queries pointing at it, and it was the thinnest thing
+   * on the site that Google was asked to rank for "compare electricity rates".
+   *
+   * What it can say that no other page can is the cross-market view — what
+   * rates actually are across all twelve states at once, and what drives the
+   * differences. The state directory lists them; this analyses them. The prose
+   * is anchored ahead of the navigation block so the page does not read as
+   * links first and substance last. */
+  '/': {
+    insertBefore: 'Shop by What You Need',
+    intro: [
+      'Retail choice splits the electricity bill in two. The utility that owns the poles and the meter keeps delivering the power and charges a regulated amount for doing it. A separate company sells you the energy itself, and that company you get to pick. Only the second half moves when you switch, and it is the half this site compares.',
+    ],
+    sections: [
+      {
+        heading: 'Electricity Rates by State',
+        paragraphs: [
+          'Read the range in that table as a range rather than as an offer. Across the whole catalog the cheapest plan rate is {RATE_MIN} and the dearest {RATE_MAX} ({AS_OF}) — but those two plans sit in different states, on different contract lengths, sold to different kinds of customer. The distance between them is not available to anybody. The distance between the plans sold at one address is narrower, and it is the only one worth acting on.',
+          'Medians are the fairer read across markets. The median plan rate we track runs from {LOWEST_MEDIAN} in {LOWEST_MEDIAN_STATE} to {HIGHEST_MEDIAN} in {HIGHEST_MEDIAN_STATE}. Most of that gap is wholesale generation cost, fuel mix and network geography, none of which a household chooses. What a household chooses is where it sits inside its own state\'s range.',
+        ],
+      },
+      {
+        heading: 'Where the Cheapest Rates Are, and Why',
+        paragraphs: [
+          '{LOWEST_MEDIAN_STATE} carries the lowest median plan rate of the {STATE_COUNT} markets on this site at {LOWEST_MEDIAN}; {HIGHEST_MEDIAN_STATE} the highest at {HIGHEST_MEDIAN}. Neither position is really a fact about the retail market. States at the cheap end tend to sit close to abundant generation with transmission able to move it; the northeastern states at the other end import much of their power and pay congestion and capacity costs on top of the energy.',
+          'Competition changes the shape of a market rather than its floor. More suppliers means a wider spread of offers, so more to gain from choosing well and more to lose from ignoring the question — but it does not lower the underlying wholesale cost. Across the states covered here, {SUPPLIER_COUNT} suppliers hold {PLAN_COUNT} active plans, and {MULTI_STATE_SUPPLIERS} of those suppliers sell into more than one state without pricing consistently across them.',
+          'Contract length is the other structural difference between markets, and it is larger than most people expect. {WIDEST_TERM_STATE} offers terms from {WIDEST_TERM_MIN} to {WIDEST_TERM_MAX} months. {SINGLE_TERM_STATE} currently offers one length, {SINGLE_TERM_LENGTH} months. Month-to-month supply exists in {MTM_STATE_COUNT} of the {STATE_COUNT} states. Where the choice is there, the term moves the rate about as much as the supplier does.',
+        ],
+      },
+      {
+        heading: 'Why Two Homes in the Same State Pay Different Rates',
+        paragraphs: [
+          'Four things separate two bills in the same state, and only one of them is the supplier.',
+        ],
+        bullets: [
+          'Utility territory. Which delivery company serves an address sets the delivery charges, and it also sets which suppliers are permitted to sell there. Two towns an hour apart can see different lists.',
+          'Usage level. Advertised rates are quoted at a specific monthly usage, commonly 1,000 or 2,000 kWh. A monthly base charge, or a usage credit with a threshold, makes the same plan cost materially more or less per kWh at any other level.',
+          'Contract term. A three-month rate and a thirty-six-month rate are priced against different stretches of the forward market. Neither length is automatically the cheaper one.',
+          'When the contract was signed. A fixed rate holds the market conditions of its signing date for the whole term, which is why two neighbours on a plan with the same name can be paying different rates.',
+        ],
+      },
+      {
+        heading: 'What a One-Cent Difference Is Worth',
+        paragraphs: [
+          'Rates are quoted in cents per kilowatt-hour, which makes the differences look too small to bother with. The arithmetic is worth doing once. At 1,000 kWh a month — a common quoting level, not a claim about your home — one cent per kWh is $10 a month and $120 across a year. At 2,000 kWh it is $240.',
+          'Measured against the spread inside a single state rather than the national range, that is usually the distance between the plan at the top of a results page and one a third of the way down. This site will not tell you what switching is worth to you, because it does not hold your bill and a figure invented for a headline is worth nothing. It shows the rates. The arithmetic above is the entire method.',
+        ],
+      },
+      {
+        heading: 'Before You Compare',
+        paragraphs: [
+          'Three things turn an approximate comparison into an accurate one.',
+        ],
+        bullets: [
+          'Your ZIP code, which decides the utility territory and therefore which plans you can actually buy.',
+          'Twelve months of kWh usage if you have it, one representative month if you do not. The plan that wins at 500 kWh is frequently not the plan that wins at 2,000.',
+          'Your current supply rate and contract end date, both on your bill. Without the end date there is no way to tell whether switching today carries an early termination fee.',
+        ],
+      },
+      {
+        heading: 'Where Retail Choice Does Not Reach',
+        paragraphs: [
+          'Living in a deregulated state does not guarantee you have a choice. Municipal utilities, owned by a city, and rural electric cooperatives, owned by their members, generally sell supply themselves and sit outside the competitive market. An address served by one has no supplier to switch to however deregulated the state around it is.',
+          'This matters most in the largest market. Texas has the biggest competitive electricity market in the country and several of its major cities are not part of it. The city pages here say so where it applies, rather than showing a comparison that cannot be acted on.',
+        ],
+      },
+    ],
+  },
+
+  /* The FAQ hub answered nine questions in 357 words. It is the page best
+   * placed to win long-tail question queries, and the questions it was missing
+   * — contract rollovers, deposits, renting, why a bill jumped — are the ones
+   * people actually type. Answers stay short here and link out to the guides;
+   * the point of a hub is breadth. */
+  '/faq': {
+    sections: [
+      {
+        heading: 'Switching Supplier',
+        paragraphs: [
+          'A switch changes the company that sells you electricity. It does not change the company that delivers it, the wires it arrives on, the meter, or who turns up after a storm.',
+        ],
+      },
+      {
+        heading: 'Rates and Plans',
+        paragraphs: [
+          'Most complaints about a rate turn out to be about how it was quoted rather than about a supplier failing to honour it. These are the mechanics behind that.',
+        ],
+      },
+      {
+        heading: 'Contracts, Renewals and Endings',
+        faqs: [
+          {
+            question: 'What happens when my fixed contract ends?',
+            answer:
+              'Unless you act, most suppliers move the account to a month-to-month variable rate rather than ending service. That rate is set by the supplier and is frequently well above what a new fixed contract would cost, which makes the end of a term the most expensive date to ignore. Suppliers generally have to write to you in advance; the letter is easy to mistake for marketing.',
+          },
+          {
+            question: 'Can I switch before my contract ends?',
+            answer:
+              'Yes, but read the early termination fee first. It is usually either a flat amount or a per-month figure multiplied by the months remaining, and it is stated in the contract summary. Where the fee is smaller than the difference over the months left, leaving early is the cheaper decision — that is arithmetic you can do from two numbers on your own paperwork.',
+          },
+          {
+            question: 'Does my contract renew automatically?',
+            answer:
+              'Some do and some do not, and the difference is worth knowing before the date arrives. An automatic renewal locks a new term at a rate you did not shop for. A rollover to month-to-month leaves you free to leave at any time, usually at a higher rate while you decide. Your contract summary says which one applies to you.',
+          },
+          {
+            question: 'What document actually binds the supplier?',
+            answer:
+              'The contract summary — a short disclosure setting out the rate, the term, any base charge, the early termination fee and what happens at the end. In Texas it is the Electricity Facts Label. Marketing pages and phone calls are not it. If a claim does not appear on that document, it is not part of what you are buying.',
+          },
+        ],
+      },
+      {
+        heading: 'Deposits, Credit Checks and Payment',
+        faqs: [
+          {
+            question: 'Will switching involve a credit check?',
+            answer:
+              'Often, yes. Suppliers price partly on credit risk, typically with a soft check at the quote stage and a hard one at enrolment. A weaker credit file does not necessarily mean a worse rate — more often it means a deposit is asked for, or that a prepaid plan is offered instead of a contract.',
+          },
+          {
+            question: 'What is a deposit for, and do I get it back?',
+            answer:
+              'It secures the supplier against unpaid usage. Where one is required it is normally refunded, either after a set number of on-time payments or when the account closes, and the terms are in the contract. A deposit is paid to the supplier through its own billing channels; anyone asking for one by wire transfer, gift card or a payment app is not a supplier.',
+          },
+          {
+            question: 'Are prepaid plans cheaper?',
+            answer:
+              'Usually not on the rate. What they avoid is the deposit and the credit check, and they show usage daily, which some households find useful for control. The trade is that running the balance down can disconnect supply quickly, and topping up is on you rather than on a billing cycle.',
+          },
+        ],
+      },
+      {
+        heading: 'Renting, Moving and More Than One Address',
+        faqs: [
+          {
+            question: 'Can I switch supplier if I rent?',
+            answer:
+              'If the electricity account is in your name, yes. The choice belongs to whoever holds the account, not to whoever owns the building, and a landlord cannot require you to stay with a particular supplier on an account you hold. If the landlord holds the account and bills you for usage, there is nothing for you to switch and the rate is a matter for the tenancy agreement.',
+          },
+          {
+            question: 'Does my plan move with me?',
+            answer:
+              'Sometimes within the same utility territory, rarely outside it. Treat a move as a fresh decision: ask the supplier whether the plan transfers, whether the early termination fee is waived for a move, and what rate would apply at the new address. Those three answers usually settle whether to move the plan or start again.',
+          },
+          {
+            question: 'Can one supplier cover several properties?',
+            answer:
+              'Frequently, if they sit in the same utility territory, and it is worth asking. Across territories or states the accounts are normally priced separately even under one supplier, because each one sits in a different market with its own delivery charges and its own competition.',
+          },
+        ],
+      },
+      {
+        heading: 'Reading the Bill',
+        faqs: [
+          {
+            question: 'Why does my bill list two companies?',
+            answer:
+              'Because two are involved. The utility charges for delivery — the poles, the meter, the restoration crew — and those charges are regulated and identical whichever supplier you use. The supplier charges for the energy. Only the second half is shoppable, and it is the half worth comparing.',
+          },
+          {
+            question: 'Which number on my bill should I compare against a new plan?',
+            answer:
+              'The supply or energy rate in cents per kWh — not the bill total divided by usage. The total includes delivery, which will not change if you switch, so including it makes two plans look closer together than they are. Dividing the supply charges alone by the kWh used gives the effective supply rate, which is the comparable number.',
+          },
+          {
+            question: 'My usage did not change but the bill jumped. Why?',
+            answer:
+              'The usual causes are a fixed term ending and rolling onto a variable rate, a usage credit whose threshold you missed by a few kWh, a seasonal delivery adjustment, or simply a billing period with more days in it than the last one. The statement gives the period length and the rate applied, so the cause is normally visible on the bill itself.',
+          },
+        ],
+      },
+      {
+        heading: 'Coverage',
+        paragraphs: [
+          'Coverage is not the same thing as eligibility. Even inside a deregulated state, an address served by a municipal utility or a rural electric cooperative usually buys supply from that utility alone. Those are not gaps in this site — they are places where there is genuinely nothing to switch to, and the city pages say so.',
+        ],
+      },
+    ],
+  },
+
+  /* The comparison hub was a table of matchups and a list of plan-type pages,
+   * 410 words in total. What it was missing is the thing that makes a hub worth
+   * indexing separately from the pages under it: an explanation of what a
+   * head-to-head can and cannot establish. Read literally, "supplier A is
+   * cheaper than supplier B" is a claim about two catalogs, not about an
+   * address, and the pages beneath work better when the hub has said so. */
+  '/compare': {
+    insertBefore: 'Compare for Your Own Address',
+    sections: [
+      {
+        heading: 'What a Head-to-Head Can and Cannot Tell You',
+        paragraphs: [
+          'A supplier comparison compares two catalogs. It can tell you which of the two holds cheaper opening rates today, in the states where both of them sell, on the terms they both offer. That is genuinely useful and it is not the same as knowing which one is cheaper for you.',
+          'The gap is territory. Which plans a supplier may sell at an address is set by the delivery utility serving it, so two suppliers that look evenly matched at state level can present very different lists at a single ZIP code — and one of them may not sell there at all. {MULTI_STATE_SUPPLIERS} of the {SUPPLIER_COUNT} suppliers tracked here sell into more than one state, and their pricing does not carry across.',
+        ],
+      },
+      {
+        heading: 'Cheapest Supplier Is the Wrong Question',
+        paragraphs: [
+          'Suppliers do not have a rate. They have a catalog, and the range inside one catalog is often wider than the difference between two suppliers. The smallest catalog tracked here holds {MIN_PROVIDER_PLANS} plans and the largest {MAX_PROVIDER_PLANS}; a large one will normally contain a competitive plan and an expensive one at the same time.',
+          'That has a practical consequence. A supplier being "cheaper" is a statement about its cheapest plan, and you are going to buy exactly one plan. Read a matchup for what it says about the shape of each catalog — how long the terms run, whether the cheap rate carries a base charge, what leaving costs — and treat the headline rate as the start of the question rather than the answer to it.',
+        ],
+      },
+      {
+        heading: 'The Choices That Apply in Every Market',
+        paragraphs: [
+          'Underneath the supplier question sit four decisions that look the same in all {STATE_COUNT} states. The plan-type pages above take one each.',
+        ],
+        bullets: [
+          'Fixed or variable. {FIXED_PLANS} of the {PLAN_COUNT} plans tracked here hold their rate for the term and {VARIABLE_PLANS} do not. A variable rate can fall; it can also be raised at the supplier\'s discretion once an introductory period ends.',
+          'How long to commit. Terms across the catalog run from {TERM_MIN} to {TERM_MAX} months. A longer term is not inherently dearer or cheaper — it is priced against a longer stretch of the forward market, which sometimes helps and sometimes does not.',
+          'What leaving costs. {NO_ETF_PLANS} plans carry no early termination fee. That flexibility is generally paid for somewhere in the rate, which is worth checking rather than assuming either way.',
+          'Renewable or standard. {RENEWABLE_PLANS} plans are backed entirely by renewable generation. Whether that costs anything extra depends on the state, and in some markets it costs nothing at all.',
+        ],
+      },
+      {
+        heading: 'Comparison Questions',
+        faqs: [
+          {
+            question: 'Why are some suppliers not compared against each other?',
+            answer:
+              'A matchup is published only where both suppliers sell into at least one of the same states. Comparing two suppliers a reader could never actually choose between produces a page that answers nobody\'s question, so those pages are not built.',
+          },
+          {
+            question: 'How current are the figures in a comparison?',
+            answer:
+              'They come from the same plan catalog snapshot as the rest of the site, dated {SNAPSHOT_DATE}. Individual plan rates move faster than a snapshot can follow, which is why entering a ZIP code returns live results rather than these figures.',
+          },
+          {
+            question: 'Does a supplier pay to win a comparison?',
+            answer:
+              'No. Which side is marked cheaper is computed from the plan data, and the computation has no knowledge of whether a supplier has a referral arrangement with us.',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* The utility hub had a coverage table and one section explaining that the
+   * utility is not the supplier — 310 words for the page that eleven utility
+   * pages sit under. Most people searching a utility by name want to know what
+   * they will pay and are looking at the wrong company; the hub is where that
+   * misunderstanding gets unpicked properly, including the case where the
+   * utility genuinely is the only supplier. */
+  '/utilities': {
+    insertBefore: 'Why the Distinction Matters',
+    sections: [
+      {
+        heading: 'What the Delivery Charge Pays For',
+        paragraphs: [
+          'The delivery half of a bill buys the physical system: transmission lines carrying power across the state, local poles and transformers, the meter and its reading, the crews that restore service after a storm, and the systems behind all of it. It is charged per kilowatt-hour delivered, usually alongside a fixed monthly component, and on most bills it is the second-largest line after supply.',
+          'What separates it from the supply half is that it is not a price. It is a tariff, set by the state utility commission in a rate case where the utility has to justify its costs and the return it earns on them. Nobody shops it, no supplier discounts it, and switching supplier does not move it by a cent.',
+        ],
+      },
+      {
+        heading: 'Why Delivery Costs Differ Between Territories',
+        paragraphs: [
+          'Two addresses in the same state can carry noticeably different delivery charges, for reasons that are physical rather than commercial.',
+        ],
+        bullets: [
+          'Density. A network serving many customers per mile of line spreads its fixed costs further than a rural one does.',
+          'Terrain and weather. Coastal and storm-exposed territories spend more on hardening and restoration, and that spending goes into the tariff.',
+          'Age of the network. A utility replacing century-old infrastructure is running a capital programme that customers fund over time.',
+          'What the commission approved. Rate cases are decided territory by territory, so two utilities with similar costs can still land on different numbers.',
+        ],
+      },
+      {
+        heading: 'When the Utility Is Also the Only Supplier',
+        paragraphs: [
+          'Retail choice is a state policy applied through utility territories, and it is not uniform inside a state. Municipal utilities, owned by a city, and rural electric cooperatives, owned by their members, generally sell supply themselves and sit outside the competitive market. An address served by one has no supplier to switch to, however deregulated the state around it is.',
+          'Texas is the clearest case and the most often misunderstood. It runs the largest competitive electricity market in the country, and several of its biggest cities are not in it, because the municipal utility or cooperative serving them kept the supply role when the market opened. That is worth establishing before shopping rather than after.',
+        ],
+        links: [
+          ['/learn/texas-cities-without-electricity-choice', 'Which Texas cities cannot switch supplier'],
+          ['/learn/el-paso-electricity-no-retail-choice', 'El Paso, and why it sits outside the market'],
+        ],
+      },
+      {
+        heading: 'Who to Call for What',
+        paragraphs: [
+          'The split between the two companies is also a split in who can help you, and calling the wrong one is the usual reason a problem takes a week instead of an afternoon.',
+        ],
+        bullets: [
+          'Power out, a downed line, a burning smell, a damaged meter: the utility, immediately. The supplier has no crews and cannot dispatch any.',
+          'A meter reading that looks wrong, or an estimated read you want replaced with a real one: the utility, which owns the meter.',
+          'Your rate, your contract term, an early termination fee, a supply charge you dispute: the supplier, which set them.',
+          'A bill you cannot pay: whoever issued it, and early. Both companies usually have arrangements, and both stop offering them once an account reaches collections.',
+        ],
+      },
+      {
+        heading: 'Utility Questions',
+        faqs: [
+          {
+            question: 'Can I choose my delivery utility?',
+            answer:
+              'No. It is determined by the address, and there is no mechanism to change it. This is the one part of an electricity bill that is genuinely fixed.',
+          },
+          {
+            question: 'Does the utility treat me differently if I switch supplier?',
+            answer:
+              'No. It processes the switch and carries on delivering exactly as before. Restoration priority, meter reading and service quality do not depend on which supplier you use, and utilities are required to treat customers the same whichever supplier bills them for energy.',
+          },
+          {
+            question: 'Will I get one bill or two?',
+            answer:
+              'It depends on the market. Most of the territories covered here use consolidated billing, where one company bills for both halves. Some markets bill separately. Either way the two sets of charges are itemised, so you can always see which half is which.',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* The renewable comparison tool page sat at 262 words and overlapped nothing
+   * — it simply had not been written. The full explanation of certificates and
+   * premiums lives on /renewable-energy, so this stays on the comparison
+   * itself: what the filter excludes, and how to weigh a renewable plan against
+   * a standard one without fooling yourself. */
+  '/renewable-compare-rates': {
+    sections: [
+      {
+        heading: 'What the Filter Excludes',
+        paragraphs: [
+          'This comparison shows only plans recorded as 100% renewable — {RENEWABLE_PLANS} of the {PLAN_COUNT} plans in the catalog, from {RENEWABLE_SUPPLIER_COUNT} of the {SUPPLIER_COUNT} suppliers tracked here. {PURE_RENEWABLE_SUPPLIER_COUNT} of those suppliers sell nothing else.',
+          'Plans with partial renewable content are left out rather than sorted to the bottom. A plan advertised as 30% or 50% renewable is a different product making a different claim, and mixing the two into one ranking produces a list that cannot be read at a glance. The unfiltered comparison holds those plans if a partial mix is what you want.',
+        ],
+      },
+      {
+        heading: 'Why One Supplier\'s Renewable Plan Costs More Than Its Standard One',
+        paragraphs: [
+          'Where a premium exists inside a single supplier\'s catalog, it is the cost of the certificates retired on your behalf plus whatever margin sits on a product sold in smaller volume. It is not a different grid connection, a different delivery route or a different quality of supply. The electricity arriving at the meter is the same electricity either way.',
+          'That is also why the premium is small, and why it sometimes disappears. Certificate prices move on their own market, separately from wholesale power, and where they are cheap a supplier can price a renewable plan level with a standard one without giving anything up.',
+        ],
+      },
+      {
+        heading: 'Comparing a Renewable Plan Against a Standard One',
+        paragraphs: [
+          'The comparison that settles the question is not renewable against renewable. It is the renewable plan you are considering against the cheapest plan of any kind at the same address, on the same term, at your own usage level. That difference, if there is one, is the actual cost of the choice.',
+          'Two things distort it if skipped. Base charges differ between plans and change the effective rate at any usage other than the quoted one. And a renewable plan on a longer term is being compared against a different stretch of the market rather than simply a different product. Hold the term and the usage level constant, and what is left is a clean comparison.',
+        ],
+      },
+      {
+        heading: 'Four Things the Filter Does Not Tell You',
+        bullets: [
+          'What the plan is matched with. Certificates are the normal mechanism and a legitimate one; a plan implying the electricity itself travels to you from a named wind farm is describing something the grid does not do.',
+          'Whether the renewable content runs for the whole term or only an introductory period.',
+          'What the rate becomes at the end of the term, and whether the plan rolls onto a variable rate that is not renewable at all.',
+          'The early termination fee, which is set by the contract and has nothing to do with the generation mix.',
+        ],
+      },
+    ],
+  },
+
+  /* The business quote page listed what to have ready and what happens next,
+   * in 254 words. The question it never answered is the one a business owner
+   * arrives with — why there is no price on the screen — and the practical
+   * problem it never solved is how to obtain a year of usage data when nobody
+   * kept the bills. Both are here. */
+  '/business-compare-rates': {
+    sections: [
+      {
+        heading: 'Why There Is No Instant Price',
+        paragraphs: [
+          'A residential comparison can be instant because residential usage is predictable enough to price in advance: a supplier publishes one rate for a whole class of customers and it is close enough for all of them. Commercial usage is not like that. Two businesses on the same street with identical annual kWh can cost a supplier very different amounts to serve, depending on when in the day and the year that usage falls.',
+          'So a commercial price is built rather than looked up. The supplier takes the shape of your load, prices it against the forward market for the term you want, adds the delivery and capacity costs of your utility territory, and applies a credit assessment. That is why a quote is a short process rather than a button, and why two suppliers can return genuinely different numbers for the same site.',
+        ],
+      },
+      {
+        heading: 'Getting Twelve Months of Usage Data',
+        paragraphs: [
+          'The single thing that most improves a commercial quote is a full year of consumption, and most businesses do not have the bills to hand. It is easier to obtain than it looks.',
+        ],
+        bullets: [
+          'Your utility will provide usage history for an account you hold, usually through the online account portal, and usually going back twelve to twenty-four months.',
+          'Ask for interval data if the meter records it. Fifteen-minute or hourly data lets a supplier price the shape of your load instead of assuming one, and an assumed shape is always priced conservatively.',
+          'Have the account or meter identifier ready — in Texas the ESI-ID, elsewhere the utility account number. It is printed on the bill, and it is what a supplier needs before it can look anything up.',
+          'If you have less than a year, say so rather than estimating. A supplier can price against a partial history. It cannot price accurately against a guess presented as a fact, and the correction comes later as a worse rate.',
+        ],
+      },
+      {
+        heading: 'Quoting Before Your Contract Ends',
+        paragraphs: [
+          'A commercial contract can usually be signed months before it starts, which turns a renewal from a deadline into a window. Quoting three to six months out means a poor number can be declined and asked for again, rather than accepting whatever the market happens to be doing in the week your term expires.',
+          'The date that matters is the contract end date, not the bill date, and it is worth confirming in writing with your current supplier rather than reading it off a summary. Rolling off a commercial contract without a replacement generally lands the account on a month-to-month rate set by the supplier, and that is not the rate they quoted to win the business.',
+        ],
+      },
+      {
+        heading: 'Sites in More Than One Territory',
+        paragraphs: [
+          'We track {COMMERCIAL_PLANS} business plans across {COMMERCIAL_STATES} states, and a multi-site request is priced as several quotes arriving together rather than as one. Each site sits in a utility territory with its own delivery charges, its own capacity obligations and its own set of suppliers licensed to sell there.',
+          'What aggregation buys is attention and sometimes terms. A supplier pricing a portfolio will often quote more sharply than it would for any one of those sites alone, and a single contract across sites is easier to administer than five separate ones. List every site on the request even where you expect them to price differently — the total is part of what a supplier is responding to.',
         ],
       },
     ],

@@ -233,7 +233,21 @@ export default function ProviderDetails() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-2">{providerName}</h1>
+                {/* The H1 is the brand name plus what the page is about, because
+                    the brand name alone is not what anyone searches. Someone
+                    looking for this page types "rhythm energy rates", and an H1
+                    reading only "Rhythm Energy" throws away the strongest
+                    heading signal the page has. This is also the heading the
+                    route registry already declares for the URL and the one the
+                    prerendered HTML carries — the component was the only place
+                    disagreeing. The second line is set smaller so the brand
+                    still reads as the headline. */}
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                  {providerName}
+                  <span className="block text-base sm:text-lg font-semibold text-blue-100">
+                    Electricity Plans and Rates
+                  </span>
+                </h1>
                 {/* The star rating that sat here fell back to a hard-coded 4.8
                     whenever the database had no rating, so most providers showed
                     a score nobody had given them. Only counts we can actually
