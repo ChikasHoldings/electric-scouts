@@ -34,6 +34,7 @@ import {
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS, ARTICLE_SLUGS, articlePath } from '../src/seo/articles.js';
+import { mergeArticleSources } from '../src/lib/articleSources.js';
 import { TITLE_MAX } from '../src/seo/site.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
 import { getPublishableProviders, getAllProviders, MARKET_GENERATED_AT, MARKET_TOTALS, getStateMarket, providersInState, renewableProvidersInState } from '../src/seo/market.js';
@@ -1905,6 +1906,81 @@ describe('comparison pages are neither thin nor near-duplicates', () => {
  * after the fact: linked in from the pages people land on, distinct from
  * one another, and substantial enough to deserve indexing.
  * ================================================================== */
+
+describe('articles resolve whether or not the database knows about them', () => {
+  // The bug this guards is the one that made adding the twelve ids to
+  // fallbackArticles a fix that would have changed nothing in production.
+  //
+  // ArticleDetail and LearningCenter both chose between their two sources with
+  // `dbArticles.length > 0 ? dbArticles : fallbackArticles`. Either/or, and the
+  // database wins on a single row — so every article that exists only in the
+  // source resolved to nothing on the live site and rendered "Article Not
+  // Found", while rendering perfectly in any environment without database
+  // credentials, because there the query returns nothing and the fallback is
+  // used. The bug is invisible exactly where it is not happening, which is why
+  // a browser check against a local build could not see it either.
+  //
+  // These cases are written against the shape production actually has: a
+  // database holding the older articles and knowing nothing about the new ones.
+  const staticList = ARTICLE_IDS.map((id) => ({ id, title: `static ${id}`, source: 'static' }));
+  const find = (articles, id) => articles.find((a) => String(a.id).trim() === String(id).trim());
+
+  test('a database that has never heard of an article still resolves it', () => {
+    // Production: rows for the original guides, nothing for the Texas cluster.
+    const older = ARTICLE_IDS.filter((id) => id < 100).map((id) => ({ id, title: `db ${id}`, source: 'db' }));
+    const merged = mergeArticleSources(staticList, older);
+
+    const missing = ARTICLE_IDS.filter((id) => !find(merged, id));
+    assert.deepEqual(missing, [], `unresolvable with a populated database: ${missing.join(', ')}`);
+    assert.equal(find(merged, 110).source, 'static', 'the static copy should supply an article the database lacks');
+  });
+
+  test('the database copy wins where it has one', () => {
+    // An editor changing a title in the database must not be overridden by the
+    // compiled-in copy, which is the reason the database is consulted at all.
+    const merged = mergeArticleSources(staticList, [{ id: 1, title: 'db 1', source: 'db' }]);
+    assert.equal(find(merged, 1).source, 'db');
+    assert.equal(find(merged, 1).title, 'db 1');
+  });
+
+  test('an empty database leaves the static list intact', () => {
+    const merged = mergeArticleSources(staticList, []);
+    assert.equal(merged.length, staticList.length);
+    assert.ok(merged.every((entry) => entry.source === 'static'));
+  });
+
+  test('string and number ids are the same article', () => {
+    // The database returns ids as strings and the static list holds numbers.
+    // Without normalising, every article would appear twice and the find could
+    // return either copy.
+    const merged = mergeArticleSources([{ id: 7, source: 'static' }], [{ id: '7', source: 'db' }]);
+    assert.equal(merged.length, 1);
+    assert.equal(merged[0].source, 'db');
+  });
+
+  test('a row with no id cannot displace a real article', () => {
+    const merged = mergeArticleSources([{ id: 1, source: 'static' }], [{ id: null }, { title: 'orphan' }]);
+    assert.equal(merged.length, 1);
+    assert.equal(merged[0].source, 'static');
+  });
+
+  test('neither page picks between the two sources any more', () => {
+    // A regression here reads as a one-word change and silently restores the
+    // production-only failure, so it is asserted rather than trusted.
+    for (const file of ['src/pages/ArticleDetail.jsx', 'src/pages/LearningCenter.jsx']) {
+      const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+      const body = text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
+      assert.ok(
+        body.includes('mergeArticleSources('),
+        `${file} no longer merges its two article sources`
+      );
+      assert.ok(
+        !/dbArticles[^\n]*\?[^\n]*fallbackArticles|dbArticles\.length === 0[\s\S]{0,80}return fallbackArticles/.test(body),
+        `${file} chooses between the database and the static list again`
+      );
+    }
+  });
+});
 
 describe('the client-side article list stays in step with the routes', () => {
   // ArticleDetail resolves a /learn/ slug to an id, then looks that id up in a

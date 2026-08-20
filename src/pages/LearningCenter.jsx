@@ -9,6 +9,7 @@ import {
   BookOpen, Zap, DollarSign, Leaf, TrendingDown, Shield, 
   Clock, ArrowRight, MapPin, Building2, FileText, Star, Tag, X
 } from "lucide-react";
+import { mergeArticleSources } from "@/lib/articleSources";
 import SEOHead, { getBreadcrumbSchema } from "../components/SEOHead";
 import PageBreadcrumbs from "@/components/PageBreadcrumbs";
 import EnhancedSearch from "../components/learning/EnhancedSearch";
@@ -1194,11 +1195,12 @@ export default function LearningCenter() {
     return colorMap[category] || "blue";
   };
 
+  /* The database wins where it has a row; the static list fills the gaps.
+   * See the same merge in ArticleDetail — either/or meant a database holding
+   * any article hid every source-only guide, so the index silently dropped
+   * them in production while listing them fine locally. */
   const articles = React.useMemo(() => {
-    if (!dbArticles || dbArticles.length === 0) {
-      return fallbackArticles;
-    }
-    const mapped = dbArticles.map(article => {
+    const mapped = (dbArticles || []).map(article => {
       // Handle both nested and flat data structures
       const data = article.data || article;
       const articleId = article.id || data.id;
@@ -1218,7 +1220,7 @@ export default function LearningCenter() {
       };
       return mapped;
     });
-    return mapped;
+    return mergeArticleSources(fallbackArticles, mapped);
   }, [dbArticles]);
 
   const [searchResults, setSearchResults] = useState(articles);

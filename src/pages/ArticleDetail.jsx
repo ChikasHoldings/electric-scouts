@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { articleIdForSlug, articlePath } from "@/seo/articles";
+import { mergeArticleSources } from "@/lib/articleSources";
 import {
   articleModifiedDate as registryModifiedDate,
   articlePublishedDate as registryPublishedDate,
@@ -1232,7 +1233,7 @@ export default function ArticleDetail() {
     return colorMap[category] || "blue";
   };
 
-  const articles = dbArticles && dbArticles.length > 0 ? dbArticles.map(article => {
+  const mappedDbArticles = (dbArticles || []).map(article => {
     // Handle both nested and flat data structures
     const data = article.data || article;
     const articleId = article.id || data.id;
@@ -1250,7 +1251,12 @@ export default function ArticleDetail() {
       keywords: data.keywords || [],
       relatedArticles: data.related_articles || []
     };
-  }) : fallbackArticles;
+  });
+
+  /* Database rows win where they exist; the static list fills the gaps. The
+   * either/or this replaces is why twelve articles rendered "Article Not Found"
+   * in production while looking fine locally — see mergeArticleSources. */
+  const articles = mergeArticleSources(fallbackArticles, mappedDbArticles);
 
   const article = articles.find(a => {
     const aId = String(a.id).trim();
