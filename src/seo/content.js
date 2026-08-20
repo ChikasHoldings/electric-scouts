@@ -18,12 +18,14 @@
  */
 
 import { LOCATION_DATA } from '../components/location/locationData.js';
+import { canonicalPath } from './site.js';
 import { getCities, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { UTILITY_ROOT, getUtilities, utilitiesForState, utilityForCity } from './utilities.js';
 import { articlesForState, relatedArticles } from './articleLinks.js';
 import { STATIC_PAGE_CONTENT } from './staticContent.js';
-import { resolveSections, setDerivedCounts } from './figures.js';
+import { resolveSections, resolveText, setDerivedCounts } from './figures.js';
 import {
+  COMPARE_ROOT,
   comparisonsForProvider,
   comparisonsForState,
   getPlanComparisons,
@@ -1292,31 +1294,41 @@ function normalizeHeading(heading) {
   return String(heading || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-export function buildStaticSections(route, context) {
-  const builder = STATIC_BUILDERS[route.path];
-  const base = builder
-    ? builder(route, context)
-    : { intro: [route.description].filter(Boolean), sections: [] };
+/** Resolve the figure tokens in a draft's intro lines, dropping any that miss. */
+function resolveIntro(lines) {
+  return (lines || []).map(resolveText).filter(Boolean);
+}
 
-  /* The editorial body, where this page has one. It is merged in rather than
-   * replacing the builder's output: the builder owns the tables and link lists
-   * assembled from the snapshot, and this owns the prose. The drafted sections
-   * go in ahead of the page's closing "Next Steps" block so the page still ends
-   * on somewhere to go.
-   *
-   * Every sentence citing a figure is resolved here, and any that cites one we
-   * cannot compute is dropped — see src/seo/figures.js. */
-  const editorial = STATIC_PAGE_CONTENT[route.path];
+/**
+ * Merge a page's drafted editorial body into the sections a builder assembled.
+ *
+ * The builder owns the tables and link lists computed from the snapshot; the
+ * draft in staticContent.js owns the prose. They are merged rather than
+ * concatenated because several drafts extend a section that already exists —
+ * "Deregulated States We Cover" is the builder's table plus the draft's
+ * explanation of what the table shows — and appending would have printed the
+ * heading twice with half the content under each.
+ *
+ * Where the appended sections land is the draft's decision. `insertBefore`
+ * names the heading to sit in front of, which matters because a page whose
+ * builder output is mostly navigation would otherwise read as links first and
+ * substance last. With no anchor given they go ahead of "Next Steps" where
+ * there is one, so the page still ends on somewhere to go, and at the end
+ * otherwise.
+ *
+ * Every sentence citing a figure is resolved here, and any that cites one we
+ * cannot compute is dropped — see src/seo/figures.js.
+ *
+ * @param {{intro?: string[], sections?: object[]}} base the builder's output
+ * @param {string} path the route path, used to look up the draft
+ */
+function mergeEditorialContent(base, path) {
+  const editorial = STATIC_PAGE_CONTENT[path];
   if (!editorial) return base;
 
   const drafted = resolveSections(editorial.sections);
   if (!drafted.length) return base;
 
-  /* A drafted section whose heading the builder already uses is merged into it
-   * rather than appended. Several drafts extend a section that exists —
-   * "Deregulated States We Cover" is the builder's table plus the draft's
-   * explanation of what the table is — and appending would have printed the
-   * heading twice with half the content under each. */
   const sections = (base.sections || []).map((section) => ({ ...section }));
   const byHeading = new Map(sections.map((section, index) => [normalizeHeading(section.heading), index]));
   const appended = [];
@@ -1335,17 +1347,29 @@ export function buildStaticSections(route, context) {
     if (section.links && !target.links) target.links = section.links;
   }
 
-  const closingIndex = sections.findIndex((section) => /^Next Steps$/i.test(section.heading || ''));
-  if (closingIndex === -1) sections.push(...appended);
-  else sections.splice(closingIndex, 0, ...appended);
+  const anchor = editorial.insertBefore
+    ? sections.findIndex(
+        (section) => normalizeHeading(section.heading) === normalizeHeading(editorial.insertBefore)
+      )
+    : sections.findIndex((section) => /^Next Steps$/i.test(section.heading || ''));
+  if (anchor === -1) sections.push(...appended);
+  else sections.splice(anchor, 0, ...appended);
 
   // An intro line is added only where it says something the builder's does not.
   const intro = [...(base.intro || [])];
-  for (const line of editorial.intro || []) {
+  for (const line of resolveIntro(editorial.intro)) {
     if (!intro.some((existing) => existing.trim() === line.trim())) intro.push(line);
   }
 
   return { ...base, intro, sections };
+}
+
+export function buildStaticSections(route, context) {
+  const builder = STATIC_BUILDERS[route.path];
+  const base = builder
+    ? builder(route, context)
+    : { intro: [route.description].filter(Boolean), sections: [] };
+  return mergeEditorialContent(base, route.path);
 }
 
 export function hasStaticContent(path) {
@@ -2717,7 +2741,7 @@ export function buildCompareHubSections() {
     ],
   });
 
-  return { intro, sections };
+  return mergeEditorialContent({ intro, sections }, canonicalPath(COMPARE_ROOT));
 }
 
 /* ------------------------------------------------------------------ *
@@ -3095,5 +3119,5 @@ export function buildUtilityHubSections() {
     ],
   });
 
-  return { intro, sections };
+  return mergeEditorialContent({ intro, sections }, canonicalPath(UTILITY_ROOT));
 }
