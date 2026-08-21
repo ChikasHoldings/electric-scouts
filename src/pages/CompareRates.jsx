@@ -404,13 +404,53 @@ export default function CompareRates() {
     [results]
   );
 
+  /**
+   * What this comparison is actually worth, as counts.
+   *
+   * The server sends these, because whether a link can pay is decided by the
+   * affiliate configuration the browser never sees. This page used to hand the
+   * router `results.length` instead, which said only that results exist — and
+   * results existing is not revenue. Most configured links are plain provider
+   * pages that earn nothing.
+   *
+   * The fallback recomputes the same counts from the result DTOs, which do carry
+   * `monetizationStatus`. It exists for one case: a response cached before the
+   * server started sending these fields, which would otherwise read every count
+   * as `undefined`. It compares against the exact contract values rather than
+   * "not unavailable", so an internal-tracking-only link is never counted as
+   * commission-capable here either.
+   */
+  const monetizationCounts = useMemo(() => {
+    const counts = comparison?.counts;
+    const has = (value) => Number.isFinite(value);
+
+    if (has(counts?.commissionCapable) && has(counts?.renewableCommissionCapable)) {
+      return {
+        resultCount: results.length,
+        commissionCapableCount: counts.commissionCapable,
+        internalTrackingOnlyCount: counts.internalTrackingOnly ?? 0,
+        outboundUnavailableCount: counts.outboundUnavailable ?? 0,
+        renewableResultCount: renewableResults.length,
+        renewableCommissionCapableCount: counts.renewableCommissionCapable,
+      };
+    }
+
+    const withStatus = (status) => results.filter((r) => r.monetizationStatus === status).length;
+    return {
+      resultCount: results.length,
+      commissionCapableCount: withStatus(MONETIZATION.COMMISSION_CAPABLE),
+      internalTrackingOnlyCount: withStatus(MONETIZATION.INTERNAL_TRACKING_ONLY),
+      outboundUnavailableCount: withStatus(MONETIZATION.UNAVAILABLE),
+      renewableResultCount: renewableResults.length,
+      renewableCommissionCapableCount: renewableResults.filter(
+        (r) => r.monetizationStatus === MONETIZATION.COMMISSION_CAPABLE
+      ).length,
+    };
+  }, [comparison, results, renewableResults]);
+
   const routing = useMemo(
-    () =>
-      resolveRoute(state, {
-        matchCount: results.length,
-        renewableMatchCount: renewableResults.length,
-      }),
-    [state, results.length, renewableResults.length]
+    () => resolveRoute(state, monetizationCounts),
+    [state, monetizationCounts]
   );
 
   // ── Persistence: recoverable at email, complete at results ──
@@ -422,6 +462,14 @@ export default function CompareRates() {
         route: routing.route,
         qualification: routing.qualification,
         lead_score: routing.score,
+        // `score_signals` now carries the monetization counts the route was
+        // chosen from (see resolveRoute). Note that api/leads.js maps this
+        // payload onto lead columns through a strict allowlist and does not
+        // write `search_preferences`, so this key is accepted and dropped
+        // today — as it already was before this change. The counts are not
+        // given columns of their own here on purpose: persisting them needs a
+        // migration, which belongs in its own change rather than riding along
+        // with a routing fix.
         score_signals: routing.signals,
       },
     });
@@ -499,16 +547,36 @@ export default function CompareRates() {
 
   useEffect(() => {
     if (view !== "results") return;
+    // Counts and enumerated values only. No email, name, phone, ZIP, address
+    // or account number goes to analytics, and no destination URL or commission
+    // figure either — those live server-side and behind /api/go by design.
+    //
+    // `result_count` and `commission_capable_count` are reported separately
+    // because they answer different questions: how much the customer was shown,
+    // and how much of it could earn. Reporting only the first is what made every
+    // completed comparison look like an affiliate opportunity.
+    const monetizationProps = {
+      result_count: monetizationCounts.resultCount,
+      commission_capable_count: monetizationCounts.commissionCapableCount,
+      internal_tracking_only_count: monetizationCounts.internalTrackingOnlyCount,
+      outbound_unavailable_count: monetizationCounts.outboundUnavailableCount,
+      renewable_result_count: monetizationCounts.renewableResultCount,
+      renewable_commission_capable_count: monetizationCounts.renewableCommissionCapableCount,
+      route: routing.route,
+    };
+
     track(EVENTS.RESULTS_VIEWED, {
       customer_type: state.customerType,
       state: state.state,
+      // Kept alongside `result_count` so existing dashboards built on it do not
+      // break; both carry the same number.
       match_count: results.length,
-      route: routing.route,
+      ...monetizationProps,
     });
     track(EVENTS.COMPARISON_COMPLETED, { route: routing.route });
     track(EVENTS.COMPARISON_RESULTS_LOADED, {
       match_count: results.length,
-      route: routing.route,
+      ...monetizationProps,
     });
   }, [view]);  
 

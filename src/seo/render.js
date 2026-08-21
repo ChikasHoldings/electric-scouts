@@ -573,7 +573,13 @@ export function renderBody(route, content, context) {
     : '';
 
   return [
-    '<div data-seo-prerender="true" style="max-width:1100px;margin:0 auto;padding:24px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;line-height:1.6">',
+    // `data-prerender-route` names the route this payload was built for. It is
+    // what the build-time assertion and the post-deploy verifier read to prove a
+    // URL is serving its OWN prerendered file rather than the homepage or the
+    // neutral app shell — a check that file existence alone cannot make. It sits
+    // on the existing wrapper rather than in a second tree, so main.jsx removes
+    // it with the rest of the payload and the mounted app never sees it.
+    `<div data-seo-prerender="true" data-prerender-route="${escapeHtml(route.path)}" style="max-width:1100px;margin:0 auto;padding:24px 20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2937;line-height:1.6">`,
     siteNav(context.states || []),
     renderBreadcrumbNav(route),
     `<main><h1>${escapeHtml(heading)}</h1>`,

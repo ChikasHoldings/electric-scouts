@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/prerender-seo.mjs",
+    "build": "vite build && node scripts/prerender-seo.mjs && node scripts/assert-prerender-output.mjs",
     "build:spa": "vite build",
     "prerender": "node scripts/prerender-seo.mjs",
+    "verify:dist": "node scripts/assert-prerender-output.mjs",
+    "verify:live": "node scripts/verify-live-routes.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",

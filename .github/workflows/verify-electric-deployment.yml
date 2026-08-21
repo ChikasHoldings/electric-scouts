@@ -1,0 +1,109 @@
+# Verify that a DEPLOYED Electric Scouts site serves the right HTML.
+#
+# `npm run build` already refuses to produce a dist/ whose routes are wrong
+# (scripts/assert-prerender-output.mjs). This checks the other half of the
+# claim: that the deployment actually serves those files. Between a correct
+# dist/ and a correct response sit the project's build and output settings, the
+# rewrites, the redirects, the CDN cache and which deployment is aliased —
+# none of which are visible from inside the repository.
+#
+# Two ways in, on purpose:
+#
+#   workflow_dispatch   run it by hand against any URL. This path always works,
+#                       which matters because the automatic one depends on the
+#                       Vercel GitHub integration emitting deployment_status
+#                       events, and a project that is not wired that way would
+#                       otherwise have no verification at all.
+#
+#   deployment_status   run it automatically when a deployment reports success
+#                       and carries an environment URL.
+#
+# No secrets, no Supabase, and nothing here writes to Vercel or to production:
+# it makes plain GET requests and reads the responses.
+
+name: Verify deployment routes
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Deployment URL to verify, e.g. https://electric-scouts.vercel.app"
+        required: true
+        type: string
+  deployment_status:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-deployment-${{ github.event.inputs.base_url || github.event.deployment_status.environment_url || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    # On deployment_status this fires for every state transition, so it is
+    # gated on a successful deployment that actually published a URL.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment_url != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Resolve target
+        id: target
+        env:
+          # Read through the environment rather than interpolated into the run
+          # script: these values come from a webhook payload.
+          DISPATCH_URL: ${{ github.event.inputs.base_url }}
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          DEPLOYMENT_SHA: ${{ github.event.deployment.sha }}
+        run: |
+          set -euo pipefail
+          if [ -n "${DISPATCH_URL:-}" ]; then
+            BASE_URL="$DISPATCH_URL"
+          else
+            BASE_URL="$DEPLOYMENT_URL"
+          fi
+
+          case "$BASE_URL" in
+            https://*) ;;
+            *) echo "::error::base URL must be https, got '$BASE_URL'"; exit 1 ;;
+          esac
+
+          echo "base_url=$BASE_URL" >> "$GITHUB_OUTPUT"
+          # Verify the commit that was deployed, so the route registry the
+          # verifier reads is the one the deployment was built from.
+          echo "ref=${DEPLOYMENT_SHA:-${{ github.sha }}}" >> "$GITHUB_OUTPUT"
+          echo "Verifying $BASE_URL"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.target.outputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # package-lock.json is the lockfile this repository builds from; it is
+          # what vercel.json pins the install to as well.
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Verify live routes
+        id: verify
+        env:
+          ELECTRICSCOUTS_BASE_URL: ${{ steps.target.outputs.base_url }}
+        run: |
+          set -o pipefail
+          npm run verify:live 2>&1 | tee verify-live-report.txt
+
+      - name: Upload report
+        if: failure() && steps.verify.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-live-report
+          path: verify-live-report.txt
+          retention-days: 14

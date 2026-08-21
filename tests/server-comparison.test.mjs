@@ -664,6 +664,110 @@ describe('result contract', () => {
   });
 });
 
+/* ── Outbound monetization counts ─────────────────────────────────── */
+
+describe('the counts separate pricing completeness from what a click earns', () => {
+  const THIRD_PROVIDER = { id: 'prov-4', name: 'Gamma Grid', logo_url: null, is_active: true };
+
+  /**
+   * One plan per outbound status, plus a renewable one that can pay.
+   *
+   *   prov-1  an affiliate-network destination      -> commission_capable
+   *   prov-2  a plain provider page                 -> internal_tracking_only
+   *   prov-4  no configured link at all             -> unavailable
+   *
+   * The renewable plan sits on prov-1 so it inherits the paying link, which is
+   * what makes `renewableCommissionCapable` distinguishable from `renewable`.
+   */
+  const MIXED = {
+    plans: [
+      planRow({ id: 'pay', rate_per_kwh: 10, provider: ACTIVE_PROVIDER }),
+      planRow({ id: 'pay-green', rate_per_kwh: 11, renewable_percentage: 100, provider: ACTIVE_PROVIDER }),
+      planRow({ id: 'tracked', rate_per_kwh: 12, provider: OTHER_PROVIDER }),
+      planRow({ id: 'green-tracked', rate_per_kwh: 13, renewable_percentage: 100, provider: OTHER_PROVIDER }),
+      planRow({ id: 'no-link', rate_per_kwh: 14, provider: THIRD_PROVIDER }),
+    ],
+    links: [
+      { slug: 'alpha', provider_id: 'prov-1', target_url: 'https://awin1.com/x?awinaffid=1', provider: {} },
+      { slug: 'beta', provider_id: 'prov-2', target_url: 'https://beta.example', provider: {} },
+    ],
+  };
+
+  test('a tracked link that earns nothing is not counted as commission-capable', async () => {
+    const { counts } = await compare(BASE_REQUEST, MIXED);
+
+    assert.equal(counts.commissionCapable, 2, 'both plans on the affiliate-network provider');
+    assert.equal(counts.internalTrackingOnly, 2, 'plain provider pages are tracked, not payable');
+    assert.equal(counts.outboundUnavailable, 1, 'no configured link at all');
+  });
+
+  test('renewable and renewable-commission-capable are different numbers', async () => {
+    const { counts } = await compare(BASE_REQUEST, MIXED);
+
+    assert.equal(counts.renewable, 2, 'two renewable plans in the returned set');
+    assert.equal(counts.renewableCommissionCapable, 1, 'only one of them can pay');
+  });
+
+  test('every returned result has exactly one outbound status', async () => {
+    const comparison = await compare(BASE_REQUEST, MIXED);
+    const { counts } = comparison;
+
+    assert.equal(
+      counts.commissionCapable + counts.internalTrackingOnly + counts.outboundUnavailable,
+      counts.returned
+    );
+    assert.equal(counts.returned, comparison.results.length);
+  });
+
+  test('pricing completeness is counted separately from monetization', async () => {
+    // `tdsp_charges` is what makes a plan fully priceable, so this set is one
+    // complete and two partial — while every one of the three can pay. The two
+    // axes have to be able to disagree.
+    const { counts } = await compare(BASE_REQUEST, {
+      plans: [
+        planRow({ id: 'a', rate_per_kwh: 10, tdsp_charges: 4 }),
+        planRow({ id: 'b', rate_per_kwh: 11 }),
+        planRow({ id: 'c', rate_per_kwh: 12 }),
+      ],
+      links: [{ slug: 'alpha', provider_id: 'prov-1', target_url: 'https://awin1.com/x?awinaffid=1', provider: {} }],
+    });
+
+    assert.equal(counts.complete, 1);
+    assert.equal(counts.partial, 2);
+    assert.equal(counts.pricingUnavailable, 0);
+    assert.equal(counts.commissionCapable, 3);
+  });
+
+  test('results stay visible when none of them can pay', async () => {
+    // The routing change must never shorten the list. A plan we earn nothing
+    // from is still the right answer if it is the cheapest one.
+    const comparison = await compare(BASE_REQUEST, {
+      plans: [
+        planRow({ id: 'a', rate_per_kwh: 10, provider: OTHER_PROVIDER }),
+        planRow({ id: 'b', rate_per_kwh: 11, provider: OTHER_PROVIDER }),
+        planRow({ id: 'c', rate_per_kwh: 12, provider: THIRD_PROVIDER }),
+      ],
+      links: [{ slug: 'beta', provider_id: 'prov-2', target_url: 'https://beta.example', provider: {} }],
+    });
+
+    assert.equal(comparison.counts.commissionCapable, 0);
+    assert.equal(comparison.results.length, 3, 'nonpaying results are still returned');
+    assert.equal(comparison.counts.returned, 3);
+    assert.ok(comparison.topMatchIds.length > 0, 'and one of them still headlines');
+  });
+
+  test('the legacy count fields keep their old meanings', async () => {
+    // Preserved for any consumer outside this repository. `monetized` counted
+    // tracked and payable links together, and `unavailable` meant pricing —
+    // both stay exactly as they were rather than being quietly redefined.
+    const { counts } = await compare(BASE_REQUEST, MIXED);
+
+    assert.equal(counts.monetized, counts.commissionCapable + counts.internalTrackingOnly);
+    assert.equal(counts.unavailable, counts.pricingUnavailable);
+    assert.notEqual(counts.monetized, counts.commissionCapable);
+  });
+});
+
 /* ── Headline selection under filters ─────────────────────────────── */
 
 describe('filtering re-selects the headline without re-scoring', () => {

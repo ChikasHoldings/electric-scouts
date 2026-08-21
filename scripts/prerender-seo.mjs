@@ -37,6 +37,7 @@ import { generateSitemap } from '../src/seo/sitemap.js';
 import { buildPageContent, renderBody, renderHead, escapeHtml } from '../src/seo/render.js';
 import { loadSeoData } from '../src/seo/data.mjs';
 import { MARKET_GENERATED_AT } from '../src/seo/market.js';
+import { outputPathFor } from './prerender-paths.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -73,12 +74,6 @@ function buildPage(template, { headTags, bodyHtml }) {
   html = html.replace(rootPattern, `<div id="root">${bodyHtml}</div>`);
 
   return html;
-}
-
-/** dist/index.html for "/", dist/<path>/index.html for everything else. */
-function outputPathFor(routePath) {
-  if (routePath === '/') return path.join(DIST, 'index.html');
-  return path.join(DIST, routePath.replace(/^\//, ''), 'index.html');
 }
 
 /* ------------------------------------------------------------------ *
@@ -175,7 +170,7 @@ async function main() {
       headTags: renderHead(route, content),
       bodyHtml: renderBody(route, content, context),
     });
-    const outputPath = outputPathFor(route.path);
+    const outputPath = outputPathFor(DIST, route.path);
     await fs.mkdir(path.dirname(outputPath), { recursive: true });
     await fs.writeFile(outputPath, html, 'utf8');
     written += 1;

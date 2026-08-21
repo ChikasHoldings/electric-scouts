@@ -44,6 +44,68 @@ const PLAN_COLUMNS = `
 `;
 
 /**
+ * The tallies that describe a comparison, split by what they actually measure.
+ *
+ * Two independent facts were previously reported in words that read as though
+ * they were about the same thing, and the confusion had a price.
+ *
+ *   - PRICING COMPLETENESS is how much of the bill we could model.
+ *     `complete`, `partial`, `pricingUnavailable`.
+ *   - OUTBOUND MONETIZATION is what a click on the result is worth.
+ *     `commissionCapable`, `internalTrackingOnly`, `outboundUnavailable`.
+ *
+ * The old field named plainly `unavailable` meant the first of those, while
+ * `monetized` counted the second and third statuses together — so a result set
+ * where every link was a plain provider page, earning nothing, was reported as
+ * fully "monetized". Both names are kept below and marked legacy so no consumer
+ * outside this repository breaks on a rename, but nothing in this repository
+ * reads them any more.
+ *
+ * `eligible` counts every plan that matched; the rest describe the returned
+ * slice, because that is the set the customer is actually looking at. The three
+ * monetization counts therefore sum to `returned` exactly — a property the
+ * server tests assert, since a result must have precisely one outbound status.
+ */
+export function countResults(allResults, returned) {
+  const by = (predicate) => returned.filter(predicate).length;
+
+  const commissionCapable = by((r) => r.monetizationStatus === MONETIZATION.COMMISSION_CAPABLE);
+  const internalTrackingOnly = by((r) => r.monetizationStatus === MONETIZATION.INTERNAL_TRACKING_ONLY);
+  const outboundUnavailable = by((r) => r.monetizationStatus === MONETIZATION.UNAVAILABLE);
+  const pricingUnavailable = by((r) => r.pricingCompleteness === PRICING_COMPLETENESS.UNAVAILABLE);
+
+  return {
+    eligible: allResults.length,
+    returned: returned.length,
+    capped: allResults.length > returned.length,
+
+    // ── Pricing completeness ──
+    complete: by((r) => r.pricingCompleteness === PRICING_COMPLETENESS.COMPLETE),
+    partial: by((r) => r.pricingCompleteness === PRICING_COMPLETENESS.PARTIAL),
+    pricingUnavailable,
+
+    renewable: by((r) => r.isRenewable),
+
+    // ── Outbound monetization ──
+    //
+    // `commissionCapable` is the only one of these that can pay, and it is the
+    // only one the monetization router is allowed to treat as revenue.
+    commissionCapable,
+    internalTrackingOnly,
+    outboundUnavailable,
+    renewableCommissionCapable: by(
+      (r) => r.isRenewable && r.monetizationStatus === MONETIZATION.COMMISSION_CAPABLE
+    ),
+
+    // ── Legacy, deprecated: read the precise fields above instead ──
+    /** @deprecated pricing completeness — use `pricingUnavailable`. */
+    unavailable: pricingUnavailable,
+    /** @deprecated counts tracked links as earning — use `commissionCapable`. */
+    monetized: commissionCapable + internalTrackingOnly,
+  };
+}
+
+/**
  * Build the tracked outbound route for a plan.
  *
  * The browser receives a route into ElectricScouts, never a provider URL:
@@ -248,16 +310,7 @@ export async function runComparison(supabase, body, options = {}) {
       customerType: session.customerType,
       usageKwh,
       benchmark,
-      counts: {
-        eligible: allResults.length,
-        returned: returned.length,
-        capped: allResults.length > returned.length,
-        complete: returned.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.COMPLETE).length,
-        partial: returned.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.PARTIAL).length,
-        unavailable: returned.filter((r) => r.pricingCompleteness === PRICING_COMPLETENESS.UNAVAILABLE).length,
-        renewable: returned.filter((r) => r.isRenewable).length,
-        monetized: returned.filter((r) => r.monetizationStatus !== MONETIZATION.UNAVAILABLE).length,
-      },
+      counts: countResults(allResults, returned),
       // The headline set, by id. The full ranked array already carries
       // `isTopMatch`; this is the same fact in the form a consumer that only
       // wants the top three can use without filtering.

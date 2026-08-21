@@ -534,35 +534,126 @@ describe('monetization routing', () => {
     customerType: CUSTOMER_TYPES.RESIDENTIAL,
   });
 
-  test('residential with matches routes to affiliate', () => {
-    const { route } = resolveRoute(residentialBase, { matchCount: 12 });
+  const renewableBase = stateWith({
+    ...atZipDone,
+    customerType: CUSTOMER_TYPES.RESIDENTIAL,
+    energyPreference: 'renewable',
+  });
+
+  /* ── The invariant: AFFILIATE requires a result that can actually pay ──
+   *
+   * Having results and having revenue are different facts. Every case below
+   * that reaches AFFILIATE has at least one commission-capable result; every
+   * case that does not, must not.
+   */
+
+  test('a commission-capable residential result opens the affiliate route', () => {
+    const { route } = resolveRoute(residentialBase, {
+      resultCount: 12,
+      commissionCapableCount: 1,
+      internalTrackingOnlyCount: 11,
+    });
     assert.equal(route, ROUTES.AFFILIATE);
   });
 
-  test('residential with no matches routes to a human, never a dead end', () => {
-    const { route } = resolveRoute(residentialBase, { matchCount: 0 });
+  test('zero results is never affiliate', () => {
+    const { route } = resolveRoute(residentialBase, { resultCount: 0 });
+    assert.notEqual(route, ROUTES.AFFILIATE);
     assert.notEqual(route, ROUTES.UNROUTED);
     assert.equal(route, ROUTES.CONCIERGE);
   });
 
-  test('renewable request with no renewable inventory does not dead-end', () => {
-    const renewable = stateWith({
-      ...atZipDone,
-      customerType: CUSTOMER_TYPES.RESIDENTIAL,
-      energyPreference: 'renewable',
+  test('results that all lack an outbound link are never affiliate', () => {
+    const { route } = resolveRoute(residentialBase, {
+      resultCount: 10,
+      commissionCapableCount: 0,
+      internalTrackingOnlyCount: 0,
     });
-    const { route } = resolveRoute(renewable, { matchCount: 8, renewableMatchCount: 0 });
+    assert.notEqual(route, ROUTES.AFFILIATE);
+    assert.notEqual(route, ROUTES.UNROUTED);
+  });
+
+  test('tracking-only links are not commission-capable and are never affiliate', () => {
+    // The regression this whole change exists for: ten clickable, attributable
+    // links that earn nothing were being booked as affiliate revenue.
+    const { route } = resolveRoute(residentialBase, {
+      resultCount: 10,
+      commissionCapableCount: 0,
+      internalTrackingOnlyCount: 10,
+    });
+    assert.notEqual(route, ROUTES.AFFILIATE);
+    assert.equal(route, ROUTES.CONCIERGE);
+  });
+
+  test('a mixed result set with nothing commission-capable is never affiliate', () => {
+    const { route } = resolveRoute(residentialBase, {
+      resultCount: 9,
+      commissionCapableCount: 0,
+      internalTrackingOnlyCount: 5,
+    });
+    assert.notEqual(route, ROUTES.AFFILIATE);
+    assert.notEqual(route, ROUTES.UNROUTED);
+  });
+
+  test('an unmigrated caller passing no counts cannot reach affiliate', () => {
+    // Defaults are zero, so a caller that has not been updated fails towards a
+    // human rather than towards a revenue claim it cannot support.
+    const { route } = resolveRoute(residentialBase, {});
+    assert.notEqual(route, ROUTES.AFFILIATE);
+  });
+
+  /* ── Renewable: the renewable count is the one that governs ── */
+
+  test('renewable results that cannot pay are never affiliate', () => {
+    const { route } = resolveRoute(renewableBase, {
+      resultCount: 10,
+      renewableResultCount: 10,
+      commissionCapableCount: 0,
+      renewableCommissionCapableCount: 0,
+    });
+    assert.notEqual(route, ROUTES.AFFILIATE);
     assert.equal(route, ROUTES.RENEWABLE_PARTNER);
   });
 
-  test('renewable request with renewable inventory routes to affiliate', () => {
-    const renewable = stateWith({
-      ...atZipDone,
-      customerType: CUSTOMER_TYPES.RESIDENTIAL,
-      energyPreference: 'renewable',
+  test('a non-renewable commission-capable result does not satisfy a renewable request', () => {
+    const { route } = resolveRoute(renewableBase, {
+      resultCount: 6,
+      renewableResultCount: 5,
+      commissionCapableCount: 1,
+      renewableCommissionCapableCount: 0,
     });
-    const { route } = resolveRoute(renewable, { matchCount: 8, renewableMatchCount: 3 });
+    assert.notEqual(route, ROUTES.AFFILIATE);
+    assert.equal(route, ROUTES.RENEWABLE_PARTNER);
+  });
+
+  test('a renewable commission-capable result opens the affiliate route', () => {
+    const { route } = resolveRoute(renewableBase, {
+      resultCount: 8,
+      renewableResultCount: 3,
+      commissionCapableCount: 3,
+      renewableCommissionCapableCount: 1,
+    });
     assert.equal(route, ROUTES.AFFILIATE);
+  });
+
+  test('renewable request with no renewable inventory does not dead-end', () => {
+    const { route } = resolveRoute(renewableBase, {
+      resultCount: 8,
+      renewableResultCount: 0,
+      renewableCommissionCapableCount: 0,
+    });
+    assert.equal(route, ROUTES.RENEWABLE_PARTNER);
+  });
+
+  test('routing records the counts it decided from', () => {
+    const { signals } = resolveRoute(residentialBase, {
+      resultCount: 10,
+      commissionCapableCount: 0,
+      internalTrackingOnlyCount: 7,
+    });
+    assert.equal(signals.resultCount, 10);
+    assert.equal(signals.commissionCapableCount, 0);
+    assert.equal(signals.internalTrackingOnlyCount, 7);
   });
 
   test('a large urgent commercial account scores hot', () => {
@@ -600,6 +691,37 @@ describe('monetization routing', () => {
     assert.equal(result.route, ROUTES.COMMERCIAL_PARTNER);
     assert.ok(typeof result.score === 'number');
     assert.ok(result.signals.spendScore > 0);
+  });
+
+  test('a commercial opportunity stays a broker lead even with payable inventory', () => {
+    // Business supply is quoted, not clicked through. Commission-capable
+    // residential-style inventory in the same territory must not divert a
+    // commercial account into the affiliate flow.
+    const commercial = stateWith({
+      ...atZipDone,
+      customerType: CUSTOMER_TYPES.COMMERCIAL,
+      monthlySpendRange: '20000_plus',
+      timing: 'now',
+    });
+    const { route } = resolveRoute(commercial, {
+      resultCount: 14,
+      commissionCapableCount: 14,
+      renewableResultCount: 4,
+      renewableCommissionCapableCount: 4,
+    });
+    assert.notEqual(route, ROUTES.AFFILIATE);
+    assert.equal(route, ROUTES.COMMERCIAL_PARTNER);
+  });
+
+  test('a small commercial account still nurtures rather than going affiliate', () => {
+    const { route } = resolveRoute(stateWith({
+      ...atZipDone,
+      customerType: CUSTOMER_TYPES.COMMERCIAL,
+      monthlySpendRange: 'under_500',
+      timing: 'comparing',
+    }), { resultCount: 10, commissionCapableCount: 10 });
+    assert.notEqual(route, ROUTES.AFFILIATE);
+    assert.equal(route, ROUTES.NURTURE);
   });
 });
 

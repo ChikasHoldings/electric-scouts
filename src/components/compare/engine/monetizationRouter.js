@@ -6,7 +6,8 @@
  * so adding or removing a partner is a data change rather than a code change.
  *
  * Routes:
- *   affiliate            — matching plans exist and can be clicked through
+ *   affiliate            — at least one relevant result can actually pay a
+ *                          commission; never merely "results exist"
  *   residential_partner  — residential lead with no instant inventory
  *   commercial_partner   — commercial opportunity for broker follow-up
  *   renewable_partner    — renewable request with no direct renewable match
@@ -88,11 +89,60 @@ export function scoreCommercialLead(state) {
 /**
  * Resolve the monetization route for a finished comparison.
  *
- * `matchCount` is how many eligible plans the results step actually found, and
- * `renewableMatchCount` how many of those meet the renewable preference.
+ * ── The invariant ──
+ *
+ * AFFILIATE means "this session can earn a commission". It may only be returned
+ * when at least one relevant result is genuinely commission-capable.
+ *
+ * This used to take a single `matchCount`, and returned AFFILIATE whenever it
+ * was above zero. But a result existing and a result being payable are two
+ * different facts: most configured links are plain provider pages that we can
+ * attribute internally and that earn nothing (INTERNAL_TRACKING_ONLY), and some
+ * results have no usable destination at all (UNAVAILABLE). A comparison made
+ * entirely of those was classified as affiliate revenue, which overstated what
+ * the session was worth and pointed the customer at a handoff that could not
+ * pay — while the partner and concierge routes that could actually help them
+ * were never reached.
+ *
+ * So the count is now split by what it measures, and only the commission-capable
+ * one opens the affiliate route:
+ *
+ * @param {object} state
+ * @param {object} counts
+ * @param {number} counts.resultCount                     results shown, whatever they are worth
+ * @param {number} counts.commissionCapableCount          of those, links a conversion can pay on
+ * @param {number} counts.internalTrackingOnlyCount       tracked and attributable, but not paying
+ * @param {number} counts.renewableResultCount            results meeting the renewable preference
+ * @param {number} counts.renewableCommissionCapableCount renewable AND commission-capable
+ *
+ * Every count defaults to 0, so a caller that has not been migrated fails
+ * towards a human rather than towards a revenue claim it cannot support.
+ *
+ * What this does NOT do is hide results. Routing decides who follows up on a
+ * session; the results board shows every plan it was given either way, because
+ * a plan we earn nothing from is still the right answer for the customer if it
+ * is the cheapest one.
  */
-export function resolveRoute(state, { matchCount = 0, renewableMatchCount = 0 } = {}) {
+export function resolveRoute(state, {
+  resultCount = 0,
+  commissionCapableCount = 0,
+  internalTrackingOnlyCount = 0,
+  renewableResultCount = 0,
+  renewableCommissionCapableCount = 0,
+} = {}) {
   const wantsRenewable = state.energyPreference === 'renewable';
+
+  // Why this session routed where it did, in the same inspectable form the
+  // commercial branch already uses for its score. These are counts, never
+  // customer data, and they are what makes "10 results but no affiliate route"
+  // legible in the admin panel instead of looking like a bug.
+  const signals = {
+    resultCount,
+    commissionCapableCount,
+    internalTrackingOnlyCount,
+    renewableResultCount,
+    renewableCommissionCapableCount,
+  };
 
   if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
     const scoring = scoreCommercialLead(state);
@@ -112,24 +162,56 @@ export function resolveRoute(state, { matchCount = 0, renewableMatchCount = 0 } 
     };
   }
 
-  // ── Residential ──
-  if (wantsRenewable && renewableMatchCount === 0) {
-    // Asked for renewable, nothing renewable available: hand to a partner
-    // rather than showing an empty result.
+  // ── Residential, renewable preference ──
+  //
+  // The renewable test is deliberately its own count rather than the general
+  // one. A commission-capable plan that is not renewable does not satisfy a
+  // customer who asked for renewable supply, so it cannot be what makes this
+  // session an affiliate opportunity.
+  if (wantsRenewable) {
+    if (renewableCommissionCapableCount > 0) {
+      return {
+        route: ROUTES.AFFILIATE,
+        qualification: QUALIFICATION.HOT,
+        score: 0,
+        signals,
+      };
+    }
+
+    // Renewable results exist but none of them can pay, or there is no renewable
+    // inventory here at all. Either way this is the renewable partner's case —
+    // the same route this branch has always used for a renewable request we
+    // cannot close directly.
     return {
-      route: matchCount > 0 ? ROUTES.RENEWABLE_PARTNER : ROUTES.CONCIERGE,
+      route: renewableResultCount > 0 || resultCount > 0
+        ? ROUTES.RENEWABLE_PARTNER
+        : ROUTES.CONCIERGE,
       qualification: QUALIFICATION.WARM,
       score: 0,
-      signals: {},
+      signals,
     };
   }
 
-  if (matchCount > 0) {
+  // ── Residential, standard ──
+  if (commissionCapableCount > 0) {
     return {
       route: ROUTES.AFFILIATE,
       qualification: QUALIFICATION.HOT,
       score: 0,
-      signals: {},
+      signals,
+    };
+  }
+
+  if (resultCount > 0) {
+    // Results to show, none of them payable. "Qualified but not automatically
+    // monetizable" is exactly what CONCIERGE is for, so the session goes to a
+    // human rather than being booked as revenue it cannot produce. The board
+    // keeps showing every result regardless.
+    return {
+      route: ROUTES.CONCIERGE,
+      qualification: QUALIFICATION.WARM,
+      score: 0,
+      signals,
     };
   }
 
@@ -139,6 +221,6 @@ export function resolveRoute(state, { matchCount = 0, renewableMatchCount = 0 } 
     route: state.zip ? ROUTES.CONCIERGE : ROUTES.RESIDENTIAL_PARTNER,
     qualification: QUALIFICATION.WARM,
     score: 0,
-    signals: {},
+    signals,
   };
 }
