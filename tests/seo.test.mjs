@@ -1160,11 +1160,35 @@ describe('no unsourced savings or review claims reach a page', () => {
     return text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
   }
 
+  /**
+   * Claims the site owner has put on the page knowing this rule forbids them.
+   *
+   * This list is an override, not an exemption the code earned. Nothing in this
+   * repository derives the figure below: we hold plan rates, not anybody's
+   * bill, not the utility default rate, and not one switched customer's
+   * before-and-after. It was removed for that reason and has been restored by
+   * product decision, which is the owner's to make — substantiating it is a
+   * business record kept outside this repository, not something the test can
+   * check.
+   *
+   * Written as an exact-string allowlist rather than a relaxed pattern so it
+   * grants exactly one sentence and nothing adjacent to it: a second savings
+   * figure, or this one with a different number, still fails. Every other
+   * surface — the footer, the About page, the city index, the Organization
+   * JSON-LD — remains covered.
+   */
+  const OWNER_APPROVED = [
+    'Households that switch save up to $800 a year on their electricity bill.',
+  ];
+
+  const withoutApproved = (text) =>
+    OWNER_APPROVED.reduce((out, claim) => out.split(claim).join(' '), text);
+
   for (const { pattern, what } of CLAIMS) {
     test(`no source file states ${what}`, () => {
       const offenders = [];
       for (const file of sourceFiles()) {
-        const body = stripComments(fs.readFileSync(file, 'utf8'));
+        const body = withoutApproved(stripComments(fs.readFileSync(file, 'utf8')));
         for (const line of body.split('\n')) {
           if (pattern.test(line)) offenders.push(`${path.relative(ROOT, file)}: ${line.trim().slice(0, 110)}`);
         }
@@ -1176,7 +1200,7 @@ describe('no unsourced savings or review claims reach a page', () => {
   test('the prerendered HTML states none of them either', { skip: !distExists }, () => {
     const offenders = [];
     for (const routePath of ['/', '/all-cities', '/all-providers', '/about-us', '/texas-electricity', '/electricity-rates/texas/houston']) {
-      const html = readDist(distFileFor(routePath));
+      const html = withoutApproved(readDist(distFileFor(routePath)));
       for (const { pattern, what } of CLAIMS) {
         if (pattern.test(html)) offenders.push(`${routePath} carries ${what}`);
       }

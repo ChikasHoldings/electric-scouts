@@ -3,10 +3,6 @@ import { CheckCircle, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ValidatedZipInput from "../ValidatedZipInput";
-import { getRateSpread } from "@/seo/market";
-
-// From the committed market snapshot, so this is a constant, not a fetch.
-const rateSpread = getRateSpread() || { min: null, max: null };
 
 export default function HeroSection({ zipCode, setZipCode }) {
   const [isZipValid, setIsZipValid] = useState(false);
@@ -67,19 +63,19 @@ export default function HeroSection({ zipCode, setZipCode }) {
               </div>
             </div>
 
-            {/* What is actually at stake, stated as something we can show.
-                This read "households that switch save up to $800 a year" — a
-                figure nothing on this site supports: we hold plan rates, not
-                anybody's bill and not a single switched customer's before and
-                after. The spread between the cheapest and dearest plans we
-                track is a fact, it is on the comparison page, and it makes the
-                same point without asking the reader to take our word for it. */}
+            {/* The headline stake, restored at the site owner's direction.
+                It previously read this way, was replaced with the rate spread
+                because no dataset in this repository derives it, and is now
+                back by product decision — see the owner-approved entry in
+                tests/seo.test.mjs, which keeps the no-unsourced-claims rule in
+                force for everything else. The same sentence is in the
+                prerendered homepage intro (src/seo/content.js) so the copy
+                Google reads and the copy a visitor reads are the same. */}
             <div className="flex items-center gap-3 sm:gap-4 justify-start">
               <p className="text-gray-600 text-xs sm:text-sm font-medium">
-                The plans we track run from{" "}
-                <span className="text-[#FF6B35] font-bold">{rateSpread.min}¢</span> to{" "}
-                <span className="text-[#FF6B35] font-bold">{rateSpread.max}¢</span> per kWh.
-                Which ones you can buy depends on your address.
+                Households that switch save up to{" "}
+                <span className="text-[#FF6B35] font-bold">$800 a year</span> on their
+                electricity bill.
               </p>
             </div>
 

@@ -1387,6 +1387,13 @@ function stateRows(states, pick) {
 const STATIC_BUILDERS = {
   '/': (route, { states }) => ({
     intro: [
+      // The same sentence the hero shows a visitor (HeroSection.jsx). It is
+      // here so the homepage a crawler reads and the homepage a person reads
+      // make the same claim — a headline promise that appears only after the
+      // app mounts is one Google never sees. Restored at the site owner's
+      // direction; tests/seo.test.mjs records it as the one approved
+      // exception to the no-unsourced-claims rule.
+      'Households that switch save up to $800 a year on their electricity bill.',
       'Electric Scouts is a free, independent comparison service for the 12 US states where ' +
         'households can choose their electricity supplier. Enter a ZIP code or upload a bill and we ' +
         'show what is actually available at that address.',
