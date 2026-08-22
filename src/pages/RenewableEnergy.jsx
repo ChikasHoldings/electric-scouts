@@ -125,7 +125,7 @@ export default function RenewableEnergy() {
   return (
     <div className="bg-white">
       <SEOHead
-        title="Renewable Electricity Plans | Electric Scouts"
+        title="How Renewable Electricity Plans Work | Electric Scouts"
         description="How 100% renewable electricity plans actually work, what they cost, and which suppliers offer them in each deregulated state we cover."
         keywords="renewable electricity plans, 100% renewable energy, green electricity, renewable energy certificates, wind energy plans, solar energy plans, clean energy supplier"
         canonical="/renewable-energy"

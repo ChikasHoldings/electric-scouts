@@ -98,7 +98,11 @@ export const STATIC_ROUTES = [
   {
     page: "RenewableEnergy",
     path: "/renewable-energy",
-    title: "Renewable Electricity Plans | Electric Scouts",
+    // "Renewable Electricity Plans" and /renewable-compare-rates's "Compare
+    // Renewable Electricity Plans" were one word apart, so the two pages asked
+    // Google to rank them for the same query and it had to pick one. This page
+    // is the explainer and the other is the tool; the title now says which.
+    title: "How Renewable Electricity Plans Work | Electric Scouts",
     description: "How 100% renewable electricity plans actually work, what they cost, and which suppliers offer them in each deregulated state we cover.",
     priority: 0.8,
     changefreq: "weekly",
@@ -538,7 +542,7 @@ export const STATIC_HEADINGS = {
   '/all-cities': 'Electricity Rates by City',
   '/learning-center': 'Learning Center: Electricity Guides and Tips',
   '/residential-electricity': 'Compare Residential Electricity Options',
-  '/renewable-energy': 'Renewable Energy Plans',
+  '/renewable-energy': 'How Renewable Electricity Plans Work',
   '/renewable-compare-rates': 'Compare Renewable Electricity Plans',
   '/business-electricity': 'Business Electricity Rates and Plans',
   '/business-hub': 'Business Electricity Hub',
