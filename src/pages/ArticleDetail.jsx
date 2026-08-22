@@ -1293,7 +1293,25 @@ export default function ArticleDetail() {
     }
   }, [articleId, fullArticle]);
 
-  if (isLoading) {
+  /**
+   * Wait only when there is genuinely nothing to show.
+   *
+   * `isLoading` is the Supabase query above. Gating the whole page on it meant
+   * that any render where that request had not come back published a spinner
+   * and nothing else — and Googlebot renders once, with a finite budget, and
+   * does not come back for a second look. The article body lives in this
+   * component rather than in the prerendered content island, so a snapshot
+   * taken during the wait indexed "Loading article..." as the entire page for
+   * one of 85 real guides.
+   *
+   * The article does not need that request. `articles` above merges the
+   * database rows over a bundled static list, and every published guide is in
+   * the static list, so `article` is already resolved synchronously on the
+   * first render. The query only ever adds newer database copy on top. This is
+   * the same rule ProviderDetails follows: the snapshot renders the page, the
+   * live record refines it.
+   */
+  if (isLoading && !article) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
