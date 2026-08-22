@@ -311,7 +311,7 @@ export default function BusinessCompareRates() {
                 <span className="text-sm font-semibold">Business Electricity</span>
               </div>
               <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                Find the Right Plan for Your Business
+                Compare Business Electricity Rates
               </h1>
               <p className="text-lg text-gray-600">
                 Find competitive commercial energy plans for your business

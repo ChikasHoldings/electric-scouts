@@ -193,9 +193,11 @@ export function QuestionFrame({
       className="animate-[comparisonStep_260ms_cubic-bezier(0.16,1,0.3,1)]"
     >
       <div className="mb-7">
-        <h1 className="text-[23px] sm:text-[27px] leading-[1.25] font-semibold text-gray-900 tracking-[-0.015em] text-balance">
+        {/* An H2: this is the current step inside the page whose H1 the shell
+            above renders. Unchanged visually. */}
+        <h2 className="text-[23px] sm:text-[27px] leading-[1.25] font-semibold text-gray-900 tracking-[-0.015em] text-balance">
           {title}
-        </h1>
+        </h2>
         {subtitle && (
           <p className="mt-2.5 text-[15px] leading-relaxed text-gray-600">
             {subtitle}
@@ -283,10 +285,19 @@ export default function ComparisonShell({
           style={{ backgroundImage: palette.band, backgroundColor: "#083A56" }}
         >
           <div className={`mx-auto px-5 sm:px-6 ${column}`}>
+            {/* The page's heading, and an H1 rather than an H2.
+                The hierarchy used to be inverted: this said "Compare
+                electricity options" as an H2 while QuestionFrame below made the
+                current question ("Where do you need electricity?") the H1. Since
+                Google indexes the DOM after the app mounts, the question was
+                what /compare-rates was indexed under — a heading with no target
+                keyword in it, contradicting the page's own title tag. The
+                wording is the route registry's, so title and H1 now agree, and
+                the question is an H2 where a step within a page belongs. */}
             <header className="text-center mb-6">
-              <h2 className="text-[20px] sm:text-[22px] font-semibold text-white tracking-[-0.015em]">
-                Compare electricity options
-              </h2>
+              <h1 className="text-[20px] sm:text-[22px] font-semibold text-white tracking-[-0.015em]">
+                Compare Electricity Rates Side by Side
+              </h1>
               <p className="mt-1.5 text-[14px] text-white/65">
                 A few quick questions and we&rsquo;ll personalize your options.
               </p>

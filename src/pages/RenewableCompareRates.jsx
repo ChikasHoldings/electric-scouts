@@ -281,7 +281,7 @@ export default function RenewableCompareRates() {
                 <span className="text-sm font-semibold">100% Renewable Energy</span>
               </div>
               <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                Explore Clean Energy Options
+                Compare Renewable Electricity Plans
               </h1>
               <p className="text-lg text-gray-600">
                 Find 100% renewable electricity plans from wind and solar sources

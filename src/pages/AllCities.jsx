@@ -427,7 +427,7 @@ export default function AllCities() {
               className="mb-4"
             />
             <h1 className="text-4xl font-bold mb-4">
-              All Service Areas
+              Electricity Rates by City
             </h1>
             <p className="text-lg text-blue-100 mb-8">
               Find the best electricity rates in your city. We serve major cities across 12 deregulated states.

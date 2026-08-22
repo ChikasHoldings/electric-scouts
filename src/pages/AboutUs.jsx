@@ -45,7 +45,7 @@ export default function AboutUs() {
                 Serving 12 States Across America
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                We Built the <span className="text-[#FF6B35]">Electricity Tool</span> We Wished Existed
+                About <span className="text-[#FF6B35]">Electric Scouts</span>
               </h1>
               <p className="text-xl text-blue-100 leading-relaxed mb-8">
                 Electric Scouts is an independent platform that makes it simple to find a better electricity deal. We pull live rates from the suppliers we track across 12 deregulated states so you can compare, decide, and switch — all without the sales pressure.

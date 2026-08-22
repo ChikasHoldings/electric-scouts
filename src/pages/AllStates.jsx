@@ -77,7 +77,7 @@ export default function AllStates() {
               className="mb-3"
             />
             <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">
-              Electricity Choice States
+              Electricity Rates by State
             </h1>
             <p className="text-sm sm:text-base text-blue-100 mb-5 sm:mb-6">
               Compare electricity providers in 12 states where you have the power to choose. Find your state to unlock savings.

@@ -573,7 +573,7 @@ export default function HomeConcierge() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <Home className="w-16 h-16 mx-auto mb-4 opacity-90" />
-            <h1 className="text-3xl lg:text-5xl font-bold mb-4">Home Concierge Service</h1>
+            <h1 className="text-3xl lg:text-5xl font-bold mb-4">Home Concierge: Set Up Every Utility in One Place</h1>
             <p className="text-xl text-blue-100 mb-2">Moving? We'll handle all your utility setup so you can focus on settling in.</p>
             <p className="text-base text-blue-200 mb-8">Electricity &bull; Internet &bull; Water &bull; Gas &bull; Phone &bull; TV &mdash; All Coordinated for You</p>
             <Button onClick={() => setStep(1)} className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-10 py-6 text-lg font-bold rounded-xl shadow-lg">

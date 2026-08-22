@@ -144,7 +144,7 @@ export default function RenewableEnergy() {
         breadcrumbs={[{ name: "Home", url: "/" }, { name: "Renewable Energy" }]}
         eyebrow="Renewable electricity"
         eyebrowIcon={Leaf}
-        title="Renewable Electricity Plans"
+        title="Renewable Energy Plans"
         intro={`We track ${totalRenewablePlans} electricity plans backed by renewable generation across ${rows.length} deregulated states. Enter your ZIP code and the comparison keeps the renewable preference — it only asks whether this is for a home or a business.`}
         facts={[
           ["Renewable plans", String(totalRenewablePlans)],

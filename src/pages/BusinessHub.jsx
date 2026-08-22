@@ -53,7 +53,7 @@ export default function BusinessHub() {
                 <span className="text-sm font-semibold">Business Solutions</span>
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold mb-4">
-                Power Your Business with Better Rates
+                Business Electricity Hub
               </h1>
               <p className="text-xl text-blue-100 mb-6">
                 Commercial supply is bid against your load profile, not sold from a list. Tell us how you use power and we will get it priced.

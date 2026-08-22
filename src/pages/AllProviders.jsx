@@ -94,7 +94,7 @@ export default function AllProviders() {
               className="mb-3"
             />
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
-              Browse All Energy Providers
+              Electricity Providers Directory
             </h1>
             <p className="text-base sm:text-lg text-blue-100 mb-6 sm:mb-8">
               Our full directory of energy providers across 12 deregulated states. Filter by state, plan type, or customer rating.

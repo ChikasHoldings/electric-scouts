@@ -25,10 +25,17 @@ export default function HeroSection({ zipCode, setZipCode }) {
           <div className="space-y-5 sm:space-y-6 animate-fade-in-up text-left">
             {/* Main Headline */}
             <div>
+              {/* The homepage's H1 is the route registry's, because that is
+                  what the <title> and the prerendered HTML already say. It read
+                  "Cut Your Electric Bill. Keep the Lights On." \u2014 good copy, but
+                  the app replaces the prerendered heading on mount, so that was
+                  the heading Google indexed the homepage under, and it names
+                  neither the product nor a query anyone types. The two-line
+                  break and the gradient on the second line are kept. */}
               <h1 className="text-[32px] sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-[#084a6f] leading-[1.15] sm:leading-tight mb-3 sm:mb-4 tracking-tight">
-                Cut{"\u00A0"}Your{"\u00A0"}Electric{"\u00A0"}Bill.<br />
+                Compare{"\u00A0"}Electricity{"\u00A0"}Rates<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A]">
-                  Keep{"\u00A0"}the{"\u00A0"}Lights{"\u00A0"}On.
+                  Across{"\u00A0"}12{"\u00A0"}Deregulated{"\u00A0"}States
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
