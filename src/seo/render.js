@@ -300,6 +300,37 @@ export function contentIslandTag(route, content) {
  * <head>
  * ------------------------------------------------------------------ */
 
+/**
+ * Ask a city photograph for share dimensions rather than card dimensions.
+ *
+ * `content.image.url` is the same URL the page's own <img> renders, and three
+ * of the city photographs carry the card thumbnail's size on the query string:
+ * `?w=400&h=300&fit=crop`. That is the right size for a 400px-wide card and the
+ * wrong size for og:image on a page that declares `twitter:card=
+ * summary_large_image` — a 400x300 file is below every platform's large-card
+ * threshold, so the card degrades to a small square or drops the image.
+ *
+ * Unsplash resizes from the query string, so the same photograph can be asked
+ * for 1200x630 instead of falling back to the generic placeholder and losing
+ * the city from the card entirely. Any other host is returned untouched: we
+ * cannot know whether an arbitrary URL honours resize parameters, and inventing
+ * a size that the file does not have is worse than sending its real one.
+ */
+function shareSized(url) {
+  if (!url) return url;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== 'images.unsplash.com') return url;
+    parsed.searchParams.set('w', '1200');
+    parsed.searchParams.set('h', '630');
+    parsed.searchParams.set('fit', 'crop');
+    return parsed.toString();
+  } catch {
+    // Not an absolute URL — a site-relative path, already ours to serve.
+    return url;
+  }
+}
+
 export function renderHead(route, content) {
   // route.canonical lets a duplicate URL point at the page it consolidates onto
   // (e.g. /landing -> /). Everything else self-canonicalizes.
@@ -307,11 +338,10 @@ export function renderHead(route, content) {
   const title = route.title;
   const description = route.description || '';
   // A city's own photograph beats the section-wide placeholder in a share card.
-  // A city's own photograph beats the section-wide placeholder in a share card.
   // The dimensions below only describe the placeholder set, which is authored at
   // 1200x630; a city photo is a different shape, so it goes out without them
   // rather than with a size that is wrong.
-  const ownImage = content?.image?.url || null;
+  const ownImage = shareSized(content?.image?.url) || null;
   const image = ownImage || `${SITE_URL}${ogImageFor(route)}`;
   const robots = route.noindex ? ROBOTS_NOINDEX : ROBOTS_INDEXABLE;
   const ogType = route.type === 'article' ? 'article' : 'website';
