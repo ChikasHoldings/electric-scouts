@@ -56,7 +56,7 @@ const articleRoutes = getArticleRouteList(seoArticles);
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
-const CANONICAL_HOST = 'https://www.electricscouts.com';
+const CANONICAL_HOST = 'https://electricscouts.com';
 
 const distExists = fs.existsSync(path.join(DIST, 'index.html'));
 

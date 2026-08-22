@@ -4,21 +4,34 @@
  * THE single source of truth for the production origin used by every SEO
  * surface: canonical tags, Open Graph URLs, JSON-LD, sitemap.xml and robots.txt.
  *
- * Why www: the production deployment serves the site on
- * https://www.electricscouts.com and redirects the apex (electricscouts.com)
- * to it. A canonical URL must point at a URL that returns 200 directly, so the
- * canonical host has to be the one that is actually served.
+ * Why the apex: production serves the site on https://electricscouts.com, and
+ * https://www.electricscouts.com answers 308 to it. A canonical URL must point
+ * at a URL that returns 200 directly, so the canonical host has to be the one
+ * that is actually served.
  *
- * To move the canonical host to the apex domain later, change SITE_URL below
- * AND flip the primary domain in the Vercel project so that www redirects to
- * the apex instead of the other way round. Those two changes must ship
- * together, otherwise every canonical URL points at a redirect.
+ * This file used to say the opposite, and it cost the site its index. The
+ * primary domain in the Vercel project was flipped to the apex; this constant
+ * was not. Every page then served 200 at the apex while declaring a canonical
+ * at www — a host that 308s straight back — so all 335 canonicals, every
+ * og:url and JSON-LD @id, and all 335 sitemap URLs pointed at a redirect.
+ * Google's response to a canonical it cannot resolve to a 200 is to disregard
+ * it and pick its own, and the sitemap read as 335 redirects. Verified against
+ * production before the change:
+ *
+ *   GET https://electricscouts.com/compare-rates      -> 200, no Location
+ *       ...its canonical said https://www.electricscouts.com/compare-rates
+ *   GET https://www.electricscouts.com/compare-rates  -> 308 -> the apex
+ *
+ * The earlier comment here was right about one thing: this constant and the
+ * Vercel primary domain are a matched pair and must move together. If the
+ * primary domain is ever flipped back to www, flip this back in the same
+ * change — never one without the other.
  *
  * This module is plain ESM with no dependencies so it can be imported from the
  * browser bundle, from Vercel serverless functions and from Node build scripts.
  */
 
-const DEFAULT_SITE_URL = 'https://www.electricscouts.com';
+const DEFAULT_SITE_URL = 'https://electricscouts.com';
 
 function readNodeEnv(key) {
   try {
@@ -42,7 +55,7 @@ function normalizeOrigin(value) {
 }
 
 /**
- * Production origin, e.g. "https://www.electricscouts.com" (no trailing slash).
+ * Production origin, e.g. "https://electricscouts.com" (no trailing slash).
  * SEO_SITE_URL is honoured so build scripts and tests can target another host;
  * it is deliberately not wired to preview deployments, because preview builds
  * must never publish preview-hostname canonicals.
@@ -67,7 +80,7 @@ export function canonicalPath(pathname) {
   return path || '/';
 }
 
-/** Absolute canonical URL for a path: "/faq" -> "https://www.electricscouts.com/faq" */
+/** Absolute canonical URL for a path: "/faq" -> "https://electricscouts.com/faq" */
 export function absoluteUrl(pathname) {
   const path = canonicalPath(pathname);
   return path === '/' ? `${SITE_URL}/` : `${SITE_URL}${path}`;

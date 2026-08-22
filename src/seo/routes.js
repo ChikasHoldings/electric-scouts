@@ -534,7 +534,14 @@ export function providerSlug(name) {
  * it describes the same thing the React page renders.
  */
 export const STATIC_HEADINGS = {
-  '/': 'Compare Electricity Rates Across 12 Deregulated States',
+  // The hero's own words. The homepage H1 is the one heading on this site that
+  // is a brand statement rather than a description, by product decision — so
+  // the registry follows the hero rather than the other way round. What matters
+  // here is that they agree: the app replaces the prerendered heading on mount,
+  // and when these two disagreed the served HTML and the indexed DOM said
+  // different things on the site's most important page. The <title> still
+  // carries the query terms ("Compare Electricity Rates in 12 States").
+  '/': 'Cut Your Electric Bill. Keep the Lights On.',
   '/compare-rates': 'Compare Electricity Rates Side by Side',
   '/bill-analyzer': 'Electricity Bill Analyzer',
   '/all-providers': 'Electricity Providers Directory',

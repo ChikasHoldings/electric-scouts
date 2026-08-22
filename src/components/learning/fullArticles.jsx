@@ -7618,7 +7618,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
 
 <p>A smart thermostat is a Wi-Fi-enabled device that allows you to control your home’s heating and cooling remotely via a smartphone app, voice commands, or automation features. Unlike traditional thermostats, smart thermostats learn your habits, adjust temperatures based on occupancy, and optimize energy use to keep your home comfortable while reducing waste.</p>
 
-<p>Popular models include the <strong><a href="https://www.electricscouts.com/renewable-energy">Nest Thermostat</a></strong> by Google and the <strong>Ecobee</strong> series, both of which offer advanced features such as:</p>
+<p>Popular models include the <strong><a href="/renewable-energy">Nest Thermostat</a></strong> by Google and the <strong>Ecobee</strong> series, both of which offer advanced features such as:</p>
 
 <ul>
   <li>Adaptive scheduling based on your daily routines</li>
