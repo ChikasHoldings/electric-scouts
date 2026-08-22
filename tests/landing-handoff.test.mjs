@@ -331,7 +331,7 @@ describe('attribution survives the handoff', () => {
         utm_source: 'google',
         utm_medium: 'cpc',
         utm_campaign: 'tx_commercial',
-        landing_page: 'https://www.electricscouts.com/business-electricity?utm_source=google',
+        landing_page: 'https://electricscouts.com/business-electricity?utm_source=google',
         referrer: 'https://www.google.com/',
       },
     };
@@ -359,7 +359,7 @@ describe('attribution survives the handoff', () => {
       utm_medium: 'cpc',
       utm_campaign: 'tx',
       referrer: 'https://www.google.com/',
-      landing_page: 'https://www.electricscouts.com/residential-electricity',
+      landing_page: 'https://electricscouts.com/residential-electricity',
     });
     assert.deepEqual(context, { utm_source: 'google', utm_medium: 'cpc', utm_campaign: 'tx' });
   });

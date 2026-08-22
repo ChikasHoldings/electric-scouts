@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Always use branded sender name — extract raw email from env var if set, then wrap with display name
 const RAW_EMAIL = (process.env.FROM_EMAIL || "noreply@electricscouts.com").replace(/.*<(.+)>.*/, '$1').trim();
 const FROM_EMAIL = `Electric Scouts <${RAW_EMAIL}>`;
-const APP_BASE_URL = process.env.APP_BASE_URL || "https://www.electricscouts.com";
+const APP_BASE_URL = process.env.APP_BASE_URL || "https://electricscouts.com";
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim()).filter(Boolean);
 
 // Logo URLs (hosted on the live site)
@@ -113,7 +113,7 @@ export function brandedFooter(recipientEmail, reasonLine) {
       <!-- Website Link -->
       <tr><td style="padding:8px 32px;text-align:center;">
         <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-size:14px;font-weight:600;">
-          www.electricscouts.com
+          electricscouts.com
         </a>
       </td></tr>
       

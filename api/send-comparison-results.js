@@ -393,7 +393,7 @@ export default async function handler(req, res) {
                   <span style="color:#d1d5db;margin:0 10px;">|</span>
                   <a href="${APP_BASE_URL}/bill-analyzer" style="color:#0A5C8C;text-decoration:none;font-weight:600;">Bill Analyzer</a>
                   <span style="color:#d1d5db;margin:0 10px;">|</span>
-                  <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-weight:600;">www.electricscouts.com</a>
+                  <a href="${APP_BASE_URL}" style="color:#0A5C8C;text-decoration:none;font-weight:600;">electricscouts.com</a>
                 </td></tr>
                 <!-- Divider -->
                 <tr><td style="padding:20px 30px 0;"><div style="border-top:1px solid #e5e7eb;"></div></td></tr>

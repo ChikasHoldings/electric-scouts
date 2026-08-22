@@ -256,7 +256,7 @@ async function handleCreateUser(req, res) {
       : "Viewer";
 
   const baseUrl =
-    process.env.VITE_APP_BASE_URL || "https://www.electricscouts.com";
+    process.env.VITE_APP_BASE_URL || "https://electricscouts.com";
 
   try {
     await sendEmail({
