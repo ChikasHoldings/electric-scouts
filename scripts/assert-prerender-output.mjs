@@ -189,6 +189,26 @@ async function assertVercelContract(failures) {
       failures.add(scope, `rewrite ${source} -> ${destination} sends a money page to the app shell`);
     }
   }
+
+  /*
+   * The two HTML files Vercel serves that no route record describes.
+   *
+   * Both answer their own URL with 200 — /app-shell.html with an empty #root,
+   * /404.html with a "Page Not Found" body — so both need a noindex that does
+   * not depend on a crawler rendering the page to find one. The meta tag in the
+   * file covers renderers; this header covers everything else, and it is the
+   * half that survives if the prerender template ever changes.
+   */
+  const headerFor = (source) =>
+    (config.headers || []).find((entry) => entry.source === source)?.headers || [];
+  for (const file of ['/app-shell.html', '/404.html']) {
+    const robots = headerFor(file).find((h) => String(h.key).toLowerCase() === 'x-robots-tag');
+    if (!robots) {
+      failures.add(scope, `${file} has no X-Robots-Tag header; it is served at its own URL and must not be indexable`);
+    } else if (!/noindex/i.test(robots.value)) {
+      failures.add(scope, `${file} X-Robots-Tag is "${robots.value}"; it must contain noindex`);
+    }
+  }
 }
 
 /**
@@ -344,6 +364,15 @@ async function assertSupportingFiles(failures) {
     const page = readPage(shell);
     if (page.canonicalCount !== 0) failures.add('app-shell.html', 'declares a canonical; the client sets it from the real route');
     if (page.marker) failures.add('app-shell.html', `carries prerender marker ${page.marker}; it must stay route-neutral`);
+    // Vercel serves everything in the output directory, so this file answers
+    // https://…/app-shell.html with 200 and an empty #root. Without a robots
+    // directive that is an indexable app shell at a public URL — the exact
+    // shape the prerender exists to remove, in the one place the route
+    // registry does not describe. SEOHead overwrites the tag from the real
+    // route once the app mounts, so this binds the raw fetch only.
+    if (!/noindex/i.test(page.robots)) {
+      failures.add('app-shell.html', `not noindex (found "${page.robots || 'no robots meta'}")`);
+    }
   }
 
   for (const name of ['robots.txt', 'sitemap.xml']) {
