@@ -352,6 +352,31 @@ describe('sitemap.xml', () => {
     }
   });
 
+  test('lastmod reports when the content changed, not when the build ran', () => {
+    // The regression this guards: `lastmod` defaulted to `new Date()`, so every
+    // deploy announced that all 300-odd generated URLs had been rewritten that
+    // morning. Google's documented response to lastmod values it finds
+    // inaccurate is to stop trusting them — and a site waiting on 335 URLs to
+    // be crawled cannot afford to discard the one signal that says which of
+    // them changed.
+    const today = new Date().toISOString().split('T')[0];
+    const stamped = entries.filter((entry) => entry.lastmod === today);
+    assert.deepEqual(
+      stamped.map((entry) => entry.loc).slice(0, 5),
+      [],
+      `${stamped.length} sitemap entries carry today's date — lastmod is being read off the clock`
+    );
+  });
+
+  test('rebuilding without changing content produces an identical sitemap', () => {
+    // The same property from the other side: if any lastmod came from the
+    // clock, two builds of one commit would disagree, and every deploy would
+    // hand Google a sitemap that looks entirely new.
+    const first = buildSitemapXml(buildSitemapEntries({ providers: getPublishableProviders() }));
+    const second = buildSitemapXml(buildSitemapEntries({ providers: getPublishableProviders() }));
+    assert.equal(first, second, 'sitemap is not reproducible across builds');
+  });
+
   test('advertises only article URLs the app can actually resolve', () => {
     // Articles are published at their keyword slug. The sitemap must advertise
     // the canonical form only: a /learn/<id> URL in here would be asking Google

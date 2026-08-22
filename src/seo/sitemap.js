@@ -18,6 +18,7 @@
 
 import { absoluteUrl } from './site.js';
 import { getIndexableRoutes } from './routes.js';
+import { MARKET_GENERATED_AT } from './market.js';
 
 function escapeXml(value) {
   return String(value)
@@ -34,7 +35,24 @@ function escapeXml(value) {
  * @param {{providers?: any[], fullArticles?: Record<string, any>, today?: string}} [options]
  */
 export function buildSitemapEntries({ providers = [], fullArticles, today } = {}) {
-  const lastmodDefault = today || new Date().toISOString().split('T')[0];
+  /**
+   * `lastmod` must be the date the PAGE last changed, not the date we built it.
+   *
+   * It used to default to `new Date()`, so every deploy told Google that all
+   * 300-odd generated URLs had been rewritten that morning. Google's stated
+   * behaviour with lastmod values it finds inaccurate is to stop trusting them,
+   * and a site asking for 335 URLs to be crawled cannot afford to throw away
+   * the one signal that says which of them are worth re-fetching. It also made
+   * the sitemap differ on every rebuild for no reason.
+   *
+   * These pages are generated from the market snapshot, so the date that
+   * snapshot was taken IS the date their content last changed. Routes with a
+   * truer date of their own — articles carry their last edit, providers their
+   * record's updatedAt — override it below.
+   *
+   * `today` stays overridable for tests; it is no longer a clock read.
+   */
+  const lastmodDefault = today || MARKET_GENERATED_AT;
 
   const entries = getIndexableRoutes({ providers, fullArticles }).map((route) => ({
     loc: absoluteUrl(route.path),

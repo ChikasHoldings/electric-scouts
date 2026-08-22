@@ -21,6 +21,7 @@
 import { canonicalPath, DESCRIPTION_MAX, SITE_NAME, stripBrand, withBrand } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { ARTICLE_SLUGS, getArticleRoutes } from './articles.js';
+import { articleModifiedDate } from './articleDates.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
 import { COMPARE_HUB, getComparisons } from './comparisons.js';
 import { UTILITY_HUB, getUtilities } from './utilities.js';
@@ -375,6 +376,10 @@ export function getArticleRouteList(fullArticles) {
     description: article.description,
     heading: article.heading,
     content: article.content,
+    // The date this article's own text last changed, from the committed
+    // snapshot of git history. Without it the sitemap fell back to the build
+    // date, which told Google all 85 guides were rewritten on every deploy.
+    lastmod: articleModifiedDate(article.id) || undefined,
     priority: 0.7,
     changefreq: 'weekly',
   }));
