@@ -1,0 +1,163 @@
+# Verify that a DEPLOYED Electric Scouts site serves the right HTML.
+#
+# `npm run build` already refuses to produce a dist/ whose routes are wrong
+# (scripts/assert-prerender-output.mjs). This checks the other half of the
+# claim: that the deployment actually serves those files. Between a correct
+# dist/ and a correct response sit the project's build and output settings, the
+# rewrites, the redirects, the CDN cache and which deployment is aliased —
+# none of which are visible from inside the repository.
+#
+# Two ways in, on purpose:
+#
+#   workflow_dispatch   run it by hand against any URL. This path always works,
+#                       which matters because the automatic one depends on the
+#                       Vercel GitHub integration emitting deployment_status
+#                       events, and a project that is not wired that way would
+#                       otherwise have no verification at all.
+#
+#   deployment_status   run it automatically when a deployment reports success
+#                       and carries an environment URL.
+#
+# WHY THE MANUAL PATH DEMANDS A GIT REF
+#
+# The verifier reads the route registry out of the checkout to decide what the
+# deployment SHOULD be serving. So the checkout has to be the commit the
+# deployment was built from. It previously fell back to github.sha — the
+# default branch — which meant verifying an old deployment against a newer
+# registry, or a newer deployment against an older one, and reporting either
+# mismatch as a route defect. A verifier that can produce a confident wrong
+# answer is worse than no verifier, so the ref is required rather than guessed.
+#
+# No secrets, no Supabase, and nothing here writes to Vercel or to production:
+# it makes plain GET requests and reads the responses.
+
+name: Verify deployment routes
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Deployment URL to verify"
+        required: true
+        type: string
+      git_ref:
+        description: "Exact commit SHA, branch, or tag deployed at base_url"
+        required: true
+        type: string
+      verification_mode:
+        description: "How to evaluate deployment-level robots headers"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - preview
+          - production
+  deployment_status:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-deployment-${{ github.event.inputs.base_url || github.event.deployment_status.environment_url || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    # On deployment_status this fires for every state transition, so it is
+    # gated on a successful deployment that actually published a URL.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment_url != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Resolve and validate target
+        id: target
+        env:
+          # Read through the environment rather than interpolated into the run
+          # script: these values come from a webhook payload or a form field.
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_URL: ${{ github.event.inputs.base_url }}
+          DISPATCH_REF: ${{ github.event.inputs.git_ref }}
+          DISPATCH_MODE: ${{ github.event.inputs.verification_mode }}
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          DEPLOYMENT_SHA: ${{ github.event.deployment.sha }}
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            BASE_URL="${DISPATCH_URL:-}"
+            GIT_REF="${DISPATCH_REF:-}"
+            MODE="${DISPATCH_MODE:-auto}"
+          else
+            BASE_URL="${DEPLOYMENT_URL:-}"
+            # The SHA the deployment was created for. Never a branch name: the
+            # branch may have moved since the deployment was built.
+            GIT_REF="${DEPLOYMENT_SHA:-}"
+            MODE="auto"
+          fi
+
+          if [ -z "$BASE_URL" ]; then
+            echo "::error::no deployment URL to verify"
+            exit 1
+          fi
+
+          # Required, never defaulted. See the header comment.
+          if [ -z "$GIT_REF" ]; then
+            echo "::error::no git ref for $BASE_URL — supply the exact commit, branch or tag that was deployed there"
+            exit 1
+          fi
+
+          case "$BASE_URL" in
+            https://*) ;;
+            *) echo "::error::base URL must be https, got '$BASE_URL'"; exit 1 ;;
+          esac
+
+          case "$MODE" in
+            auto|preview|production) ;;
+            *) echo "::error::verification mode must be auto, preview or production, got '$MODE'"; exit 1 ;;
+          esac
+
+          {
+            echo "base_url=$BASE_URL"
+            echo "git_ref=$GIT_REF"
+            echo "mode=$MODE"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Verifying $BASE_URL at ref $GIT_REF (mode: $MODE)"
+
+      - uses: actions/checkout@v4
+        with:
+          # The commit the deployment was built from, so the route registry the
+          # verifier reads is the one that produced the HTML it is reading.
+          ref: ${{ steps.target.outputs.git_ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # package-lock.json is the lockfile this repository builds from; it is
+          # what vercel.json pins the install to as well.
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Verify live routes
+        id: verify
+        env:
+          ELECTRICSCOUTS_BASE_URL: ${{ steps.target.outputs.base_url }}
+          ELECTRICSCOUTS_VERIFY_MODE: ${{ steps.target.outputs.mode }}
+        run: |
+          set -o pipefail
+          npm run verify:live 2>&1 | tee verify-live-report.txt
+
+      - name: Upload report
+        if: failure() && steps.verify.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-live-report
+          path: verify-live-report.txt
+          retention-days: 14

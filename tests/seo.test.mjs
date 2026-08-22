@@ -418,6 +418,31 @@ describe('sitemap.xml', () => {
     }
   });
 
+  test('importing the date generator does not rewrite the dates', async () => {
+    // The test above imports scripts/refresh-article-dates.mjs for one helper.
+    // That script used to call main() at module scope, so merely reading
+    // hashBlocks out of it regenerated src/seo/articleDates.js — `npm test`
+    // left the worktree dirty, and a generated snapshot nobody meant to change
+    // was one `git commit -a` away from shipping. main() is now behind an
+    // entrypoint guard.
+    const generated = path.join(ROOT, 'src/seo/articleDates.js');
+    const before = fs.readFileSync(generated, 'utf8');
+
+    const module = await import('../scripts/refresh-article-dates.mjs');
+    assert.equal(typeof module.hashBlocks, 'function', 'the helper is still exported');
+    // Called with no arguments so it reads the generator's OWN module URL
+    // against this process's argv[1]. Passing this test file's url instead
+    // would assert something true and irrelevant: under `node --test` the test
+    // file really is its own process entrypoint.
+    assert.equal(module.isMainModule(), false, 'the imported generator is not the entrypoint');
+
+    assert.equal(
+      fs.readFileSync(generated, 'utf8'),
+      before,
+      'importing the generator rewrote src/seo/articleDates.js'
+    );
+  });
+
   test('every article has a slug, and no two share one', () => {
     const slugs = ARTICLE_IDS.map((id) => ARTICLE_SLUGS[id]);
     for (const [index, slug] of slugs.entries()) {
