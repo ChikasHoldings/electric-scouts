@@ -125,7 +125,7 @@ export default function RenewableEnergy() {
   return (
     <div className="bg-white">
       <SEOHead
-        title="Renewable Electricity Plans | Electric Scouts"
+        title="How Renewable Electricity Plans Work | Electric Scouts"
         description="How 100% renewable electricity plans actually work, what they cost, and which suppliers offer them in each deregulated state we cover."
         keywords="renewable electricity plans, 100% renewable energy, green electricity, renewable energy certificates, wind energy plans, solar energy plans, clean energy supplier"
         canonical="/renewable-energy"
@@ -144,7 +144,11 @@ export default function RenewableEnergy() {
         breadcrumbs={[{ name: "Home", url: "/" }, { name: "Renewable Energy" }]}
         eyebrow="Renewable electricity"
         eyebrowIcon={Leaf}
-        title="Renewable Electricity Plans"
+        /* Must match STATIC_HEADINGS["/renewable-energy"] in src/seo/routes.js:
+           this is the H1 Google reads after rendering, and the prerendered one is
+           what it reads before. A page whose two H1s disagree is a page whose
+           keyword is on neither. */
+        title="How Renewable Electricity Plans Work"
         intro={`We track ${totalRenewablePlans} electricity plans backed by renewable generation across ${rows.length} deregulated states. Enter your ZIP code and the comparison keeps the renewable preference — it only asks whether this is for a home or a business.`}
         facts={[
           ["Renewable plans", String(totalRenewablePlans)],

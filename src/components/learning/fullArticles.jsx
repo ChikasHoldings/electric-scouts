@@ -838,7 +838,7 @@ Annual cost: $33,744<br>
 
   106: {
     title: "Nashua NH Electricity Rates: Complete Shopping Guide",
-    metaTitle: "Nashua NH Electricity Rates & Suppliers | Electric Scouts",
+    metaTitle: "Nashua NH: Electricity Suppliers vs Eversource",
     metaDescription: "Compare Nashua electricity suppliers against Eversource default service, with local context for Hillsborough County households.",
     tags: ["Nashua NH Electricity", "Hillsborough County Power", "Eversource Nashua", "New Hampshire Electricity Rates", "Nashua Energy Suppliers"],
     content: `
@@ -1003,7 +1003,7 @@ Competitive rate: ~$1,068/month<br>
 
   107: {
     title: "Concord NH Electricity Rates: Capital City Guide",
-    metaTitle: "Concord NH Electricity Rates & Suppliers | Electric Scouts",
+    metaTitle: "Concord NH: Electricity Suppliers vs Eversource",
     metaDescription: "Compare Concord electricity suppliers against Eversource default service, with local context for Merrimack County households.",
     tags: ["Concord NH Electricity", "Merrimack County Power", "Eversource Concord", "New Hampshire Capital", "Concord Energy Rates"],
     content: `
@@ -1193,7 +1193,7 @@ Calendar reminder 90 days before contract expiration to shop again and avoid exp
 
   108: {
     title: "Warwick RI Electricity Rates: Kent County Guide",
-    metaTitle: "Warwick RI Electricity Rates & Suppliers | Electric Scouts",
+    metaTitle: "Warwick RI: Suppliers vs Rhode Island Energy",
     metaDescription: "Compare Warwick electricity suppliers against Rhode Island Energy last resort service, with local context for Kent County.",
     tags: ["Warwick RI Electricity", "Kent County Power", "National Grid Warwick", "Rhode Island Electricity", "Warwick Energy Rates"],
     content: `
@@ -4646,7 +4646,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   },
   33: {
     title: "San Antonio Electricity Rates 2026: CPS Energy Alternatives",
-    metaTitle: "San Antonio Electricity & CPS Energy | Electric Scouts",
+    metaTitle: "Can You Switch Electricity in San Antonio?",
     metaDescription: "San Antonio is served by municipal utility CPS Energy, so retail choice works differently here. What that means for your options.",
     tags: ["san antonio electricity rates", "cps energy alternatives", "san antonio energy plans", "energy cost savings", "Texas energy providers"],
     content: `
@@ -4767,7 +4767,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   },
   34: {
     title: "Austin Electricity Rates 2026: Austin Energy Alternatives",
-    metaTitle: "Austin Electricity Rates & Austin Energy | Electric Scouts",
+    metaTitle: "Can You Switch Electricity in Austin?",
     metaDescription: "Austin Energy is a municipal utility, so most of the city sits outside Texas retail choice. What that means for your options.",
     tags: ["Austin electricity rates", "Austin energy alternatives", "Austin energy plans", "energy savings Austin", "renewable energy Austin"],
     content: `
@@ -5455,7 +5455,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   },
   39: {
     title: "Green Mountain Energy Review 2026: Plans, Rates, and Pros/Cons",
-    metaTitle: "Green Mountain Energy Review: Plans & Rates | Electric Scouts",
+    metaTitle: "Green Mountain Energy Review: Renewable Claims",
     metaDescription: "A look at Green Mountain Energy's plan types, contract terms and renewable claims, and where it sits against other Texas suppliers.",
     tags: ["green mountain energy review", "green mountain energy rates", "green mountain energy plans", "renewable energy", "energy provider review"],
     content: `
@@ -5568,7 +5568,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   },
   40: {
     title: "Octopus Energy Review 2026: Plans, Rates, and Customer Experience",
-    metaTitle: "Octopus Energy Review: Plans & Rates | Electric Scouts",
+    metaTitle: "Octopus Energy Review: Customer Experience",
     metaDescription: "A look at Octopus Energy's plan structure, contract terms and customer experience, and how it compares with other retail suppliers.",
     tags: ["octopus energy review", "octopus energy rates", "octopus energy plans", "energy reviews 2026", "renewable energy"],
     content: `
@@ -5726,7 +5726,7 @@ Set a reminder 90 days before contract end to shop again and avoid expensive aut
   },
   41: {
     title: "Just Energy Review 2026: Plans, Rates, and Is It Worth It?",
-    metaTitle: "Just Energy Review: Plans & Rates | Electric Scouts",
+    metaTitle: "Just Energy Review: Contract Terms and Fees",
     metaDescription: "A look at Just Energy's plan types, contract terms and fees, and the things worth weighing up before you sign with them.",
     tags: ["just energy review", "just energy rates", "just energy plans", "energy providers", "energy comparison"],
     content: `

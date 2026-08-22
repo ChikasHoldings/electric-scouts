@@ -200,7 +200,7 @@ export default function FAQ() {
               className="mb-3 justify-center"
             />
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
-              Frequently Asked Questions
+              Electricity Questions, Answered
             </h1>
             <p className="text-lg text-blue-100">
               Straight answers to the questions we hear most about switching providers and saving on electricity

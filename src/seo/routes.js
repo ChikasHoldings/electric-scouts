@@ -21,6 +21,7 @@
 import { canonicalPath, DESCRIPTION_MAX, SITE_NAME, stripBrand, withBrand } from './site.js';
 import { getCities, getStates, STATE_NAMES, STATE_PAGE_PATHS } from './locations.js';
 import { ARTICLE_SLUGS, getArticleRoutes } from './articles.js';
+import { articleModifiedDate } from './articleDates.js';
 import { formatRate, getStateMarket, parseRate } from './market.js';
 import { COMPARE_HUB, getComparisons } from './comparisons.js';
 import { UTILITY_HUB, getUtilities } from './utilities.js';
@@ -97,7 +98,11 @@ export const STATIC_ROUTES = [
   {
     page: "RenewableEnergy",
     path: "/renewable-energy",
-    title: "Renewable Electricity Plans | Electric Scouts",
+    // "Renewable Electricity Plans" and /renewable-compare-rates's "Compare
+    // Renewable Electricity Plans" were one word apart, so the two pages asked
+    // Google to rank them for the same query and it had to pick one. This page
+    // is the explainer and the other is the tool; the title now says which.
+    title: "How Renewable Electricity Plans Work | Electric Scouts",
     description: "How 100% renewable electricity plans actually work, what they cost, and which suppliers offer them in each deregulated state we cover.",
     priority: 0.8,
     changefreq: "weekly",
@@ -375,6 +380,10 @@ export function getArticleRouteList(fullArticles) {
     description: article.description,
     heading: article.heading,
     content: article.content,
+    // The date this article's own text last changed, from the committed
+    // snapshot of git history. Without it the sitemap fell back to the build
+    // date, which told Google all 85 guides were rewritten on every deploy.
+    lastmod: articleModifiedDate(article.id) || undefined,
     priority: 0.7,
     changefreq: 'weekly',
   }));
@@ -533,7 +542,7 @@ export const STATIC_HEADINGS = {
   '/all-cities': 'Electricity Rates by City',
   '/learning-center': 'Learning Center: Electricity Guides and Tips',
   '/residential-electricity': 'Compare Residential Electricity Options',
-  '/renewable-energy': 'Renewable Energy Plans',
+  '/renewable-energy': 'How Renewable Electricity Plans Work',
   '/renewable-compare-rates': 'Compare Renewable Electricity Plans',
   '/business-electricity': 'Business Electricity Rates and Plans',
   '/business-hub': 'Business Electricity Hub',

@@ -668,7 +668,7 @@ export default function BillAnalyzer() {
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <FileText className="w-8 h-8 text-white" aria-hidden="true" />
             </div>
-            <h1 className="text-3xl font-bold mb-3">Analyze Your Electricity Bill</h1>
+            <h1 className="text-3xl font-bold mb-3">Electricity Bill Analyzer</h1>
             <p className="text-base text-blue-100 max-w-2xl mx-auto">
               Upload a recent bill and we&rsquo;ll read your usage and what you actually pay,
               then compare it against the plans sold at your address.

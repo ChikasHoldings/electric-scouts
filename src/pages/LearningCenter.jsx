@@ -1306,7 +1306,7 @@ export default function LearningCenter() {
               <span>Free Expert Guides</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
-              Learn How Electricity Shopping Actually Works
+              Learning Center: Electricity Guides and Tips
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-blue-100 mb-5">
               Expert guides with real examples to help you find the lowest rates

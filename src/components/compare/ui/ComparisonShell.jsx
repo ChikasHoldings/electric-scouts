@@ -1,7 +1,6 @@
-import { createContext, useContext } from "react";
-import { Check, Lock, ShieldCheck, Sparkles } from "lucide-react";
+import { createContext, useContext, useEffect, useRef } from "react";
+import { Lock, ShieldCheck, Sparkles } from "lucide-react";
 
-import { STAGES, STAGE_LABELS } from "../engine/comparisonState";
 
 /**
  * Layout and chrome for the comparison engine.
@@ -66,92 +65,6 @@ export function useAccent() {
   return useContext(AccentContext);
 }
 
-/**
- * Stage indicator.
- *
- * Deliberately not "Step 4 of 10" — the number of questions varies with the
- * branch and with how much the bill supplied, so a count would be wrong as
- * often as it was right. Stages stay stable regardless of the path taken, and
- * a completed one carries a check so progress is legible at a glance.
- */
-export function StageProgress({ activeStage }) {
-  const activeIndex = STAGES.indexOf(activeStage);
-
-  return (
-    <nav aria-label="Progress" className="mb-8">
-      {/* Each stage owns the half-rail on either side of its dot, so the line
-          reads as one continuous track rather than five stitched segments. */}
-      <ol className="flex items-start">
-        {STAGES.map((stage, index) => {
-          const isComplete = index < activeIndex;
-          const isActive = index === activeIndex;
-          const railBefore = index <= activeIndex ? "bg-white/60" : "bg-white/15";
-          const railAfter = index < activeIndex ? "bg-white/60" : "bg-white/15";
-
-          return (
-            <li key={stage} className="flex-1 flex flex-col items-center min-w-0">
-              <div className="w-full flex items-center h-8">
-                <span
-                  aria-hidden="true"
-                  className={`h-[2px] flex-1 transition-colors ${index === 0 ? "bg-transparent" : railBefore}`}
-                />
-                <span
-                  aria-hidden="true"
-                  className={`flex-shrink-0 flex items-center justify-center rounded-full font-semibold transition-all duration-300 ${
-                    isActive
-                      ? "w-8 h-8 bg-white text-gray-900 text-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.22)] ring-[5px] ring-white/20"
-                      : isComplete
-                        ? "w-6 h-6 bg-white text-gray-900 text-[11px]"
-                        : "w-6 h-6 bg-white/[0.14] text-white/60 text-[11px] ring-1 ring-inset ring-white/20"
-                  }`}
-                >
-                  {/* Completed stages carry a check; the active and upcoming
-                      ones carry a dot rather than a number. A numeral here read
-                      as "step 5 of 5", which is exactly the fixed step counter
-                      this flow must not imply — the number of questions varies
-                      with the branch and with what the bill supplied. */}
-                  {isComplete ? (
-                    <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                  ) : (
-                    <span
-                      className={`rounded-full ${
-                        isActive ? "w-2.5 h-2.5 bg-gray-900" : "w-1.5 h-1.5 bg-white/50"
-                      }`}
-                    />
-                  )}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={`h-[2px] flex-1 transition-colors ${
-                    index === STAGES.length - 1 ? "bg-transparent" : railAfter
-                  }`}
-                />
-              </div>
-
-              <span
-                className={`mt-2 text-[10.5px] sm:text-[11.5px] font-medium tracking-wide truncate max-w-full transition-colors ${
-                  isActive ? "text-white" : isComplete ? "text-white/70" : "text-white/40"
-                }`}
-                aria-current={isActive ? "step" : undefined}
-              >
-                {STAGE_LABELS[stage]}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
-  );
-}
-
-/**
- * What the engine already knows, shown back to the visitor.
- *
- * The whole point of the landing handoff is that nothing is asked twice — so
- * the ZIP code and the service they picked are stated on the band rather than
- * being invisible state. It is also the fastest way for someone to notice they
- * typed the wrong ZIP.
- */
 function ContextChips({ items }) {
   if (!items.length) return null;
 
@@ -193,9 +106,11 @@ export function QuestionFrame({
       className="animate-[comparisonStep_260ms_cubic-bezier(0.16,1,0.3,1)]"
     >
       <div className="mb-7">
-        <h1 className="text-[23px] sm:text-[27px] leading-[1.25] font-semibold text-gray-900 tracking-[-0.015em] text-balance">
+        {/* An H2: this is the current step inside the page whose H1 the shell
+            above renders. Unchanged visually. */}
+        <h2 className="text-[23px] sm:text-[27px] leading-[1.25] font-semibold text-gray-900 tracking-[-0.015em] text-balance">
           {title}
-        </h1>
+        </h2>
         {subtitle && (
           <p className="mt-2.5 text-[15px] leading-relaxed text-gray-600">
             {subtitle}
@@ -258,24 +173,79 @@ function TrustStrip() {
   );
 }
 
+/**
+ * How far above the card to stop, so it does not sit flush against the
+ * viewport edge when a step scrolls into place.
+ */
+const CARD_SCROLL_GAP = 16;
+
 export default function ComparisonShell({
-  activeStage,
   children,
   wide = false,
   accent = "residential",
   context = [],
+  scrollKey,
+  scrollTarget = "form",
 }) {
   const palette = ACCENTS[accent] || ACCENTS.residential;
+  const cardRef = useRef(null);
+  const isFirstStep = useRef(true);
 
   // Results need real room for three side-by-side match cards plus a list;
   // the questionnaire stays narrow so a single question keeps the focus.
   const column = wide ? "max-w-6xl" : "max-w-xl";
 
+  /**
+   * Put each step where the reader expects to start reading it.
+   *
+   * One question replaces another in place, so without this a visitor who
+   * scrolled down to reach the button answers the next question from wherever
+   * that button left them — half a screen into a card whose heading is above
+   * the fold. A question is a fresh unit of content and should start at its
+   * own top.
+   *
+   * A form step scrolls to the top of the card. Results scroll to the top of
+   * the PAGE, because there the heading and the summary above the card are
+   * part of what the visitor came for rather than chrome they have read.
+   *
+   * The first FORM step is exempt: a direct load of /compare-rates already
+   * starts at the top, and moving the page under someone who has not
+   * interacted yet is the one case where this would be wrong. Results are not
+   * exempt, and that distinction is load-bearing rather than a nicety — the
+   * results view renders through a different component, so this shell unmounts
+   * and a fresh one mounts underneath it. To that new instance the results ARE
+   * the first step, and a blanket exemption would skip the one scroll a
+   * visitor most needs: from the bottom of a form to the top of their answers.
+   */
+  useEffect(() => {
+    if (scrollKey === undefined) return;
+    if (typeof window === "undefined") return;
+    if (scrollTarget === "form" && isFirstStep.current) {
+      isFirstStep.current = false;
+      return;
+    }
+    isFirstStep.current = false;
+
+    const behavior = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+      ? "auto"
+      : "smooth";
+
+    if (scrollTarget === "page") {
+      window.scrollTo({ top: 0, behavior });
+      return;
+    }
+
+    const card = cardRef.current;
+    if (!card) return;
+    const top = card.getBoundingClientRect().top + window.scrollY - CARD_SCROLL_GAP;
+    window.scrollTo({ top: Math.max(0, top), behavior });
+  }, [scrollKey, scrollTarget]);
+
   return (
     <AccentContext.Provider value={palette}>
       <div className="min-h-screen bg-[#F4F7FA]">
         {/* The band is real layout rather than a fixed-height decoration, so it
-            always ends exactly under the progress row however the header wraps.
+            always ends exactly under the header however that header wraps.
             The card then overlaps it by a deliberate 40px — the edge stays crisp
             instead of being smudged into the page by a fade. */}
         <div
@@ -283,10 +253,19 @@ export default function ComparisonShell({
           style={{ backgroundImage: palette.band, backgroundColor: "#083A56" }}
         >
           <div className={`mx-auto px-5 sm:px-6 ${column}`}>
+            {/* The page's heading, and an H1 rather than an H2.
+                The hierarchy used to be inverted: this said "Compare
+                electricity options" as an H2 while QuestionFrame below made the
+                current question ("Where do you need electricity?") the H1. Since
+                Google indexes the DOM after the app mounts, the question was
+                what /compare-rates was indexed under — a heading with no target
+                keyword in it, contradicting the page's own title tag. The
+                wording is the route registry's, so title and H1 now agree, and
+                the question is an H2 where a step within a page belongs. */}
             <header className="text-center mb-6">
-              <h2 className="text-[20px] sm:text-[22px] font-semibold text-white tracking-[-0.015em]">
-                Compare electricity options
-              </h2>
+              <h1 className="text-[20px] sm:text-[22px] font-semibold text-white tracking-[-0.015em]">
+                Compare Electricity Rates Side by Side
+              </h1>
               <p className="mt-1.5 text-[14px] text-white/65">
                 A few quick questions and we&rsquo;ll personalize your options.
               </p>
@@ -294,11 +273,10 @@ export default function ComparisonShell({
 
             <ContextChips items={context} />
 
-            {activeStage && <StageProgress activeStage={activeStage} />}
           </div>
         </div>
 
-        <div className={`mx-auto px-5 sm:px-6 -mt-10 pb-20 ${column}`}>
+        <div ref={cardRef} className={`mx-auto px-5 sm:px-6 -mt-10 pb-20 ${column}`}>
           {/* overflow-hidden so the accent strip follows the rounded corners. */}
           <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-white ring-1 ring-black/5 shadow-[0_1px_2px_rgba(16,24,40,0.04),0_30px_70px_-30px_rgba(2,20,32,0.55)]">
             <div aria-hidden="true" className="h-1" style={{ backgroundImage: palette.band }} />

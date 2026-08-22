@@ -234,10 +234,20 @@ function CityRatesInner() {
                 to and no supplier to compare, so it gets neither promise. The
                 prerendered H1 already said so; without this the mounted app
                 replaced it with the offer and Google indexes the mounted app. */}
+            {/* "Compare", not "Cheap", because that is what the rest of the
+                page already says. This URL's <title> is "Compare Electricity
+                Rates in Houston, TX" and its prerendered H1 is "Compare
+                Electricity Rates in Houston, Texas" — both from the route
+                registry. Only this line said "Cheap", and since Google indexes
+                the DOM after the app mounts, this line was the one it read: 134
+                city pages whose title and heading disagreed with each other for
+                no reason. The registry is the source of truth for the wording;
+                `npm run audit:render` flags it as h1-divergence if they drift
+                apart again. */}
             <h1 className="text-3xl lg:text-4xl font-bold mb-3">
               {noChoice
                 ? `${displayCityName} Electricity Rates`
-                : `Cheap Electricity Rates in ${displayCityName}, ${city.state}`}
+                : `Compare Electricity Rates in ${displayCityName}, ${city.state}`}
             </h1>
             <p className="text-lg text-blue-100 mb-5">
               {noChoice ? (

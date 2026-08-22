@@ -128,7 +128,7 @@ export default function BusinessElectricity() {
         breadcrumbs={[{ name: "Home", url: "/" }, { name: "Business Electricity" }]}
         eyebrow="Commercial electricity"
         eyebrowIcon={Building2}
-        title="Business Electricity Rates"
+        title="Business Electricity Rates and Plans"
         intro="Commercial supply is priced against your usage pattern and contract term, not sold from a rate card. Start with your service ZIP code and we take it from your business type — nothing gets re-entered."
         facts={[
           ["Commercial plans", String(totalBusinessPlans)],

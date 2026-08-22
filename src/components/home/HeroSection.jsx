@@ -3,10 +3,6 @@ import { CheckCircle, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ValidatedZipInput from "../ValidatedZipInput";
-import { getRateSpread } from "@/seo/market";
-
-// From the committed market snapshot, so this is a constant, not a fetch.
-const rateSpread = getRateSpread() || { min: null, max: null };
 
 export default function HeroSection({ zipCode, setZipCode }) {
   const [isZipValid, setIsZipValid] = useState(false);
@@ -25,10 +21,17 @@ export default function HeroSection({ zipCode, setZipCode }) {
           <div className="space-y-5 sm:space-y-6 animate-fade-in-up text-left">
             {/* Main Headline */}
             <div>
+              {/* The homepage's H1 is the route registry's, because that is
+                  what the <title> and the prerendered HTML already say. It read
+                  "Cut Your Electric Bill. Keep the Lights On." \u2014 good copy, but
+                  the app replaces the prerendered heading on mount, so that was
+                  the heading Google indexed the homepage under, and it names
+                  neither the product nor a query anyone types. The two-line
+                  break and the gradient on the second line are kept. */}
               <h1 className="text-[32px] sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-[#084a6f] leading-[1.15] sm:leading-tight mb-3 sm:mb-4 tracking-tight">
-                Cut{"\u00A0"}Your{"\u00A0"}Electric{"\u00A0"}Bill.<br />
+                Compare{"\u00A0"}Electricity{"\u00A0"}Rates<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B35] to-[#FF8C5A]">
-                  Keep{"\u00A0"}the{"\u00A0"}Lights{"\u00A0"}On.
+                  Across{"\u00A0"}12{"\u00A0"}Deregulated{"\u00A0"}States
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl">
@@ -60,19 +63,19 @@ export default function HeroSection({ zipCode, setZipCode }) {
               </div>
             </div>
 
-            {/* What is actually at stake, stated as something we can show.
-                This read "households that switch save up to $800 a year" — a
-                figure nothing on this site supports: we hold plan rates, not
-                anybody's bill and not a single switched customer's before and
-                after. The spread between the cheapest and dearest plans we
-                track is a fact, it is on the comparison page, and it makes the
-                same point without asking the reader to take our word for it. */}
+            {/* The headline stake, restored at the site owner's direction.
+                It previously read this way, was replaced with the rate spread
+                because no dataset in this repository derives it, and is now
+                back by product decision — see the owner-approved entry in
+                tests/seo.test.mjs, which keeps the no-unsourced-claims rule in
+                force for everything else. The same sentence is in the
+                prerendered homepage intro (src/seo/content.js) so the copy
+                Google reads and the copy a visitor reads are the same. */}
             <div className="flex items-center gap-3 sm:gap-4 justify-start">
               <p className="text-gray-600 text-xs sm:text-sm font-medium">
-                The plans we track run from{" "}
-                <span className="text-[#FF6B35] font-bold">{rateSpread.min}¢</span> to{" "}
-                <span className="text-[#FF6B35] font-bold">{rateSpread.max}¢</span> per kWh.
-                Which ones you can buy depends on your address.
+                Households that switch save up to{" "}
+                <span className="text-[#FF6B35] font-bold">$800 a year</span> on their
+                electricity bill.
               </p>
             </div>
 

@@ -200,7 +200,7 @@ const norm = (value) =>
     .trim();
 const indexable = (robots) => !/noindex/i.test(String(robots || ''));
 
-function compare(url, served, rendered) {
+function compare(url, served, rendered, routeType) {
   /* A page that renders a fraction of what it served is the soft 404 that took
    * this site out of the index. Ratio rather than an absolute floor, because a
    * short page is allowed to be short — it is the collapse that matters. */
@@ -229,8 +229,19 @@ function compare(url, served, rendered) {
   if (servedH1 && rendered.h1 && norm(servedH1) !== norm(rendered.h1)) {
     /* Not automatically wrong — the app is entitled to its own headline — but
      * the H1 Google reads is the second one, so a keyword that only exists in
-     * the first is a keyword on no page at all. */
-    flagIt('P2', 'h1-divergence', url, `served "${servedH1}" / rendered "${rendered.h1}"`);
+     * the first is a keyword on no page at all.
+     *
+     * On a generated route the two H1s come from one builder and can only drift
+     * together, so a difference there is usually the app choosing its own
+     * phrasing on purpose. On a static route they are two hand-maintained
+     * strings — STATIC_HEADINGS in the registry, and the page's own hero prop —
+     * with nothing tying them together, so one can be edited without the other.
+     * That happened while this audit was being written: retitling
+     * /renewable-energy moved the registry heading and left the hero behind.
+     * Blocking there, advisory elsewhere. */
+    const handMaintained = routeType === 'static' || routeType === 'home';
+    flagIt(handMaintained ? 'P1' : 'P2', 'h1-divergence', url,
+      `served "${servedH1}" / rendered "${rendered.h1}"`);
   }
 
   if (served.canonical && rendered.canonical && served.canonical !== rendered.canonical) {
@@ -337,7 +348,7 @@ async function main() {
     }
     rendered.errors = [...errors];
 
-    compare(route.path, served, rendered);
+    compare(route.path, served, rendered, route.type);
     pages.push({ path: route.path, type: route.type, served: {
       mainWords: served.mainWords, h1: (served.h1s || [])[0], robots: served.robots, canonical: served.canonical,
     }, rendered });

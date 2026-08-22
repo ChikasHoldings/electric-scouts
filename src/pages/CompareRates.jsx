@@ -23,7 +23,6 @@ import {
   invalidateBranchState,
   resetServiceSelection,
   resolveUsageKwh,
-  stageForQuestion,
   CUSTOMER_TYPES,
 } from "../components/compare/engine/comparisonState";
 import {
@@ -610,10 +609,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        {/* No activeStage from here on. The questionnaire is finished, so the
-            stage indicator must not follow the customer into the analysis and
-            results — those are a destination, not another form step. */}
-        <ComparisonShell accent={accent} context={context}>
+        <ComparisonShell accent={accent} context={context} scrollKey="matching">
           {matchingFailed ? (
             <AnalysisFailed
               onRetry={() => {
@@ -668,7 +664,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="usage" accent={accent} context={context}>
+        <ComparisonShell accent={accent} context={context} scrollKey="bill_upload">
           <QuestionFrame
             questionKey="bill_upload"
             title={
@@ -719,7 +715,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell activeStage="usage" accent={accent} context={context}>
+        <ComparisonShell accent={accent} context={context} scrollKey="bill_summary">
           <QuestionFrame
             questionKey="bill_summary"
             title="Here's what we found"
@@ -753,7 +749,7 @@ export default function CompareRates() {
     return (
       <>
         {seoBlock}
-        <ComparisonShell accent={accent} context={context}>
+        <ComparisonShell accent={accent} context={context} scrollKey="analysis">
           <AnalysisLoader name={state.firstName || null} />
         </ComparisonShell>
       </>
@@ -763,7 +759,7 @@ export default function CompareRates() {
   return (
     <>
       {seoBlock}
-      <ComparisonShell activeStage={stageForQuestion(currentQuestion.id)} accent={accent} context={context}>
+      <ComparisonShell accent={accent} context={context} scrollKey={currentQuestion.id}>
         <QuestionScreen
           question={currentQuestion}
           state={state}
@@ -1185,7 +1181,7 @@ function ResultsScreen({
   // confirmation rather than a price list it cannot honestly produce.
   if (state.customerType === CUSTOMER_TYPES.COMMERCIAL) {
     return (
-      <ComparisonShell accent={accent} context={context}>
+      <ComparisonShell accent={accent} context={context} scrollKey="results" scrollTarget="page">
         <CommercialComplete state={state} qualification={routing.qualification} />
       </ComparisonShell>
     );
@@ -1193,7 +1189,7 @@ function ResultsScreen({
 
   if (results.length === 0) {
     return (
-      <ComparisonShell accent={accent} context={context}>
+      <ComparisonShell accent={accent} context={context} scrollKey="results" scrollTarget="page">
         <NoMatchState
           zip={state.zip}
           onConcierge={() => {
@@ -1285,11 +1281,12 @@ function ResultsScreen({
   };
 
   return (
-    <ComparisonShell accent={accent} context={context} wide>
+    <ComparisonShell accent={accent} context={context} wide scrollKey="results" scrollTarget="page">
       <div className="mb-6">
-        <h1 className="text-[22px] sm:text-[26px] font-semibold text-gray-900 tracking-[-0.01em]">
+        {/* An H2: the page's H1 is the shell's heading above. */}
+        <h2 className="text-[22px] sm:text-[26px] font-semibold text-gray-900 tracking-[-0.01em]">
           Electricity options for {state.city || state.zip}
-        </h1>
+        </h2>
         <p className="mt-1.5 text-[15px] text-gray-600">
           Estimated at {Math.round(usageKwh).toLocaleString()} kWh a month
           {state.billAnalysisStatus === "complete" ? " from your bill" : ""}.

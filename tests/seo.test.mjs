@@ -34,6 +34,7 @@ import {
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS, ARTICLE_SLUGS, articlePath } from '../src/seo/articles.js';
+import { ARTICLE_DATES } from '../src/seo/articleDates.js';
 import { mergeArticleSources } from '../src/lib/articleSources.js';
 import { TITLE_MAX } from '../src/seo/site.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
@@ -350,6 +351,53 @@ describe('sitemap.xml', () => {
       const priority = Number(entry.priority);
       assert.ok(priority >= 0 && priority <= 1, `bad priority: ${entry.priority}`);
     }
+  });
+
+  test('lastmod reports when the content changed, not when the build ran', () => {
+    // The regression this guards: `lastmod` defaulted to `new Date()`, so every
+    // deploy announced that all 300-odd generated URLs had been rewritten that
+    // morning. Google's documented response to lastmod values it finds
+    // inaccurate is to stop trusting them — and a site waiting on 335 URLs to
+    // be crawled cannot afford to discard the one signal that says which of
+    // them changed.
+    //
+    // This used to assert that NO entry carries today's date, which is a proxy
+    // for the real property and not the property itself. It is wrong on any day
+    // an article is actually edited: refresh-article-dates.mjs reads dates from
+    // git history, so an article committed today is correctly stamped today,
+    // and the suite failed for doing the right thing. Eight of them did when
+    // the cannibalizing titles were fixed.
+    //
+    // What actually distinguishes the regression is provenance, so that is what
+    // is checked: a date equal to today is allowed only where the committed
+    // record in articleDates.js says today. A clock default could not satisfy
+    // that — it would stamp all 335 URLs, including the 250 with no record at
+    // all — and the neighbouring reproducibility test closes the same gap from
+    // the other side.
+    const today = new Date().toISOString().split('T')[0];
+    const datedToday = new Set(
+      Object.entries(ARTICLE_DATES)
+        .filter(([, [, modified]]) => modified === today)
+        .map(([id]) => absoluteUrl(articlePath(Number(id))))
+    );
+    const unexplained = entries
+      .filter((entry) => entry.lastmod === today && !datedToday.has(entry.loc))
+      .map((entry) => entry.loc);
+    assert.deepEqual(
+      unexplained.slice(0, 5),
+      [],
+      `${unexplained.length} sitemap entries carry today's date with no committed record saying so — ` +
+        'lastmod is being read off the clock'
+    );
+  });
+
+  test('rebuilding without changing content produces an identical sitemap', () => {
+    // The same property from the other side: if any lastmod came from the
+    // clock, two builds of one commit would disagree, and every deploy would
+    // hand Google a sitemap that looks entirely new.
+    const first = buildSitemapXml(buildSitemapEntries({ providers: getPublishableProviders() }));
+    const second = buildSitemapXml(buildSitemapEntries({ providers: getPublishableProviders() }));
+    assert.equal(first, second, 'sitemap is not reproducible across builds');
   });
 
   test('advertises only article URLs the app can actually resolve', () => {
@@ -671,12 +719,28 @@ describe('prerendered output in dist/', () => {
     assert.ok(tag.h1(html), 'missing <h1>');
   });
 
-  test('app-shell.html declares no canonical and no robots directive', () => {
-    // Served only for dynamic routes created after the build; the client sets
-    // both from the real route, and a guessed canonical here would be wrong.
+  test('app-shell.html declares no canonical and is noindex', () => {
+    // The canonical rule is unchanged: the shell answers for whatever route is
+    // rewritten to it, so any canonical guessed here would be wrong for that
+    // route, and the client sets the real one on mount.
+    //
+    // The robots rule is the reverse of what it was. This test used to assert
+    // the shell hardcoded NO robots directive, on the reasoning that the client
+    // sets it from the real route. That reasoning covered a use that the
+    // routing no longer has: there is no catch-all rewrite onto this file, so
+    // the only things it answers for are /admin* and its own URL — and
+    // https://…/app-shell.html returned 200 with an empty #root, the bare site
+    // name as its title, no canonical and no robots meta. An indexable app
+    // shell at a public URL is the exact shape the prerender exists to remove,
+    // sitting in the one place the route registry does not describe.
+    //
+    // `follow` rather than `nofollow` so nothing is stranded, and SEOHead
+    // overwrites the tag from the real route once the app mounts (it
+    // setAttributes the existing tag rather than appending a second one), so
+    // this binds the raw fetch only.
     const html = readDist('app-shell.html');
     assert.equal(tag.canonical(html), undefined, 'app shell must not hardcode a canonical');
-    assert.equal(tag.robots(html), undefined, 'app shell must not hardcode a robots directive');
+    assert.match(tag.robots(html) || '', /noindex/, 'app shell must be noindex');
   });
 
   test('dist/robots.txt is generated and points at the sitemap', () => {
@@ -1096,11 +1160,35 @@ describe('no unsourced savings or review claims reach a page', () => {
     return text.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/^\s*\/\/.*$/gm, ' ');
   }
 
+  /**
+   * Claims the site owner has put on the page knowing this rule forbids them.
+   *
+   * This list is an override, not an exemption the code earned. Nothing in this
+   * repository derives the figure below: we hold plan rates, not anybody's
+   * bill, not the utility default rate, and not one switched customer's
+   * before-and-after. It was removed for that reason and has been restored by
+   * product decision, which is the owner's to make — substantiating it is a
+   * business record kept outside this repository, not something the test can
+   * check.
+   *
+   * Written as an exact-string allowlist rather than a relaxed pattern so it
+   * grants exactly one sentence and nothing adjacent to it: a second savings
+   * figure, or this one with a different number, still fails. Every other
+   * surface — the footer, the About page, the city index, the Organization
+   * JSON-LD — remains covered.
+   */
+  const OWNER_APPROVED = [
+    'Households that switch save up to $800 a year on their electricity bill.',
+  ];
+
+  const withoutApproved = (text) =>
+    OWNER_APPROVED.reduce((out, claim) => out.split(claim).join(' '), text);
+
   for (const { pattern, what } of CLAIMS) {
     test(`no source file states ${what}`, () => {
       const offenders = [];
       for (const file of sourceFiles()) {
-        const body = stripComments(fs.readFileSync(file, 'utf8'));
+        const body = withoutApproved(stripComments(fs.readFileSync(file, 'utf8')));
         for (const line of body.split('\n')) {
           if (pattern.test(line)) offenders.push(`${path.relative(ROOT, file)}: ${line.trim().slice(0, 110)}`);
         }
@@ -1112,12 +1200,106 @@ describe('no unsourced savings or review claims reach a page', () => {
   test('the prerendered HTML states none of them either', { skip: !distExists }, () => {
     const offenders = [];
     for (const routePath of ['/', '/all-cities', '/all-providers', '/about-us', '/texas-electricity', '/electricity-rates/texas/houston']) {
-      const html = readDist(distFileFor(routePath));
+      const html = withoutApproved(readDist(distFileFor(routePath)));
       for (const { pattern, what } of CLAIMS) {
         if (pattern.test(html)) offenders.push(`${routePath} carries ${what}`);
       }
     }
     assert.deepEqual(offenders, []);
+  });
+});
+
+/* ==================================================================
+ * Keyword cannibalization
+ *
+ * Two of our own URLs asking Google to rank them for the same query is a
+ * problem the audits could not see, because every check they ran was on one
+ * page at a time and each page passed: unique title, unique description,
+ * unique body, its own canonical. The damage is between pages.
+ *
+ * The worst pair was exact. /electricity-rates/texas/austin was titled
+ * "Austin Electricity Rates and Austin Energy" and /learn/austin-energy-
+ * explained was titled "Austin Electricity Rates & Austin Energy" — the same
+ * seven words, one ampersand apart. Google picks one of those and it is not
+ * necessarily the landing page we want ranking; the other becomes "Duplicate,
+ * Google chose different canonical" or simply never surfaces.
+ *
+ * The rule is scoped to pairs from DIFFERENT route families on purpose. Two
+ * city pages differing only by city name are not competing — "electricity
+ * rates in Danbury" and "electricity rates in Hartford" are different queries.
+ * A city page and an article carrying the same title are competing, and so are
+ * a provider page and its review.
+ * ================================================================== */
+
+describe('no two page families claim the same query', () => {
+  /* Words that carry no intent, so they neither create nor excuse an overlap.
+   * The brand is stripped separately: it is on most titles and would otherwise
+   * make every pair look more alike than it reads in a SERP. */
+  const STOP = new Set([
+    'the', 'a', 'an', 'and', 'or', 'of', 'in', 'to', 'for', 'your', 'you', 'with',
+    'what', 'is', 'are', 'on', 'by', 'it', 'from', 'electric', 'scouts', 'complete',
+  ]);
+
+  /* 0.65 sits above every legitimate pair the registry produces today — the
+   * closest survivor is a state page against its own in-depth guide — and below
+   * every pair that was actually competing. */
+  const OVERLAP_LIMIT = 0.65;
+
+  const tokens = (title) =>
+    new Set(
+      String(title)
+        .toLowerCase()
+        .replace(/\|\s*electric scouts\s*$/, '')
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .split(/\s+/)
+        .filter((word) => word && !STOP.has(word))
+    );
+
+  const overlap = (a, b) => {
+    let shared = 0;
+    for (const token of a) if (b.has(token)) shared += 1;
+    return shared / (a.size + b.size - shared || 1);
+  };
+
+  test('no cross-family pair of titles resolves to one search intent', () => {
+    const routes = getIndexableRoutes({
+      providers: getPublishableProviders(),
+      fullArticles: seoArticles,
+    })
+      .filter((route) => route.title)
+      .map((route) => ({ path: route.path, type: route.type, title: route.title, tokens: tokens(route.title) }));
+
+    const collisions = [];
+    for (let i = 0; i < routes.length; i += 1) {
+      for (let j = i + 1; j < routes.length; j += 1) {
+        if (routes[i].type === routes[j].type) continue;
+        const score = overlap(routes[i].tokens, routes[j].tokens);
+        if (score >= OVERLAP_LIMIT) {
+          collisions.push(
+            `${score.toFixed(2)}  ${routes[i].path} "${routes[i].title}"\n        ${routes[j].path} "${routes[j].title}"`
+          );
+        }
+      }
+    }
+    assert.deepEqual(
+      collisions,
+      [],
+      `titles competing for one query:\n  ${collisions.join('\n  ')}`
+    );
+  });
+
+  test('the two renewable pages own different halves of the topic', () => {
+    // "Renewable Electricity Plans" (the explainer) against "Compare Renewable
+    // Electricity Plans" (the tool) is a one-word difference, and both are in
+    // the static family, so the cross-family sweep above cannot catch it.
+    const byPath = new Map(getStaticRoutes().map((route) => [route.path, route.title]));
+    const hub = byPath.get('/renewable-energy');
+    const tool = byPath.get('/renewable-compare-rates');
+    assert.ok(hub && tool, 'both renewable routes must exist');
+    assert.ok(
+      overlap(tokens(hub), tokens(tool)) < OVERLAP_LIMIT,
+      `"${hub}" and "${tool}" read as the same query`
+    );
   });
 });
 
@@ -1178,11 +1360,19 @@ describe('vercel.json routing', () => {
   test('no X-Robots-Tag noindex is applied to public pages', () => {
     // The sitemap response used to send this header, telling Google to ignore
     // the very file it had just fetched.
+    //
+    // app-shell.html and 404.html are on this list because Vercel serves the
+    // whole output directory: both answer their own URL with 200, one with an
+    // empty React shell and one with a "Page Not Found" body. Neither is a page
+    // we publish, and a friendly 404 returning 200 is the textbook soft 404, so
+    // both take the header. They are named individually rather than by prefix
+    // so a new unlisted .html file cannot inherit the exemption.
+    const NOT_PUBLIC_PAGES = new Set(['/app-shell.html', '/404.html']);
     for (const entry of config.headers || []) {
       const noindex = entry.headers.some((h) => h.key === 'X-Robots-Tag' && /noindex/.test(h.value));
       if (!noindex) continue;
       assert.ok(
-        /^\/(admin|api|go)/.test(entry.source),
+        /^\/(admin|api|go)/.test(entry.source) || NOT_PUBLIC_PAGES.has(entry.source),
         `X-Robots-Tag: noindex applied to public path "${entry.source}"`
       );
     }
@@ -1210,6 +1400,34 @@ describe('vercel.json routing', () => {
       assert.ok(!sources.has(redirect.destination), `redirect chain: ${redirect.source} -> ${redirect.destination}`);
     }
   });
+
+  /*
+   * The two HTML files the route registry does not describe.
+   *
+   * Vercel serves the whole output directory, so dist/app-shell.html answers
+   * https://…/app-shell.html with 200 — an empty #root, the bare site name for
+   * a title, and (until this was fixed) no robots directive and no canonical.
+   * Nothing links to it, which is not protection: Google finds URLs from Chrome
+   * telemetry and from external references, and an app shell returning 200 is
+   * exactly the shape the prerender was built to remove from this site.
+   *
+   * dist/404.html has the same property with a friendlier body, which is worse
+   * rather than better — a "Page Not Found" page returning 200 at its own URL
+   * is the textbook soft 404.
+   *
+   * Both carry a meta robots tag in the file; this asserts the header as well,
+   * because a header does not depend on the crawler rendering the page, and it
+   * survives a change to the prerender template.
+   */
+  for (const file of ['/app-shell.html', '/404.html']) {
+    test(`${file} is served with a noindex header`, () => {
+      const rule = (config.headers || []).find((entry) => entry.source === file);
+      assert.ok(rule, `${file} has no headers entry; it is publicly reachable and must not be indexable`);
+      const robots = rule.headers.find((h) => h.key.toLowerCase() === 'x-robots-tag');
+      assert.ok(robots, `${file} has no X-Robots-Tag header`);
+      assert.match(robots.value, /noindex/i, `${file} X-Robots-Tag must contain noindex`);
+    });
+  }
 });
 
 /* ================================================================== *

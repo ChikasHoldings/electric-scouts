@@ -80,15 +80,32 @@ function buildPage(template, { headTags, bodyHtml }) {
  * Extra artefacts
  * ------------------------------------------------------------------ */
 
-/** Neutral shell for dynamic routes created after this build. */
+/**
+ * Neutral shell, used for the /admin rewrite and served at its own URL.
+ *
+ * It carries `noindex` because both of those are things we never want indexed,
+ * and the file was reachable at https://…/app-shell.html returning 200 with an
+ * empty #root, no robots directive and no canonical — an app shell at a public
+ * URL, which is the shape this whole prerender exists to remove. Nothing linked
+ * to it, but Google does not need a link: it finds URLs from Chrome telemetry,
+ * from external references, and from the /admin rewrite pointing at it.
+ *
+ * `follow` rather than `nofollow` so the shell never strands link equity, and
+ * still no canonical: a canonical guessed here would be wrong for every URL the
+ * shell is rewritten to. SEOHead overwrites the robots meta from the real route
+ * once the app mounts (it setAttributes the existing tag rather than appending
+ * a second one), so this is the value for the raw fetch only.
+ *
+ * There is deliberately no catch-all rewrite onto this file — unknown URLs 404
+ * — so the only consumers are /admin* and the file's own URL, and noindex is
+ * correct for both.
+ */
 function buildAppShell(template) {
-  const html = stripManagedTags(template).replace(
+  return stripManagedTags(template).replace(
     '</head>',
-    `    <title>${escapeHtml(SITE_NAME)}</title>\n  </head>`
+    `    <title>${escapeHtml(SITE_NAME)}</title>\n` +
+      `    <meta name="robots" content="noindex, follow" />\n  </head>`
   );
-  // No canonical and no robots meta on purpose: SEOHead sets both from the real
-  // route once the app mounts, and a wrong guess here is worse than none.
-  return html;
 }
 
 function build404Page(template, context) {
