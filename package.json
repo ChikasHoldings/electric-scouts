@@ -15,6 +15,7 @@
     "typecheck": "tsc -p ./jsconfig.json",
     "test": "node --test tests/*.test.mjs",
     "audit": "node scripts/seo-audit.mjs",
+    "audit:urls": "node scripts/seo-url-audit.mjs",
     "audit:render": "node scripts/seo-render-audit.mjs",
     "test:seo": "node --test tests/seo.test.mjs",
     "preview": "vite preview"
