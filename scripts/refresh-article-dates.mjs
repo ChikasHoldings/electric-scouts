@@ -26,6 +26,10 @@
  * a test failure with a message telling you to run it.
  *
  *   node scripts/refresh-article-dates.mjs
+ *
+ * Importing this module runs nothing: the helpers are exported for the
+ * regression suite, and the refresh happens only when the file is executed
+ * directly. See isMainModule() at the bottom.
  */
 
 import { execSync } from 'node:child_process';
@@ -197,7 +201,31 @@ export function articleSourceHash(id) {
   console.log(`[article-dates] ${publishedSpread} distinct publish dates, ${modifiedSpread} distinct modified dates`);
 }
 
-main().catch((error) => {
-  console.error(`[article-dates] FAILED: ${error.message}`);
-  process.exit(1);
-});
+/**
+ * True when this file is the process entrypoint rather than an import.
+ *
+ * `main()` used to run on import, and tests/seo.test.mjs imports this module
+ * for `hashBlocks` — so `npm test` rewrote the tracked file
+ * src/seo/articleDates.js as a side effect of reading one helper out of here.
+ * That left every test run with a dirty worktree and made it easy to commit a
+ * regenerated snapshot nobody meant to change.
+ *
+ * argv[1] is compared as a resolved path so a relative invocation
+ * (`node scripts/refresh-article-dates.mjs`) matches, and its absence — a REPL,
+ * an embedder — reads as "not the entrypoint" rather than throwing.
+ */
+export function isMainModule(moduleUrl = import.meta.url, argv1 = process.argv[1]) {
+  if (!argv1) return false;
+  try {
+    return fileURLToPath(moduleUrl) === path.resolve(argv1);
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
+  main().catch((error) => {
+    console.error(`[article-dates] FAILED: ${error.message}`);
+    process.exit(1);
+  });
+}

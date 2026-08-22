@@ -13,18 +13,169 @@
  * So this fetches the URLs and reads what actually came back.
  *
  *   node scripts/verify-live-routes.mjs https://deployment.example.com
+ *   node scripts/verify-live-routes.mjs https://… --mode production
  *   ELECTRICSCOUTS_BASE_URL=https://… npm run verify:live
+ *   ELECTRICSCOUTS_VERIFY_MODE=preview npm run verify:live -- https://…
  *
  * Node built-ins only (global fetch), so it runs in CI with no install beyond
  * the repository's own dependencies.
  *
  * Exits nonzero on any failure, and prints a table either way.
+ *
+ * The policy decisions are exported as pure functions and imported by
+ * tests/verify-live-routes.test.mjs, so `main()` runs only when this file is
+ * the process entrypoint — importing it must never make a network request.
  */
 
-import { absoluteUrl, canonicalPath } from '../src/seo/site.js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { absoluteUrl, canonicalPath, SITE_URL } from '../src/seo/site.js';
 
 /** The routes whose regression costs money, in the order they are reported. */
 const CONTENT_ROUTES = ['/', '/compare-rates', '/bill-analyzer'];
+
+/* ------------------------------------------------------------------ *
+ * Verification mode
+ *
+ * A preview deployment and the production site are held to different
+ * standards on exactly one point, and it is worth being precise about which.
+ *
+ * Vercel stamps `X-Robots-Tag: noindex` on deployment-specific URLs itself, so
+ * that a preview cannot be indexed. That is the hosting platform protecting the
+ * site, and failing a preview for it would mean the verifier could never be run
+ * against the thing it is most useful against — a deploy that has not shipped
+ * yet.
+ *
+ * A `noindex` in the page's own HTML is a different object entirely. It is
+ * built by the application, it travels with the build, and if it is present on
+ * a preview it will be present on production. So it fails everywhere.
+ *
+ * Nothing else relaxes: a preview must still publish production canonicals,
+ * route-specific content, a real 404 and a correct sitemap.
+ * ------------------------------------------------------------------ */
+
+export const VERIFICATION_MODES = Object.freeze(['auto', 'preview', 'production']);
+
+/** The one hostname that is the real site. Compared exactly, never by suffix. */
+export function canonicalHostname(canonicalSiteUrl = SITE_URL) {
+  return new URL(canonicalSiteUrl).hostname.toLowerCase();
+}
+
+/**
+ * Decide whether a base URL is being verified as production or as a preview.
+ *
+ * `auto` resolves to production ONLY on an exact hostname match with the
+ * canonical site. Substring or suffix matching would be a security-shaped bug
+ * rather than a convenience: `fake-www.electricscouts.com` and
+ * `www.electricscouts.com.example.org` both contain the canonical host and
+ * neither is it, and treating either as production would apply production's
+ * stricter rules to a host we do not control — or, worse, let a misconfigured
+ * host present itself as verified production.
+ *
+ * Branch names, paths, deployment names and strings containing "prod" are
+ * deliberately not consulted. A deployment is production because it is served
+ * on the production hostname, not because of what it is called.
+ *
+ * @returns {'preview'|'production'}
+ */
+export function resolveVerificationMode({ baseUrl, requestedMode = 'auto', canonicalSiteUrl = SITE_URL } = {}) {
+  const mode = String(requestedMode || 'auto').trim().toLowerCase();
+  if (!VERIFICATION_MODES.includes(mode)) {
+    throw new Error(
+      `invalid verification mode "${requestedMode}" — expected one of ${VERIFICATION_MODES.join(', ')}`
+    );
+  }
+
+  // An explicit choice is the operator saying they know what this deployment
+  // is, and it wins over inference in both directions.
+  if (mode !== 'auto') return mode;
+
+  let hostname;
+  try {
+    hostname = new URL(baseUrl).hostname.toLowerCase();
+  } catch {
+    throw new Error(`cannot resolve verification mode: "${baseUrl}" is not a URL`);
+  }
+
+  return hostname === canonicalHostname(canonicalSiteUrl) ? 'production' : 'preview';
+}
+
+/** Does a robots directive list `noindex` among its comma-separated tokens? */
+function declaresNoindex(value) {
+  return String(value || '')
+    .toLowerCase()
+    .split(',')
+    .some((token) => token.trim() === 'noindex');
+}
+
+/**
+ * Apply the robots policy for one content route.
+ *
+ * `responseRobotsHeader` may carry several directives, either comma-joined in
+ * one header or joined by fetch when the response repeats the header. Both
+ * arrive here as one string and are read token by token, so "nofollow, noindex"
+ * is caught as surely as "noindex".
+ *
+ * @returns {{failures: string[], httpRobots: string, allowedByMode: boolean}}
+ */
+export function evaluateRobotsPolicy({ mode, htmlRobots = '', responseRobotsHeader = '' } = {}) {
+  if (!VERIFICATION_MODES.includes(mode) || mode === 'auto') {
+    throw new Error(`evaluateRobotsPolicy needs a resolved mode, got "${mode}"`);
+  }
+
+  const failures = [];
+  const httpNoindex = declaresNoindex(responseRobotsHeader);
+
+  // Page-level noindex is built into the application and would reach the real
+  // production domain unchanged, so it is never acceptable — not even on a
+  // preview, where "it is only a preview" is exactly the reasoning that ships
+  // it to production.
+  if (declaresNoindex(htmlRobots)) {
+    failures.push(`page HTML declares robots "${htmlRobots}" — a built-in noindex reaches production`);
+  }
+
+  if (httpNoindex && mode === 'production') {
+    failures.push(
+      `served with X-Robots-Tag "${responseRobotsHeader}" — the production domain must not carry a hosting-level noindex`
+    );
+  }
+
+  return {
+    failures,
+    httpRobots: httpNoindex ? 'noindex' : (String(responseRobotsHeader || '').trim() || 'none'),
+    allowedByMode: httpNoindex && mode === 'preview',
+  };
+}
+
+/**
+ * Read the base URL and mode out of argv and the environment.
+ *
+ * Pure and exported so the precedence rules are tested rather than assumed:
+ * a positional URL beats the environment variable, and `--mode` beats
+ * ELECTRICSCOUTS_VERIFY_MODE.
+ */
+export function parseCliArgs(argv = [], env = {}) {
+  const positional = [];
+  let requestedMode = null;
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--mode') {
+      requestedMode = argv[i + 1];
+      i += 1;
+    } else if (arg.startsWith('--mode=')) {
+      requestedMode = arg.slice('--mode='.length);
+    } else {
+      positional.push(arg);
+    }
+  }
+
+  return {
+    baseUrl: positional[0] || env.ELECTRICSCOUTS_BASE_URL || '',
+    requestedMode: requestedMode || env.ELECTRICSCOUTS_VERIFY_MODE || 'auto',
+  };
+}
 
 /**
  * A path that must never resolve.
@@ -141,7 +292,7 @@ class Report {
  * canonical, because a preview-hostname canonical shipped to production is how
  * a site tells Google its real pages live on a temporary URL.
  */
-function checkContentRoute(routePath, response, report) {
+function checkContentRoute(routePath, response, report, mode) {
   const scope = routePath;
   const row = {
     route: routePath,
@@ -150,6 +301,7 @@ function checkContentRoute(routePath, response, report) {
     canonical: 'no',
     h1: 'no',
     unique: '—',
+    httpRobots: '—',
     result: 'FAIL',
   };
 
@@ -182,12 +334,15 @@ function checkContentRoute(routePath, response, report) {
   if (page.h1) row.h1 = 'yes';
   else report.fail(scope, 'no <h1>');
 
-  if (/noindex/i.test(page.robots)) report.fail(scope, `served with robots "${page.robots}"`);
-  // A deployment-specific Vercel URL carries this header by design; the
-  // production domain must not.
-  if (/noindex/i.test(response.robotsHeader)) {
-    report.fail(scope, `served with X-Robots-Tag "${response.robotsHeader}"`);
-  }
+  // Page-level and hosting-level robots are two different objects with two
+  // different rules; see evaluateRobotsPolicy.
+  const robots = evaluateRobotsPolicy({
+    mode,
+    htmlRobots: page.robots,
+    responseRobotsHeader: response.robotsHeader,
+  });
+  row.httpRobots = robots.allowedByMode ? 'noindex*' : robots.httpRobots;
+  for (const failure of robots.failures) report.fail(scope, failure);
 
   if (page.scripts.length === 0) report.fail(scope, 'no built application script reference');
 
@@ -250,7 +405,7 @@ function checkDistinctness(pages, rows, report) {
 /** An unknown path must not answer 200 with the homepage. */
 function checkUnknownRoute(response, homePage, report) {
   const scope = UNKNOWN_ROUTE;
-  const row = { route: 'unknown path', status: response.status ?? '—', title: '—', canonical: '—', h1: '—', unique: '—', result: 'FAIL' };
+  const row = { route: 'unknown path', status: response.status ?? '—', title: '—', canonical: '—', h1: '—', unique: '—', httpRobots: '—', result: 'FAIL' };
 
   if (response.error) {
     report.fail(scope, `request failed (${response.error})`);
@@ -277,7 +432,7 @@ function checkUnknownRoute(response, homePage, report) {
 
 async function checkSitemap(response, report) {
   const scope = '/sitemap.xml';
-  const row = { route: '/sitemap.xml', status: response.status ?? '—', title: '—', canonical: '—', h1: '—', unique: '—', result: 'FAIL' };
+  const row = { route: '/sitemap.xml', status: response.status ?? '—', title: '—', canonical: '—', h1: '—', unique: '—', httpRobots: '—', result: 'FAIL' };
 
   if (response.error) {
     report.fail(scope, `request failed (${response.error})`);
@@ -308,7 +463,7 @@ async function checkSitemap(response, report) {
 
 async function checkRobots(response, report) {
   const scope = '/robots.txt';
-  const row = { route: '/robots.txt', status: response.status ?? '—', title: '—', canonical: '—', h1: '—', unique: '—', result: 'FAIL' };
+  const row = { route: '/robots.txt', status: response.status ?? '—', title: '—', canonical: '—', h1: '—', unique: '—', httpRobots: '—', result: 'FAIL' };
 
   if (response.error) {
     report.fail(scope, `request failed (${response.error})`);
@@ -343,19 +498,30 @@ async function checkRobots(response, report) {
  * Main
  * ------------------------------------------------------------------ */
 
-function resolveBaseUrl() {
-  const raw = process.argv[2] || process.env.ELECTRICSCOUTS_BASE_URL;
+/** The base URL and the resolved mode, or a usage error and exit 1. */
+function resolveTarget() {
+  const { baseUrl: raw, requestedMode } = parseCliArgs(process.argv.slice(2), process.env);
+
   if (!raw) {
     console.error('[verify:live] FAILED: no base URL.');
-    console.error('  node scripts/verify-live-routes.mjs https://deployment.example.com');
+    console.error('  node scripts/verify-live-routes.mjs https://deployment.example.com [--mode auto|preview|production]');
     console.error('  ELECTRICSCOUTS_BASE_URL=https://… npm run verify:live');
     process.exit(1);
   }
+
   const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  let baseUrl;
   try {
-    return new URL(withScheme).origin;
+    baseUrl = new URL(withScheme).origin;
   } catch {
     console.error(`[verify:live] FAILED: "${raw}" is not a URL`);
+    process.exit(1);
+  }
+
+  try {
+    return { baseUrl, mode: resolveVerificationMode({ baseUrl, requestedMode }) };
+  } catch (error) {
+    console.error(`[verify:live] FAILED: ${error.message}`);
     process.exit(1);
   }
 }
@@ -368,6 +534,9 @@ function printTable(rows) {
     ['CANONICAL', 'canonical', 9],
     ['H1', 'h1', 3],
     ['UNIQUE', 'unique', 6],
+    // Only the robots directive is reported. No other response header is
+    // printed: a verification log is not a place to leak cookies or auth.
+    ['HTTP-ROBOTS', 'httpRobots', 11],
     ['RESULT', 'result', 6],
   ];
 
@@ -378,9 +547,13 @@ function printTable(rows) {
 }
 
 async function main() {
-  const baseUrl = resolveBaseUrl();
+  const { baseUrl, mode } = resolveTarget();
   console.log(`[verify:live] base URL: ${baseUrl}`);
+  console.log(`[verify:live] mode: ${mode}`);
   console.log(`[verify:live] expected canonical host: ${absoluteUrl('/')}`);
+  if (mode === 'preview') {
+    console.log('[verify:live] a hosting-level X-Robots-Tag: noindex is expected here and is marked noindex*');
+  }
 
   const report = new Report();
 
@@ -393,7 +566,7 @@ async function main() {
   const pages = new Map();
   const rows = [];
   for (const routePath of CONTENT_ROUTES) {
-    const { row, page } = checkContentRoute(routePath, byPath.get(routePath), report);
+    const { row, page } = checkContentRoute(routePath, byPath.get(routePath), report, mode);
     rows.push(row);
     if (page) pages.set(routePath, page);
   }
@@ -425,7 +598,29 @@ async function main() {
   console.log('\n[verify:live] OK — every checked route serves its own page');
 }
 
-main().catch((error) => {
-  console.error(`[verify:live] FAILED: ${error.stack || error.message}`);
-  process.exit(1);
-});
+/**
+ * True when this file is the process entrypoint rather than an import.
+ *
+ * Without this, importing the module to test its policy would fire six HTTP
+ * requests and call process.exit — which is how a test suite ends up depending
+ * on the network, and how `main()` becomes untestable in practice.
+ *
+ * argv[1] is compared as a resolved path so a relative invocation
+ * (`node scripts/verify-live-routes.mjs`) matches, and its absence — a REPL, an
+ * embedder — reads as "not the entrypoint" rather than throwing.
+ */
+export function isMainModule(moduleUrl = import.meta.url, argv1 = process.argv[1]) {
+  if (!argv1) return false;
+  try {
+    return fileURLToPath(moduleUrl) === path.resolve(argv1);
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
+  main().catch((error) => {
+    console.error(`[verify:live] FAILED: ${error.stack || error.message}`);
+    process.exit(1);
+  });
+}
