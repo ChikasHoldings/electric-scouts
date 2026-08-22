@@ -34,6 +34,7 @@ import {
   STATIC_ROUTES,
 } from '../src/seo/routes.js';
 import { ARTICLE_IDS, ARTICLE_SLUGS, articlePath } from '../src/seo/articles.js';
+import { ARTICLE_DATES } from '../src/seo/articleDates.js';
 import { mergeArticleSources } from '../src/lib/articleSources.js';
 import { TITLE_MAX } from '../src/seo/site.js';
 import { buildSitemapEntries, buildSitemapXml } from '../src/seo/sitemap.js';
@@ -359,12 +360,34 @@ describe('sitemap.xml', () => {
     // inaccurate is to stop trusting them — and a site waiting on 335 URLs to
     // be crawled cannot afford to discard the one signal that says which of
     // them changed.
+    //
+    // This used to assert that NO entry carries today's date, which is a proxy
+    // for the real property and not the property itself. It is wrong on any day
+    // an article is actually edited: refresh-article-dates.mjs reads dates from
+    // git history, so an article committed today is correctly stamped today,
+    // and the suite failed for doing the right thing. Eight of them did when
+    // the cannibalizing titles were fixed.
+    //
+    // What actually distinguishes the regression is provenance, so that is what
+    // is checked: a date equal to today is allowed only where the committed
+    // record in articleDates.js says today. A clock default could not satisfy
+    // that — it would stamp all 335 URLs, including the 250 with no record at
+    // all — and the neighbouring reproducibility test closes the same gap from
+    // the other side.
     const today = new Date().toISOString().split('T')[0];
-    const stamped = entries.filter((entry) => entry.lastmod === today);
+    const datedToday = new Set(
+      Object.entries(ARTICLE_DATES)
+        .filter(([, [, modified]]) => modified === today)
+        .map(([id]) => absoluteUrl(articlePath(Number(id))))
+    );
+    const unexplained = entries
+      .filter((entry) => entry.lastmod === today && !datedToday.has(entry.loc))
+      .map((entry) => entry.loc);
     assert.deepEqual(
-      stamped.map((entry) => entry.loc).slice(0, 5),
+      unexplained.slice(0, 5),
       [],
-      `${stamped.length} sitemap entries carry today's date — lastmod is being read off the clock`
+      `${unexplained.length} sitemap entries carry today's date with no committed record saying so — ` +
+        'lastmod is being read off the clock'
     );
   });
 
