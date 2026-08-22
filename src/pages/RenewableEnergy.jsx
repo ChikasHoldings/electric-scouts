@@ -144,7 +144,11 @@ export default function RenewableEnergy() {
         breadcrumbs={[{ name: "Home", url: "/" }, { name: "Renewable Energy" }]}
         eyebrow="Renewable electricity"
         eyebrowIcon={Leaf}
-        title="Renewable Energy Plans"
+        /* Must match STATIC_HEADINGS["/renewable-energy"] in src/seo/routes.js:
+           this is the H1 Google reads after rendering, and the prerendered one is
+           what it reads before. A page whose two H1s disagree is a page whose
+           keyword is on neither. */
+        title="How Renewable Electricity Plans Work"
         intro={`We track ${totalRenewablePlans} electricity plans backed by renewable generation across ${rows.length} deregulated states. Enter your ZIP code and the comparison keeps the renewable preference — it only asks whether this is for a home or a business.`}
         facts={[
           ["Renewable plans", String(totalRenewablePlans)],
